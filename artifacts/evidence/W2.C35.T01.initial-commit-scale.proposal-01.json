@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-C35-initial-commit-scale-proposal",
+  "status": "PROPOSED_PENDING_DIFFERENT_SCOPE_AND_SOURCE_REVIEW_AND_ROOT_SELECTION",
+  "preparedBy": "agent:/root/c21_closeout_review",
+  "taskId": "W2.C35.T01",
+  "implementationCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "prospectiveOwnerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "actualBasis": {
+    "sourceDiagnosis": {
+      "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-source-diagnosis-01.json",
+      "sha256": "645b6530b487632bd1b2aeb11583ecd75eea44c92783fa0b40b99dd8e08ee6ac"
+    },
+    "last100kCommitFailure": {
+      "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+      "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+    },
+    "reviewFunctionalComposition": {
+      "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+      "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+    },
+    "firstCommitFailure": {
+      "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+      "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+    }
+  },
+  "problem": "Actual100k original commit misses1830 observation while atomic publication is in progress, then rolls back on shutdown.100001 rows staged and identity verified, but no accepted commit/manifest. No specific avoidable correctness defect or latency cause is established. Earlier initiating failure remains unknown. Do not retry100k or optimize speculatively.",
+  "criterionChange": {
+    "explicitMaterialReduction": true,
+    "predecessorDecision": {
+      "path": "artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json",
+      "sha256": "6affe83d391222cc54c2bc75b812cd9449f3c733fb449a1bf213636eac415810"
+    },
+    "frozenTaskSpec": {
+      "path": "artifacts/evidence/W2.C35.T01.spec.json",
+      "sha256": "42fbaf9db73d3e07804b372520a0456cf246992fdaa11cbf30db813ba13a0f59"
+    },
+    "predecessorCompletionMethod": {
+      "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+      "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+    },
+    "affectedRequirements": [
+      "6affe policyLimits.protectedWorkloadSelection freshComplete100kCommit/recordsEach100000 and whole original commit completion",
+      "C35 frozen spec impactAnalysis actual100k commit with all original functional assertions",
+      "8dc proposedFiniteSelection.freshCommit and hardFailures commit2400 obligation for100k"
+    ],
+    "replacement": "Initial W2 functional commit acceptance may use exactly one fresh original supported1000-record case with all original assertions.100k commit publication/completeness/paging/replay/reopen and continuous performance remain explicitly UNQUALIFIED, not merely slow-but-passed. Original1830/1800/2400 failures remain. No old spec/decision/test is edited."
+  },
+  "proposedSelection": {
+    "caseId": "tests.service.test_import_commit_scale_windows.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+    "records": 1000,
+    "freshFixtures": 1,
+    "automaticRetry": false,
+    "allOriginalAssertions": true,
+    "timingMeaning": "single completed observation descriptive only; canonicalPerformanceQualified false",
+    "parseWaitSeconds": 930,
+    "commitWaitSeconds": 1830,
+    "commitWorkerSeconds": 1800,
+    "completedSampleSeconds": 2400,
+    "overallObserverSeconds": 2460,
+    "ownedWatchdogSeconds": 2520,
+    "normalDrainSeconds": 5,
+    "processPeakWorkingSetBytesMaximum": 268435456
+  },
+  "adequacyAndLimits": {
+    "initialFunctionalRationale": "The unchanged original real-principal DPAPI+SQLCipher/Core+durable-worker case covers canonical creation/counts, sealed ordered membership, atomic completion, idempotent request replay and fresh-runtime reopen at1000. Combine only actual passing fresh facts with existing190 denial/compatibility/rollback tests, currentCore/five-check evidence,100k review composition and observed100k rollback. Independent actual disposition remains required.",
+    "notProved": [
+      "Successful100k commit/manifest membership completeness",
+      "100k idempotent replay and fresh-runtime accepted manifest reopen",
+      "100k completion within1800worker/2400sample or absence of other scale defects"
+    ],
+    "hardSafetyRemains": "No rights, identity, provenance, parser-profile authority, encryption, source/runtime custody, memory, lease/cancellation, transaction, rollback or normal-cleanup exemption. Any failure of the selected1000 case stops; no automatic retry.",
+    "userVisibleLimit": "Disclose initial commit qualification only at1000 bibliographic records. The unchanged product still permits its existing larger input limits; this decision adds no enforced1000 cap and offers no guarantee for larger commits. Do not market100k commitment as verified.",
+    "largeCommitRisk": "A larger commit may exceed observation time and fail to produce an accepted manifest; the actual interrupted100k transaction rolled back. Existing focused safety plus that observation is evidence, not exhaustive100k failure/security proof.",
+    "resourceAndUsability": "Keep all existing phase/whole/256MiB observation ceilings at1000. No claimed runtime/RSS guarantee or timing extrapolation. Optional100k continuous scale/performance work is proposed forW9 only, not adopted scope or prerequisite for W3 planning."
+  },
+  "unchangedEvidence": "Existing100k review ed7d, pure6,190focused cases, currentCore/five consumers and their exact causal dispositions remain separate. No parser, quality, package, review-tail or100k replay is selected here.",
+  "recording": "One-use under actual34e: after genuine different combined finite-scope/source readiness, root must select exact ignored decision bytes BEFORE execution at unchanged3541. Producer authenticates and holds exact34e/proposal/readiness/decision. Publish byte-exact proposal/decision/readiness with normal C35 evidence AFTER actual proof and record true introduction commit; no owner inspection of later packet, backdated publication, automatic task/Wave/release approval, new ECR or controller.",
+  "requiredDecisionFields": {
+    "status": "APPROVED",
+    "documentType": "finite-C35-initial-commit-scale-decision",
+    "implementationCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+    "prospectiveOwnerAuthority": {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    "proposal": "actual path/digest of this proposal",
+    "independentScopeReadiness": "actual combined different scope/source readiness path/digest",
+    "selection": "exact proposedSelection object",
+    "actualResult": null,
+    "actualIntroductionCommit": null
+  },
+  "actualResult": null,
+  "criterionSelected": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

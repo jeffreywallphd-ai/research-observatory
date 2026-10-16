@@ -1,0 +1,97 @@
+{
+  "documentType": "independent-finite-C35-functional-completion-criterion-and-method-scope-disposition",
+  "reviewer": "agent:/root/c21_closeout_review",
+  "proposalAuthor": "agent:/root",
+  "recordedAt": "2026-10-16T00:13:49.891857+00:00",
+  "result": "APPROVED_FINITE_C35_CRITERION_AND_METHOD_SCOPE_PENDING_ROOT_SELECTION_SOURCE_REVIEW_AND_ACTUAL_PROOF",
+  "blockingFindings": [],
+  "acceptableAsExplicitFiniteInitialChoice": true,
+  "proposal": {
+    "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/proposal-02.json",
+    "sha256": "974f9a77973792da72eec06f6499dc37e9e61f5968fd81b7f6889d916279e165"
+  },
+  "implementationCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "ownerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "predecessorDecision": {
+    "path": "artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json",
+    "sha256": "6affe83d391222cc54c2bc75b812cd9449f3c733fb449a1bf213636eac415810"
+  },
+  "actualFailure": {
+    "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+    "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+  },
+  "reusedActualFailureDisposition": {
+    "path": "artifacts/tmp/W2.C35.T01.paired100k-first-failure-independent-disposition-01.json",
+    "sha256": "dd44ddd2868f4873a6a17b283dc2d679095d27b56565e09e694d106d44e06ee5"
+  },
+  "authorityAssessment": "Actual34e expressly permits necessary bounded W2 verification-method/criterion/procedural decisions with their actual concrete bytes, alternatives, rationale and independent disposition. This proposal is confined to the demonstrated current C35 protected100k review failure and its unperformed tail/commit. Root may select this precise finite scope without inventing owner inspection of the later packet, rewriting6affe or requesting a new general campaign. This judgment does not approve W9 scope or future results.",
+  "necessityAndRisk": {
+    "demonstratedIssue": "The sole original observer1860 assertion failed in duplicate-member paging, after accepted parse/summary and complete100001 ordered record-page assertions. Old7063 remains FAIL, original1800 whole-review target unmet and full continuous completion time unavailable. No established source remedy or product failure cause justifies speculative optimization or blind whole-case retry.",
+    "usabilityLimitation": "Current actual100k exhaustive review ran beyond31 minutes without completing all duplicate-member traversal/reopen assertions. This is material initial bulk-review latency, not a measured complete latency or an acceptable general latency guarantee. The finite acceptance must remain prominently disclosed for this candidate/configuration; bounded page responses and successful workers do not erase that limitation.",
+    "whyBoundedAcceptanceIsReasonable": "For initial working software, this single candidate-bound disclosed latency limitation can be nonblocking while all original functionality, worker limits, resource ceilings, rights/security and cleanup remain mandatory. It avoids repeating the expensive already-established parsing/summary/record traversal solely to obtain a different timing outcome. No model, larger-memory workload, optimization, cause attribution, lowered workload or fabricated canonical PASS is introduced."
+  },
+  "approvedFiniteScope": {
+    "onlyCriterionReduction": "Explicitly accept original current900-profile review whole-sample1800 miss as a nonblocking initial-W2 limitation. Preserve actual1860 observer failure and all raw observations; no new passing1800 value, baseline, median, old-policy or canonical-performance PASS is asserted.",
+    "functionalMethod": "Compose authenticated actual completed components with exactly one same-fixture original-unreached functional tail. Every original functional assertion must be mapped to actual existing execution or the new tail, with no static substitute and no skipped partial member prefix. Original helper/source/approved observers remain immutable; a separate reviewed private tail is a new disclosed component, not a passing invocation of the original full method.",
+    "sameFixtureAuthority": "Exact encrypted before-copy/current state and original DPAPI vault/project identity/accepted lineage must be authenticated before normal lifecycle writes. Existing current-principal providers/project open and governed read-only discovery are required. No new key/actor/witness, lock clearing, ACL repair, substitute fixture, begin-review revision mutation or worker rescheduling.",
+    "tail": "Actual raw/DOI group metadata assertions, full original DOI pagination from0/limit100/start2/count100000, then exact original close/fresh-runtime-reopen/summary/counts/last-page/canonical0/final-close assertions.",
+    "tailLimits": {
+      "observerSeconds": 1860,
+      "childWatchdogSeconds": 1920,
+      "normalDrainSeconds": 5,
+      "currentProcessPeakWorkingSetBytesMaximum": 268435456
+    },
+    "tailMeasurementMeaning": "New tail duration/observed-process peak only. No stitched/restarted end-to-end latency or continuous full-review memory qualification. Original failed observer clock is never reset or relabeled.",
+    "commit": "Only after successful authenticated tail, execute the still-unperformed original100000-record fresh commit once using its original own fresh fixture and complete unchanged original assertions. Do not use the review fixture as a shortcut or reschedule an already-completed commit.",
+    "unchangedCommitLimits": {
+      "onlyAfter": "Actual same-fixture tail succeeds and its genuine independently reviewed source/input/authority/normal-cleanup requirements are met.",
+      "selection": "Only the still-unperformed original100000-record fresh commit sample, once, with its own original fresh fixture and every original intake, parse, summary, commit, replay, idempotency, restart/reopen, rights, rollback and durable-fact assertion.",
+      "productParserSeconds": 900,
+      "summaryWorkerSeconds": 900,
+      "commitWorkerSeconds": 1800,
+      "parseAndSummaryWaitSeconds": 930,
+      "commitWaitSeconds": 1830,
+      "completedSampleSeconds": 2400,
+      "overallObserverSeconds": 2460,
+      "ownedChildWatchdogSeconds": 2520,
+      "normalDrainSeconds": 5,
+      "currentProcessPeakWorkingSetBytesMaximum": 268435456,
+      "unchangedOriginalObserverAndAssertionsRequired": true,
+      "noAutomaticRetry": true
+    },
+    "allOtherFailuresBinding": "Functional/lineage/authority/rights/security/worker timeout/resource/drift/cleanup failures remain hard failures. Commit2400 remains binding. Future tail/commit failure stops with no automatic retry. No blanket timing-outlier or other-failure exemption.",
+    "futureWork": "Optional import latency work is a proposed W9 planning follow-up only; no W9 item or budget is adopted here."
+  },
+  "oneUseRecordingAssessment": {
+    "acceptableForExactScope": true,
+    "preExecution": "At unchanged3541, root must actually select and record the exact proposal/this genuine disposition/final decision before dependent execution, then the producer authenticates and holds them with actual34e/source/runtime. An ignored decision is not represented as already Git-published, owner-inspected or a receipt granting authority.",
+    "postExecution": "Publish byte-exact selected proposal/disposition/decision with ordinary C35 evidence only after actual proof, naming genuine introduction/publication provenance when known. No backdated introduction, rewritten frozen packet/baseline or unrelated mid-claim source candidate change.",
+    "limits": "This finite procedural exception does not authorize framework, privacy, product, dependency, UX or scope changes; final actual frozen task/integration/Wave review remains required.",
+    "noAdditionalRecordingGateRequired": "Final task review can authenticate actual selected decision and byte-exact later public recording against this scope judgment; no separate generalized recording chain is needed absent a concrete mismatch."
+  },
+  "truthAndRetainedEvidence": {
+    "original7063Failed": true,
+    "original1800TargetMet": false,
+    "completeReviewLatencyKnown": false,
+    "noCurrentCanonicalPerformancePass": true,
+    "old6affeFrozenTextAndBaselineUnchanged": true,
+    "originalUnfinishedAssertionsStillRequired": true,
+    "actualTailResult": null,
+    "actualCommitResult": null,
+    "wholeTaskApprovalInferred": false
+  },
+  "nextNecessaryWork": "Root selects exact finite decision, then independent incremental source review of minimal tail/original-unperformed-commit controls and real state/input admission. This scope disposition is not source-readiness or a forecast of success.",
+  "limits": {
+    "sourceOrControlsOrFixtureOrRuntimeOrHEADMutated": false,
+    "producerOrProductImported": false,
+    "testsOrRuntimeScansExecuted": false,
+    "sourceReady": false,
+    "actualProofAccepted": false,
+    "taskApproved": false,
+    "waveApproved": false,
+    "releaseApproved": false
+  }
+}

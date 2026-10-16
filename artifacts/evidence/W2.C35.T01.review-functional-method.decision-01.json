@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-C35-initial-review-performance-acceptance-and-functional-completion-decision",
+  "status": "APPROVED",
+  "recordedBy": "agent:/root",
+  "recordedAt": "2026-10-16T00:14:34.093058+00:00",
+  "approvedBy": "human:repository-owner",
+  "approvalBasis": "Actual prospective necessary W2 completion authority34e, selected by root after genuine independent scope review. Owner is not claimed to have inspected this later packet.",
+  "ownerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "proposal": {
+    "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/proposal-02.json",
+    "sha256": "974f9a77973792da72eec06f6499dc37e9e61f5968fd81b7f6889d916279e165"
+  },
+  "independentScopeReadiness": {
+    "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/independent-scope-disposition-02.json",
+    "sha256": "77c5ba6e54540e2aca1641d5852792ec7223d212400918f965b0e9d325cb514c"
+  },
+  "implementationCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "predecessorDecision": {
+    "path": "artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json",
+    "sha256": "6affe83d391222cc54c2bc75b812cd9449f3c733fb449a1bf213636eac415810"
+  },
+  "actualFailure": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+      "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+    },
+    "independentDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.paired100k-first-failure-independent-disposition-01.json",
+      "sha256": "dd44ddd2868f4873a6a17b283dc2d679095d27b56565e09e694d106d44e06ee5"
+    },
+    "result": "FAIL_RETAINED_NO_RETRY",
+    "overallObserverSeconds": 1860,
+    "observedElapsedAtAssertionSeconds": 1860.0371488000092,
+    "originalWholeReview1800TargetMet": false,
+    "completeWholeReviewTimingAvailable": false,
+    "completedFacts": {
+      "parseRows": 100001,
+      "summaryRows": 100001,
+      "acceptedOutputs": 2,
+      "summaryCompletions": 1,
+      "canonicalRecords": 0,
+      "orderedRecordPages": 1001,
+      "orderedRecordRows": 100001,
+      "parseWorkerSeconds": 564.6063869000063,
+      "summaryWorkerSeconds": 701.5110949999944,
+      "observedPartialPeakWorkingSetBytes": 219676672,
+      "naturalRootExit": 1,
+      "naturalOwnedProcesses": 11,
+      "emptyJobConfirmed": true,
+      "inputsStable": true
+    },
+    "missing": [
+      "Complete ordered DOI duplicate-member traversal",
+      "Original explicit close and fresh-runtime reopen tail, unchanged summary, last page, canonical0 and final close",
+      "Every part of the still-unperformed separate fresh original100k commit sample"
+    ],
+    "notEstablished": "No worker, rights, data-integrity, memory or process-cleanup defect was observed. This is not proof that unexecuted assertions will pass or a causal attribution of the elapsed time.873 member requests do not provide an authenticated saved cursor."
+  },
+  "selectedFiniteMethod": {
+    "scope": "This C35 candidate's initial protected100k review completion only. No other failed criterion is waived and no further correction number is created.",
+    "wholeReviewLatency": "Accept the demonstrated1800-second whole-review target miss as a disclosed nonblocking initial-W2 performance limitation. Preserve the1860 observer failure unchanged. The original1800 criterion is not passed, replaced by a fabricated measurement or reset. Continuous whole-review latency qualification and optional import-scale performance work become a proposed W9 follow-up, subject to W9 planning; do not optimize or run another complete review now.",
+    "functionalComposition": "Authenticate and retain the actual completed intake, accepted parse, accepted summary/counts/coverage and all100001 ordered record rows. Add one separate actual same-fixture functional-tail component for every original unexecuted assertion. All original functional assertions must be accounted for; no smaller workload or static substitute.",
+    "sameFixtureAdmission": [
+      "Bind actual old receipt, diagnostic, case result, raw, source, runtime, environment and current committed input closure. Record source-equal metadata-only publication separately if HEAD advances.",
+      "Before normal lifecycle writes, preserve an exact private encrypted-fixture before-copy and manifest using bounded copying. Reject ambiguous paths, reparses, drift, unexpected files or competing use; do not create plaintext project copies.",
+      "Use the original profile vault, original project and same current-Windows-principal DPAPI/local actor through normal production create_runtime_app and project open. Missing authority, denial or state mismatch stops. No new key, actor, witness, lock bypass, ACL repair or substituted fixture.",
+      "Use governed read-only persisted preview/draft/summary discovery; require exactly one inspect-authorized preview and exact immutable source identity, selected900 settings, accepted parse/summary jobs/receipts and attempt1 lineage, saved counts and canonical0. Never call begin-review, revise a draft, reschedule workers or manufacture a new revision."
+    ],
+    "tail": {
+      "steps": [
+        "Repeat only the original cheap raw and DOI group metadata assertions to obtain actual groupKey.",
+        "Run original DOI member pagination from after0 with original limit100, ordinal start2, cursor/order/completeness/100000-count assertions. Do not infer or skip an unsaved873-page prefix.",
+        "Execute the original close, fresh-runtime reopen, exact summary/count equality, last-record-page complete/nextAfter100001/one-row, canonical0 and final close assertions."
+      ],
+      "overallObserverSeconds": 1860,
+      "ownedChildWatchdogSeconds": 1920,
+      "normalDrainSeconds": 5,
+      "currentProcessPeakWorkingSetBytesMaximum": 268435456,
+      "timingMeaning": "Report the separate actual tail duration and its observed-process peak. Do not add, subtract, stitch or restart clocks to manufacture a complete-review timing sample, median, distribution or full continuous memory claim."
+    },
+    "freshCommit": {
+      "onlyAfter": "Actual same-fixture tail succeeds and its genuine independently reviewed source/input/authority/normal-cleanup requirements are met.",
+      "selection": "Only the still-unperformed original100000-record fresh commit sample, once, with its own original fresh fixture and every original intake, parse, summary, commit, replay, idempotency, restart/reopen, rights, rollback and durable-fact assertion.",
+      "productParserSeconds": 900,
+      "summaryWorkerSeconds": 900,
+      "commitWorkerSeconds": 1800,
+      "parseAndSummaryWaitSeconds": 930,
+      "commitWaitSeconds": 1830,
+      "completedSampleSeconds": 2400,
+      "overallObserverSeconds": 2460,
+      "ownedChildWatchdogSeconds": 2520,
+      "normalDrainSeconds": 5,
+      "currentProcessPeakWorkingSetBytesMaximum": 268435456,
+      "unchangedOriginalObserverAndAssertionsRequired": true,
+      "noAutomaticRetry": true
+    },
+    "hardFailures": "Any unknown lineage, authority denial, assertion, worker timeout, resource overage, data-integrity, source/runtime drift or cleanup failure stops. This decision does not turn these failures into timing outliers or passing samples. The commit2400 criterion is unchanged. No future success is inferred.",
+    "oldComponents": "Retain actual190 focused cases/affected quality/API, current Core build/five checks, pure6 and their genuine input-closure dispositions. This method does not authorize repeating them or claiming they executed at a later commit.",
+    "publication": "One-use append-only recording under34e: after actual independent scope/source review, root records the exact final decision in ignored local evidence at unchanged implementation candidate3541 BEFORE any dependent execution. The decision is actual authority only through34e; it is not owner inspection of this later packet, Git publication, task approval or a receipt authorizing work. The qualifying producer authenticates and holds actual34e, exact proposal/readiness/selected decision, source and runtime throughout. After proof, publish the exact selected decision/proposal/independent disposition bytes with the ordinary C35 evidence and provenance naming their actual introduction commit; do not backdate publication. This finite recording exception avoids an unrelated mid-claim metadata-only HEAD change or new ECR/controller/bootstrap. Old packet and inherited task text stay immutable. No framework implementation or privacy exception is authorized."
+  },
+  "oneUseRecordingException": "Exact local ignored decision is selected before dependent execution at3541. Producer must authenticate and hold actual34e/proposal/independent disposition/this decision with source/runtime throughout. Exact bytes and proposal/disposition are published with normal C35 evidence after actual proof, with honest later introduction. This is not an already-public or owner-inspected packet and confers no authority beyond34e.",
+  "retainedMaterialLimitation": "The actual exhaustive100k review exceeded31minutes and failed its original overall1860 observer;1800 whole-review target is unmet and full continuous completion timing remains unavailable. Accept this precise initial-W2 latency limitation as nonblocking. Proposed optionalW9 latency work is not adopted W9 scope. All original missing functional assertions and fresh original commit under unchanged limits remain mandatory.",
+  "actualTailResult": null,
+  "actualCommitResult": null,
+  "canonicalPerformanceQualified": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

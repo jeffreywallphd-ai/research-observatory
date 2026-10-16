@@ -1,0 +1,139 @@
+{
+  "documentType": "independent-finite-C35-initial1000-commit-scope-and-control-source-readiness",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "SOURCE_READY_FINITE_INITIAL1000_FUNCTIONAL_SCOPE_PENDING_ACTUAL_ROOT_SELECTION",
+  "blockingFindings": [],
+  "candidateCommit": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "producer": {
+    "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/owned-original-commit1000-01.py",
+    "sha256": "5dc7a907e9f4882f902a9e040b3b109ddf8b0f88f29ae46edf066c65c7527431"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/preparation-01.json",
+    "sha256": "60bb9368739dc05c9972a4f4bf59447d005428e8e32fd86028bfb81b89583d19"
+  },
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "child": {
+    "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/case-child-01.py",
+    "sha256": "2dff00135bf1b7938a146c6672e769c6410f8e9a5dac537bdcacdfa1deeadb04"
+  },
+  "finiteProposal": {
+    "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+    "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+  },
+  "finiteInitialCommit1000ScopeAccepted": true,
+  "sourceManifest": {
+    "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/source-manifest-01.json",
+    "sha256": "41a0f57d571d22d5192ca78202a12cdcb08af36a9037fefd5a3d9b0323e01dc0"
+  },
+  "sourceDelta": {
+    "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/source-delta-01.json",
+    "sha256": "831d4fe14d1fcae3df6594294d206ff80e19fdaf09a9899d386b361b6500fbc3"
+  },
+  "priorExactSourceReadiness": {
+    "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01/independent-source-readiness-01.json",
+    "sha256": "48d967c39f2a77aa88eecaca195d48288065d70ccff5b916bd840dd184f200e8"
+  },
+  "actualOutcomeDiagnosis": {
+    "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+    "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+  },
+  "prospectiveOwnerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "scopeJudgment": {
+    "explicitMaterialCriterionReduction": true,
+    "affectedFrozenAuthoritiesPreserved": {
+      "explicitMaterialReduction": true,
+      "predecessorDecision": {
+        "path": "artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json",
+        "sha256": "6affe83d391222cc54c2bc75b812cd9449f3c733fb449a1bf213636eac415810"
+      },
+      "frozenTaskSpec": {
+        "path": "artifacts/evidence/W2.C35.T01.spec.json",
+        "sha256": "42fbaf9db73d3e07804b372520a0456cf246992fdaa11cbf30db813ba13a0f59"
+      },
+      "predecessorCompletionMethod": {
+        "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+        "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+      },
+      "affectedRequirements": [
+        "6affe policyLimits.protectedWorkloadSelection freshComplete100kCommit/recordsEach100000 and whole original commit completion",
+        "C35 frozen spec impactAnalysis actual100k commit with all original functional assertions",
+        "8dc proposedFiniteSelection.freshCommit and hardFailures commit2400 obligation for100k"
+      ],
+      "replacement": "Initial W2 functional commit acceptance may use exactly one fresh original supported1000-record case with all original assertions.100k commit publication/completeness/paging/replay/reopen and continuous performance remain explicitly UNQUALIFIED, not merely slow-but-passed. Original1830/1800/2400 failures remain. No old spec/decision/test is edited."
+    },
+    "acceptedFiniteChoice": "One fresh unchanged original supported1000-record commit case may supply initial functional commit evidence only after actual root selection of this reviewed proposal. This changes the finite100k evidence requirement openly; it does not reinterpret100k as passed.",
+    "rationale": "The original case explicitly supports1000 or100000 and retains current-principal DPAPI/SQLCipher/Core/durable-worker publication, every complete count and manifest-membership predicate, replay and fresh-runtime reopen. Existing actual190 focused/currentCore safety dispositions and interrupted100k rollback remain separate evidence at their stated boundaries. No concrete correctness repair or mandatory100k replay was established by the captured1830 deadline failure.",
+    "retainedLimitations": [
+      "All old100k failures, uncompleted100k publication/fullmanifest/replay/reopen and unmet1800/2400 evidence remain explicit.",
+      "1000 success cannot establish100k absence of defects or any new enforced product scale cap. Existing larger product input limits are unchanged.",
+      "Single completed timing is descriptive only; no canonical performance baseline or old100k initial-policy PASS.",
+      "No security/rights/authority/cancellation/lease/atomicity/provenance/resource/cleanup defect can be accepted as latency debt.",
+      "W9 high-scale work is a provisional recommendation, not adopted scope. Task, Wave and release approvals remain separate."
+    ],
+    "newOwnerQuestionRequired": false,
+    "authorityMeaning": "Actual34e prospectively authorizes necessary bounded criterion/method decisions; it is not owner inspection of later proposal/candidate/results. This readiness is the genuine different finite scope/source judgment, not root selection or execution."
+  },
+  "verifiedSourceDelta": {
+    "manifestPayloadHashesExact": true,
+    "parentLiteralTransformsAndCompleteRawInverseExact": true,
+    "childLiteralTransformsAndCompleteRawInverseExact": true,
+    "unchangedParentFunctionASTs": [
+      "sha",
+      "require",
+      "save",
+      "load",
+      "normalized",
+      "env_sha",
+      "root_namespace",
+      "normal",
+      "report_path",
+      "final_source_binding",
+      "finite_positive"
+    ],
+    "changedParentFunctions": [
+      "validate_sample",
+      "main"
+    ],
+    "validateSample": "Only explicit count/page/source-size projections; parse930, commit1800, sample2400 and268435456 memory checks unchanged, full successful durable facts and no retries still mandatory.",
+    "child": "Only supported count/environment/output/result identity literals; original bcf2/c991 body/helper references and complete observe/stage/client/main-tail bytes unchanged.",
+    "expectedSyntheticSourceDefinition": {
+      "byteLength": 46010,
+      "chunks": 1,
+      "sha256": "04be5575d78c5e93b44f9f96131d907e5995dcf13a255071c8dde773a75bac61"
+    },
+    "expectedSourceMeaning": "Independently recomputed from original header and1000 literal rows; definition hash only, not a measured workload.",
+    "fixedInputPrefixPreserved": 40,
+    "fixedInputCount": 47,
+    "custody": "Identical actual3541 source binding578RAW/570Git/37exactCRLF pairs, captured4564 runtime/environment, source namespace and held input bookends; only exact proposal/actual decision added to selected holds. No new normalization/runtime capture.",
+    "decisionGuard": "Authenticates actual CLI decision/proposal/readiness digests, exact candidate/authority/selection and null preexecution result/introduction; holds actual decision and proposal through final equality.",
+    "exclusiveOutput": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01",
+    "reporting": "Success remains pending different functional-component disposition; canonicalPerformanceQualified and initialPolicyQualified remainfalse. Actual100k failures remain separately bound."
+  },
+  "requiredBeforeExecution": {
+    "actualRootDecision": "Create exact finite decision with proposal.requiredDecisionFields: APPROVED, finite-C35-initial-commit-scale-decision, actual3541, actual34e authority, exact08ccc proposal, this actual readiness path/SHA, selection equal proposedSelection, actualResultnull/actualIntroductionCommitnull. Any attribution must identify prospective34e authority without inventing owner inspection.",
+    "recording": "Root selects exact ignored bytes BEFORE execution; source guard holds them. Publish byte-exact proposal/decision/readiness with ordinary C35 evidence later and true introduction chronology. No separate recording gate is required.",
+    "launch": "Captured .venv Python -B -s -X pycache_prefix=absolute HERE/unused-parent-bytecode-01 initially absent. Output must be absent. Actual environment/executable resolution must match existing4564; child uses fresh separate cache.",
+    "outerLogs": "All ongoing wrapper/invocation/log writers outside HERE and every selected source/runtime tree.",
+    "serialization": "Only one fresh original1000 commit; no automatic retry, no parallel owned performance checks. Root assesses actual dispatch conditions without inventing an uncontended machine.",
+    "finalActualProof": "Real onecase/noSkip/root0/normalEMPTY0/no timeout; every original assertion, full evaluator facts/caps, final held input stability and observerFailures[] must be authenticated by a genuine different outcome disposition. Any infrastructure/application/observer failure remains explicit."
+  },
+  "actualDecision": null,
+  "actualResult": null,
+  "sourceModulesImportedOrExecuted": false,
+  "fixturesAccessed": false,
+  "runtimeScannedOrRehashed": false,
+  "checksOrWorkloadsExecuted": false,
+  "trackedSourceOrHEADChanged": false,
+  "criterionSelectedByReviewer": false,
+  "futureOutcomeInferred": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

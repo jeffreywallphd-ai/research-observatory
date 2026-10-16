@@ -1,0 +1,2620 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "draftState": "PRIVATE_UNFROZEN_SELECTED_INITIAL_FUNCTIONAL_EVIDENCE_COMPLETE_PENDING_NORMAL_FREEZE_AND_FORMAL_REVIEW",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "taskId": "W2.C35.T01",
+  "baseCommit": "3ed9b568c7981f938204eedebca16b731f8d6008",
+  "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.C35.T01.task-start.md",
+    "artifacts/evidence/W2_C35_quality_inventory.evidence-01.json",
+    "artifacts/evidence/W2_C35_quality_inventory.maintenance-01.md",
+    "artifacts/evidence/W2_C35_quality_inventory.review-01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/import_preview_repository.py",
+    "services/core-api/src/research_observatory_core/import_summary_repository.py",
+    "services/core-api/src/research_observatory_core/ingestion/import_summaries.py",
+    "services/core-api/src/research_observatory_core/ingestion/preview_activity.py",
+    "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py",
+    "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py",
+    "services/core-api/src/research_observatory_core/ingestion/summary_activity.py",
+    "services/core-api/src/research_observatory_core/ports/import_previews.py",
+    "tests/data/test_import_preview_repository.py",
+    "tests/data/test_import_summary_repository.py",
+    "tests/fixtures/imports/protected-preview-legacy120-authority-v1.json",
+    "tests/service/test_import_commit_workflow.py",
+    "tests/service/test_import_intake_api.py",
+    "tests/service/test_import_preview_activity.py",
+    "tests/service/test_import_preview_workflow.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "inheritedCriterion": "User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.",
+      "checkIds": [
+        "tests.service.test_import_preview_workflow",
+        "tests.service.test_import_commit_workflow",
+        "tests.data.test_import_preview_repository",
+        "tests.data.test_import_summary_repository",
+        "tests.service.test_import_preview_activity",
+        "tests.service.test_import_intake_api",
+        "tests.service.test_import_preview_service",
+        "tests.service.test_import_summary_workflow",
+        "tests.service.test_import_commit_service",
+        "tests.data.test_import_commit_publication",
+        "tests.service.test_import_commit_identity",
+        "tests.service.test_import_commit_activity",
+        "tests.data.test_import_commit_hot_path",
+        "tests.data.test_import_preview_drafts",
+        "tests.data.test_import_summary_storage",
+        "tests.data.test_import_manifest_access",
+        "tests.data.test_import_commit_preparation",
+        "tests.service.test_import_commit_interruptions",
+        "tests.service.test_import_commit_api",
+        "tests.service.test_import_review_api",
+        "tests.service.test_import_summaries",
+        "protected100k-review",
+        "protected1000-commit"
+      ],
+      "status": "SELECTED_INITIAL_SCOPE_EVIDENCE_BOUND_PENDING_NORMAL_FORMAL_REVIEW",
+      "evidence": [
+        "Actual composed190 named cases cover old/new profile reconstruction, mapping/exclusion/error output, rights/cancellation/atomicity, saved+accepted commit lineage and scientific deduplication at their stated real/synthetic boundaries. Genuine ed7d closes all original100k review functional assertions by authenticated prefix+tail composition.",
+        "Genuine C21 ed7d qualifies original completed accepted parse/summary/counts/ordered100001 record pages plus the exact same-fixture DOI100000-member traversal/close/fresh-reopen tail under selected974f/77c5/8dc. This is review functional composition, not one passing original invocation or complete continuous timing/memory proof. The original1800 miss/1860 FAIL remains a disclosed nonblocking initial-W2 latency limitation; optional W9 work is only proposed.",
+        "Exact04ed/08ccc/02794 prospectively and explicitly replaces initial100k commit evidence with one fresh supported original1000-record case under actual34e. Genuine different31db qualifies that actual case: all11 manifest pages/1001 rows, canonical1000, one sealed manifest/accepted commit, exact replay and fresh-runtime reopen, root0/11normalEMPTY0/stable, peak230871040 below268435456. All original100k failures and unqualified large-path coverage remain disclosed knownLimitations; no1000 product cap or canonical benchmark PASS."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "inheritedCriterion": "Automated tests cover the expected path and at least one material failure or boundary condition.",
+      "checkIds": [
+        "tests.service.test_import_preview_workflow",
+        "tests.service.test_import_commit_workflow",
+        "tests.data.test_import_preview_repository",
+        "tests.data.test_import_summary_repository",
+        "tests.service.test_import_preview_activity",
+        "tests.service.test_import_intake_api",
+        "tests.service.test_import_preview_service",
+        "tests.service.test_import_summary_workflow",
+        "tests.service.test_import_commit_service",
+        "tests.data.test_import_commit_publication",
+        "tests.service.test_import_commit_identity",
+        "tests.service.test_import_commit_activity",
+        "tests.data.test_import_commit_hot_path",
+        "tests.data.test_import_preview_drafts",
+        "tests.data.test_import_summary_storage",
+        "tests.data.test_import_manifest_access",
+        "tests.data.test_import_commit_preparation",
+        "tests.service.test_import_commit_interruptions",
+        "tests.service.test_import_commit_api",
+        "tests.service.test_import_review_api",
+        "tests.service.test_import_summaries",
+        "current-core-configuration",
+        "current-core-installed-worker",
+        "current-core-metadata",
+        "current-core-principals",
+        "current-core-frozen",
+        "protected100k-review",
+        "protected1000-commit"
+      ],
+      "status": "SELECTED_INITIAL_SCOPE_EVIDENCE_BOUND_PENDING_NORMAL_FORMAL_REVIEW",
+      "evidence": [
+        "Exact149+41 disjoint composition qualified at3541 with original source/runtime/input closure. Historical six pure parser100k observations separately admitted by causal input continuity; not fresh measurements and not old canonical aggregatePASS. CurrentCore build/five genuine970c component disposition admits actual normal/stable configuration/worker/metadata/real LPAC/frozen import-reimport-cancel-restart proof; unchanged dependency/Native causal reuse remains bounded, no whole current security scan or GUI-combination claim.",
+        "Genuine C21 ed7d qualifies original completed accepted parse/summary/counts/ordered100001 record pages plus the exact same-fixture DOI100000-member traversal/close/fresh-reopen tail under selected974f/77c5/8dc. This is review functional composition, not one passing original invocation or complete continuous timing/memory proof. The original1800 miss/1860 FAIL remains a disclosed nonblocking initial-W2 latency limitation; optional W9 work is only proposed.",
+        "Exact04ed/08ccc/02794 prospectively and explicitly replaces initial100k commit evidence with one fresh supported original1000-record case under actual34e. Genuine different31db qualifies that actual case: all11 manifest pages/1001 rows, canonical1000, one sealed manifest/accepted commit, exact replay and fresh-runtime reopen, root0/11normalEMPTY0/stable, peak230871040 below268435456. All original100k failures and unqualified large-path coverage remain disclosed knownLimitations; no1000 product cap or canonical benchmark PASS."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "inheritedCriterion": "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.",
+      "checkIds": [
+        "typing-remediation-format",
+        "typing-remediation-lint",
+        "affected-configured-types",
+        "core-api-contract",
+        "current-core-configuration",
+        "current-core-installed-worker",
+        "current-core-metadata",
+        "current-core-principals",
+        "current-core-frozen"
+      ],
+      "status": "SELECTED_INITIAL_SCOPE_EVIDENCE_BOUND_PENDING_NORMAL_FORMAL_REVIEW",
+      "evidence": [
+        "Immutable closed120/900 internal profiles and real captured legacy authority-only fixture preserve missing/v1/default/Python-name settings, exact old queues/receipts/stored requests and public DTO/schema bytes. No DDL/migration/default120/pure-parser/scientific-identity change. Explicit6affe authorizes material newly-created-only900 and one-review+one-commit initial evidence choice; this is not a hidden unchanged120 performance restoration.",
+        "The exact frozen/public origin, spec and6affe/8dc authorities remain immutable. Later candidate-bound04ed explicitly discloses its material initial functional-evidence reduction, preserves all hard safety/resource/cleanup predicates at1000, and requires truthful later publication of actual selected scope records. The actual new policy/proof is not attributed retroactively to old tests or history."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "typing-remediation-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py tests/service/test_import_preview_workflow.py tests/service/test_import_commit_workflow.py tests/data/test_import_preview_repository.py tests/service/test_import_preview_activity.py",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 0.2375074000156019,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/typing-remediation-format.raw.log",
+        "sha256": "f114d83b30c5c657ee43a847a45bafccaea255d82673feb87c26d252c61e29c1"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "typing-remediation-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py tests/service/test_import_preview_workflow.py tests/service/test_import_commit_workflow.py tests/data/test_import_preview_repository.py tests/service/test_import_preview_activity.py",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 0.2491855999978725,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/typing-remediation-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "affected-configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.C35.T01.focused-proof-06.f01/complete-governed-files.args",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 19.96510319999652,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/affected-configured-types.raw.log",
+        "sha256": "be53c5001524aa89ff3b3871e0fb323975691c6810b2e10698a889957bb0ed45"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 4.245369000011124,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/core-api-contract.raw.log",
+        "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_preview_workflow",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_cross_project_intent_and_unsealed_source_are_denied tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_draft_context_and_exact_declarative_local_authority tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_expired_ordinary_attempt_replays_from_immutable_source tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_frozen_comma_job_survives_queue_reload_without_definition_drift tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_import_worker_does_not_claim_other_document_activities tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_noncomma_input_is_versioned_and_cannot_substitute_for_queued_comma tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_reloaded_claim_binds_source_intent_policy_epoch_and_worker_identity tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_security_cancel_fences_pending_parse_and_late_outputs tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_supervisor_admission_heartbeat_receipt_and_completed_preview tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_known_new_hash_cannot_replace_old_queued_profile tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_new_creation_persists900_before_scheduling tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_old_accepted_summary_receipts_keep_exact_fingerprint_and_version tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_old_unscheduled_inputs_and_all_queued_authorities_reconstruct_exactly tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_predecessor_input_schemas_remain_byte_equivalent tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_two_frozen_profiles_preserve_pure_default_and_all_other_limits",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 8.609340299997712,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_preview_workflow.raw.log",
+        "sha256": "e19d6aa6f3305dc1ecb2c5aa7d2c5a846a7ff0dcf0527b2291c334585656022e"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_commit_workflow",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_workflow.ImportCommitWorkflowTests.test_continuation_requires_exact_cancelled_predecessor tests.service.test_import_commit_workflow.ImportCommitWorkflowTests.test_exact_claim_accepts_but_changed_inputs_or_claims_deny tests.service.test_import_commit_workflow.ImportCommitWorkflowTests.test_request_replay_is_distinct_from_scientific_identity tests.service.test_import_commit_workflow.ProtectedProfileQueueLineageTests.test_legacy_and_new_profiles_survive_queue_reload_and_do_not_duplicate_scientific_records",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 13.414846600004239,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_commit_workflow.raw.log",
+        "sha256": "7ed29090a5d16c7498a5dceb6833c733e860558630ffac798c89cf4c34b7f036"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.data.test_import_preview_repository",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_completed_parser_cannot_substitute_a_different_delimiter tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_incomplete_substituted_or_closed_intake_is_not_published tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_legacy_preview_has_comma_default_without_backfill tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_legacy_settings_default_and_python_version_name_keep_exact120_authority tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_legacy_source_only_receipt_still_accepts_without_profile_backfill tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_malformed_or_substituted_parser_settings_fail_without_publishing_preview tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_profile_rejects_actual_legacy_session_even_with_valid_new_receipt tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_profile_rejects_wrong_actual_parser_receipt tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_settings_require_explicit_profile_hash_and_object_shape tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_settings_select900_and_legacy_missing_or_v1_is_never_upgraded tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_null_predecessor_cannot_bypass_draft_revision_check tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_parser_settings_are_atomic_immutable_and_identity_bound tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_record_source_substitution_rolls_back_the_whole_batch tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_records_stay_provisional_until_exact_attempt_receipt_is_accepted tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_restart_after_provisional_completion_uses_new_fenced_attempt tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_sealed_chunk_membership_is_closed_even_to_adapter_sql tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_shared_references_survive_cancel_restart_and_block_deletion tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_unfinished_parse_forged_lease_and_security_cancel_deny_publication tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_unknown_rights_and_path_sources_are_denied_without_state",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 8.716573499987135,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.data.test_import_preview_repository.raw.log",
+        "sha256": "736972e5ddd37c4fa05bed2a151403fdd10e833ed4762d1a658b580612ff077a"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.data.test_import_summary_repository",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_100k_row_query_scale_has_linear_groups_and_bounded_python_memory tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_all_rows_need_store_and_inspect_even_excluded_records_beyond_first_page tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_completion_failure_rolls_back_groups_and_retry_preserves_rows tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_counts_groups_members_and_restart_require_exact_queue_acceptance tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_different_committed_output_does_not_accept_summary_receipt tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_edit_before_completion_leaves_no_summary_or_groups tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_edit_between_page_projection_and_append_rolls_back tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_empty_import_is_complete_zero_not_a_missing_or_failed_summary tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_expired_actor_or_cancelled_claim_cannot_write_or_publish tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_expired_attempt_restarts_from_zero_and_cannot_publish_old_rows tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_legacy_summary_still_accepts_its_original_receipt_version_after_reload tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_new_profile_cannot_accept_a_legacy_summary_receipt tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_wrong_attempt_draft_and_result_receipts_never_publish",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 13.55386039998848,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.data.test_import_summary_repository.raw.log",
+        "sha256": "66933d66eb610a1a8eb7f7eb5272cbff278934d6cc18b3fa0046cb86551823ee"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_preview_activity",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_actual_activity_selects_frozen_new_or_legacy_limits tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_durable_cancellation_before_parse_never_creates_accepted_preview tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_real_encrypted_source_parse_receipt_and_exact_attempt_acceptance tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_revoked_project_guard_stops_before_read_or_receipt tests.service.test_import_preview_activity.ProtectedParserClockTests.test_profiles_keep_distinct_bounded_deadlines_and_cancellation",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 5.094523500010837,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_preview_activity.raw.log",
+        "sha256": "5bf17167d9c2940aea13399449689f4611a4ac1e4041045b735f882ac23ec17d"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_intake_api",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_intake_api.ImportIntakeApiTests.test_cancellation_before_worker_claim_leaves_no_reviewable_import tests.service.test_import_intake_api.ImportIntakeApiTests.test_claimed_seal_digest_is_not_accepted_as_verified_source tests.service.test_import_intake_api.ImportIntakeApiTests.test_discovery_status_and_cancel_recheck_inspection_rights tests.service.test_import_intake_api.ImportIntakeApiTests.test_explicit_delimiters_survive_project_reopen_and_reach_real_worker tests.service.test_import_intake_api.ImportIntakeApiTests.test_intake_denies_unknown_rights_actor_path_and_malformed_or_oversized_chunks tests.service.test_import_intake_api.ImportIntakeApiTests.test_library_discovery_is_bounded_and_reopens_persisted_previews tests.service.test_import_intake_api.ImportIntakeApiTests.test_native_intake_roundtrip_uses_encrypted_chunks_and_real_worker tests.service.test_import_intake_api.ImportIntakeApiTests.test_native_report_pages_bind_session_revision_and_complete_diagnostics tests.service.test_import_intake_api.ImportIntakeApiTests.test_native_routes_keep_existing_authentication_and_transport_bounds tests.service.test_import_intake_api.ImportIntakeApiTests.test_project_identity_and_closed_reopened_session_cannot_be_substituted tests.service.test_import_intake_api.ImportIntakeApiTests.test_report_final_authorization_rejects_earlier_record_rights_revocation tests.service.test_import_intake_api.ProtectedProfileTransportTests.test_profile_selection_is_not_a_public_create_field_or_response_field",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 22.911672200018074,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_intake_api.raw.log",
+        "sha256": "e1274f5ac3a2e0789f51cf3ac4e3680a14f79e5c191f509b552f32fd9b242ac7"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_preview_service",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_preview_service.ImportPreviewServiceTests.test_background_pump_and_cancel_before_claim tests.service.test_import_preview_service.ImportPreviewServiceTests.test_close_and_reopen_do_not_reuse_old_live_project_binding tests.service.test_import_preview_service.ImportPreviewServiceTests.test_created_draft_intent_is_real_context_not_an_acceptance_gate tests.service.test_import_preview_service.ImportPreviewServiceTests.test_foreign_intent_adapter_cannot_substitute_a_valid_bridge tests.service.test_import_preview_service.ImportPreviewServiceTests.test_new_recovery_epoch_cancels_old_job_before_claim tests.service.test_import_preview_service.ImportRuntimeCompositionTests.test_authenticated_project_open_attaches_real_protected_worker_and_close_drains tests.service.test_import_preview_service.ImportRuntimeCompositionTests.test_legacy_startup_has_no_import_authority",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 15.447977799980436,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_preview_service.raw.log",
+        "sha256": "9e863271c398a9d0f13350f5ddcff4f1a9e4e46f2b60b054d9bab97f64b932d3"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_summary_workflow",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_binding_rejects_each_material_input_and_claim_substitution tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_cancel_summary_does_not_cancel_or_edit_preview tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_continuation_requires_real_unsuccessful_predecessor_and_matching_authority tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_current_privacy_change_after_page_prevents_receipt_publication tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_ordinary_mid_page_close_is_retryable_but_never_publishes_partial_summary tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_ordinary_restart_reconstructs_exact_summary_authority tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_queued_summary_cannot_compute_a_newer_edited_draft tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_retry_on_older_sibling_branch_remains_visible_live_and_reconstructed tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_same_authority_replays_job_and_real_worker_publishes_complete_summary tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_security_epoch_cancels_old_summary_before_claim_but_explicit_new_calculation_is_allowed tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_summary_scheduling_rejects_stale_revision_or_closed_project tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_task_center_continuation_and_retry_of_continuation_publish_actual_job tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_terminal_continuation_status_survives_reconstruction",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 43.145735099999,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_summary_workflow.raw.log",
+        "sha256": "08d7a497cf8bc500d603edf06018685d65b546c0925de3cddda3b60a1c2865c4"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_commit_service",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_draft_before_execution_is_not_silently_adopted tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_request_payload_conflicts_and_preserves_original tests.service.test_import_commit_service.ImportCommitServiceTests.test_concurrent_same_request_has_one_durable_job tests.service.test_import_commit_service.ImportCommitServiceTests.test_explicit_cancelled_job_continuation_preserves_saved_command tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_manifest_uses_accepted_order_not_uuid_sort_order_after_restart tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_request_uses_retained_order_not_uuid_sort_order_after_restart tests.service.test_import_commit_service.ImportCommitServiceTests.test_preview_cancellation_cancels_queued_commit tests.service.test_import_commit_service.ImportCommitServiceTests.test_request_written_before_enqueue_is_recovered_not_lost tests.service.test_import_commit_service.ImportCommitServiceTests.test_security_epoch_cancels_old_commit_without_automatic_replacement tests.service.test_import_commit_service.ImportCommitServiceTests.test_service_replays_request_and_worker_commits_after_restart",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 36.27890639999532,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_commit_service.raw.log",
+        "sha256": "287421aa3e5b4ade65a98b91942dc90f3ba0f8d5473aea12e16fcf4c3649e4ae"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.data.test_import_commit_publication",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_cancel_before_publication_leaves_canonical_state_unchanged tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_changed_file_retains_old_assertion_and_explains_update tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_comparison_denies_current_predecessor_record_rights_revocation tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_equal_raw_bytes_do_not_hide_changed_accepted_mapping tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_expiration_during_publication_uses_fresh_time_and_rolls_back tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_forged_prepared_selection_cannot_override_actual_draft tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_generic_completed_receipt_is_not_an_import_manifest_replay tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_lost_reply_replays_without_new_facts tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_manifest_reads_preserve_complete_ordered_decisions_and_identity tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_material_failures_roll_back_entire_publication tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_more_than_64_records_have_complete_manifest_membership tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_multiple_current_candidates_are_not_reported_as_certain_updates tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_publication_commits_manifest_records_provenance_and_worker_output tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_file_new_preview_reuses_source_assertion_ids tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_scientific_import_reuses_manifest_and_records",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 39.8610086000117,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.data.test_import_commit_publication.raw.log",
+        "sha256": "4425f969277b46c2aaf59ec4a04918d4f577ac1fa6fe4670792cb3b98760fd70"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_commit_identity",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_corrections_selection_and_per_record_rights_change_manifest_identity tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_exact_serialization_and_single_traversal tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_identity_projection_rejects_incoherent_counts tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_incomplete_reordered_or_unbounded_input_cannot_return_identity tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_preview_is_excluded_but_scientific_authority_is_bound tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_source_assertion_key_is_scoped_and_not_a_work_or_record_uuid",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 0.734572899993509,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_commit_identity.raw.log",
+        "sha256": "5f12582cd96d5cebb24c65604c203a5fc2901ce5bd75abbb7ddaa6ec09096b73"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.service.test_import_commit_activity",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_activity.ImportCommitActivityTests.test_activity_accepts_canonical_manifest_and_exact_worker_output tests.service.test_import_commit_activity.ImportCommitActivityTests.test_atomic_publication_cannot_renew_a_genuinely_expired_lease tests.service.test_import_commit_activity.ImportCommitActivityTests.test_atomic_publication_renews_live_lease_without_extending_its_interval tests.service.test_import_commit_activity.ImportCommitActivityTests.test_authority_loss_after_verification_denies_publication_without_canonical_facts tests.service.test_import_commit_activity.ImportCommitActivityTests.test_cancellation_after_verification_stops_before_writer tests.service.test_import_commit_activity.ImportCommitActivityTests.test_cancelled_activity_does_not_begin_publication tests.service.test_import_commit_activity.ImportCommitActivityTests.test_heartbeat_during_preparation_retains_exact_attempt_authority tests.service.test_import_commit_activity.ImportCommitActivityTests.test_nonadvancing_page_is_bounded_failure_not_an_infinite_loop tests.service.test_import_commit_activity.ImportCommitActivityTests.test_verification_releases_outer_guard_but_pages_and_atomic_writer_are_guarded",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 19.6437455000123,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.service.test_import_commit_activity.raw.log",
+        "sha256": "684ba2a6ae0e8c31da9fa56de8328475df98855763872dbc464f57fdc7da49f3"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.data.test_import_commit_hot_path",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_canonical_publication_uses_fixed_compiled_statements tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_draft_record_read_does_not_compile_the_same_query_per_ordinal tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_identity_verification_uses_one_fresh_transaction_per_page tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_revision_changed_between_verification_pages_is_rejected",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 13.57479820001754,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.data.test_import_commit_hot_path.raw.log",
+        "sha256": "db83d8a369ac04955161b3e5d3cc5326a48571e4f2fbe0faf5f2afcb4a97cb8d"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.data.test_import_preview_drafts",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_current_rights_deny_historical_pages_and_mid_report_retrieval tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_full_report_includes_mapping_and_exclusion_without_content tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_group_decisions_and_complete_report_cross_page_boundaries tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_group_edit_restart_compare_and_swap_and_undo_preserve_history tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_mapping_binding_correction_and_exclusion_survive_remapping tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_mapping_revision_cannot_be_redefined_after_undo tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_page_byte_limit_stops_before_loading_later_decisions tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_page_key_selection_matches_scalar_history_for_every_retained_revision tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_page_resolves_history_once_and_preserves_abandoned_branch_semantics tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_record_rights_are_not_bypassed_by_raw_or_historical_pages tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_setwise_undo_preserves_each_action_restriction_outside_visible_page tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_sparse_selection_preserves_history_rights_and_one_transaction tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_substituted_record_rolls_back_entire_group_and_no_canonical_import tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_cannot_remove_current_record_rights_restrictions tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_checks_export_rights_beyond_the_visible_page_and_defaults tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_query_handles_100k_decisions_and_10k_revisions tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_resolves_rights_setwise_instead_of_per_ordinal_history_queries",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 12.219228399975691,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/tests.data.test_import_preview_drafts.raw.log",
+        "sha256": "7f0ed4c9ef84febd5876bcb19ebe574f01bf4586c43cf216665c8a5f25da04ba"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "FAIL",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+          "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "PRIOR149_AND_QUALITY",
+        "executedInRemaining41Continuation": false
+      }
+    },
+    {
+      "id": "tests.data.test_import_summary_storage",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_summary_storage.ImportSummaryStorageTests.test_attempt_source_membership_completeness_and_immutability",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 2.759578799974406,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.data.test_import_summary_storage.raw.log",
+        "sha256": "315bc3889e7b950e0ba5d79ad5a2e0cf1d71f5990173d9ca96600e42c2e3557d"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "tests.data.test_import_manifest_access",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_manifest_access.ImportManifestAccessTests.test_default_revocation_denies_warmed_read tests.data.test_import_manifest_access.ImportManifestAccessTests.test_new_draft_requires_complete_recheck_even_when_rights_stay_permitted tests.data.test_import_manifest_access.ImportManifestAccessTests.test_off_page_revocation_invalidates_warm_authority_and_failed_checks_are_never_memoized tests.data.test_import_manifest_access.ImportManifestAccessTests.test_publication_replay_rechecks_rights_even_after_warmed_read tests.data.test_import_manifest_access.ImportManifestAccessTests.test_unchanged_pages_reuse_only_complete_current_authorization_and_cold_adapter_rescans tests.data.test_import_manifest_access.ImportManifestAccessTests.test_undo_of_permitted_edit_rechecks_new_revision tests.data.test_import_manifest_access.ImportManifestAccessTests.test_warmed_scan_does_not_bypass_cancelled_preview",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 16.797030899993842,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.data.test_import_manifest_access.raw.log",
+        "sha256": "0ef52a188ac8c35c85db5e1fecba72d10a4eb20615855eb835d865eed63c4974"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "tests.data.test_import_commit_preparation",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_cancellation_denies_staging_and_identity tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_complete_staging_replays_begin_but_is_not_canonical_publication tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_excluded_denied_record_cannot_be_retained_as_commit_decision tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_expired_lease_denies_staging tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_extra_request_revision_is_rejected_not_latest_wins tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_immutable_request_reopens_exactly_and_rejects_changed_command_or_actor tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_substituted_claim_or_inputs_and_stale_draft_are_denied",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 15.346970000013243,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.data.test_import_commit_preparation.raw.log",
+        "sha256": "5130e13bf5882877f6e7d208cf9583c80df0ca90f4b3f93189544effebdac7f0"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "tests.service.test_import_commit_interruptions",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancel_after_rollback_exposes_expired_durable_lease_uses_recovery_not_revival tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancel_interrupts_sql_inside_an_adapter_and_rolls_back_before_convergence tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancel_route_interrupts_writer_before_acquiring_lifecycle_lock tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancellation_after_commit_keeps_accepted_manifest_and_records tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_close_route_interrupts_writer_and_drains_before_closing tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_drain_timeout_is_bounded_and_does_not_claim_no_import_was_published tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_wrong_command_and_replaced_binding_cannot_interrupt_publication",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 36.93507410000893,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.service.test_import_commit_interruptions.raw.log",
+        "sha256": "6a247bc5c87bc276babdad2746d7b3398ecb3f8687cf8e8ee47b9871369dbb90"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "tests.service.test_import_commit_api",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_api.ImportCommitApiTests.test_cancel_requires_exact_request_job_and_does_not_cancel_preview tests.service.test_import_commit_api.ImportCommitApiTests.test_commit_status_manifest_pages_and_request_replay tests.service.test_import_commit_api.ImportCommitApiTests.test_cross_preview_manifest_and_request_substitution_are_denied tests.service.test_import_commit_api.ImportCommitApiTests.test_manifest_and_completed_status_deny_later_rights_revocation tests.service.test_import_commit_api.ImportCommitApiTests.test_prepared_request_can_be_discovered_without_renderer_memory_or_automatic_execution tests.service.test_import_commit_api.ImportCommitApiTests.test_strict_input_authentication_and_uncertain_outcome_disclosure",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 30.423318900022423,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.service.test_import_commit_api.raw.log",
+        "sha256": "8b7325f1ead5550cebc97b723c3d62499c1126dd5df8105414eea79849b51692"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "tests.service.test_import_review_api",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_review_api.ImportReviewApiTests.test_actual_request_bytes_are_bounded_before_json_parsing tests.service.test_import_review_api.ImportReviewApiTests.test_authenticated_review_mapping_exclusion_and_report_round_trip tests.service.test_import_review_api.ImportReviewApiTests.test_automatic_column_targets_roundtrip_and_single_change_preserves_other_fields tests.service.test_import_review_api.ImportReviewApiTests.test_duplicate_groups_and_noncontiguous_members_are_complete_and_current tests.service.test_import_review_api.ImportReviewApiTests.test_summary_cancel_is_separate_from_preview_and_rejects_other_job tests.service.test_import_review_api.ImportReviewApiTests.test_summary_is_explicit_revision_bound_and_never_an_unavailable_zero tests.service.test_import_review_api.ImportReviewApiTests.test_undo_cannot_reopen_restricted_source_via_authenticated_route tests.service.test_import_review_api.ImportReviewApiTests.test_undo_walks_effective_history_without_redo_or_automatic_stale_retry tests.service.test_import_review_api.ImportReviewApiTests.test_validation_authentication_and_project_close_cannot_leak_records",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 28.552914700005203,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.service.test_import_review_api.raw.log",
+        "sha256": "7606ce016c0beb2210c123512b0dd3ce77e36f2baf7e8ffd8019572e6b6980ed"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "tests.service.test_import_summaries",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_summaries.ImportSummaryTests.test_context_malformed_and_excluded_rows_supply_no_candidate_or_coverage tests.service.test_import_summaries.ImportSummaryTests.test_corrections_normalize_for_candidates_without_mutating_accepted_values tests.service.test_import_summaries.ImportSummaryTests.test_missing_permissions_and_substituted_decision_fail_closed tests.service.test_import_summaries.ImportSummaryTests.test_raw_and_normalized_doi_candidates_are_distinct_from_record_identity",
+      "commandSemantics": "DISPLAY actual logical arguments with repository executable/script paths made relative; complete original private invocation remains in executionReceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 0.7286129000131041,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/tests.service.test_import_summaries.raw.log",
+        "sha256": "1ef66820b6dfc7b06fb9ad89a8b4834283f799d2a79ba6b47aef73135f4c1da0"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "originalCollectorRowStatus": "PASS",
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+          "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+          "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+        },
+        "componentGroup": "FRESH_REMAINING41",
+        "executedInRemaining41Continuation": true
+      }
+    },
+    {
+      "id": "current-core-configuration",
+      "command": "artifacts/tmp/c35/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --check",
+      "commandSemantics": "DISPLAY same actual arguments with repository-local executable/script paths relative; private receipt/external invocation retain exact original arguments.",
+      "result": null,
+      "actualProducerReportedResult": "PASS",
+      "componentReviewStatus": "PENDING_DIFFERENT_ACTUAL_DISPOSITION",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 1.7520188000053167,
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/configuration.raw.log",
+        "sha256": "99f80014ed7f91d261c578d7dc74d68c3e7b74112eab55991bfe8936621eb929"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+          "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+        },
+        "actualExternalInvocation": {
+          "path": "artifacts/tmp/W2.C35.T01.current-core-invocation-02/invocation.json",
+          "sha256": "8bb1f6dc6e806fd0f58c05e7fb18c3a1a3ab67b48a2e646268c9d4d2061f6662"
+        },
+        "independentDisposition": null
+      }
+    },
+    {
+      "id": "current-core-installed-worker",
+      "command": "artifacts/tmp/c35/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --check-worker-runtime",
+      "commandSemantics": "DISPLAY same actual arguments with repository-local executable/script paths relative; private receipt/external invocation retain exact original arguments.",
+      "result": null,
+      "actualProducerReportedResult": "PASS",
+      "componentReviewStatus": "PENDING_DIFFERENT_ACTUAL_DISPOSITION",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 0.24419269998907112,
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/installed-worker.raw.log",
+        "sha256": "69aaf4c34260dbebd9ce55b558a80374d0bc9055ed66fb5cba074b0d780c8fca"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+          "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+        },
+        "actualExternalInvocation": {
+          "path": "artifacts/tmp/W2.C35.T01.current-core-invocation-02/invocation.json",
+          "sha256": "8bb1f6dc6e806fd0f58c05e7fb18c3a1a3ab67b48a2e646268c9d4d2061f6662"
+        },
+        "independentDisposition": null
+      }
+    },
+    {
+      "id": "current-core-metadata",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py --child metadata --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea --source-readiness artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json --source-readiness-sha256 a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c --input-manifest-sha256 c6d978535b8b9195bba86adbb26112ad0161696c353abcec7829028e39056097 --final-source-binding artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json --final-source-binding-sha256 c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490 --core-build-receipt artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json --core-build-receipt-sha256 b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8 --core-report artifacts/tmp/W2.protected-import-current-core-01.report.json --core-report-sha256 069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521",
+      "commandSemantics": "DISPLAY same actual arguments with repository-local executable/script paths relative; private receipt/external invocation retain exact original arguments.",
+      "result": null,
+      "actualProducerReportedResult": "PASS",
+      "componentReviewStatus": "PENDING_DIFFERENT_ACTUAL_DISPOSITION",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 1.393714000005275,
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/metadata.raw.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+          "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+        },
+        "actualExternalInvocation": {
+          "path": "artifacts/tmp/W2.C35.T01.current-core-invocation-02/invocation.json",
+          "sha256": "8bb1f6dc6e806fd0f58c05e7fb18c3a1a3ab67b48a2e646268c9d4d2061f6662"
+        },
+        "independentDisposition": null
+      },
+      "methodResults": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/metadata-result.json",
+        "sha256": "0f3692905b69b0d69b20e5bba4496c101c2fc4a811a1175c509775502ae607e5"
+      }
+    },
+    {
+      "id": "current-core-principals",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py --child principals --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea --source-readiness artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json --source-readiness-sha256 a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c --input-manifest-sha256 c6d978535b8b9195bba86adbb26112ad0161696c353abcec7829028e39056097 --final-source-binding artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json --final-source-binding-sha256 c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490 --core-build-receipt artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json --core-build-receipt-sha256 b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8 --core-report artifacts/tmp/W2.protected-import-current-core-01.report.json --core-report-sha256 069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521",
+      "commandSemantics": "DISPLAY same actual arguments with repository-local executable/script paths relative; private receipt/external invocation retain exact original arguments.",
+      "result": null,
+      "actualProducerReportedResult": "PASS",
+      "componentReviewStatus": "PENDING_DIFFERENT_ACTUAL_DISPOSITION",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 6.662328200007323,
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/principals.raw.log",
+        "sha256": "c71edc5d7f47c5db83a064c64a832013555df86f7c1de2e09aa56f52a686f146"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+          "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+        },
+        "actualExternalInvocation": {
+          "path": "artifacts/tmp/W2.C35.T01.current-core-invocation-02/invocation.json",
+          "sha256": "8bb1f6dc6e806fd0f58c05e7fb18c3a1a3ab67b48a2e646268c9d4d2061f6662"
+        },
+        "independentDisposition": null
+      },
+      "methodResults": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/principals-result.json",
+        "sha256": "f6818521fc6d40a12cf92519e5e68ad8d741f7bcc473cd7c63cfaeb56db39d3e"
+      }
+    },
+    {
+      "id": "current-core-frozen",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py --child frozen --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea --source-readiness artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json --source-readiness-sha256 a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c --input-manifest-sha256 c6d978535b8b9195bba86adbb26112ad0161696c353abcec7829028e39056097 --final-source-binding artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json --final-source-binding-sha256 c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490 --core-build-receipt artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json --core-build-receipt-sha256 b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8 --core-report artifacts/tmp/W2.protected-import-current-core-01.report.json --core-report-sha256 069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521",
+      "commandSemantics": "DISPLAY same actual arguments with repository-local executable/script paths relative; private receipt/external invocation retain exact original arguments.",
+      "result": null,
+      "actualProducerReportedResult": "PASS",
+      "componentReviewStatus": "PENDING_DIFFERENT_ACTUAL_DISPOSITION",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 101.66263050000998,
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/frozen.raw.log",
+        "sha256": "838f65bc9cc2257094bbb4e613f3fa7fbfb78254972d625018594a362550a526"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+          "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+        },
+        "actualExternalInvocation": {
+          "path": "artifacts/tmp/W2.C35.T01.current-core-invocation-02/invocation.json",
+          "sha256": "8bb1f6dc6e806fd0f58c05e7fb18c3a1a3ab67b48a2e646268c9d4d2061f6662"
+        },
+        "independentDisposition": null
+      },
+      "methodResults": {
+        "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/frozen-result.json",
+        "sha256": "fa7249e1ebec70918c36fdb1ae652242e7120285c9957dfb92f46e651d9baab4"
+      }
+    },
+    {
+      "id": "protected100k-review",
+      "command": ".venv/Scripts/python.exe -B -s -P artifacts/tmp/W2.protected-import-functional-continuation-01/case-child-01.py --kind tail --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 fa211030e0ec09028bca7146dee3a80f19d38fe143532a1edcd9df9c2b7b7f75 --output artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 250.22489199999836,
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/owned-child.raw.log",
+        "sha256": "403f23bc076bf40c68782cbd51ab3c72394dcff3730f77215ad3064f8a3acb7b"
+      },
+      "ownedJob": {
+        "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+        "launched": true,
+        "killOnJobClose": true,
+        "breakawayAllowed": false,
+        "drained": true,
+        "timedOut": false,
+        "rootExitCode": 0,
+        "totalProcesses": 11,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "status": "ACTUAL_ORIGINAL_REMAINING_TAIL_PASSED_REVIEW_FUNCTIONAL_COMPOSITION_QUALIFIED",
+      "actualReceipt": {
+        "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+        "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+      },
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "componentProvenance": {
+        "originalCompletedReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+          "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+        },
+        "originalCompletedDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.paired100k-first-failure-independent-disposition-01.json",
+          "sha256": "dd44ddd2868f4873a6a17b283dc2d679095d27b56565e09e694d106d44e06ee5"
+        },
+        "actualTailEvaluation": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/evaluation.json",
+          "sha256": "ea7a528302c6ac1df1ed32c00cbe44e97b0d723c7deef21ddb5061aaff3d48b4"
+        },
+        "actualTailCase": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/case-result.json",
+          "sha256": "a04186eaa85a87a37139d1fe59af460f1d17613f7cd9c992d90ec62e4746793a"
+        },
+        "actualTailDiagnostic": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/diagnostic.json",
+          "sha256": "5a4f112a5ed750e703f6ff558db809749cf6956f81c50b0aedefc8c7565e87dc"
+        },
+        "actualTailRaw": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/owned-child.raw.log",
+          "sha256": "403f23bc076bf40c68782cbd51ab3c72394dcff3730f77215ad3064f8a3acb7b"
+        },
+        "originalMethodId": "tests.service.test_import_review_scale_windows.ImportReviewScaleWindowsTests.test_real_protected_100k_import_summary_paging_and_reopen",
+        "actualPrivateTailCaseId": "c35_private_tail.ImportReviewScaleWindowsTests.test_same_fixture_remaining_doi_and_reopen",
+        "completedPartition": [
+          "Previous actual streaming intake, accepted100001 parse rows, accepted summary100001 rows/one completion/two committed outputs, all original summary/count/title/DOI coverage and1001 ordered record pages/100001 rows.",
+          "Actual same-vault/current-actor/source/profile/accepted-parse+summary-job-and-receipt admission without begin-review/revision/rescheduling/key or fixture replacement.",
+          "Actual original raw/DOI group assertions and full1000 DOI-member pages/100000 ordered members from0, without skipping the unsaved873-request partial prefix.",
+          "Actual explicit close, fresh-runtime reopen, exact saved summary/counts, last-record-page complete/nextAfter100001/one record, canonical0 and final close."
+        ],
+        "sourceAndStateClosure": {
+          "priorAll6718SelectedRawPinsEqualUnderHolds": true,
+          "priorAllEightRuntimeCurrentSourceTreesEqual": true,
+          "finalInputsStableAfterBothChildren": true,
+          "sameCandidateSourceAndCurrentBinding": true,
+          "preopenBackupManifest": {
+            "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/preopen-backup-manifest.json",
+            "sha256": "3151dda42e753526a4d04cf6df0bf675571abd12adcfd8e28818588df2d519f2"
+          },
+          "opaqueBackupFilesRecordedAndHeld": 35,
+          "backupCopiesOpenedOrRehashedByReviewer": false,
+          "lineageCurrentPrincipalAndAcceptedProductionReadersValidated": true,
+          "exactImmutable900Profile": "protected-preview-900s-v1",
+          "sameSourceDigest": "c98a9e5dbe1a92373bc4137ea6aa3c6ae758e2f1d30f2ca53837502cb2f115a3",
+          "summaryCountsAndDurableFactsEqualOldDiagnostic": true
+        },
+        "tailOutcomes": {
+          "testsRun": 1,
+          "failures": 0,
+          "errors": 0,
+          "skips": 0,
+          "expectedFailures": 0,
+          "unexpectedSuccesses": 0,
+          "rootExitCode": 0,
+          "ownedProcesses": 11,
+          "activeProcesses": 0,
+          "drained": true,
+          "cleanupState": "EMPTY_CONFIRMED",
+          "timedOut": false,
+          "forcedTerminationAccepted": false,
+          "observerSeconds": 1860,
+          "actualTailSeconds": 250.22489199999836,
+          "observedCurrentProcessPeakWorkingSetBytes": 233852928,
+          "peakLimitBytes": 268435456
+        },
+        "actualTailStages": {
+          "close-original-runtime": {
+            "seconds": 0.11740240000654012,
+            "state": "passed"
+          },
+          "duplicate-group-pages": {
+            "seconds": 227.35753050001222,
+            "state": "passed"
+          },
+          "existing-fixture-admission": {
+            "seconds": 10.890752099978272,
+            "state": "passed"
+          },
+          "fresh-runtime-reopen": {
+            "seconds": 11.362218199996278,
+            "state": "passed"
+          }
+        },
+        "actualFullMemberCoverage": {
+          "/projects/imports/summary/members": {
+            "complete": true,
+            "pages": 1000,
+            "records": 100000
+          }
+        },
+        "reusedCompleteRecordCoverage": {
+          "complete": true,
+          "pages": 1001,
+          "records": 100001
+        },
+        "durableFacts": {
+          "acceptedOutputs": 2,
+          "canonicalRecords": 0,
+          "encryptedHeader": true,
+          "parseRows": 100001,
+          "summaryCompletions": 1,
+          "summaryRows": 100001
+        },
+        "meaning": "All original review functional assertion boundaries are now accounted for across authenticated previous completed components and this exact remaining-block execution under the selected8dc method. This is independently qualified functional composition only, not a passing full invocation of the old original test or continuous workload timing/memory qualification."
+      },
+      "originalWholeInvocationPassed": false,
+      "completeContinuousTimingAndPeakQualified": false,
+      "displayCommandMeaning": "This actual root0 command executed only the original remaining same-fixture tail. Genuine ed7d independently composes it with the authenticated original completed prefix. It is not a passing full original100k review invocation or continuous benchmark result.",
+      "commandSemantics": "DISPLAY actual private tail child arguments with repository executable/script paths made relative; exact private argv is preserved in the linked actual receipt/evaluation.",
+      "originalCollectorRowStatus": "FUNCTIONAL_TAIL_PASSED_PENDING_DIFFERENT_DISPOSITION"
+    },
+    {
+      "id": "protected1000-commit",
+      "command": ".venv/Scripts/python.exe -B -s -P artifacts/tmp/W2.C35.T01.initial-commit-scale-01/case-child-01.py --kind commit --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 60bb9368739dc05c9972a4f4bf59447d005428e8e32fd86028bfb81b89583d19 --output artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit",
+      "commandSemantics": "DISPLAY actual private child logical arguments with repository executable/script paths made relative; exact private invocation remains in actual receipt/evaluation and invocation note.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "seconds": 42.66569939997862,
+      "raw": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/owned-child.raw.log",
+        "sha256": "dfbfc957c8963dd59fb7666dae42b3f36a33620df406f97b3ffd599fafd25e66"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "totalProcesses": 11,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "breakawayAllowed": false,
+        "killOnJobClose": true
+      },
+      "status": "ACTUAL_ORIGINAL1000_CASE_PASSED_INITIAL_FUNCTIONAL_COMPONENT_QUALIFIED",
+      "actualReceipt": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/receipt.json",
+        "sha256": "9fe4bb57691a14b894918394a31d949d1ef76b62dfcef8dad92a611b8d2548d7"
+      },
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+        "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+      },
+      "originalCollectorRowStatus": "ORIGINAL1000_FUNCTIONAL_COMPONENT_CAPTURED_PENDING_DIFFERENT_DISPOSITION",
+      "finiteCriterionDecision": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+        "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+      },
+      "executionProvenance": {
+        "actualEvaluation": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/evaluation.json",
+          "sha256": "a1f6f8ad79c467e2f4cf952d6a9fabfd46bdac70529535612a2b71d8afbd0a26"
+        },
+        "actualCase": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/case-result.json",
+          "sha256": "0bf7178b5449a7b33e6cb76046b29379398e1c61e630b4d2f7c7177d448bd1af"
+        },
+        "exactPrivateInvocation": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-invocation-01/invocation.json",
+          "sha256": "bbc0216c491444fc5fadf360c4d452b0a0d5119f80d464aea0aaa68e69dc690a"
+        },
+        "componentDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+          "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+        },
+        "originalCaseId": "tests.service.test_import_commit_scale_windows.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+        "actualPrivateCaseId": "c35_private_commit.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+        "supportedOriginalRecordSelection": 1000,
+        "nonqualifyingReceiptLabelsPreserved": true,
+        "canonicalPerformanceQualified": false,
+        "original100kCommitQualified": false
+      },
+      "descriptiveTimingWindows": {
+        "unittestSummarySeconds": 42.635,
+        "caseWrapperSeconds": 42.66569939997862,
+        "diagnosticElapsedSeconds": 42.26642220001668,
+        "collectorSeconds": 73.91260370000964
+      },
+      "meaning": "Only the explicitly selected initial1000 functional case is passed/qualified. All original assertions and hard limits were retained; no100k accepted publication/paging/replay/reopen or canonical performance claim follows."
+    }
+  ],
+  "unverifiedItems": [],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+      "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.f01/receipt.json",
+      "sha256": "982160525acca0a32a11023044621ed3b1317c703af76142ad2e7843cc277201"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json",
+      "sha256": "b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+      "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+      "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.preserved-commit-postmortem-01.f01/receipt.json",
+      "sha256": "ea9359a350e4936e42cc896468bded12fe5252d4894ebac09f2e5d96ce08bbaa"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+      "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/receipt.json",
+      "sha256": "9fe4bb57691a14b894918394a31d949d1ef76b62dfcef8dad92a611b8d2548d7"
+    }
+  ],
+  "focusedProof": {
+    "compoundDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+      "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+    },
+    "prior149Disposition": {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.actual149-component-disposition-01.json",
+      "sha256": "3d24540d9613a43ebbc28f8ea55b985074f29b6c694cd71a2de2fb8a51846e85"
+    },
+    "remainingSourceReadiness": {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-control-07/independent-source-readiness-07.json",
+      "sha256": "0cb3bb23b83c8feddc990401419963ebb89363bbdbfdecbc0914493df665c2fd"
+    },
+    "priorCaseCount": 149,
+    "freshCaseCount": 41,
+    "totalUniqueQualifiedCaseCount": 190,
+    "moduleCount": 21,
+    "singleFresh190InvocationClaimed": false,
+    "originalReportingAggregateRemainsFAIL": true,
+    "lastOriginal17CaseResult": "PASS original full17 names/Ran17/OK/root0 with authored post-summary synthetic undo print; old collector lastrowFAIL and aggregateFAIL remain preserved."
+  },
+  "pureParserComponent": {
+    "disposition": {
+      "path": "artifacts/tmp/W2.C35.T01.pure-parser-six-component-continuity-01.json",
+      "sha256": "a3f019d0ac4685002a9cc6371baf32032170c38812b29632a83b1022d372b355"
+    },
+    "qualifiedMethodId": "tests.service.test_reference_import_streaming.ReferenceImportStreamingTests.test_100k_ris_bibtex_csv_records_with_bounded_peak_memory",
+    "actualOriginalReceipt": {
+      "path": "artifacts/tmp/W2.import-performance-current-03.f01/receipt.json",
+      "sha256": "45a56d543cb85cd8d65343fc88619eb259fa87efcaedc55b2bb652055cf5e8ab"
+    },
+    "actualOriginalReport": {
+      "path": "artifacts/tmp/W2.import-performance-current-03.f01/report.json",
+      "sha256": "425f74b124955c4f31b4cd0e8194dcd988fa884c430b89d88159c4b2bb7a93fe"
+    },
+    "actualOriginalRaw": {
+      "path": "artifacts/tmp/import-performance-fxk_tr_t/parser-1.log",
+      "sha256": "3340c65e686d2f8375f27f3fd0f9fa3afab80edd06e723886997b33401c51f55"
+    },
+    "actualSourceCandidate": "1c20b883a0adac7645913568d057a7c146feffcb",
+    "currentContinuityCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+    "observationCount": 6,
+    "actualMeasurements": [
+      {
+        "format": "ris",
+        "repetition": 1,
+        "records": 100000,
+        "seconds": 11.160207,
+        "peakTracedBytes": 28885
+      },
+      {
+        "format": "ris",
+        "repetition": 2,
+        "records": 100000,
+        "seconds": 12.345424,
+        "peakTracedBytes": 28861
+      },
+      {
+        "format": "bibtex",
+        "repetition": 1,
+        "records": 100000,
+        "seconds": 13.100523,
+        "peakTracedBytes": 29443
+      },
+      {
+        "format": "bibtex",
+        "repetition": 2,
+        "records": 100000,
+        "seconds": 14.577854,
+        "peakTracedBytes": 28787
+      },
+      {
+        "format": "csv",
+        "repetition": 1,
+        "records": 100000,
+        "seconds": 13.744159,
+        "peakTracedBytes": 30117
+      },
+      {
+        "format": "csv",
+        "repetition": 2,
+        "records": 100000,
+        "seconds": 13.775537,
+        "peakTracedBytes": 29813
+      }
+    ],
+    "memoryExclusiveCeilingBytes": 16777216,
+    "reused": true,
+    "freshMeasurementClaimed": false,
+    "canonicalAggregateRemainsFAIL": true,
+    "originalCanonicalPerformanceQualifying": false,
+    "meaning": "Actual original descriptive first/immediate repeats per format. No fresh/current timing, cold-cache, relative-latency or percentile claim."
+  },
+  "currentCoreBuild": {
+    "actualReceipt": {
+      "path": "artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json",
+      "sha256": "b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8"
+    },
+    "actualProducerReportedResult": "FRESH_BUILD_CAPTURED_PENDING_DIFFERENT_DISPOSITION",
+    "actualExitCode": 0,
+    "inputsStable": true,
+    "seconds": 47.9024162000278,
+    "normalOwnedCleanup": {
+      "rootExitCode": 0,
+      "drained": true,
+      "activeProcesses": 0,
+      "cleanupState": "EMPTY_CONFIRMED",
+      "totalProcesses": 49
+    },
+    "producer": {
+      "path": "artifacts/tmp/W2.protected-import-current-package-plan-01/build-core-only-02.py",
+      "sha256": "3f657f834bbe7742dbaa4ffe162b00d75f131017e56af75b1331941944ca12c2"
+    },
+    "preparation": {
+      "path": "artifacts/tmp/W2.protected-import-current-package-plan-01/build-preparation-02.json",
+      "sha256": "78cb8c84a305f02d61b1a4b1557fc0a75fc571082e996e5fc37410d93b1c573a"
+    },
+    "sourceReadiness": {
+      "path": "artifacts/tmp/W2.protected-import-current-package-plan-01/independent-build-control-source-readiness-02.json",
+      "sha256": "ea031c7fa9ef316e1e2e430e01ff2802080629ece4f41432d97869d035984a4e"
+    },
+    "buildReport": {
+      "path": "artifacts/tmp/W2.protected-import-current-core-01.report.json",
+      "sha256": "069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521"
+    },
+    "finalSourceBinding": {
+      "path": "artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json",
+      "sha256": "c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490"
+    },
+    "independentActualDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.current-Core-build-and-five-checks-independent-component-disposition-01.json",
+      "sha256": "970c3497819b7be5b556798a08629033ad3a2b3e0bf6157a969796efd6c7918d"
+    },
+    "qualifiedResult": "QUALIFIED_CURRENT_C35_CORE_BUILD_AND_FIVE_AFFECTED_CHECKS_ONLY",
+    "independentComponentDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.current-Core-build-and-five-checks-independent-component-disposition-01.json",
+      "sha256": "970c3497819b7be5b556798a08629033ad3a2b3e0bf6157a969796efd6c7918d"
+    }
+  },
+  "currentCoreFive": {
+    "actualReceipt": {
+      "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f02/receipt.json",
+      "sha256": "f4ec14910d828a3ea4a9a099291e701bec73f0e36e413af1fae3e6c2df97bfe0"
+    },
+    "actualProducerReportedResult": "CURRENT_CORE_AFFECTED_PROOF_CAPTURED_PENDING_DIFFERENT_DISPOSITION",
+    "actualInputsStable": true,
+    "producer": {
+      "path": "artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py",
+      "sha256": "4d11940b07d66a27b053f17a668f359cfa6ec36e15c7137f00cfb45a2370fccf"
+    },
+    "preparation": {
+      "path": "artifacts/tmp/W2.protected-import-current-core-proof-01/preparation-03.json",
+      "sha256": "9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea"
+    },
+    "sourceReadiness": {
+      "path": "artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json",
+      "sha256": "a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c"
+    },
+    "actualExternalInvocation": {
+      "path": "artifacts/tmp/W2.C35.T01.current-core-invocation-02/invocation.json",
+      "sha256": "8bb1f6dc6e806fd0f58c05e7fb18c3a1a3ab67b48a2e646268c9d4d2061f6662"
+    },
+    "normalRowsObserved": 5,
+    "independentActualDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.current-Core-build-and-five-checks-independent-component-disposition-01.json",
+      "sha256": "970c3497819b7be5b556798a08629033ad3a2b3e0bf6157a969796efd6c7918d"
+    },
+    "qualifiedResult": "QUALIFIED_CURRENT_C35_CORE_BUILD_AND_FIVE_AFFECTED_CHECKS_ONLY",
+    "independentComponentDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.current-Core-build-and-five-checks-independent-component-disposition-01.json",
+      "sha256": "970c3497819b7be5b556798a08629033ad3a2b3e0bf6157a969796efd6c7918d"
+    },
+    "actualQualification": "QUALIFIED_CURRENT_C35_CORE_BUILD_AND_FIVE_AFFECTED_CHECKS_ONLY"
+  },
+  "protected100kPair": {
+    "status": "ORIGINAL100K_AGGREGATES_FAIL_RETAINED_INITIAL_COMMIT_EVIDENCE_SCOPE_REPLACED_BY_04ED",
+    "actualReceipt": {
+      "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+      "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+    },
+    "reviewResult": {
+      "result": "QUALIFIED_FUNCTIONAL_COMPOSITION_ONLY",
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "component": {
+        "originalCompletedReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+          "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+        },
+        "originalCompletedDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.paired100k-first-failure-independent-disposition-01.json",
+          "sha256": "dd44ddd2868f4873a6a17b283dc2d679095d27b56565e09e694d106d44e06ee5"
+        },
+        "actualTailEvaluation": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/evaluation.json",
+          "sha256": "ea7a528302c6ac1df1ed32c00cbe44e97b0d723c7deef21ddb5061aaff3d48b4"
+        },
+        "actualTailCase": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/case-result.json",
+          "sha256": "a04186eaa85a87a37139d1fe59af460f1d17613f7cd9c992d90ec62e4746793a"
+        },
+        "actualTailDiagnostic": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/diagnostic.json",
+          "sha256": "5a4f112a5ed750e703f6ff558db809749cf6956f81c50b0aedefc8c7565e87dc"
+        },
+        "actualTailRaw": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/owned-child.raw.log",
+          "sha256": "403f23bc076bf40c68782cbd51ab3c72394dcff3730f77215ad3064f8a3acb7b"
+        },
+        "originalMethodId": "tests.service.test_import_review_scale_windows.ImportReviewScaleWindowsTests.test_real_protected_100k_import_summary_paging_and_reopen",
+        "actualPrivateTailCaseId": "c35_private_tail.ImportReviewScaleWindowsTests.test_same_fixture_remaining_doi_and_reopen",
+        "completedPartition": [
+          "Previous actual streaming intake, accepted100001 parse rows, accepted summary100001 rows/one completion/two committed outputs, all original summary/count/title/DOI coverage and1001 ordered record pages/100001 rows.",
+          "Actual same-vault/current-actor/source/profile/accepted-parse+summary-job-and-receipt admission without begin-review/revision/rescheduling/key or fixture replacement.",
+          "Actual original raw/DOI group assertions and full1000 DOI-member pages/100000 ordered members from0, without skipping the unsaved873-request partial prefix.",
+          "Actual explicit close, fresh-runtime reopen, exact saved summary/counts, last-record-page complete/nextAfter100001/one record, canonical0 and final close."
+        ],
+        "sourceAndStateClosure": {
+          "priorAll6718SelectedRawPinsEqualUnderHolds": true,
+          "priorAllEightRuntimeCurrentSourceTreesEqual": true,
+          "finalInputsStableAfterBothChildren": true,
+          "sameCandidateSourceAndCurrentBinding": true,
+          "preopenBackupManifest": {
+            "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/preopen-backup-manifest.json",
+            "sha256": "3151dda42e753526a4d04cf6df0bf675571abd12adcfd8e28818588df2d519f2"
+          },
+          "opaqueBackupFilesRecordedAndHeld": 35,
+          "backupCopiesOpenedOrRehashedByReviewer": false,
+          "lineageCurrentPrincipalAndAcceptedProductionReadersValidated": true,
+          "exactImmutable900Profile": "protected-preview-900s-v1",
+          "sameSourceDigest": "c98a9e5dbe1a92373bc4137ea6aa3c6ae758e2f1d30f2ca53837502cb2f115a3",
+          "summaryCountsAndDurableFactsEqualOldDiagnostic": true
+        },
+        "tailOutcomes": {
+          "testsRun": 1,
+          "failures": 0,
+          "errors": 0,
+          "skips": 0,
+          "expectedFailures": 0,
+          "unexpectedSuccesses": 0,
+          "rootExitCode": 0,
+          "ownedProcesses": 11,
+          "activeProcesses": 0,
+          "drained": true,
+          "cleanupState": "EMPTY_CONFIRMED",
+          "timedOut": false,
+          "forcedTerminationAccepted": false,
+          "observerSeconds": 1860,
+          "actualTailSeconds": 250.22489199999836,
+          "observedCurrentProcessPeakWorkingSetBytes": 233852928,
+          "peakLimitBytes": 268435456
+        },
+        "actualTailStages": {
+          "close-original-runtime": {
+            "seconds": 0.11740240000654012,
+            "state": "passed"
+          },
+          "duplicate-group-pages": {
+            "seconds": 227.35753050001222,
+            "state": "passed"
+          },
+          "existing-fixture-admission": {
+            "seconds": 10.890752099978272,
+            "state": "passed"
+          },
+          "fresh-runtime-reopen": {
+            "seconds": 11.362218199996278,
+            "state": "passed"
+          }
+        },
+        "actualFullMemberCoverage": {
+          "/projects/imports/summary/members": {
+            "complete": true,
+            "pages": 1000,
+            "records": 100000
+          }
+        },
+        "reusedCompleteRecordCoverage": {
+          "complete": true,
+          "pages": 1001,
+          "records": 100001
+        },
+        "durableFacts": {
+          "acceptedOutputs": 2,
+          "canonicalRecords": 0,
+          "encryptedHeader": true,
+          "parseRows": 100001,
+          "summaryCompletions": 1,
+          "summaryRows": 100001
+        },
+        "meaning": "All original review functional assertion boundaries are now accounted for across authenticated previous completed components and this exact remaining-block execution under the selected8dc method. This is independently qualified functional composition only, not a passing full invocation of the old original test or continuous workload timing/memory qualification."
+      }
+    },
+    "commitResult": {
+      "result": "FAIL_RETAINED_NO_QUALIFIED_COMMIT",
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "failure": {
+        "caseResult": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/commit/case-result.json",
+          "sha256": "0d8ea6050375e599ec7e46cffa76d759ac239c0f3c8e19cf9dbe4ea57f11a554"
+        },
+        "diagnostic": {
+          "path": "artifacts/tmp/import-commit-scale-windows-y4k3zhxu/diagnostic.json",
+          "sha256": "d3ee08357c12577d251200c81a1f4d9753ea9be5332c81e20aadab7e49eeeef7"
+        },
+        "raw": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/commit/owned-child.raw.log",
+          "sha256": "1dd196901d3df704a3d46ca4cd67a27b7a7dd9fd79100a136a42341571e40ce5"
+        },
+        "originalMethodId": "tests.service.test_import_commit_scale_windows.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+        "actualPrivateCaseId": "c35_private_commit.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+        "testsRun": 1,
+        "failures": 0,
+        "errors": 1,
+        "skips": 0,
+        "rootExitCode": 1,
+        "ownedProcesses": 11,
+        "activeProcesses": 0,
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "timedOut": false,
+        "forcedTerminationAccepted": false,
+        "failedStage": "parse-prerequisite",
+        "failedStageSeconds": 286.1986208999879,
+        "diagnosticElapsedSeconds": 303.98789200000465,
+        "actualCaseSeconds": 318.31774300002144,
+        "terminalExceptionType": "ProviderProblem",
+        "terminalExceptionCode": "cancelled",
+        "terminalSource": "connector_worker.py shutdown via app.py lifespan context.connectors.shutdown",
+        "lastReportedJob": {
+          "attemptCount": 1,
+          "diagnosticCode": null,
+          "interruptionKind": null,
+          "state": "running"
+        },
+        "commitPhases": {},
+        "durableFactsUnavailable": "StorageProblem",
+        "metrics": null,
+        "noCommitDispatchObserved": "Recorded request inventory ends with project/intake/schedule; no commit request or commit phase is recorded. No accepted canonical publication or final canonical count is proven because durable facts were unavailable.",
+        "causeLimit": "The visible cleanup exception may replace an earlier body exception. Do not label this a parser900 deadline failure, proven connector root cause, environmental-load cause or harmless teardown without the bounded diagnosis.286s stage is incomplete work, not a completed latency sample.",
+        "requiredDisposition": "Preserve actual aggregate/commit FAIL and fixture; diagnose specific actual source/exception chain. No unchanged retry, automatic recovery, waived assertion, source repair, fixture reopening or future success is authorized by this review."
+      }
+    },
+    "independentActualDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+      "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+    },
+    "initialEvidencePolicy": {
+      "status": "APPROVED_ORIGINAL_INITIAL_POLICY_WITH_EXACT_8DC_REVIEW_LATENCY_CHOICE_COMMIT_HARD_GATES_UNCHANGED",
+      "productParserSeconds": 900.0,
+      "pureParserDefaultSeconds": 120.0,
+      "pureParserMemoryTestExistingExplicitSeconds": 600,
+      "protectedParseStageCompletionAndObserverSeconds": 930,
+      "reviewSummaryWorkerSeconds": 900,
+      "commitWorkerSeconds": 1800,
+      "reviewCompletedSampleSeconds": 1800,
+      "commitCompletedSampleSeconds": 2400,
+      "processPeakWorkingSetBytesMaximum": 268435456,
+      "memoryMeaning": "Same original workload current-process peakWorkingSetSize: Core+ASGI+test runner.256MiB is a finite proposed observation ceiling aligned with current metadata admission estimate, not an OS/job-tree/whole-app memory guarantee. Reservation policy itself is unchanged.",
+      "observerSafety": {
+        "parseWaitSeconds": 930,
+        "summaryWaitSeconds": 930,
+        "commitWaitSeconds": 1830,
+        "reviewOverallObservationSeconds": 1860,
+        "commitOverallObservationSeconds": 2460,
+        "perChildWatchdogSeconds": {
+          "review": 1920,
+          "commit": 2520
+        },
+        "outerCollectionSeconds": 10800,
+        "ownedNormalDrainSeconds": 5
+      },
+      "rationale": "Explicit conservative initial engineering ceilings, not measurements or extrapolation. Prior complete521s review/1093s commit are context; current120s timeout and182.2MiB partial peak show old choices do not qualify current execution. Keep a finite total/phase bound and256MiB peak rather than optimize now. These proposed relaxed comparisons require different review and root selection before any measurement.",
+      "protectedWorkloadSelection": {
+        "freshComplete100kReview": 1,
+        "freshComplete100kCommit": 1,
+        "recordsEach": 100000,
+        "allOriginalFunctionalAssertionsRetained": true,
+        "noAutomaticRetry": true,
+        "noNewPercentileOrBaseline": true,
+        "meaning": "This expressly replaces old two-review+two-commit/20percent comparison for this finite initial completion choice. It is not a passing invocation of unchanged canonical tool/baseline. One observation per workload is reported raw; any median ofn=1 is trivial and has no distribution/percentile claim."
+      },
+      "oldAdverseRule": "Preserve every old failed/incomplete attempt and effective old120 configuration. No failed timeout is a latency sample or discardable outlier. New900 observations are a different declared configuration cohort, not replacement histories. Any new failure remains a failure and stops this selected group; no retry-to-pass.",
+      "laterSelectedReviewLimitation": "Only candidate-bound974f/77c5/8dc makes the demonstrated whole-review1800 miss nonblocking for initial W2. The original numeric target/history is preserved; no complete continuous timing/memory sample or canonical PASS is manufactured. Commit2400 and all hard obligations remain unchanged."
+    },
+    "canonicalBaselineOrToolChanged": false,
+    "canonicalWholeBenchmarkPassClaimed": false,
+    "selectedFiniteMethod": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/proposal-02.json",
+        "sha256": "974f9a77973792da72eec06f6499dc37e9e61f5968fd81b7f6889d916279e165"
+      },
+      "independentScopeDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/independent-scope-disposition-02.json",
+        "sha256": "77c5ba6e54540e2aca1641d5852792ec7223d212400918f965b0e9d325cb514c"
+      },
+      "selectedDecision": {
+        "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+        "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+      }
+    },
+    "retainedReviewTimingFailure": {
+      "original7063Status": "FAIL_RETAINED_NO_RETRY",
+      "wholeReview1800TargetMet": false,
+      "original1860ObserverFailurePreserved": true,
+      "completeContinuousReviewTimingAvailable": false,
+      "canonicalPerformanceQualified": false,
+      "initial6affePolicyQualified": false,
+      "tailAndOldTimesNotStitched": true,
+      "newTailDurationIsSeparateDescriptiveObservation": true,
+      "known1800MissAcceptance": "Only the explicit candidate-bound8dc/974f/77c5 initial-W2 limitation; no other error/resource/security/cleanup or commit2400 exemption."
+    },
+    "commitFailureDiagnosis": {
+      "path": "artifacts/tmp/W2.C35.T01.commit-prerequisite-failure-independent-diagnosis-01.json",
+      "sha256": "6b296a4ab7c12dfba75e7dac7d892c3b3ea1fc77b43061e20301cf1bfcfc2c6c"
+    },
+    "copiedPostmortem": {
+      "independentDiagnosis": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-postmortem-independent-diagnosis-02.json",
+        "sha256": "219fe830b8668f19caba9ea9292f672265f8a85aa244667e30de2e575da2fca2"
+      },
+      "actualReceipt": {
+        "path": "artifacts/tmp/W2.C35.T01.preserved-commit-postmortem-01.f01/receipt.json",
+        "sha256": "ea9359a350e4936e42cc896468bded12fe5252d4894ebac09f2e5d96ce08bbaa"
+      },
+      "actualResult": {
+        "path": "artifacts/tmp/W2.C35.T01.preserved-commit-postmortem-01.f01/postmortem.json",
+        "sha256": "34f5250f1c86ffc350bd98aa37404950df79edd9e4a542ab3dfdc2bf4d6d9c69"
+      },
+      "status": "DURABLE_PARSE_COMPLETION_BEFORE_QUEUE_ACCEPTANCE_OBSERVED_INITIAL_ERROR_STILL_UNKNOWN",
+      "nonqualifying": true,
+      "seconds": 6.02243909999379,
+      "normalOwnedProcesses": 3,
+      "original38FileByteAndIdentityMapsEqual": true,
+      "parseRecords": 100001,
+      "parseCompletionRows": 1,
+      "acceptedOutputRows": 0,
+      "summaryCompletions": 0,
+      "commitRows": 0,
+      "initialBodyCauseKnown": false,
+      "meaning": "Bounded normal-authority queries on a complete opaque copy only. Declared database/WAL/SHM changes occurred on the copy; original38-file maps remained equal. Durable parse completion does not satisfy production queue/output acceptance. No workload timing or repaired state is inferred."
+    },
+    "successfulCommitProof": null,
+    "wholePairedQualified": false,
+    "historicalScopeOnly": "This retained object describes original100k attempts. Its failed commit is unqualified history and a disclosed selected initial-W2 limitation under04ed, not an unmet mandatory proof within the newly selected1000 scope.",
+    "actualFirstExceptionDiagnostic": {
+      "status": "ACTUAL_COMMIT_OBSERVATION_DEADLINE_FAILURE_CONFIRMED_NO_SPECIFIC_CORRECTNESS_REPAIR_ESTABLISHED",
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+        "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+      },
+      "actualReceipt": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+        "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+      },
+      "nonqualifying": true,
+      "firstBodyFailure": {
+        "class": "builtins.AssertionError",
+        "stage": "commit-worker",
+        "source": "artifacts/tmp/W2.protected-import-initial-proof-01/commit-observer-01.py",
+        "function": "_wait_commit",
+        "line": 104,
+        "observationDeadlineSeconds": 1830,
+        "meaning": "Queue success had not been observed before the original monotonic wait deadline. The assertion is preserved through client exit; the parent RuntimeError is only the later nonzero-root evaluator classification."
+      },
+      "ownedCleanup": {
+        "rootExitCode": 1,
+        "totalProcesses": 11,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "breakawayAllowed": false,
+        "killOnJobClose": true
+      },
+      "inputsStable": true,
+      "stagedRows": 100001,
+      "acceptedCommitOutputs": 0,
+      "postRollbackCounts": {
+        "import_commit_rows": 100001,
+        "import_manifest_members": 0,
+        "import_manifest_seals": 0,
+        "import_manifests": 0,
+        "import_source_records": 0
+      },
+      "completeCommitTimingAvailable": false,
+      "earlierF1f5InitialCauseKnown": false,
+      "specificProductPatchEstablished": false,
+      "meaning": "The original1830 wait assertion occurred during active guarded publication, then shutdown interrupted and rolled back canonical publication. Partial staged rows and zero accepted output do not qualify100k completion. This later result does not recover the earlier masked first body error."
+    },
+    "original100kCommitQualified": false,
+    "currentAmendedCommitComponent": {
+      "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+      "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+    }
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C35.T01.spec.json",
+    "sha256": "42fbaf9db73d3e07804b372520a0456cf246992fdaa11cbf30db813ba13a0f59"
+  },
+  "finiteInitialPolicyAuthority": {
+    "decision": {
+      "path": "artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json",
+      "sha256": "6affe83d391222cc54c2bc75b812cd9449f3c733fb449a1bf213636eac415810"
+    },
+    "ownerPreauthorization": {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    "independentScopeReadiness": {
+      "path": "artifacts/tmp/W2.protected-import-completion-proposal-01/independent-finite-scope-readiness-02.json",
+      "sha256": "66f002b9614b823f063faa3e94f698c9ef59e8c8221785d09e8c15b864215b5b"
+    },
+    "claim": "Material explicit approved creation-only900+initial evidence choice; missing/v1/old unscheduled/queued/accepted preview-summary-commit authority remains120. No old failures converted to samples, no automatic retry or new baseline/percentile claim."
+  },
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C35.T01.application-08.json",
+    "sha256": "64397ff4cdc571b764bd7669372a1387ec066cc0a8e99695390a3feff1b70bf8"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.C35.T01.proposals-01/independent-product-source-readiness-08.json",
+    "sha256": "abe28f35156b5b26d54ddbc8cc6d83948c93d1ea96f2b6a3a8b9b2039f170c57"
+  },
+  "sourceManifest": {
+    "path": "artifacts/tmp/W2.C35.T01.proposals-01/source-manifest-08.json",
+    "sha256": "55fef4599f43ca97db86e4e0ac250f0529e8e032ec38d6d44e743b74f77869cd"
+  },
+  "actualSelectedSourceMap": [
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py",
+      "sha256": "416392db28ee050033cc79d15f3c45d24ce2c076031d6cbe7ab125409cd36df4"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/import_previews.py",
+      "sha256": "499d53a7adefcf7f1e2aeff43acb59b5105d26bbcdf98045cb397e8e136cd932"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py",
+      "sha256": "edb909aa12567b095ff2c61625ef2a14f5aa5e153f0358b766cbd08eae9a08f9"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/preview_activity.py",
+      "sha256": "6b1983eb82076ca809bfc3362070fd74d8d4e0af065373ec06e60b69b10f16a2"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/import_preview_repository.py",
+      "sha256": "d9e2cc6cf732ed2a0e74c4c9e84c218164a14f85df920f524af8e6be60358697"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/import_summaries.py",
+      "sha256": "5fcd1ac99331dbc220521e0b890d4c91a8680cd0caabf03685ff827be4ff9c14"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/summary_activity.py",
+      "sha256": "f4f4337ad731404c82bd8671c883b3a82b3172bdbf42158cf88464a94f5c3fc1"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/import_summary_repository.py",
+      "sha256": "d1634e106da216b711092616fa62a0d1df4c760ef795cb515e0b0ba4273f90c3"
+    },
+    {
+      "path": "tests/service/test_import_preview_workflow.py",
+      "sha256": "235460a8dd5d4b05601a0cb95e9a05bd81314487f4a03fb2affea1d2ed009be6"
+    },
+    {
+      "path": "tests/service/test_import_commit_workflow.py",
+      "sha256": "2eb5048ec1c1cebe6df5464a9f24b84ad16a1b4e2b6126e32a233f21311281df"
+    },
+    {
+      "path": "tests/data/test_import_preview_repository.py",
+      "sha256": "8573be6e97c353aa84f0e3370663cf8c5610c6464983cd3551b3b8285cea64dc"
+    },
+    {
+      "path": "tests/data/test_import_summary_repository.py",
+      "sha256": "4e85640a0f46e49444584e83e559144e7a4ae41ee9885bdd5053ba6f9a564f6e"
+    },
+    {
+      "path": "tests/service/test_import_preview_activity.py",
+      "sha256": "a803f6401e471da519f9969d4e9291b5fd1e75196ab9143996bbb267a2482336"
+    },
+    {
+      "path": "tests/service/test_import_intake_api.py",
+      "sha256": "0836a886f5c30a0596e635d53519af2019d53ca1a8045629c6330ff1d9f1c3db"
+    },
+    {
+      "path": "tests/fixtures/imports/protected-preview-legacy120-authority-v1.json",
+      "sha256": "8616605e9a93550c765e05252c7a74cd590f39fcd4d626b7e423a9d34fde5fdc"
+    }
+  ],
+  "qualityInventoryMaintenance": [
+    {
+      "path": "artifacts/evidence/W2_C35_quality_inventory.evidence-01.json",
+      "sha256": "70abd84d2e8c2f0f112afb600f0e038f59b53542de725a31f5c7d7e4d21345d4"
+    },
+    {
+      "path": "artifacts/evidence/W2_C35_quality_inventory.maintenance-01.md",
+      "sha256": "b0d080b654a17ff8520332456a309ac3562c2447925be3100c611b6655a24540"
+    },
+    {
+      "path": "artifacts/evidence/W2_C35_quality_inventory.review-01.json",
+      "sha256": "b20987594027c59a54a20f41827f309066a83328b81ec9cff68a19732e4f45a5"
+    }
+  ],
+  "qualityComposition": {
+    "freshFivePathFormatLintAnd735TypesReceipt": {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+      "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+    },
+    "unchangedNinePathPriorReceipt": {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-01.f01/receipt.json",
+      "sha256": "4ba5c197f8a0bfe6da0f745703e83e45772d0c98c881e9858fad3ce8fec6aa70"
+    },
+    "unchangedNinePaths": [
+      "services/core-api/src/research_observatory_core/ports/import_previews.py",
+      "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py",
+      "services/core-api/src/research_observatory_core/ingestion/preview_activity.py",
+      "services/core-api/src/research_observatory_core/import_preview_repository.py",
+      "services/core-api/src/research_observatory_core/ingestion/import_summaries.py",
+      "services/core-api/src/research_observatory_core/ingestion/summary_activity.py",
+      "services/core-api/src/research_observatory_core/import_summary_repository.py",
+      "tests/data/test_import_summary_repository.py",
+      "tests/service/test_import_intake_api.py"
+    ],
+    "meaning": "Five affectedpaths actual format/lint at3541 plus nine unchangedpath portions at actualac56; strict held-source/config/runtime continuity.735 configured typing and CoreAPI actual3541. No full735 format/lint or broadprofile claim."
+  },
+  "testFirst": {
+    "path": "artifacts/tmp/W2.C35.T01.test-first-01/actual-01/receipt.json",
+    "sha256": "a80b84f7d9939960f3d57a9a940b2f80d0004c505806ad494dfc1e3a3aac83d3"
+  },
+  "legacyFixtureProjection": {
+    "actualPredecessorCapture": {
+      "path": "artifacts/tmp/W2.protected-import-legacy120-capture-03.f01/receipt.json",
+      "sha256": "a0184f743cb345b6feb2540991561b5ec9023b949eb936b13668076da85de776"
+    },
+    "projectionProvenance": {
+      "path": "artifacts/tmp/W2.protected-import-legacy120-capture-01/public-authority-projection-01.json",
+      "sha256": "8fdf2ce9a4b56ac64d72ba57990f02acb68267c2b0e21d6afbdbc5c7f007bf1f"
+    },
+    "portableFixture": {
+      "path": "tests/fixtures/imports/protected-preview-legacy120-authority-v1.json",
+      "sha256": "8616605e9a93550c765e05252c7a74cd590f39fcd4d626b7e423a9d34fde5fdc"
+    },
+    "meaning": "Actual synthetic compatibility serialization; omit whole retired worker claims arrays. Not protected principal/DPAPI/performance evidence; raw fixture stays private."
+  },
+  "priorAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-01.f01/receipt.json",
+      "sha256": "4ba5c197f8a0bfe6da0f745703e83e45772d0c98c881e9858fad3ce8fec6aa70"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-02.f01/receipt.json",
+      "sha256": "6d2ee4eb291ab58b64243991c1f4930dc911a3b7f73d8be55a9d2b326f73c55e"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-03.f01/receipt.json",
+      "sha256": "ed31c26f5530f11518337c78a0df02b73d2fce2972f93f489e5f4c414d4d0592"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-04.f01/receipt.json",
+      "sha256": "b83d090719b16bfd6dad494798f5ea813473cba6ca4f0eb214b436a084a4cbce"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-05.f01/receipt.json",
+      "sha256": "238676ae153a28073fc10b0e8f0958e2c03ee7eeea22e005f7cba0a577676593"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-06.f01/receipt.json",
+      "sha256": "1e13372979b5d1a2a93b0d94570726aeb8e01337864db65ed2d11acba8173c33"
+    },
+    {
+      "path": "artifacts/tmp/W2.import-performance-current-03.f01/receipt.json",
+      "sha256": "45a56d543cb85cd8d65343fc88619eb259fa87efcaedc55b2bb652055cf5e8ab"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-legacy120-capture-01.f01/receipt.json",
+      "sha256": "c9fea8ea53ae03a4b905322dc7634011c2fe6aadca95c667b5e92d733d18262c"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-legacy120-capture-02.f01/receipt.json",
+      "sha256": "2d18d449ea8e68a7b5e2ee208e8d11186f4daedb1c4cc7fe7ac62acdd705e58b"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-current-core-proof-01.f01/receipt.json",
+      "sha256": "0721cb4467e7ca083600fb9e2d5d2ca81ff4e544c32f9e0d3d61b569cc580b25"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+      "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+      "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+    },
+    {
+      "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+      "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:quality",
+      "service:unit",
+      "data:unit",
+      "contracts:unit",
+      "packaging:unit"
+    ],
+    "registeredContract": {
+      "path": "verification-profiles.json",
+      "sha256": "673c3b6075a14c145aff86bb2184f139e9593c894714595b1f4fad56ea5a955f"
+    },
+    "riskAnalysis": "Exactly the same five registered coverage domains and30 closed rows at3541. Actual focused190/affected quality/API/pure6/currentCore970c stay bounded. Genuine ed7d accounts for original100k review functionality under974f/77c5/8dc; original1800/1860FAIL remains. Explicit selected08ccc/02794/04ed materially amends initial commit evidence to one original supported1000 case; genuine31db qualifies that actual whole functional case under unchanged hard limits. All failed100k attempts/unqualified100k commit coverage remain disclosed knownLimitations, not silently relabelled PASS. No broad profile/canonical benchmark/currentGUI/security scan claim.",
+    "deferred": [
+      "Unchanged renderer/native/UI and broader profile coverage not replayed solely for internal timer; current pollers have no cumulative120/180 deadline.",
+      "Full affected W2 qualification, independent Wave review and separate human release remain outside task evidence."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py tests/service/test_import_preview_workflow.py tests/service/test_import_commit_workflow.py tests/data/test_import_preview_repository.py tests/service/test_import_preview_activity.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py tests/service/test_import_preview_workflow.py tests/service/test_import_commit_workflow.py tests/data/test_import_preview_repository.py tests/service/test_import_preview_activity.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.C35.T01.focused-proof-06.f01/complete-governed-files.args",
+      ".venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_cross_project_intent_and_unsealed_source_are_denied tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_draft_context_and_exact_declarative_local_authority tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_expired_ordinary_attempt_replays_from_immutable_source tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_frozen_comma_job_survives_queue_reload_without_definition_drift tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_import_worker_does_not_claim_other_document_activities tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_noncomma_input_is_versioned_and_cannot_substitute_for_queued_comma tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_reloaded_claim_binds_source_intent_policy_epoch_and_worker_identity tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_security_cancel_fences_pending_parse_and_late_outputs tests.service.test_import_preview_workflow.ImportPreviewWorkflowTests.test_supervisor_admission_heartbeat_receipt_and_completed_preview tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_known_new_hash_cannot_replace_old_queued_profile tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_new_creation_persists900_before_scheduling tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_old_accepted_summary_receipts_keep_exact_fingerprint_and_version tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_old_unscheduled_inputs_and_all_queued_authorities_reconstruct_exactly tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_predecessor_input_schemas_remain_byte_equivalent tests.service.test_import_preview_workflow.ProtectedImportProfileCompatibilityTests.test_two_frozen_profiles_preserve_pure_default_and_all_other_limits",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_workflow.ImportCommitWorkflowTests.test_continuation_requires_exact_cancelled_predecessor tests.service.test_import_commit_workflow.ImportCommitWorkflowTests.test_exact_claim_accepts_but_changed_inputs_or_claims_deny tests.service.test_import_commit_workflow.ImportCommitWorkflowTests.test_request_replay_is_distinct_from_scientific_identity tests.service.test_import_commit_workflow.ProtectedProfileQueueLineageTests.test_legacy_and_new_profiles_survive_queue_reload_and_do_not_duplicate_scientific_records",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_completed_parser_cannot_substitute_a_different_delimiter tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_incomplete_substituted_or_closed_intake_is_not_published tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_legacy_preview_has_comma_default_without_backfill tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_legacy_settings_default_and_python_version_name_keep_exact120_authority tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_legacy_source_only_receipt_still_accepts_without_profile_backfill tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_malformed_or_substituted_parser_settings_fail_without_publishing_preview tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_profile_rejects_actual_legacy_session_even_with_valid_new_receipt tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_profile_rejects_wrong_actual_parser_receipt tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_settings_require_explicit_profile_hash_and_object_shape tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_new_settings_select900_and_legacy_missing_or_v1_is_never_upgraded tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_null_predecessor_cannot_bypass_draft_revision_check tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_parser_settings_are_atomic_immutable_and_identity_bound tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_record_source_substitution_rolls_back_the_whole_batch tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_records_stay_provisional_until_exact_attempt_receipt_is_accepted tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_restart_after_provisional_completion_uses_new_fenced_attempt tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_sealed_chunk_membership_is_closed_even_to_adapter_sql tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_shared_references_survive_cancel_restart_and_block_deletion tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_unfinished_parse_forged_lease_and_security_cancel_deny_publication tests.data.test_import_preview_repository.ImportPreviewRepositoryTests.test_unknown_rights_and_path_sources_are_denied_without_state",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_100k_row_query_scale_has_linear_groups_and_bounded_python_memory tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_all_rows_need_store_and_inspect_even_excluded_records_beyond_first_page tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_completion_failure_rolls_back_groups_and_retry_preserves_rows tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_counts_groups_members_and_restart_require_exact_queue_acceptance tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_different_committed_output_does_not_accept_summary_receipt tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_edit_before_completion_leaves_no_summary_or_groups tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_edit_between_page_projection_and_append_rolls_back tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_empty_import_is_complete_zero_not_a_missing_or_failed_summary tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_expired_actor_or_cancelled_claim_cannot_write_or_publish tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_expired_attempt_restarts_from_zero_and_cannot_publish_old_rows tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_legacy_summary_still_accepts_its_original_receipt_version_after_reload tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_new_profile_cannot_accept_a_legacy_summary_receipt tests.data.test_import_summary_repository.ImportSummaryRepositoryTests.test_wrong_attempt_draft_and_result_receipts_never_publish",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_actual_activity_selects_frozen_new_or_legacy_limits tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_durable_cancellation_before_parse_never_creates_accepted_preview tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_real_encrypted_source_parse_receipt_and_exact_attempt_acceptance tests.service.test_import_preview_activity.ImportPreviewActivityTests.test_revoked_project_guard_stops_before_read_or_receipt tests.service.test_import_preview_activity.ProtectedParserClockTests.test_profiles_keep_distinct_bounded_deadlines_and_cancellation",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_intake_api.ImportIntakeApiTests.test_cancellation_before_worker_claim_leaves_no_reviewable_import tests.service.test_import_intake_api.ImportIntakeApiTests.test_claimed_seal_digest_is_not_accepted_as_verified_source tests.service.test_import_intake_api.ImportIntakeApiTests.test_discovery_status_and_cancel_recheck_inspection_rights tests.service.test_import_intake_api.ImportIntakeApiTests.test_explicit_delimiters_survive_project_reopen_and_reach_real_worker tests.service.test_import_intake_api.ImportIntakeApiTests.test_intake_denies_unknown_rights_actor_path_and_malformed_or_oversized_chunks tests.service.test_import_intake_api.ImportIntakeApiTests.test_library_discovery_is_bounded_and_reopens_persisted_previews tests.service.test_import_intake_api.ImportIntakeApiTests.test_native_intake_roundtrip_uses_encrypted_chunks_and_real_worker tests.service.test_import_intake_api.ImportIntakeApiTests.test_native_report_pages_bind_session_revision_and_complete_diagnostics tests.service.test_import_intake_api.ImportIntakeApiTests.test_native_routes_keep_existing_authentication_and_transport_bounds tests.service.test_import_intake_api.ImportIntakeApiTests.test_project_identity_and_closed_reopened_session_cannot_be_substituted tests.service.test_import_intake_api.ImportIntakeApiTests.test_report_final_authorization_rejects_earlier_record_rights_revocation tests.service.test_import_intake_api.ProtectedProfileTransportTests.test_profile_selection_is_not_a_public_create_field_or_response_field",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_preview_service.ImportPreviewServiceTests.test_background_pump_and_cancel_before_claim tests.service.test_import_preview_service.ImportPreviewServiceTests.test_close_and_reopen_do_not_reuse_old_live_project_binding tests.service.test_import_preview_service.ImportPreviewServiceTests.test_created_draft_intent_is_real_context_not_an_acceptance_gate tests.service.test_import_preview_service.ImportPreviewServiceTests.test_foreign_intent_adapter_cannot_substitute_a_valid_bridge tests.service.test_import_preview_service.ImportPreviewServiceTests.test_new_recovery_epoch_cancels_old_job_before_claim tests.service.test_import_preview_service.ImportRuntimeCompositionTests.test_authenticated_project_open_attaches_real_protected_worker_and_close_drains tests.service.test_import_preview_service.ImportRuntimeCompositionTests.test_legacy_startup_has_no_import_authority",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_binding_rejects_each_material_input_and_claim_substitution tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_cancel_summary_does_not_cancel_or_edit_preview tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_continuation_requires_real_unsuccessful_predecessor_and_matching_authority tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_current_privacy_change_after_page_prevents_receipt_publication tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_ordinary_mid_page_close_is_retryable_but_never_publishes_partial_summary tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_ordinary_restart_reconstructs_exact_summary_authority tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_queued_summary_cannot_compute_a_newer_edited_draft tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_retry_on_older_sibling_branch_remains_visible_live_and_reconstructed tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_same_authority_replays_job_and_real_worker_publishes_complete_summary tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_security_epoch_cancels_old_summary_before_claim_but_explicit_new_calculation_is_allowed tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_summary_scheduling_rejects_stale_revision_or_closed_project tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_task_center_continuation_and_retry_of_continuation_publish_actual_job tests.service.test_import_summary_workflow.ImportSummaryWorkflowTests.test_terminal_continuation_status_survives_reconstruction",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_draft_before_execution_is_not_silently_adopted tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_request_payload_conflicts_and_preserves_original tests.service.test_import_commit_service.ImportCommitServiceTests.test_concurrent_same_request_has_one_durable_job tests.service.test_import_commit_service.ImportCommitServiceTests.test_explicit_cancelled_job_continuation_preserves_saved_command tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_manifest_uses_accepted_order_not_uuid_sort_order_after_restart tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_request_uses_retained_order_not_uuid_sort_order_after_restart tests.service.test_import_commit_service.ImportCommitServiceTests.test_preview_cancellation_cancels_queued_commit tests.service.test_import_commit_service.ImportCommitServiceTests.test_request_written_before_enqueue_is_recovered_not_lost tests.service.test_import_commit_service.ImportCommitServiceTests.test_security_epoch_cancels_old_commit_without_automatic_replacement tests.service.test_import_commit_service.ImportCommitServiceTests.test_service_replays_request_and_worker_commits_after_restart",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_cancel_before_publication_leaves_canonical_state_unchanged tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_changed_file_retains_old_assertion_and_explains_update tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_comparison_denies_current_predecessor_record_rights_revocation tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_equal_raw_bytes_do_not_hide_changed_accepted_mapping tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_expiration_during_publication_uses_fresh_time_and_rolls_back tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_forged_prepared_selection_cannot_override_actual_draft tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_generic_completed_receipt_is_not_an_import_manifest_replay tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_lost_reply_replays_without_new_facts tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_manifest_reads_preserve_complete_ordered_decisions_and_identity tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_material_failures_roll_back_entire_publication tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_more_than_64_records_have_complete_manifest_membership tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_multiple_current_candidates_are_not_reported_as_certain_updates tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_publication_commits_manifest_records_provenance_and_worker_output tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_file_new_preview_reuses_source_assertion_ids tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_scientific_import_reuses_manifest_and_records",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_corrections_selection_and_per_record_rights_change_manifest_identity tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_exact_serialization_and_single_traversal tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_identity_projection_rejects_incoherent_counts tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_incomplete_reordered_or_unbounded_input_cannot_return_identity tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_preview_is_excluded_but_scientific_authority_is_bound tests.service.test_import_commit_identity.ImportCommitIdentityTests.test_source_assertion_key_is_scoped_and_not_a_work_or_record_uuid",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_activity.ImportCommitActivityTests.test_activity_accepts_canonical_manifest_and_exact_worker_output tests.service.test_import_commit_activity.ImportCommitActivityTests.test_atomic_publication_cannot_renew_a_genuinely_expired_lease tests.service.test_import_commit_activity.ImportCommitActivityTests.test_atomic_publication_renews_live_lease_without_extending_its_interval tests.service.test_import_commit_activity.ImportCommitActivityTests.test_authority_loss_after_verification_denies_publication_without_canonical_facts tests.service.test_import_commit_activity.ImportCommitActivityTests.test_cancellation_after_verification_stops_before_writer tests.service.test_import_commit_activity.ImportCommitActivityTests.test_cancelled_activity_does_not_begin_publication tests.service.test_import_commit_activity.ImportCommitActivityTests.test_heartbeat_during_preparation_retains_exact_attempt_authority tests.service.test_import_commit_activity.ImportCommitActivityTests.test_nonadvancing_page_is_bounded_failure_not_an_infinite_loop tests.service.test_import_commit_activity.ImportCommitActivityTests.test_verification_releases_outer_guard_but_pages_and_atomic_writer_are_guarded",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_canonical_publication_uses_fixed_compiled_statements tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_draft_record_read_does_not_compile_the_same_query_per_ordinal tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_identity_verification_uses_one_fresh_transaction_per_page tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_revision_changed_between_verification_pages_is_rejected",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_current_rights_deny_historical_pages_and_mid_report_retrieval tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_full_report_includes_mapping_and_exclusion_without_content tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_group_decisions_and_complete_report_cross_page_boundaries tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_group_edit_restart_compare_and_swap_and_undo_preserve_history tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_mapping_binding_correction_and_exclusion_survive_remapping tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_mapping_revision_cannot_be_redefined_after_undo tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_page_byte_limit_stops_before_loading_later_decisions tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_page_key_selection_matches_scalar_history_for_every_retained_revision tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_page_resolves_history_once_and_preserves_abandoned_branch_semantics tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_record_rights_are_not_bypassed_by_raw_or_historical_pages tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_setwise_undo_preserves_each_action_restriction_outside_visible_page tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_sparse_selection_preserves_history_rights_and_one_transaction tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_substituted_record_rolls_back_entire_group_and_no_canonical_import tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_cannot_remove_current_record_rights_restrictions tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_checks_export_rights_beyond_the_visible_page_and_defaults tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_query_handles_100k_decisions_and_10k_revisions tests.data.test_import_preview_drafts.ImportPreviewDraftTests.test_undo_resolves_rights_setwise_instead_of_per_ordinal_history_queries",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_summary_storage.ImportSummaryStorageTests.test_attempt_source_membership_completeness_and_immutability",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_manifest_access.ImportManifestAccessTests.test_default_revocation_denies_warmed_read tests.data.test_import_manifest_access.ImportManifestAccessTests.test_new_draft_requires_complete_recheck_even_when_rights_stay_permitted tests.data.test_import_manifest_access.ImportManifestAccessTests.test_off_page_revocation_invalidates_warm_authority_and_failed_checks_are_never_memoized tests.data.test_import_manifest_access.ImportManifestAccessTests.test_publication_replay_rechecks_rights_even_after_warmed_read tests.data.test_import_manifest_access.ImportManifestAccessTests.test_unchanged_pages_reuse_only_complete_current_authorization_and_cold_adapter_rescans tests.data.test_import_manifest_access.ImportManifestAccessTests.test_undo_of_permitted_edit_rechecks_new_revision tests.data.test_import_manifest_access.ImportManifestAccessTests.test_warmed_scan_does_not_bypass_cancelled_preview",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_cancellation_denies_staging_and_identity tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_complete_staging_replays_begin_but_is_not_canonical_publication tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_excluded_denied_record_cannot_be_retained_as_commit_decision tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_expired_lease_denies_staging tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_extra_request_revision_is_rejected_not_latest_wins tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_immutable_request_reopens_exactly_and_rejects_changed_command_or_actor tests.data.test_import_commit_preparation.ImportCommitPreparationTests.test_substituted_claim_or_inputs_and_stale_draft_are_denied",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancel_after_rollback_exposes_expired_durable_lease_uses_recovery_not_revival tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancel_interrupts_sql_inside_an_adapter_and_rolls_back_before_convergence tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancel_route_interrupts_writer_before_acquiring_lifecycle_lock tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_cancellation_after_commit_keeps_accepted_manifest_and_records tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_close_route_interrupts_writer_and_drains_before_closing tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_drain_timeout_is_bounded_and_does_not_claim_no_import_was_published tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests.test_wrong_command_and_replaced_binding_cannot_interrupt_publication",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_commit_api.ImportCommitApiTests.test_cancel_requires_exact_request_job_and_does_not_cancel_preview tests.service.test_import_commit_api.ImportCommitApiTests.test_commit_status_manifest_pages_and_request_replay tests.service.test_import_commit_api.ImportCommitApiTests.test_cross_preview_manifest_and_request_substitution_are_denied tests.service.test_import_commit_api.ImportCommitApiTests.test_manifest_and_completed_status_deny_later_rights_revocation tests.service.test_import_commit_api.ImportCommitApiTests.test_prepared_request_can_be_discovered_without_renderer_memory_or_automatic_execution tests.service.test_import_commit_api.ImportCommitApiTests.test_strict_input_authentication_and_uncertain_outcome_disclosure",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_review_api.ImportReviewApiTests.test_actual_request_bytes_are_bounded_before_json_parsing tests.service.test_import_review_api.ImportReviewApiTests.test_authenticated_review_mapping_exclusion_and_report_round_trip tests.service.test_import_review_api.ImportReviewApiTests.test_automatic_column_targets_roundtrip_and_single_change_preserves_other_fields tests.service.test_import_review_api.ImportReviewApiTests.test_duplicate_groups_and_noncontiguous_members_are_complete_and_current tests.service.test_import_review_api.ImportReviewApiTests.test_summary_cancel_is_separate_from_preview_and_rejects_other_job tests.service.test_import_review_api.ImportReviewApiTests.test_summary_is_explicit_revision_bound_and_never_an_unavailable_zero tests.service.test_import_review_api.ImportReviewApiTests.test_undo_cannot_reopen_restricted_source_via_authenticated_route tests.service.test_import_review_api.ImportReviewApiTests.test_undo_walks_effective_history_without_redo_or_automatic_stale_retry tests.service.test_import_review_api.ImportReviewApiTests.test_validation_authentication_and_project_close_cannot_leak_records",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_summaries.ImportSummaryTests.test_context_malformed_and_excluded_rows_supply_no_candidate_or_coverage tests.service.test_import_summaries.ImportSummaryTests.test_corrections_normalize_for_candidates_without_mutating_accepted_values tests.service.test_import_summaries.ImportSummaryTests.test_missing_permissions_and_substituted_decision_fail_closed tests.service.test_import_summaries.ImportSummaryTests.test_raw_and_normalized_doi_candidates_are_distinct_from_record_identity",
+      "artifacts/tmp/c35/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --check",
+      "artifacts/tmp/c35/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --check-worker-runtime",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py --child metadata --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea --source-readiness artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json --source-readiness-sha256 a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c --input-manifest-sha256 c6d978535b8b9195bba86adbb26112ad0161696c353abcec7829028e39056097 --final-source-binding artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json --final-source-binding-sha256 c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490 --core-build-receipt artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json --core-build-receipt-sha256 b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8 --core-report artifacts/tmp/W2.protected-import-current-core-01.report.json --core-report-sha256 069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py --child principals --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea --source-readiness artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json --source-readiness-sha256 a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c --input-manifest-sha256 c6d978535b8b9195bba86adbb26112ad0161696c353abcec7829028e39056097 --final-source-binding artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json --final-source-binding-sha256 c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490 --core-build-receipt artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json --core-build-receipt-sha256 b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8 --core-report artifacts/tmp/W2.protected-import-current-core-01.report.json --core-report-sha256 069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.protected-import-current-core-proof-01/owned-current-core-proof-03.py --child frozen --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 9785ca27d89a8e67d22876b4c00c30ca3606aedf1b3600c21aa93faa2f3f1eea --source-readiness artifacts/tmp/W2.protected-import-current-core-proof-01/independent-source-readiness-03.json --source-readiness-sha256 a0ddd07bc4af3aa20af3072c0bd55b31a0ee67b7b59beefface99b95ece4ba2c --input-manifest-sha256 c6d978535b8b9195bba86adbb26112ad0161696c353abcec7829028e39056097 --final-source-binding artifacts/tmp/W2.protected-import-current-package-plan-01/final-source-binding-05.json --final-source-binding-sha256 c6dc751925cef49e2e21c0c969a8da622318debb74468d704316c59e2b638490 --core-build-receipt artifacts/tmp/W2.protected-import-current-package-plan-01/actual-core-build-01/receipt.json --core-build-receipt-sha256 b4bb5fa4ea4eba44788b8312b07499a51646bc364acbee7664132057d4d2f7f8 --core-report artifacts/tmp/W2.protected-import-current-core-01.report.json --core-report-sha256 069359ae87dc899744a12bf51758db77b4744d41b2e9ca1778fd0a54cd93a521",
+      ".venv/Scripts/python.exe -B -s -P artifacts/tmp/W2.protected-import-functional-continuation-01/case-child-01.py --kind tail --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 fa211030e0ec09028bca7146dee3a80f19d38fe143532a1edcd9df9c2b7b7f75 --output artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail",
+      ".venv/Scripts/python.exe -B -s -P artifacts/tmp/W2.C35.T01.initial-commit-scale-01/case-child-01.py --kind commit --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 60bb9368739dc05c9972a4f4bf59447d005428e8e32fd86028bfb81b89583d19 --output artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+        "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+      },
+      {
+        "path": "artifacts/tmp/W2.C35.T01.pure-parser-six-component-continuity-01.json",
+        "sha256": "a3f019d0ac4685002a9cc6371baf32032170c38812b29632a83b1022d372b355"
+      },
+      {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      {
+        "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+        "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+      }
+    ],
+    "rationale": "Preserve exact4951 origin and legacy120/scientific/security authority. Actual190/pure6/currentCore remain closed scoped components; genuineed7d plus actual tail root0 accounts for review functionality while8dc preserves/accepts only the known review latency miss. Exact04ed explicitly replaces initial100k commit evidence with original1000 proof genuinely qualified31db. All100k failures/unqualified large-path coverage remain knownLimitations; no hard safety waiver, product cap, canonical benchmark PASS or formal task approval is inferred."
+  },
+  "formalReviews": {
+    "currentCoreActual": {
+      "path": "artifacts/tmp/W2.C35.T01.current-Core-build-and-five-checks-independent-component-disposition-01.json",
+      "sha256": "970c3497819b7be5b556798a08629033ad3a2b3e0bf6157a969796efd6c7918d"
+    },
+    "protected100kActual": {
+      "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+      "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+    },
+    "frozenC35TaskReview": null,
+    "waveReview": null,
+    "initial1000CommitActual": {
+      "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+      "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+    }
+  },
+  "fullProfilePassClaimed": false,
+  "taskApproved": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "limits": [
+    "Private unfrozen draft only. All selected product evidence is bound and unverifiedItems is empty under the explicit selected finite scope; normal publication/frozen packet/different formal task review/state closure remain procedural pending, with no inferred approval.",
+    "All display paths are repository-relative; original absolute invocations/runtime/environment/private fixtures remain only in linked ignored artifacts. No runtime/account/session values copied.",
+    "Data-only successor from actual independently qualified components and exact selected finite decisions. No producer/checker/framework, new criterion choice, execution, runtime scan or qualification gate was authored here."
+  ],
+  "supersedesUnfrozenDraft": {
+    "path": "artifacts/tmp/W2.C35.T01.evidence-draft-03/R01.unfrozen-draft-03.json",
+    "sha256": "5d074e01c69553d81881dbbd789a49124c45a84c15f04bc6eddfa247277adba4"
+  },
+  "correctiveAuthorityMeaning": "OriginalDONE/origin/frozen spec/public6affe and private8dc remain immutable. Actual34e supports the genuinely reviewed candidate-bound04ed initial evidence reduction to one1000 commit; this is disclosed, not an assertion original100k passed. Missing/v1 legacy120 and source/scientific/security limits remain unchanged. Task/Wave/release approval remains separate.",
+  "actualProtected100kFailure": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+      "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+    },
+    "independentDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.paired100k-first-failure-independent-disposition-01.json",
+      "sha256": "dd44ddd2868f4873a6a17b283dc2d679095d27b56565e09e694d106d44e06ee5"
+    },
+    "status": "FAIL_RETAINED_NO_RETRY",
+    "wholeReview1800TargetMet": false,
+    "completeReviewTimingAvailable": false,
+    "commitDispatched": false,
+    "tailResult": null,
+    "freshCommitResult": null,
+    "meaning": "Exact original706329 invocation facts only; its commitDispatched=false and null later-tail/commit fields describe that immutable attempt. Later outcomes are separately bound in protected100kPair and do not rewrite it."
+  },
+  "finiteFunctionalCompletionMethodAuthority": {
+    "selectedDecision": {
+      "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+      "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+    },
+    "proposal": {
+      "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/proposal-02.json",
+      "sha256": "974f9a77973792da72eec06f6499dc37e9e61f5968fd81b7f6889d916279e165"
+    },
+    "independentScopeReadiness": {
+      "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/independent-scope-disposition-02.json",
+      "sha256": "77c5ba6e54540e2aca1641d5852792ec7223d212400918f965b0e9d325cb514c"
+    },
+    "publication": "Exact private selected bytes at3541 before new execution; ordinary post-proof public introduction pending, not already published or owner-inspected. Preserve original1800FAIL/no complete timing; only scoped initial-review limitation is nonblocking.",
+    "actualTailResult": {
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "qualifiedReviewFunctionalComposition": true,
+      "actualCase": {
+        "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/tail/case-result.json",
+        "sha256": "a04186eaa85a87a37139d1fe59af460f1d17613f7cd9c992d90ec62e4746793a"
+      }
+    },
+    "actualCommitResult": {
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "qualified": false,
+      "result": "FAIL_RETAINED_PREACCEPTANCE",
+      "actualCase": {
+        "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/commit/case-result.json",
+        "sha256": "0d8ea6050375e599ec7e46cffa76d759ac239c0f3c8e19cf9dbe4ea57f11a554"
+      }
+    }
+  },
+  "taskStateAtParentSnapshot": "IN_PROGRESS",
+  "preparedAtUtc": "2026-10-16T02:18:32.450381+00:00",
+  "proceduralPending": {
+    "actualFrozenR01Packet": null,
+    "exactSixScopeAuthorityPublication": null,
+    "actualIntroductionCommit": null,
+    "differentFormalTaskReview": null,
+    "normalTaskStateAndIntegrationClosure": null,
+    "meaning": "These are ordinary pending submission/publication/review/state actions, not missing selected product checks. Root freezes normal R01 at actual3541 before adding the six exact reviewed scope-authority copies and records true later introduction. No formal approval is claimed."
+  },
+  "knownLimitations": [
+    {
+      "id": "initial-protected-review1800-latency",
+      "status": "DISCLOSED_NONBLOCKING_INITIAL_W2_LIMITATION_UNDER_SELECTED_8DC",
+      "authority": {
+        "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+        "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+      },
+      "actualFunctionalDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "wholeReview1800TargetMet": false,
+      "completeContinuousReviewTimingAndPeakQualified": false,
+      "originalFailureRetained": {
+        "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+        "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+      },
+      "meaning": "All original review functional assertions are accounted for by the genuine completed-prefix plus same-fixture-tail disposition. The old full invocation remainsFAIL; times/peaks are not stitched. Optional W9 latency work is proposed only."
+    },
+    {
+      "id": "protected100k-commit-unqualified",
+      "status": "DISCLOSED_INITIAL_W2_DEFERRED_100K_QUALIFICATION_UNDER_SELECTED_04ED",
+      "authority": {
+        "proposal": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+          "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+        },
+        "independentScopeAndSourceReadiness": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+          "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+        },
+        "selectedDecision": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+          "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+        }
+      },
+      "original100kCommitQualified": false,
+      "actual100kFailureDiagnosis": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+        "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+      },
+      "actual100kFailureReceipt": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+        "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+      },
+      "earlierFailureReceipt": {
+        "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+        "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+      },
+      "earlierInitiatingCause": "UNKNOWN",
+      "notQualified": [
+        "Successful100k commit/manifest membership completeness",
+        "100k idempotent replay and fresh-runtime accepted manifest reopen",
+        "100k completion within1800worker/2400sample or absence of other scale defects"
+      ],
+      "actual1000Disposition": {
+        "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+        "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+      },
+      "meaning": "Initial functional commit acceptance is expressly amended to one supported original1000-record case.100k publication, full manifest/paging, replay/reopen, continuous performance and absence of other scale defects remain unqualified. Existing larger product input limits are unchanged; no enforced1000 product cap or guarantee is introduced. Larger commits may exceed observation time; the observed interrupted transaction rolled back. High-scale work is merely proposed for W9, not adopted scope."
+    },
+    {
+      "id": "canonical-import-benchmark-and-method-boundaries",
+      "status": "ORIGINAL_CANONICAL_FAIL_AND_NONQUALIFYING_REPORT_LABELS_PRESERVED",
+      "canonicalWholeBenchmarkPassClaimed": false,
+      "initial6affe100kPolicyQualified": false,
+      "meaning": "Actual190/pure6/currentCore, review composition and selected1000 functional proof retain distinct source candidates/methods/real-vs-synthetic boundaries. One completed1000 observation is descriptive; it does not pass the unchanged canonical baseline/tool or prove whole-app RAM, packaged NativeGUI or live-provider throughput."
+    }
+  ],
+  "initialProtectedImportFunctionalCompletion": {
+    "result": "ACTUAL_COMPONENTS_BOUND_FOR_SELECTED_INITIAL_SCOPE_PENDING_NORMAL_TASK_REVIEW",
+    "reviewFunctionalComposition": {
+      "qualified": true,
+      "independentDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "originalWholeInvocationRemainsFAIL": true
+    },
+    "initialCommit1000": {
+      "result": "QUALIFIED_INITIAL1000_RECORD_COMMIT_FUNCTIONAL_COMPONENT_ONLY",
+      "initialFunctionalComponentQualified": true,
+      "qualifiedRecords": 1000,
+      "independentActualDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+        "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+      },
+      "actualReceipt": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/receipt.json",
+        "sha256": "9fe4bb57691a14b894918394a31d949d1ef76b62dfcef8dad92a611b8d2548d7"
+      },
+      "actualEvaluation": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/evaluation.json",
+        "sha256": "a1f6f8ad79c467e2f4cf952d6a9fabfd46bdac70529535612a2b71d8afbd0a26"
+      },
+      "actualCase": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/case-result.json",
+        "sha256": "0bf7178b5449a7b33e6cb76046b29379398e1c61e630b4d2f7c7177d448bd1af"
+      },
+      "actualRaw": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/owned-child.raw.log",
+        "sha256": "dfbfc957c8963dd59fb7666dae42b3f36a33620df406f97b3ffd599fafd25e66"
+      },
+      "actualExceptionObservations": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit/first-exception-observations.json",
+        "sha256": "61b652951bd2fb1a343ff4d2be5836332a645d9f419b9fb76544ce1fa45fa2de"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/owned-original-commit1000-01.py",
+        "sha256": "5dc7a907e9f4882f902a9e040b3b109ddf8b0f88f29ae46edf066c65c7527431"
+      },
+      "preparation": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/preparation-01.json",
+        "sha256": "60bb9368739dc05c9972a4f4bf59447d005428e8e32fd86028bfb81b89583d19"
+      },
+      "sourceReadiness": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+        "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+      },
+      "inputManifest": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/input-manifest.json",
+        "sha256": "009911798d2e6ccf54b291d4a83fda7ab76a142955838cd2c3e3dc1db49664ca"
+      },
+      "actualPrivateInvocation": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-invocation-01/invocation.json",
+        "sha256": "bbc0216c491444fc5fadf360c4d452b0a0d5119f80d464aea0aaa68e69dc690a"
+      },
+      "actualPrivateCompletion": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit1000-invocation-01/completion.json",
+        "sha256": "94c2abebc121231db73f767a91646b32d176ecf2cf5b4af0cf848a946b1177ad"
+      },
+      "portableDisplayCommand": ".venv/Scripts/python.exe -B -s -P artifacts/tmp/W2.C35.T01.initial-commit-scale-01/case-child-01.py --kind commit --candidate 3541a4b0e842727c0b54af1e4043af2989845134 --preparation-sha256 60bb9368739dc05c9972a4f4bf59447d005428e8e32fd86028bfb81b89583d19 --output artifacts/tmp/W2.C35.T01.initial-commit1000-01.f01/commit",
+      "caseFacts": {
+        "originalCaseId": "tests.service.test_import_commit_scale_windows.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+        "executionIdentity": {
+          "caseId": "c35_private_commit.ImportCommitScaleWindowsTests.test_protected_commit_manifest_pages_replay_and_reopen",
+          "source": {
+            "path": "artifacts/tmp/W2.protected-import-initial-proof-01/commit-observer-01.py",
+            "sha256": "bcf2e1b3adf05b047179fa429aec4eedce318bebcdba35bce56f35fe31d77366"
+          },
+          "helperSource": {
+            "path": "artifacts/tmp/W2.protected-import-initial-proof-01/commit-helper-observer-01.py",
+            "sha256": "c99100985b97db281c7fee8ca85bd78978b743296aa693c13c1418774aa85f7a"
+          }
+        },
+        "unittest": {
+          "testsRun": 1,
+          "failures": 0,
+          "errors": 0,
+          "skips": 0,
+          "expectedFailures": 0,
+          "unexpectedSuccesses": 0
+        },
+        "unittestSummarySeconds": 42.635,
+        "caseWrapperSeconds": 42.66569939997862,
+        "diagnosticElapsedSeconds": 42.26642220001668,
+        "collectorSeconds": 73.91260370000964,
+        "phaseSeconds": {
+          "cold-manifest-and-warm-pages": 4.409625200001756,
+          "commit-worker": 24.95168850000482,
+          "fresh-runtime-reopen": 4.815841899981024,
+          "parse-prerequisite": 4.616294299979927,
+          "project-and-intake": 1.8678595999954268,
+          "request-replay": 1.0528833999997005
+        },
+        "allSixOriginalStagesPassed": true,
+        "durableFacts": {
+          "acceptedOutputs": 2,
+          "canonicalRecords": 1000,
+          "encryptedHeader": true,
+          "parseRows": 1001,
+          "summaryCompletions": 0,
+          "summaryRows": 0
+        },
+        "commitFacts": {
+          "acceptedCommitOutputs": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "diagnosticCode": null,
+              "state": "succeeded"
+            }
+          ],
+          "counts": {
+            "import_commit_rows": 1001,
+            "import_manifest_members": 1001,
+            "import_manifest_seals": 1,
+            "import_manifests": 1,
+            "import_source_records": 1000
+          }
+        },
+        "pageCoverage": {
+          "/projects/imports/manifest/members": {
+            "complete": true,
+            "pages": 11,
+            "records": 1001
+          }
+        },
+        "lastJob": {
+          "attemptCount": 1,
+          "diagnosticCode": null,
+          "interruptionKind": null,
+          "state": "succeeded"
+        },
+        "retryObserved": false,
+        "events": [],
+        "observerFailures": []
+      },
+      "originalAssertionAssessment": {
+        "allAssertionsExecutedWithoutFailureOrSkip": true,
+        "acceptedManifestAndPublication": "Original assertions verify1000 created/selected bibliographic records,1001 ordered input/manifest rows, one sealed manifest and accepted commit output from a single succeeded attempt.",
+        "fullTraversal": "All11 manifest-member pages cover1001 rows including the original extra input record; complete=true.",
+        "idempotencyAndRestart": "Original request-replay compares exact accepted manifest, closes normally, opens a fresh runtime and compares latest manifest; original last-page/count/canonical1000/manifests1 assertions pass before final close.",
+        "rightsAndAuthorityMeaning": "The unchanged original real-principal DPAPI/SQLCipher/Core/durable-worker flow validates its current project/preview/request/rights and accepted authority through the same guarded production paths. This successful authorized path is not a new revocation/denial experiment; existing190/currentCore safety dispositions remain their separately qualified exact scope."
+      },
+      "actualCaps": {
+        "parseWaitObservedSeconds": 4.616294299979927,
+        "parseWaitMaximumSeconds": 930,
+        "commitWorkerObservedSeconds": 24.95168850000482,
+        "commitWorkerMaximumSeconds": 1800,
+        "completedSampleObservedSeconds": 42.26642220001668,
+        "completedSampleMaximumSeconds": 2400,
+        "peakWorkingSetObservedBytes": 230871040,
+        "peakWorkingSetMaximumBytes": 268435456,
+        "memoryScope": "Core plus ASGI test runner in this process; no tracemalloc",
+        "singleTimingMeaning": "One completed1000 observation, descriptive only; no comparative baseline, percentile or100k timing extrapolation."
+      },
+      "closedInputs": {
+        "selectedInputCount": 6732,
+        "runtimeAndCurrentSourceTrees": 8,
+        "finalSourceBindingCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+        "sourceAndInputStabilityAuthenticatedBy": {
+          "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+          "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+        },
+        "inputsStable": true
+      },
+      "normalOwnedCleanup": {
+        "rootExitCode": 0,
+        "totalProcesses": 11,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "breakawayAllowed": false,
+        "killOnJobClose": true
+      },
+      "limitations": {
+        "realBoundaries": [
+          "current-user DPAPI",
+          "SQLCipher",
+          "Core composition",
+          "durable worker"
+        ],
+        "originalLimitations": [
+          "ASGI transport",
+          "synthetic native context",
+          "not packaged",
+          "no reviewed baseline"
+        ],
+        "notQualified": [
+          "100k canonical commit publication or manifest completeness",
+          "100k paging/replay/fresh-runtime reopen",
+          "100k1800worker/2400sample performance",
+          "whole-app or job-tree RAM guarantee",
+          "packaged/NativeGUI/live-provider execution",
+          "task/Wave/release completion"
+        ],
+        "unchangedLargerInputPolicy": "Product limits still permit larger inputs; no enforced1000 cap or guarantee for larger commits was introduced.",
+        "laterWork": "High-scale work remains proposed forW9, not adopted scope."
+      },
+      "original100kCommitQualified": false,
+      "canonicalPerformanceQualified": false,
+      "original6affePolicyQualified": false,
+      "receiptNonqualifyingLabelPreserved": true,
+      "timingMeaning": "One completed1000-record observation only. No canonical benchmark,100k timing, new percentile, baseline or whole-job memory qualification."
+    },
+    "finiteCommitScaleAuthority": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+        "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+      },
+      "independentScopeAndSourceReadiness": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+        "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+      },
+      "selectedDecision": {
+        "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+        "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+      }
+    },
+    "allHardSelected1000ChecksQualifiedBy": {
+      "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+      "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+    },
+    "noMandatoryOutstandingSelectedProductCheck": true,
+    "knownLimitations": [
+      {
+        "id": "initial-protected-review1800-latency",
+        "status": "DISCLOSED_NONBLOCKING_INITIAL_W2_LIMITATION_UNDER_SELECTED_8DC",
+        "authority": {
+          "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+          "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+        },
+        "actualFunctionalDisposition": {
+          "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+          "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+        },
+        "wholeReview1800TargetMet": false,
+        "completeContinuousReviewTimingAndPeakQualified": false,
+        "originalFailureRetained": {
+          "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+          "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+        },
+        "meaning": "All original review functional assertions are accounted for by the genuine completed-prefix plus same-fixture-tail disposition. The old full invocation remainsFAIL; times/peaks are not stitched. Optional W9 latency work is proposed only."
+      },
+      {
+        "id": "protected100k-commit-unqualified",
+        "status": "DISCLOSED_INITIAL_W2_DEFERRED_100K_QUALIFICATION_UNDER_SELECTED_04ED",
+        "authority": {
+          "proposal": {
+            "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+            "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+          },
+          "independentScopeAndSourceReadiness": {
+            "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+            "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+          },
+          "selectedDecision": {
+            "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+            "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+          }
+        },
+        "original100kCommitQualified": false,
+        "actual100kFailureDiagnosis": {
+          "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+          "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+        },
+        "actual100kFailureReceipt": {
+          "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+          "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+        },
+        "earlierFailureReceipt": {
+          "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+          "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+        },
+        "earlierInitiatingCause": "UNKNOWN",
+        "notQualified": [
+          "Successful100k commit/manifest membership completeness",
+          "100k idempotent replay and fresh-runtime accepted manifest reopen",
+          "100k completion within1800worker/2400sample or absence of other scale defects"
+        ],
+        "actual1000Disposition": {
+          "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+          "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+        },
+        "meaning": "Initial functional commit acceptance is expressly amended to one supported original1000-record case.100k publication, full manifest/paging, replay/reopen, continuous performance and absence of other scale defects remain unqualified. Existing larger product input limits are unchanged; no enforced1000 product cap or guarantee is introduced. Larger commits may exceed observation time; the observed interrupted transaction rolled back. High-scale work is merely proposed for W9, not adopted scope."
+      },
+      {
+        "id": "canonical-import-benchmark-and-method-boundaries",
+        "status": "ORIGINAL_CANONICAL_FAIL_AND_NONQUALIFYING_REPORT_LABELS_PRESERVED",
+        "canonicalWholeBenchmarkPassClaimed": false,
+        "initial6affe100kPolicyQualified": false,
+        "meaning": "Actual190/pure6/currentCore, review composition and selected1000 functional proof retain distinct source candidates/methods/real-vs-synthetic boundaries. One completed1000 observation is descriptive; it does not pass the unchanged canonical baseline/tool or prove whole-app RAM, packaged NativeGUI or live-provider throughput."
+      }
+    ],
+    "formalTaskReview": null
+  },
+  "finiteInitialCommitScaleAuthority": {
+    "selectedDecision": {
+      "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+      "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+    },
+    "proposal": {
+      "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+      "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+    },
+    "independentScopeAndSourceReadiness": {
+      "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+      "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+    },
+    "actualOutcomeDisposition": {
+      "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+      "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+    },
+    "publication": "Exact ignored selected bytes before execution under actual34e. Six byte-identical proposal/scope/decision records (974f/77c5/8dc and08ccc/02794/04ed) are to be copied after normal3541 freeze with true introduction chronology; no earlier Git publication or owner inspection of later packets is claimed.",
+    "actualIntroductionCommit": null
+  }
+}
