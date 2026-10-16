@@ -67,7 +67,7 @@ class VersionMigrationTests(unittest.TestCase):
         parent = self.database.parents[2]
         for adapter in (sqlite3, sqlcipher):
             with self.subTest(adapter=adapter.__name__):
-                folder = parent / adapter.__name__ / "réview %23 #&"
+                folder = parent / adapter.__name__ / "rÃ©view %23 #&"
                 folder.mkdir(parents=True)
                 database = folder / "literal%20name.sqlite3"
                 with closing(adapter.connect(str(database), isolation_level=None)) as seed:
@@ -126,6 +126,7 @@ class VersionMigrationTests(unittest.TestCase):
                 "0026_document_revisions",
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
+                "0029_lexical_index_generations",
             ),
             plan.migration_ids,
         )
@@ -207,7 +208,7 @@ class ProtectedVersionMigrationTests(unittest.TestCase):
         storage.configure_protected_database_provider(fixture.keys)
         before = restore_v15(fixture.root / "legacy/state/project.sqlite3")
         identity = before["projectId"]
-        component = "réview %23 #& "
+        component = "rÃ©view %23 #& "
         root = fixture.root / (component + "p" * (210 - len(str(fixture.root)) - len(component) - 1))
         (root / "state").mkdir(parents=True)
         (root / ".tmp").mkdir()

@@ -201,6 +201,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         "0026_document_revisions",
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
+                        "0029_lexical_index_generations",
                     ),
                     planned.migration_ids,
                 )
@@ -229,6 +230,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         "0026_document_revisions",
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
+                        "0029_lexical_index_generations",
                     ),
                     completed.migration_ids,
                 )
@@ -276,6 +278,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
             26: "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c",
             27: "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913",
             28: "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6",
+            29: "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3",
         }
         current_targets: dict[int, str] = {}
         for rule in current["allOf"]:
@@ -293,14 +296,14 @@ class CorpusReportMigrationTests(unittest.TestCase):
         self.assertEqual(18, frozen["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(19, frozen_v19["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(20, frozen_v20["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28], current["properties"]["targetSchemaVersion"]["enum"])
+        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28, 29], current["properties"]["targetSchemaVersion"]["enum"])
         self.assertEqual(SCHEMA_SHA256, frozen["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, frozen_v19["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(
             "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6",
             frozen_v20["properties"]["targetSchemaSha256"]["const"],
         )
-        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current_targets[28])
+        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current_targets[29])
 
     def test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup(self) -> None:
         for kind in ("import-corpus", "connector-corpus"):
@@ -323,6 +326,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         "0026_document_revisions",
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
+                        "0029_lexical_index_generations",
                     ),
                     planned.migration_ids,
                 )
