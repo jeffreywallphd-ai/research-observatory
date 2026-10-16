@@ -1,0 +1,179 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-C36-current14-div-root-and-current-frontend-source-binding",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalDecisionIntroductionCommit": "db25c8c74e2432b6267d687edcfddae31dc070eb",
+  "scopeId": "W2-DESKTOP-CURRENT14-01",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-18.py",
+    "sha256": "20671d48dfd933ba6a8b616056a6ab826e19f2069f6da5f5f8972ebe73fa6074"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-18.json",
+    "sha256": "6d8b87bc078274ee5c8258067b4c5cd1ee788ec2183c434952a61f727d460fbc"
+  },
+  "manifest": null,
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-18.py": "20671d48dfd933ba6a8b616056a6ab826e19f2069f6da5f5f8972ebe73fa6074",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-15.py": "8b138c1c835e7d97221398c7dac8c40a2e82a34e24f63b7515d910c1767393e3",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-09.mjs": "cdd3108c0a213a33d853854146bc7ea9274802405ec2910f15d771fdd3fc0fe7"
+  },
+  "extraExactSources": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-conformance-18.py",
+      "sha256": "faf4f6caa3e4af8b6feeaf05536eb0f6e5e3464063c83028cd8feaa0550b6845"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-correction-current-root-02.ts",
+      "sha256": "d38a96ad86c3e55707db5de287bee172a7ff02152802db97405e68d93cb260a5"
+    }
+  ],
+  "sourceReadiness": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-readiness-18.json",
+    "sha256": "788ccfdb8330362ace4db0a4a77e487f959a60acf4503d042dcbe0527af99f52"
+  },
+  "recordingReadiness": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.C36.T01.current14-source-binding-01.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Existing prospective34e+738a finite Current14 restoration: private fixture root main\u2192div matches actual shipping div#root. Genuine separately reviewed C36 CSS source/build now replaces historical C34 frontend admission using only distinct receipt-success/component labels and exact new205 manifest. No product or criterion change by this private method.",
+  "scope": "Seven freshf10 transport/name/output rotations, exact helper18 path/hash dependency, one rootcontainer literal main\u2192div in private serve_fixture, only two current_frontend admission literals and actual current205 metadata. Preserve Readersection16/bookwire17/Qualityselectors/expectedtext/all26assertions2186calls90cases180captures/300s3600s/5s naturaldrain and full source/runtime/alias/deny custody. AuthorizedSources remains exactly three producer/method/builder; helper18/wire02 are extra held exact refs.",
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-01/receipt.json",
+    "sha256": "1781b9c87bbdcf427225ac8f290bf722fb3aa7c101ed16526fe08464a78acd07"
+  },
+  "freshProductComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/independent-c36-actual-component-disposition-01.json",
+    "sha256": "cf52255445f859c010c272d9457dd60ae344b385e50065cd2aa296a6f552ac41"
+  },
+  "frontendManifest": {
+    "path": "apps/desktop/product-dist/application-manifest.json",
+    "sha256": "340883a3c11ca3ec02f6890522423df6320cc7d43087730c64505ee0f5a5fc2e"
+  },
+  "conformanceHelper": {
+    "path": "artifacts/tmp/CAP-05.S06.W2-1.9-conformance-18.py",
+    "sha256": "faf4f6caa3e4af8b6feeaf05536eb0f6e5e3464063c83028cd8feaa0550b6845"
+  },
+  "pathCoherenceWitness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-path-coherence-witness-18.json",
+    "sha256": "3b761f38cce7445be88085a07028575abe9534d52ecb931019e018f778107737"
+  },
+  "sourceDelta": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-successor-18.delta.json",
+    "sha256": "acd45caa90f7c1ed9733ac2ea3be7298a7f31da21fefdee3d7416509b53a3553"
+  },
+  "C36SourceApplication": {
+    "path": "artifacts/evidence/W2.C36.T01.source-application-01.json",
+    "sha256": "6f006036a143e9e6f35048dd7254d4ae34bd79b497be08940fd67c7e6ae5d647"
+  },
+  "CSSSourceReadiness": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/independent-source-readiness-02.json",
+    "sha256": "130fac5ce521545ab967dc697d2d2283087298dc5eaff8360b3015c62c3d42de"
+  },
+  "historical17": {
+    "producer": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-17.py",
+      "sha256": "8e391d1552a546bbcd264315d4f02706f8a6d9a5d06533eee2c54010315699c5"
+    },
+    "preparation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-17.json",
+      "sha256": "ab89e9cb9cef036de61b9c53c5d7e280a135b2a2ca2392b266b08d67da5b2115"
+    },
+    "manifest": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-successor-17.manifest.json",
+      "sha256": "7372fd455b45e1c6b2e5daf73125a852bab326a6e400f18cc267fefb2f3265a3"
+    },
+    "sourceReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-17.json",
+      "sha256": "9297d8bbb40e4a5d6bbc94027922d77a1e8a7942ac71e7bd53f0c7cc950a60a5"
+    },
+    "binding": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-source-binding-17.finalized.json",
+      "sha256": "725ace8123f613110a79628b958b45834f83f57189aaa1ec139cb0fce8623e6a"
+    }
+  },
+  "preservedActualF09": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f09/receipt.json",
+      "sha256": "f9e174c183afebca90f93b20cc8465b9e054cac41d1c62bbd063f96ee9f9dd36"
+    },
+    "childReport": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f09/child-report.json",
+      "sha256": "774a2db9bcaedfcf5eb33e1c4cc75c476cfe1a5b2beea82d6702c9515a397b94"
+    },
+    "inputManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f09/input-manifest.json",
+      "sha256": "86dd020df9f6a5abdc8a45a9b732079a0937bfe54d9256ffb7bad711d3d14f45"
+    },
+    "qualificationRaw": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f09/qualification-raw.log",
+      "sha256": "892d543652d053d864625cb8932ee2cb729393d52ec75f34782af6b83fcc5328"
+    },
+    "outerCompletion": {
+      "path": "artifacts/tmp/W2.current14-dispatch-20261016-05/completion.json",
+      "sha256": "6e13dd44e2324906d62561c53bea38ce3141b806736b676a3142466699fc385f"
+    }
+  },
+  "actualF09RCA": {
+    "path": "artifacts/tmp/W2.Current14-f09-complete-layout-findings-diagnosis-01.json",
+    "sha256": "9a232320559bba33ea4c5896c4bfb4e5b38546e0c0fae52a794847a814c3125d"
+  },
+  "historicalC34InputMeaning": "Original85138 aggregateFAIL/94cf/738ad remain historical via immutable17/prep/preserved205. Current input is genuine1781/cf522/340883, never a relabel of oldFAIL.",
+  "oldManifestPreservedAt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-01/preserved-product-dist/application-manifest.json",
+    "sha256": "738ad07bfa745d5636512029754fa99e662d204a305e71b4b88229afc6b25138"
+  },
+  "existingFixedPrefixRule": {
+    "previousPreparation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-17.json",
+      "sha256": "ab89e9cb9cef036de61b9c53c5d7e280a135b2a2ca2392b266b08d67da5b2115"
+    },
+    "previousRows": 117,
+    "onlyChangedExistingRowIndex": 58,
+    "previous": {
+      "path": "apps/desktop/product-dist/application-manifest.json",
+      "sha256": "738ad07bfa745d5636512029754fa99e662d204a305e71b4b88229afc6b25138"
+    },
+    "current": {
+      "path": "apps/desktop/product-dist/application-manifest.json",
+      "sha256": "340883a3c11ca3ec02f6890522423df6320cc7d43087730c64505ee0f5a5fc2e"
+    },
+    "other116RowsExact": true,
+    "oldManifestPreservedAt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-01/preserved-product-dist/application-manifest.json",
+      "sha256": "738ad07bfa745d5636512029754fa99e662d204a305e71b4b88229afc6b25138"
+    },
+    "entire117PrefixRawEqualityClaimed": false
+  },
+  "preExecutionConditions": {
+    "genuineActualC36ReferenceRefreshAndOriginalSnapshot19": "Required before publication/execution; external actual proof is not yet available in this preparation. Original parent dynamic reference snapshot/manifest/source assertions remain unchanged and still independently decide actual current admission.",
+    "genuineActualC36NativeBundle": "Required root pre-execution prerequisite; no absent outcome fabricated. No currentTauriGUI/runtime claim.",
+    "actualNativeAndReferenceOutcomeAtPreparation": null,
+    "preparationTimeNullMeaning": "Historical unknown at this preparation only. Root must independently authenticate real external prerequisites before publishing/running; no extra binding field finalization or guessed result/hash is authorized.",
+    "sourceAndRecordingReview": "Genuine different source readiness for exact producer/preparation/witness/current205/helper plus exact four-field finalization then different recording review.",
+    "candidateAndInputs": "Root supplies actual later clean committed candidate containing byte-identical task-owned binding; source/current205/reference/runtime fixed for original collection. No actual future candidate guessed.",
+    "regression": "One original complete90case180capture matrix includes all12 Reader/Quality after observations. No extra afterdriver, narrowed assertion, timer or predicate exemption."
+  },
+  "publicationConditions": "Wait actual C36 reference04/originalsnapshot19 and Nativebundle, genuine different source/recording review; root may finalize only status,approvedBy,sourceReadiness,truthful recordingSemantics. No outcome/manifest/intro/recording null is guessed or self-cycle created.",
+  "permittedFinalizationFields": [
+    "status",
+    "approvedBy",
+    "sourceReadiness",
+    "recordingSemantics"
+  ],
+  "recordingSemantics": "Root prospectively selects only the exact independently source-reviewed finite source18 packet under actual owner preauthorization34e and original738a method authority. This is a present recording, not an earlier exact owner approval. Current CSS/source/application and actual product1781/componentcf522/manifest340883 are separately authenticated at ffaf; actual reference04/snapshot19 scope is independently qualified by0c579. The C36 UI authority method remains the separately recorded d167/4e5a/d680 selection introduced at ffaf. The sourceReadiness path names a byte-exact task-owned public alias of genuine788cc; its original private record stays unchanged. Only status, approvedBy, sourceReadiness and this recordingSemantics field differ from the frozen draft. No other original null/digest/history or body field is finalized. This private finalization supplies no Native or Current14 PASS: genuine Native closure and a different exact recording review are required before publication, followed by one original90-case/180-capture run. Introduction commit and all actual outcomes are observed separately after they exist; no future self-commit is invented. No canonical UI gate/classifier PASS, framework/predicate/reference change or release approval is granted.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "baselineChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner"
+}

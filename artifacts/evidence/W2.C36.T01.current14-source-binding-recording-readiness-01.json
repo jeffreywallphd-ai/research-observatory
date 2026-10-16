@@ -1,0 +1,71 @@
+{
+  "documentType": "independent-source18-exact-four-field-recording-review",
+  "reviewer": "agent:/root/security_resolution_review",
+  "reviewedAtUtc": "2026-10-16T07:57:25.679742+00:00",
+  "result": "RECORDING_READY",
+  "blockingFindings": [],
+  "draft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-source-binding-18.draft.json",
+    "sha256": "b3c4c24974d84f707e64bd17a11a9950783f0ac9d463b2864f0e88ab6ea840fe"
+  },
+  "finalized": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-source-binding-18.finalized.json",
+    "sha256": "4f310cc18780563a24b831826db69f576729a98ca053fb77bc82fc73b74f4b60"
+  },
+  "rootFinalizationRecord": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-source-binding-18.finalization-record.json",
+    "sha256": "74e1dd317ef532444b1bdfe8152b9125bf972425a467c3c6659317e050b2d6f3"
+  },
+  "originalPrivateSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-18.json",
+    "sha256": "788ccfdb8330362ace4db0a4a77e487f959a60acf4503d042dcbe0527af99f52"
+  },
+  "intendedPublicReadinessAlias": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-readiness-18.json",
+    "sha256": "788ccfdb8330362ace4db0a4a77e487f959a60acf4503d042dcbe0527af99f52"
+  },
+  "intendedPublicBindingPath": "artifacts/evidence/W2.C36.T01.current14-source-binding-01.json",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-18.py",
+    "sha256": "20671d48dfd933ba6a8b616056a6ab826e19f2069f6da5f5f8972ebe73fa6074"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-18.json",
+    "sha256": "6d8b87bc078274ee5c8258067b4c5cd1ee788ec2183c434952a61f727d460fbc"
+  },
+  "exactChangedFields": [
+    "approvedBy",
+    "recordingSemantics",
+    "sourceReadiness",
+    "status"
+  ],
+  "allOtherStructuredValuesExact": true,
+  "allOriginalNullsAndHistoricalDataPreserved": true,
+  "publicAliasReview": {
+    "digestMatchesGenuinePrivateReadinessBytes": true,
+    "aliasAlreadyPublished": false,
+    "parentRecordPathAcceptsOrdinaryConfinedRepositoryRelativeEvidencePath": true,
+    "exactExistingParentAuthenticationCompatibleWithProposedAliasCLI": true,
+    "producerPreparationCurrent205AndReviewerFieldsMatch": true,
+    "sourceReturnOrBodySubstitution": false,
+    "requiredActualRecording": "After genuine Native closure, copy exact private readiness LF bytes to the stated task-owned public path and exact finalized binding bytes to its reviewed path. Parent must use the exact public alias path/hash and actual binding hash at a real clean committed successor; original commit/blob and source/input admission remain mandatory."
+  },
+  "authorityMeaning": "Present root recording under actual prospective owner34e/original738a and separately introduced C36 d167/4e5a/d680. approvedBy records that bounded owner authority; no assertion that the owner inspected these later exact bytes earlier. RecordingSemantics truthfully separates actual1781/cf522/current205/reference0c579 from pending Native and Current14.",
+  "actualReferencePrerequisite": {
+    "path": "artifacts/tmp/W2.C36.T01.reference-refresh-independent-actual-disposition-01.json",
+    "sha256": "0c579f0b5052ce6f5326f942dddc34d5932b48b68fa60bf07c8e1910c1ec4c84"
+  },
+  "remainingOriginalPrerequisites": [
+    "Actual current C36 Native closure and genuine component disposition before public copy/commit.",
+    "Actual exact byte copies, clean introduction commit and unchanged original dispatch/source/runtime/product/reference/fixture admission.",
+    "One original90case180capture run and genuine affected criterion/capture/visual review; no matrix result inferred from recording."
+  ],
+  "canonicalUiGatePassClaimed": false,
+  "canonicalRestorationClassifierPassClaimed": false,
+  "NativeQualified": false,
+  "Current14Qualified": false,
+  "taskApproved": false,
+  "WaveApproved": false,
+  "releaseApproved": false,
+  "reviewActions": "Exact final/draft/readiness/pin and existing parent record/authentication source reads and static structured comparison only. No source re-audit, imports, workload, runtime scan, public file write, commit or HEAD mutation."
+}
