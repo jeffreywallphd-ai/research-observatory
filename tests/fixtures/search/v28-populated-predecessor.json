@@ -1,0 +1,1624 @@
+{
+  "schemaVersion": "1.0",
+  "fixture": "v28-populated-predecessor",
+  "sourceCommit": "c90c06dfaa3279e6602d4cad53091e7a04c35941",
+  "sourceState": "v28 schema/storage/test source at claim; one disclosed unrelated enum addition",
+  "construction": "Actual protected v28 fixture APIs; explicitly synthetic source/parser/Native inspector and in-memory keys. Not Windows DPAPI or real-principal proof.",
+  "fixtureKeyDerivation": "SHA256 UTF-8: Research Observatory synthetic v28 migration fixture key v1",
+  "databaseSchemaVersion": 28,
+  "schemaSha256": "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6",
+  "profileSha256": "6cc9fc713678dcbaab23bd922a4010098cbd05922932a4b5f4840967f8f377e6",
+  "projectId": "77b5c291-20a9-4782-9868-ab4e1ff30244",
+  "counts": {
+    "acquisition_attempt_results": 0,
+    "acquisition_attempts": 0,
+    "acquisition_locations": 0,
+    "aggregate_identities": 14,
+    "aggregate_revisions": 17,
+    "corpus_commands": 0,
+    "corpus_decision_evidence": 0,
+    "corpus_decisions": 0,
+    "corpus_discovery_paths": 0,
+    "corpus_item_discovery_paths": 0,
+    "corpus_item_states": 0,
+    "corpus_items": 0,
+    "corpus_report_members": 0,
+    "corpus_report_paths": 0,
+    "corpus_report_snapshots": 0,
+    "corpus_report_sources": 0,
+    "corpus_source_item_heads": 0,
+    "corpus_source_overlap_totals": 0,
+    "corpus_source_totals": 0,
+    "decisions": 4,
+    "dependency_impact_audit_events": 4,
+    "dependency_impact_decisions": 0,
+    "dependency_impact_items": 1,
+    "dependency_impact_runs": 2,
+    "dependency_stale_causes": 1,
+    "document_access_needs": 0,
+    "document_acquisition_sources": 0,
+    "document_attachment_assertions": 1,
+    "document_attachment_cancellations": 0,
+    "document_attachment_candidates": 1,
+    "document_attachment_operations": 0,
+    "document_attachment_recoveries": 0,
+    "document_enrichment_elements": 1,
+    "document_enrichment_identifiers": 1,
+    "document_enrichment_targets": 1,
+    "document_enrichments": 1,
+    "document_intake_jobs": 0,
+    "document_intake_results": 0,
+    "document_normalized_revisions": 1,
+    "document_parse_jobs": 1,
+    "document_parse_results": 1,
+    "document_structure_elements": 3,
+    "documents": 6,
+    "evidence": 0,
+    "import_commit_preparations": 1,
+    "import_commit_rows": 2,
+    "import_draft_revisions": 1,
+    "import_manifest_members": 2,
+    "import_manifest_seals": 1,
+    "import_manifests": 1,
+    "import_parse_attempts": 1,
+    "import_parse_completions": 1,
+    "import_parse_records": 2,
+    "import_preview_events": 5,
+    "import_previews": 1,
+    "import_record_decisions": 0,
+    "import_source_chunks": 1,
+    "import_source_records": 1,
+    "import_source_seals": 1,
+    "import_summary_attempts": 0,
+    "import_summary_completions": 0,
+    "import_summary_groups": 0,
+    "import_summary_rows": 0,
+    "material_dependencies": 81,
+    "material_dependency_diagnostics": 0,
+    "material_dependency_outputs": 17,
+    "object_envelope_upgrades": 0,
+    "object_records": 7,
+    "ontologies": 0,
+    "outbox_events": 23,
+    "plugin_grant_events": 0,
+    "projects": 1,
+    "provenance_events": 24,
+    "provenance_ledger_checkpoints": 20,
+    "provenance_ledger_entities": 61,
+    "provenance_ledger_events": 20,
+    "provenance_ledger_relations": 142,
+    "provenance_legacy_bridges": 4,
+    "reconciliation_assertions": 1,
+    "reconciliation_candidate_pairs": 0,
+    "reconciliation_candidate_sets": 0,
+    "reconciliation_commands": 1,
+    "reconciliation_exact_impacts": 0,
+    "reconciliation_feature_cache": 0,
+    "reconciliation_identifier_links": 1,
+    "reconciliation_impact_continuations": 0,
+    "reconciliation_impact_seals": 1,
+    "reconciliation_relation_evidence": 0,
+    "reconciliation_review_decisions": 0,
+    "reconciliation_version_decisions": 1,
+    "reconciliation_version_impacts": 1,
+    "reconciliation_version_preferences": 0,
+    "reconciliation_version_relations": 0,
+    "reconciliation_version_sources": 1,
+    "reconciliation_versions": 1,
+    "reconciliation_work_members": 2,
+    "reconciliation_work_revisions": 0,
+    "reconciliation_work_seals": 2,
+    "reconciliation_work_states": 2,
+    "rights_legacy_output_rechecks": 0,
+    "rights_policy_generic_rechecks": 0,
+    "rights_policy_recheck_completions": 0,
+    "rights_policy_recheck_scopes": 2,
+    "rights_policy_rechecks": 0,
+    "rights_policy_revisions": 2,
+    "rights_policy_subjects": 1,
+    "rights_use_decisions": 23,
+    "schema_metadata": 1,
+    "schema_migrations": 0,
+    "scholarly_records": 5,
+    "settings": 10,
+    "workflow_attempt_artifacts": 5,
+    "workflow_authority_snapshots": 3,
+    "workflow_checkpoints": 0,
+    "workflow_committed_outputs": 3,
+    "workflow_definitions": 3,
+    "workflow_history_events": 33,
+    "workflow_job_attempts": 3,
+    "workflow_queue_jobs": 3,
+    "workflows": 2
+  },
+  "rowSha256": {
+    "acquisition_attempt_results": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "acquisition_attempts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "acquisition_locations": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "aggregate_identities": "735ca60a64781a39a7b9449df9a91a33da62eb722d9986aa28ae7427d913ecd9",
+    "aggregate_revisions": "71280a675db0f06f7ea3a7923d95dda82d5b95155b124f7c3bb775c33b0cde03",
+    "corpus_commands": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_decision_evidence": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_decisions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_discovery_paths": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_item_discovery_paths": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_item_states": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_items": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_report_members": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_report_paths": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_report_snapshots": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_report_sources": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_source_item_heads": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_source_overlap_totals": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "corpus_source_totals": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "decisions": "ed22a380f0a94c200618eab93f120decd5737d2c3836a5649eaed8319f27a56a",
+    "dependency_impact_audit_events": "27cdd5aa33b1ceb0e09a34648bb2c8eb85cf8f3d52bc3a9b9b7981f525e745c8",
+    "dependency_impact_decisions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "dependency_impact_items": "f73d7e33c2d1ba35c2c6a5ce80846e0e4ad18c109bceb2e40f89248e75c6aafc",
+    "dependency_impact_runs": "ab5d500287e965871a91267f3b2de490fc42dba8e360a261034642348b690a56",
+    "dependency_stale_causes": "2307ab47660c95095b80df0b3d55ed4affa68307116b0db80ec61f968a9fc18b",
+    "document_access_needs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_acquisition_sources": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_attachment_assertions": "f22e505107cf15f6db673b033bfc3e8c8cc9080837563e642b4b98a6b01e7500",
+    "document_attachment_cancellations": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_attachment_candidates": "273b3ab26c23172a30272b10f0c3927c092055ddfda1389e20b86d191df836d2",
+    "document_attachment_operations": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_attachment_recoveries": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_enrichment_elements": "9af1753d04f6d0b6a18c0da9aa68ab3a9d69e62db3b2d363ecd95253325c4594",
+    "document_enrichment_identifiers": "60ccbcbe4f1fe9e11efade96ba0ec74462dfb9ab954e9b985102c1ea6757cf4f",
+    "document_enrichment_targets": "5fa1a23edfa7b177ede9d14a1012f49d5ab007c516ca675f9cb83b724d82e21b",
+    "document_enrichments": "5f72c118eea2f5747448fe7fa4aabe0aad2ac4b1b5a72a9560dce397762380d1",
+    "document_intake_jobs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_intake_results": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "document_normalized_revisions": "3eff61db56faa09c5fee7bf5f4303e44cbde96a0f7117e71e3fc4fe41975ce90",
+    "document_parse_jobs": "83c0e1ea1957ace176be11b994d117393c109097a31f31d19975d62af54c07c4",
+    "document_parse_results": "c1618583f2ff1ee749af34203f1fd8155639070bd12d01a22b437340dc70a79d",
+    "document_structure_elements": "672ff13bff67d70fbe7a648d0adb310f1f76b8b441746b28e349419d7a89a541",
+    "documents": "fe6ec727cb06b6a3b3bd60ea0f2aebdf60c6365ddfac360c5df4b4fc38fc6792",
+    "evidence": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "import_commit_preparations": "e9b46b36e118f0aa0af46737e795ffa6e414601eb9dff5f474da4404bcc404ff",
+    "import_commit_rows": "b62355e9450d73cf320bc2ba3ab327d627acb95b5e97a1b62dcc6b1c628d24cf",
+    "import_draft_revisions": "a700408cf6bb115df9c9fd35306b357ad3e654f25ed5cb37a9a6338ee91a6952",
+    "import_manifest_members": "7220d014e567b31e7c95bc3b5675d2f18f33b4deadedbce3503950d881b9402f",
+    "import_manifest_seals": "f56e92ee2a3b12d0346d35329f988b04c0c0eea6ad7b96cb6554f07850c1fcbf",
+    "import_manifests": "208b1770fd5a7c1a4893c6c6d8c725bfbbb4a09172b76f8a135814c18ceedb07",
+    "import_parse_attempts": "9555d57cd73683a774962eff5b2bb86d318ee8f7ae5c73270ff2b2e59a6280fd",
+    "import_parse_completions": "1ba32411018c3c3b27e103e66c3439254e49d7c7d5d15c8f379afacd85bc8714",
+    "import_parse_records": "dafc2d0508d1e4e9700a5726958185e5babd12774942a356786d2e11e09af7e3",
+    "import_preview_events": "4fbeb2ed6d684b6ebc6991907b1b26e5e52f9bb97fb55acf0352637f645adcd3",
+    "import_previews": "ba8b82d21b3129b4584d6c6d3ab82f6124ac53a7096584b3a3b0b872ad6ce96b",
+    "import_record_decisions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "import_source_chunks": "1ef403d08abb981fd147569c6f8dc949bc2f7411cb6cccaefb97d73132818f97",
+    "import_source_records": "5f1cb42d63e120efd9a118d758c426596282d83a2cfda5036b6a2056a7bfb224",
+    "import_source_seals": "a9af8decc35d4b183d45d05792fed352ea5bc473e190d249b95dc48c018f2292",
+    "import_summary_attempts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "import_summary_completions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "import_summary_groups": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "import_summary_rows": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "material_dependencies": "575d1c8ff3542e390391276f5ddd62dfcd889fd71eb88b6125de5e6add3ea7d7",
+    "material_dependency_diagnostics": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "material_dependency_outputs": "27ed7908f9f6f711e25f540cf3756646456e7beca3301dc48c0ebf4939b46f3b",
+    "object_envelope_upgrades": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "object_records": "72eca70a4776addd3b798d833737c5b9c7c65ebb7c3b94297538448cc709fe24",
+    "ontologies": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "outbox_events": "cfa79a4d252cff0bedb187176fe097c9a12f9f4c8d248b72431953b684fba7af",
+    "plugin_grant_events": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "projects": "39990222a73415ded4e45d152ab1a1c67a32bc5f499abdcdf35f74fc8c43f4df",
+    "provenance_events": "1edc1d7fb562f2b96b43d970bb73acd5fcf34a0f608e1596d6175efe9e827032",
+    "provenance_ledger_checkpoints": "faf100c141187d7fb7b8e6e6953017b256c8b1f533a4ec9466662afee4e4120e",
+    "provenance_ledger_entities": "13d402f44b2547849cb008b65cc0c00720913b817b0e8c6a97d6bc83145c5750",
+    "provenance_ledger_events": "14caddde2c88320d9acbb9aacdba82cab6bda5f4e754e5e95803d372e65557aa",
+    "provenance_ledger_relations": "89e0962d15ab35b7ee560e8e1452656aff44147a26e56480e531001a88846258",
+    "provenance_legacy_bridges": "7b785689a47c2f80141b8f854453ea36b1c8e2f472c959dbd212ea4a780ee158",
+    "reconciliation_assertions": "4865dac4dfa1044987c1ecd6ba4b510875c1212e1d30a172644f5488d07a4fc9",
+    "reconciliation_candidate_pairs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_candidate_sets": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_commands": "bba97eeb07a7a7a196f7d1b94d9da15ed73f42674e02d204d048e4b9d589b0f1",
+    "reconciliation_exact_impacts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_feature_cache": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_identifier_links": "f07622680f047993f40126d42724f5310f43611b0025a311d9c8ba67595ba9d9",
+    "reconciliation_impact_continuations": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_impact_seals": "ec93524deaf6eafccb61b73e84ab89358ba9d2a1c7512dded87adaed994fc93a",
+    "reconciliation_relation_evidence": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_review_decisions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_version_decisions": "f26d17c758f54d9203ee3b8066bfc6f560f8b092bd84c2b1d57a456cc7a9d56d",
+    "reconciliation_version_impacts": "c8b22459d89590dcf05cc9752400eddfc9a08465d2c46483ca42cbd7d4b851c1",
+    "reconciliation_version_preferences": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_version_relations": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_version_sources": "e4429ec735ec4cde813aaea668ccf3787649e97f7d8c2552f6631aebab3bbacf",
+    "reconciliation_versions": "86f18d1243bd5cb4dc35c01c52f282008fc5400095fd770a24867ac3763f7ea9",
+    "reconciliation_work_members": "74a269777c39d4a3cd06d20091b56684b285f726812a0bca8e04b157b89b7655",
+    "reconciliation_work_revisions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "reconciliation_work_seals": "d88980b0750043799e1b1492a7e8ed1de89addecc846df9069422739b53cbbb8",
+    "reconciliation_work_states": "2a28bd66a6b9166f8cad6bd23e3e5431be20a448f0e26639b817e8da03ef7393",
+    "rights_legacy_output_rechecks": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "rights_policy_generic_rechecks": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "rights_policy_recheck_completions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "rights_policy_recheck_scopes": "cd6a116052d5d3ba24b495b7c9640d8ff6810a771398c8e1f0223de580707da8",
+    "rights_policy_rechecks": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "rights_policy_revisions": "e3f90346add5524df7d71b2e2b7c025bcc2afceffa02602d5a386ca355d95229",
+    "rights_policy_subjects": "7c4ae446d2c9c39d7886f0277fd1d3438275ec9cbe3d59928eab21e6333e1716",
+    "rights_use_decisions": "ce4b5b3fb119f5e06b88283f523e71005508b3d95552f99943178053e6e77ab3",
+    "schema_metadata": "b33bc2fe2c2b26fbabe422a926f50825808056eba5b172182fbdc13cb9124430",
+    "schema_migrations": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "scholarly_records": "e221980a666fb1c24478f16c605223daa94c8cef2e0817eb60bd23bf09de7877",
+    "settings": "55849cd7a935898d35e051b49724054ae8aca4a73018189df029cb30ec3f5acc",
+    "workflow_attempt_artifacts": "cf9338c43bc5a06ad9c1953c99c115a9078179f5d7e97c5f02badcc1e2d60f2e",
+    "workflow_authority_snapshots": "468bb4b561a9180edd900b5718d1cf49799160c6ad002ca325fb9ce387089119",
+    "workflow_checkpoints": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "workflow_committed_outputs": "4fdfda7ef4cd8b93ecbceffddef986a6c27d0c3fdf649a6d174512f016b9308f",
+    "workflow_definitions": "8e7e92bcdbba2775722fc02115bcefa7fd0e303bbc2a77b4385e853723544593",
+    "workflow_history_events": "207933d02d99dfcda6e572dab28f228903168bfcd69119dfe492e609af34b988",
+    "workflow_job_attempts": "38f2bec197de9dcbcd62f27f90cf970c192501e5611357f4bd4d145d551d574d",
+    "workflow_queue_jobs": "b9ff89fbe420f05f107291767b1913ca3d5ebbfc778b9bb3c23e28f144a34ddc",
+    "workflows": "ae05335f8a0332f6fa7a43345d988fc270fd7e3d9690f3838086f55cdb5a5456"
+  },
+  "schemaMigrationRows": [],
+  "exportPreservation": "all source counts, ordered row/cell SHA256 and schema-migration rows matched captured target exactly before archiving",
+  "acceptedRevisionId": "01a145de-4101-73e5-a993-b56e7cec02d2",
+  "enrichmentRevisionId": "01a145de-4217-7cff-bde1-cbaa25fda538",
+  "databaseSha256": "971c2a2456151cc710bc1db65294b04a8c973b6b6a7a7a10148a5397f0616454",
+  "archiveSha256": "e3a57bdc4d5f06b079818a8e9cf2bff7f4a621426aaa28dc2e12fb13223cc570",
+  "ciphertext": [
+    {
+      "relativePath": "objects/14/56/1456e4fc237ebee80134e68ffaf6477f75bfce614ba92c77d918f8d7d7fefe55.blob",
+      "sha256": "2e458e30d7d5bc10bf5e8d9f89297f8b52a7430ee5da6ce2ed2aa782054cca6a",
+      "byteLength": 80
+    },
+    {
+      "relativePath": "objects/33/3a/333a964eabc05b83c2dc3da849b2a0979b35b4f2556e357ed65a4e48fce66e56.blob",
+      "sha256": "075a26e5597567f11e9a84de9401cdfdf017b0e4c91d4034c920d45e77570c08",
+      "byteLength": 4122
+    },
+    {
+      "relativePath": "objects/35/02/3502d921f52c20da5914fca6f1a625fd1e5997f67ea5dbd6fcb10eb06d263eb2.blob",
+      "sha256": "1c06515595c5e831b41ee8e5378b9380044f6380a27510133bc3354b830f59c8",
+      "byteLength": 2859
+    },
+    {
+      "relativePath": "objects/7c/87/7c8789d6ec29e41ada29de05e465970d87c8a48d7c854086e08b7c90d6069a92.blob",
+      "sha256": "d7f08324a5d5138a3320ac905f8a114c91d26f5acfbbb6e9c03b2433cf7a9cb5",
+      "byteLength": 6027
+    },
+    {
+      "relativePath": "objects/cf/3c/cf3c0fe1b6b28655ece7321400f41c3b7cd7d69a422254d964922fc0160895bd.blob",
+      "sha256": "0e3f47cf94f14a1102525c217fa417b7507d177df7f53dd9af3aa76b54dbfe78",
+      "byteLength": 5068
+    },
+    {
+      "relativePath": "objects/d4/6a/d46a48d0367e2ee9b2c64d80b1458f5fe061a66b38e7d2b020138a98e0669693.blob",
+      "sha256": "369c122b23afbf2c0b17929c57a7f8af3eb9ed4d0cbb00e4f6caa73bf555731b",
+      "byteLength": 81
+    },
+    {
+      "relativePath": "objects/f7/76/f7764165c6484421f59f29ead692fb65847c08084ce22b8df518c7b18f37c010.blob",
+      "sha256": "2606874571e490ef0e07361ceab634d04b4c0204b70b82c9a3254e381c32f9cc",
+      "byteLength": 86
+    }
+  ],
+  "consumedRepositorySources": {
+    "services/core-api/src/research_observatory_core/__init__.py": {
+      "rawSha256": "8e474f05baa97c8439b1124b663b089be4c96d2d86962257d94d9a4266d4656e",
+      "canonicalSha256": "8e474f05baa97c8439b1124b663b089be4c96d2d86962257d94d9a4266d4656e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/__init__.py": {
+      "rawSha256": "c70ac009f6a6a6844d3b3cd0e8bdccb5472f021075abea83ee02591948107f52",
+      "canonicalSha256": "c70ac009f6a6a6844d3b3cd0e8bdccb5472f021075abea83ee02591948107f52",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/__init__.py": {
+      "rawSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0",
+      "canonicalSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py": {
+      "rawSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f",
+      "canonicalSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0003_object_envelopes.py": {
+      "rawSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac",
+      "canonicalSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py": {
+      "rawSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56",
+      "canonicalSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py": {
+      "rawSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357",
+      "canonicalSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0028_document_enrichments.py": {
+      "rawSha256": "17c27d3a9358bd6f52b32c11f7e0ee4bc3e9ce37a359044783dce943b43863d0",
+      "canonicalSha256": "17c27d3a9358bd6f52b32c11f7e0ee4bc3e9ce37a359044783dce943b43863d0",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/__init__.py": {
+      "rawSha256": "688091ef4f711ea2ab7ee237af56d4fc020710aec7377406756475e15538567c",
+      "canonicalSha256": "688091ef4f711ea2ab7ee237af56d4fc020710aec7377406756475e15538567c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/credential_store.py": {
+      "rawSha256": "b8a56b0473e9a33ccac403a641970dc9c1e6709914c5d3c6c6200ecd0710ac46",
+      "canonicalSha256": "b8a56b0473e9a33ccac403a641970dc9c1e6709914c5d3c6c6200ecd0710ac46",
+      "equalsClaimGitBlob": false
+    },
+    "services/core-api/src/research_observatory_core/ports/database_keys.py": {
+      "rawSha256": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf",
+      "canonicalSha256": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/storage.py": {
+      "rawSha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4",
+      "canonicalSha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4",
+      "equalsClaimGitBlob": true
+    },
+    "tests/__init__.py": {
+      "rawSha256": "72a4bc8606c8ade2e0f6e3b8a6338ee2bdbf1786e95e84dedb24c6f09a492c65",
+      "canonicalSha256": "72a4bc8606c8ade2e0f6e3b8a6338ee2bdbf1786e95e84dedb24c6f09a492c65",
+      "equalsClaimGitBlob": true
+    },
+    "tests/documents/__init__.py": {
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/anchors/__init__.py": {
+      "rawSha256": "c0698ac94ca0c838e5f4fc2c3feb4f01f4ecf82bd3c9d877fb54e453d4a43935",
+      "canonicalSha256": "c0698ac94ca0c838e5f4fc2c3feb4f01f4ecf82bd3c9d877fb54e453d4a43935",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/domain_contracts.py": {
+      "rawSha256": "0fb696920deb89e6ab7aa57e3f122712274a706d36cc0548cca56cedc3375d31",
+      "canonicalSha256": "0fb696920deb89e6ab7aa57e3f122712274a706d36cc0548cca56cedc3375d31",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/__init__.py": {
+      "rawSha256": "a31978f774b3301b4f32ee2b55ede3083018684b78d8abb85275732ee7ee9e53",
+      "canonicalSha256": "a31978f774b3301b4f32ee2b55ede3083018684b78d8abb85275732ee7ee9e53",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/models.py": {
+      "rawSha256": "f6ee35109b717f63f55903ab0e8977cd864faf69b39fc5ff239d02f170f9a92a",
+      "canonicalSha256": "f6ee35109b717f63f55903ab0e8977cd864faf69b39fc5ff239d02f170f9a92a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/normalization.py": {
+      "rawSha256": "84f823011635ec1307e5760b109438a16799d13057dfbc5f17c9bc26d1f48175",
+      "canonicalSha256": "84f823011635ec1307e5760b109438a16799d13057dfbc5f17c9bc26d1f48175",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/contracts.py": {
+      "rawSha256": "953a693d3f2928a7285fda5a80d4b9c9834ce93572abd8a0d7765e6b6ce12b4c",
+      "canonicalSha256": "953a693d3f2928a7285fda5a80d4b9c9834ce93572abd8a0d7765e6b6ce12b4c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_revisions.py": {
+      "rawSha256": "e378fd9bb0ffcd6c1cf7409c8c8704c4a6f5cc7d6c181b851a288ced09153991",
+      "canonicalSha256": "e378fd9bb0ffcd6c1cf7409c8c8704c4a6f5cc7d6c181b851a288ced09153991",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/anchors/contracts.py": {
+      "rawSha256": "85f57bfbd6b192032d9a40946b20fe50cbebda5529bfac6e52505b04ec5190c8",
+      "canonicalSha256": "85f57bfbd6b192032d9a40946b20fe50cbebda5529bfac6e52505b04ec5190c8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/native_contracts.py": {
+      "rawSha256": "f779a1f9036a040f6c0d02a4cfbfad8304c597353187f0bbc158c41e9a8965e9",
+      "canonicalSha256": "f779a1f9036a040f6c0d02a4cfbfad8304c597353187f0bbc158c41e9a8965e9",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/__init__.py": {
+      "rawSha256": "7cecd520991f69509f0d820d591eacff18b6b7a880140b1f7075fcce24456231",
+      "canonicalSha256": "7cecd520991f69509f0d820d591eacff18b6b7a880140b1f7075fcce24456231",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/__init__.py": {
+      "rawSha256": "6d3fb652dba126e2926cb8f55c86260c7070bd8f53653382031caae2a4d36d34",
+      "canonicalSha256": "6d3fb652dba126e2926cb8f55c86260c7070bd8f53653382031caae2a4d36d34",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/reference_imports.py": {
+      "rawSha256": "a088be7c44765f875c313ba066df920061029fcc678e5dfb882fc7acc6d83391",
+      "canonicalSha256": "a088be7c44765f875c313ba066df920061029fcc678e5dfb882fc7acc6d83391",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/import_drafts.py": {
+      "rawSha256": "c24d8e6afc3a2945f4d5cd24772d6ff080e1754e5f6fd9dde82b0717dee7f250",
+      "canonicalSha256": "c24d8e6afc3a2945f4d5cd24772d6ff080e1754e5f6fd9dde82b0717dee7f250",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/identifiers.py": {
+      "rawSha256": "391a4431c4892f1f9793629ec0eb8c4c386973f934012c4f00f51250db044522",
+      "canonicalSha256": "391a4431c4892f1f9793629ec0eb8c4c386973f934012c4f00f51250db044522",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/exact.py": {
+      "rawSha256": "e5de5dfe2e2a96385e8bb6198720328b0c5d8fa6f860778f4f103fa6dded6488",
+      "canonicalSha256": "e5de5dfe2e2a96385e8bb6198720328b0c5d8fa6f860778f4f103fa6dded6488",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/contracts.py": {
+      "rawSha256": "bb3ae21201fddaafa9a6ab5e438b0a7737b75ae9b3901b3c783d7147abece0e3",
+      "canonicalSha256": "bb3ae21201fddaafa9a6ab5e438b0a7737b75ae9b3901b3c783d7147abece0e3",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/candidates.py": {
+      "rawSha256": "1e8e0881a36597d6887d62b5d748d7126a4f4fca3db1df1e36dc82aba623ca0a",
+      "canonicalSha256": "1e8e0881a36597d6887d62b5d748d7126a4f4fca3db1df1e36dc82aba623ca0a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_references.py": {
+      "rawSha256": "e4bbdd2937d3c6cfb30e64e80940b3619f4e7cfb4621302a69c247d5b2644195",
+      "canonicalSha256": "e4bbdd2937d3c6cfb30e64e80940b3619f4e7cfb4621302a69c247d5b2644195",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/selection.py": {
+      "rawSha256": "a4dd8dbf27875bcfe16abc025c739ba0b9fbc94ad32868087b7f5b6a59b2ae20",
+      "canonicalSha256": "a4dd8dbf27875bcfe16abc025c739ba0b9fbc94ad32868087b7f5b6a59b2ae20",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/requests.py": {
+      "rawSha256": "9b5b63a5be27eaae77da0e6efef21a9ccc8b7984a8adb8e310a77340bcc3c00f",
+      "canonicalSha256": "9b5b63a5be27eaae77da0e6efef21a9ccc8b7984a8adb8e310a77340bcc3c00f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py": {
+      "rawSha256": "416392db28ee050033cc79d15f3c45d24ce2c076031d6cbe7ab125409cd36df4",
+      "canonicalSha256": "416392db28ee050033cc79d15f3c45d24ce2c076031d6cbe7ab125409cd36df4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/import_summaries.py": {
+      "rawSha256": "5fcd1ac99331dbc220521e0b890d4c91a8680cd0caabf03685ff827be4ff9c14",
+      "canonicalSha256": "5fcd1ac99331dbc220521e0b890d4c91a8680cd0caabf03685ff827be4ff9c14",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus/__init__.py": {
+      "rawSha256": "5c8582af3f86912c27f0b7037b06ce0608817c7de224e2e95e7fd245908f33c4",
+      "canonicalSha256": "5c8582af3f86912c27f0b7037b06ce0608817c7de224e2e95e7fd245908f33c4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus/membership.py": {
+      "rawSha256": "ac5482e34a805f0377bebc230cd311d3009fd3aa12b532ac42cd79ea552d83b9",
+      "canonicalSha256": "ac5482e34a805f0377bebc230cd311d3009fd3aa12b532ac42cd79ea552d83b9",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/corpus.py": {
+      "rawSha256": "a7b4369c3ad5e978d73811c09c6b2b2ce077aadecfe5eec9789fcabccce16271",
+      "canonicalSha256": "a7b4369c3ad5e978d73811c09c6b2b2ce077aadecfe5eec9789fcabccce16271",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/object_store.py": {
+      "rawSha256": "c0c4f557b90c104c635159ebbef4494dc2d5ad32580632bce5602e897b966dc5",
+      "canonicalSha256": "c0c4f557b90c104c635159ebbef4494dc2d5ad32580632bce5602e897b966dc5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/source_chunks.py": {
+      "rawSha256": "2897bdf9a199bbedfdb28820182f2a0a6e2a384a2fff0d391b03e7a23950f84e",
+      "canonicalSha256": "2897bdf9a199bbedfdb28820182f2a0a6e2a384a2fff0d391b03e7a23950f84e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/workflow_executor.py": {
+      "rawSha256": "0bde8557059e11bc73756a43846f0052a6ca7dff4873f4a15be2ef032aca94e0",
+      "canonicalSha256": "0bde8557059e11bc73756a43846f0052a6ca7dff4873f4a15be2ef032aca94e0",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/import_previews.py": {
+      "rawSha256": "499d53a7adefcf7f1e2aeff43acb59b5105d26bbcdf98045cb397e8e136cd932",
+      "canonicalSha256": "499d53a7adefcf7f1e2aeff43acb59b5105d26bbcdf98045cb397e8e136cd932",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_contracts.py": {
+      "rawSha256": "013ffebdf9df2ba14546224971ab7bdf5cc74df31f1c01dda17b00d063d91e8f",
+      "canonicalSha256": "013ffebdf9df2ba14546224971ab7bdf5cc74df31f1c01dda17b00d063d91e8f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_executor.py": {
+      "rawSha256": "d30cfa3867826e700a379c1acd679149ff1ce812d30110afb1205b067cd0390f",
+      "canonicalSha256": "d30cfa3867826e700a379c1acd679149ff1ce812d30110afb1205b067cd0390f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py": {
+      "rawSha256": "edb909aa12567b095ff2c61625ef2a14f5aa5e153f0358b766cbd08eae9a08f9",
+      "canonicalSha256": "edb909aa12567b095ff2c61625ef2a14f5aa5e153f0358b766cbd08eae9a08f9",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/batch.py": {
+      "rawSha256": "a94d052cfe0e2b0695ac36bb91625fa2d14f6c31eb9aabefc83809193c2ed5bc",
+      "canonicalSha256": "a94d052cfe0e2b0695ac36bb91625fa2d14f6c31eb9aabefc83809193c2ed5bc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py": {
+      "rawSha256": "42af88a548205658450d9a67df971be2997a66c050fcdb2150ab3c558b8ed4dc",
+      "canonicalSha256": "42af88a548205658450d9a67df971be2997a66c050fcdb2150ab3c558b8ed4dc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_views.py": {
+      "rawSha256": "ecc70dd2640f825d1419c03e203b66836871dcc79af17d499f39a7fa5e98612a",
+      "canonicalSha256": "ecc70dd2640f825d1419c03e203b66836871dcc79af17d499f39a7fa5e98612a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/decisions.py": {
+      "rawSha256": "0bb39b25da90004bad558e6df9b3ee662d5a27d2ddd7a3d3944b91cdee4d1bed",
+      "canonicalSha256": "0bb39b25da90004bad558e6df9b3ee662d5a27d2ddd7a3d3944b91cdee4d1bed",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/inventory.py": {
+      "rawSha256": "de9ea02b0bd06708654cb6fe3dadba515f894fbd80722599e8e8632b2b4e4bf5",
+      "canonicalSha256": "de9ea02b0bd06708654cb6fe3dadba515f894fbd80722599e8e8632b2b4e4bf5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/versions.py": {
+      "rawSha256": "3c22f4cec6be6d1b7c7f72e3fa604f4172f8259b4a7bce9da38c662218cb47f6",
+      "canonicalSha256": "3c22f4cec6be6d1b7c7f72e3fa604f4172f8259b4a7bce9da38c662218cb47f6",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/reconciliation.py": {
+      "rawSha256": "974dd6c48b823e5ab71e70124a786fcbc89321c45e7e27101e552f8ed0cce018",
+      "canonicalSha256": "974dd6c48b823e5ab71e70124a786fcbc89321c45e7e27101e552f8ed0cce018",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/repositories.py": {
+      "rawSha256": "1635ffde693edb41ae90fb71f559ddf0b4d3688152ce9840fd3ea2d8f8334ce8",
+      "canonicalSha256": "1635ffde693edb41ae90fb71f559ddf0b4d3688152ce9840fd3ea2d8f8334ce8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/feature_cache.py": {
+      "rawSha256": "7f411f1a35888992f9b2f033e5d14b04d741c08b46d4480a9ee442e90ac415ff",
+      "canonicalSha256": "7f411f1a35888992f9b2f033e5d14b04d741c08b46d4480a9ee442e90ac415ff",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/workflow.py": {
+      "rawSha256": "7fdea5381fcdd2280796b637a2b4a4b6162d06e292044436acde85835ab41e6d",
+      "canonicalSha256": "7fdea5381fcdd2280796b637a2b4a4b6162d06e292044436acde85835ab41e6d",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/dependency_impacts.py": {
+      "rawSha256": "a6b308c84196ae81cb52bd73edb0a0b7f8e9ea84920121aa290581dcdc42063c",
+      "canonicalSha256": "a6b308c84196ae81cb52bd73edb0a0b7f8e9ea84920121aa290581dcdc42063c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/logging.py": {
+      "rawSha256": "7a11494476f67074a078fe30407c9f13ea73b4b401c0d78db958a54de55241cc",
+      "canonicalSha256": "7a11494476f67074a078fe30407c9f13ea73b4b401c0d78db958a54de55241cc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/object_store_keys.py": {
+      "rawSha256": "0e201809db0ee30efc5513a20260c67d0c5b418c1f9936832872ee5d0004bbb2",
+      "canonicalSha256": "0e201809db0ee30efc5513a20260c67d0c5b418c1f9936832872ee5d0004bbb2",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/project_recovery.py": {
+      "rawSha256": "c5b32f97f2fe74d8eca501cb12f39e32e2c6aa89a4ed4c44e46179f1d1aa675e",
+      "canonicalSha256": "c5b32f97f2fe74d8eca501cb12f39e32e2c6aa89a4ed4c44e46179f1d1aa675e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/project_action_mutex.py": {
+      "rawSha256": "852e759522466f6d7f6cac6e5b11fdd5c2522ccde60866df74e27405823ad545",
+      "canonicalSha256": "852e759522466f6d7f6cac6e5b11fdd5c2522ccde60866df74e27405823ad545",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_profile_contracts.py": {
+      "rawSha256": "a7c2964ded438a4e29b9dfefa13b4967f3acdea088db416a9d2ba19af5af85dd",
+      "canonicalSha256": "a7c2964ded438a4e29b9dfefa13b4967f3acdea088db416a9d2ba19af5af85dd",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/projects.py": {
+      "rawSha256": "3dc13522aae66632a930782d31dd49e1edbe8cc34bce2be419ce977cc82bf977",
+      "canonicalSha256": "3dc13522aae66632a930782d31dd49e1edbe8cc34bce2be419ce977cc82bf977",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/provenance_contracts.py": {
+      "rawSha256": "b068e20debaa6b4e8133fd7c8c8cf479cf4dcfad28596b843e4c04dd297b44b8",
+      "canonicalSha256": "b068e20debaa6b4e8133fd7c8c8cf479cf4dcfad28596b843e4c04dd297b44b8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/provenance.py": {
+      "rawSha256": "93bc1269e08683724a1d5166b560784479964fe8781333fc776e755d330593d7",
+      "canonicalSha256": "93bc1269e08683724a1d5166b560784479964fe8781333fc776e755d330593d7",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/recalculation_contracts.py": {
+      "rawSha256": "c5962546e537fcb3a864aac605893aa1b5b289c6ebd5c66789cedd6dec616341",
+      "canonicalSha256": "c5962546e537fcb3a864aac605893aa1b5b289c6ebd5c66789cedd6dec616341",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/repositories.py": {
+      "rawSha256": "b39430580c54a9954f5c97f69baca17d65688a4a258d76bca1cae062dc0d1b90",
+      "canonicalSha256": "b39430580c54a9954f5c97f69baca17d65688a4a258d76bca1cae062dc0d1b90",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation_repository.py": {
+      "rawSha256": "600c121ca4cdf3ea266011a6ff840f63928cf6a57e5923c522bc0154a2750c67",
+      "canonicalSha256": "600c121ca4cdf3ea266011a6ff840f63928cf6a57e5923c522bc0154a2750c67",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reference_matching_repository.py": {
+      "rawSha256": "5baaa86b71aaf359a587c94a9159497c5ded8f619c9cc099b91b9df345597134",
+      "canonicalSha256": "5baaa86b71aaf359a587c94a9159497c5ded8f619c9cc099b91b9df345597134",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_reference_repository.py": {
+      "rawSha256": "34dcdb7e85298bad87ec81378727f7d57205ba961ce42752830992c3b8d64044",
+      "canonicalSha256": "34dcdb7e85298bad87ec81378727f7d57205ba961ce42752830992c3b8d64044",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/object_store.py": {
+      "rawSha256": "dd7d1a9cb675884befc99ee5bb7872b88e3bf18a4c872b56e1b7311630561625",
+      "canonicalSha256": "dd7d1a9cb675884befc99ee5bb7872b88e3bf18a4c872b56e1b7311630561625",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/acquisition/__init__.py": {
+      "rawSha256": "16dcd1f5b93622cb1bb9667e657bcb665ef5dd792f6992f4d922587aea095e45",
+      "canonicalSha256": "16dcd1f5b93622cb1bb9667e657bcb665ef5dd792f6992f4d922587aea095e45",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/acquisition/intake.py": {
+      "rawSha256": "0bf84e495cacd0413ec5e42f68940b44900a045676f99b3aa4940db2e86c69ca",
+      "canonicalSha256": "0bf84e495cacd0413ec5e42f68940b44900a045676f99b3aa4940db2e86c69ca",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/__init__.py": {
+      "rawSha256": "b0431a6af56067298d20bae4192a45215d51daaf6406dc834c5d6ad7600537fc",
+      "canonicalSha256": "b0431a6af56067298d20bae4192a45215d51daaf6406dc834c5d6ad7600537fc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/contracts.py": {
+      "rawSha256": "66c7042f434916bfd7c7cb069cac77b6acbe0a235b070d9dbe147841760d7ee6",
+      "canonicalSha256": "66c7042f434916bfd7c7cb069cac77b6acbe0a235b070d9dbe147841760d7ee6",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/rights_policy.py": {
+      "rawSha256": "700e631bd29ca9ac9f76e72eef70aef21208352bb46cd05b3028a6e4067153d6",
+      "canonicalSha256": "700e631bd29ca9ac9f76e72eef70aef21208352bb46cd05b3028a6e4067153d6",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/document_attachments.py": {
+      "rawSha256": "a537144eea39bf75d49f29ddd44f20dde55da24aee3c298652d967d0c95b1ec7",
+      "canonicalSha256": "a537144eea39bf75d49f29ddd44f20dde55da24aee3c298652d967d0c95b1ec7",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/acquisition.py": {
+      "rawSha256": "780f1ecc8d0a38e4795753a682f6cf88b9dc1886570981862d51bb2fb7ffc61f",
+      "canonicalSha256": "780f1ecc8d0a38e4795753a682f6cf88b9dc1886570981862d51bb2fb7ffc61f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/providers.py": {
+      "rawSha256": "18112dd62f0754c6f31d7a2c9c7eeebb0b45abbdc4b533f8f0690d70a653937f",
+      "canonicalSha256": "18112dd62f0754c6f31d7a2c9c7eeebb0b45abbdc4b533f8f0690d70a653937f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/transport.py": {
+      "rawSha256": "07b991ff4f5566a555111ff41b991ee7cc41168c38f5b1e1beb7cd2fdcf1a5bc",
+      "canonicalSha256": "07b991ff4f5566a555111ff41b991ee7cc41168c38f5b1e1beb7cd2fdcf1a5bc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/acquisition/transport.py": {
+      "rawSha256": "4d81d990f2063e7b559549943bb2438315ee9902bc4e3731bc784f004e85a077",
+      "canonicalSha256": "4d81d990f2063e7b559549943bb2438315ee9902bc4e3731bc784f004e85a077",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/acquisition/locations.py": {
+      "rawSha256": "57b2022bf8262341ea71d1d0d209ce46fc7fa522b9daa43e04c9067b79482d23",
+      "canonicalSha256": "57b2022bf8262341ea71d1d0d209ce46fc7fa522b9daa43e04c9067b79482d23",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/connector_runtime.py": {
+      "rawSha256": "ee0c5ec6cf3af873f25199cfdb5882b31b306be1e170f1d67c355fc11520c109",
+      "canonicalSha256": "ee0c5ec6cf3af873f25199cfdb5882b31b306be1e170f1d67c355fc11520c109",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/connectors.py": {
+      "rawSha256": "0e4cb28eade372289dd95f581a9f87637ae9efd8468b581e46913e98c2aef486",
+      "canonicalSha256": "0e4cb28eade372289dd95f581a9f87637ae9efd8468b581e46913e98c2aef486",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/settings.py": {
+      "rawSha256": "d4a8a31491a86b9055eb60d672e57abfe62c4a2762aa63840afc1ac585b402c0",
+      "canonicalSha256": "d4a8a31491a86b9055eb60d672e57abfe62c4a2762aa63840afc1ac585b402c0",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/broker.py": {
+      "rawSha256": "e811cdc20c49b9bf885e1f7b8c2ca11be0af0325de54ee456bb1686616ad35fd",
+      "canonicalSha256": "e811cdc20c49b9bf885e1f7b8c2ca11be0af0325de54ee456bb1686616ad35fd",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/privacy.py": {
+      "rawSha256": "d67221b2f71cce88bb54caad1bf2141fddb9d7fed027076d1a60a5d76b5e1dba",
+      "canonicalSha256": "d67221b2f71cce88bb54caad1bf2141fddb9d7fed027076d1a60a5d76b5e1dba",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/research_intent_contracts.py": {
+      "rawSha256": "0ccafb9c28c97335c211c1b7e91bfa6c5c0354eed0fd207055aa174e45030078",
+      "canonicalSha256": "0ccafb9c28c97335c211c1b7e91bfa6c5c0354eed0fd207055aa174e45030078",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/research_intents.py": {
+      "rawSha256": "d6fc524e54dca78002832fc9c7b157d992dea3d33f383b5d9368408df14d2925",
+      "canonicalSha256": "d6fc524e54dca78002832fc9c7b157d992dea3d33f383b5d9368408df14d2925",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connector_service.py": {
+      "rawSha256": "d3520729b55390086019c648234a1fbf4af29a45bf8d5889309cbb57c5c2b21f",
+      "canonicalSha256": "d3520729b55390086019c648234a1fbf4af29a45bf8d5889309cbb57c5c2b21f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_contracts.py": {
+      "rawSha256": "d82e662d59a82c67a064c004cc60f2afe60b6980c30eda887d7c2c15af6b3a78",
+      "canonicalSha256": "d82e662d59a82c67a064c004cc60f2afe60b6980c30eda887d7c2c15af6b3a78",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_report_model.py": {
+      "rawSha256": "a9c67e3a82d78be886b9be966847126c62e74dda844186076ffb123248de4bd1",
+      "canonicalSha256": "a9c67e3a82d78be886b9be966847126c62e74dda844186076ffb123248de4bd1",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_source_projection.py": {
+      "rawSha256": "2969497cf4f406c1a5dd23e5686816fbece991f449defafb6ec7378d3eb173eb",
+      "canonicalSha256": "2969497cf4f406c1a5dd23e5686816fbece991f449defafb6ec7378d3eb173eb",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/rights.py": {
+      "rawSha256": "eecfacb8516adcf8cfcf480e6290fc275bf5960b7ec70b1ee285168d526c29d0",
+      "canonicalSha256": "eecfacb8516adcf8cfcf480e6290fc275bf5960b7ec70b1ee285168d526c29d0",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/rights_repository.py": {
+      "rawSha256": "00a496bc006a4f9ca5cd1929a0f1ade90c0b5643b0511ae95bf70e6c0c4bac66",
+      "canonicalSha256": "00a496bc006a4f9ca5cd1929a0f1ade90c0b5643b0511ae95bf70e6c0c4bac66",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_repository.py": {
+      "rawSha256": "928b6b81320342ae5c135dfb50b417730b5d07e5958f1acbe3fb732515b492dc",
+      "canonicalSha256": "928b6b81320342ae5c135dfb50b417730b5d07e5958f1acbe3fb732515b492dc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/parsing.py": {
+      "rawSha256": "60b91ac1df9ec80b8348f53b042ed29f0aea019538224d10ef285d8767caf219",
+      "canonicalSha256": "60b91ac1df9ec80b8348f53b042ed29f0aea019538224d10ef285d8767caf219",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_attachment_repository.py": {
+      "rawSha256": "c40922baa658c56730d7cc8823d13b3c75d7b529579c25c2c3c0b8f3234222b2",
+      "canonicalSha256": "c40922baa658c56730d7cc8823d13b3c75d7b529579c25c2c3c0b8f3234222b2",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_parse_workflow.py": {
+      "rawSha256": "ad71aee661e0adab4825d77ba4dbb6cbd35663946517f120db672563f6a5ba20",
+      "canonicalSha256": "ad71aee661e0adab4825d77ba4dbb6cbd35663946517f120db672563f6a5ba20",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_corrections.py": {
+      "rawSha256": "cb604cc43066be5ae75831e12f50c06f2de8151e7ce35dd2ec7ba9a0b613cc5f",
+      "canonicalSha256": "cb604cc43066be5ae75831e12f50c06f2de8151e7ce35dd2ec7ba9a0b613cc5f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/native_parsing.py": {
+      "rawSha256": "c1084508fd77c900360ab65855a92dce6a4e840a24ed25afd3cdbb45e49c76d1",
+      "canonicalSha256": "c1084508fd77c900360ab65855a92dce6a4e840a24ed25afd3cdbb45e49c76d1",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/pipeline.py": {
+      "rawSha256": "997f5fa1361251b7250a9f6b0ab712a40940493de130d4a177f8917f2cde88fc",
+      "canonicalSha256": "997f5fa1361251b7250a9f6b0ab712a40940493de130d4a177f8917f2cde88fc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/native.py": {
+      "rawSha256": "786dbca54bf55ae13fee8aac5820bc5b8a607fbd4baaf8e2dda7f2e430e1554a",
+      "canonicalSha256": "786dbca54bf55ae13fee8aac5820bc5b8a607fbd4baaf8e2dda7f2e430e1554a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/quality.py": {
+      "rawSha256": "51ba9768e3bb76ea6e698da6378ff7aa83faddbf35b3e80fcc9124fd83aff5d4",
+      "canonicalSha256": "51ba9768e3bb76ea6e698da6378ff7aa83faddbf35b3e80fcc9124fd83aff5d4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_reprocessing.py": {
+      "rawSha256": "9661cf987d92eef90c37344ae9443bdddbd376c5628b564bd5c35636e70b860b",
+      "canonicalSha256": "9661cf987d92eef90c37344ae9443bdddbd376c5628b564bd5c35636e70b860b",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_correction_lineage.py": {
+      "rawSha256": "4fab9fd259cbfaaef1f8c828865ea04ae39375012355115075ebd074abdedf70",
+      "canonicalSha256": "4fab9fd259cbfaaef1f8c828865ea04ae39375012355115075ebd074abdedf70",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_correction_views.py": {
+      "rawSha256": "a9433a7a65b6e7fa566c29a325bbaf8ebf8b6571f107d19e93d1a4d90c7e5073",
+      "canonicalSha256": "a9433a7a65b6e7fa566c29a325bbaf8ebf8b6571f107d19e93d1a4d90c7e5073",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/source.py": {
+      "rawSha256": "1eb7c3cabf0d5ed0a8ba219a391747245c3a7b123d7dd628d09a3e6eeafa83cc",
+      "canonicalSha256": "1eb7c3cabf0d5ed0a8ba219a391747245c3a7b123d7dd628d09a3e6eeafa83cc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/source_anchors.py": {
+      "rawSha256": "597bed3bff56327bdfb9d9ecb54d79b017f328184fed39a838fe739939f85b24",
+      "canonicalSha256": "597bed3bff56327bdfb9d9ecb54d79b017f328184fed39a838fe739939f85b24",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_revision_repository.py": {
+      "rawSha256": "e6dada145fbc11566e75381b8ce61522904f3a33a2d05904f9929e99f103bcce",
+      "canonicalSha256": "e6dada145fbc11566e75381b8ce61522904f3a33a2d05904f9929e99f103bcce",
+      "equalsClaimGitBlob": true
+    },
+    "tests/parsing/__init__.py": {
+      "rawSha256": "b0858d8a35ca5b3301744fc7f5523827e6fb05a1a7d101e61bf662114b1cce7f",
+      "canonicalSha256": "b0858d8a35ca5b3301744fc7f5523827e6fb05a1a7d101e61bf662114b1cce7f",
+      "equalsClaimGitBlob": true
+    },
+    "tests/parsing/contract_fixtures.py": {
+      "rawSha256": "15f06d8d9c176226bd0ca8d2c7c616daa9b3b5ff434e7380c9938e1e2cc93ca2",
+      "canonicalSha256": "15f06d8d9c176226bd0ca8d2c7c616daa9b3b5ff434e7380c9938e1e2cc93ca2",
+      "equalsClaimGitBlob": true
+    },
+    "tests/database_key_fixtures.py": {
+      "rawSha256": "ddc8913c85e1491ba0e6a15cb4bca5e7094b4098b89edb7879f64e000340a8bc",
+      "canonicalSha256": "ddc8913c85e1491ba0e6a15cb4bca5e7094b4098b89edb7879f64e000340a8bc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py": {
+      "rawSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69",
+      "canonicalSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py": {
+      "rawSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917",
+      "canonicalSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py": {
+      "rawSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723",
+      "canonicalSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py": {
+      "rawSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a",
+      "canonicalSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0011_import_previews.py": {
+      "rawSha256": "d80b2334bab3d65b016fd8282eaff5784815cc5a3c56a7ec62dd8ebadc972982",
+      "canonicalSha256": "d80b2334bab3d65b016fd8282eaff5784815cc5a3c56a7ec62dd8ebadc972982",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0012_import_summaries.py": {
+      "rawSha256": "e538b0ee317f4a28312e8e8f80e739540441a4876f8434fab61b21d5ff057f02",
+      "canonicalSha256": "e538b0ee317f4a28312e8e8f80e739540441a4876f8434fab61b21d5ff057f02",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0013_import_commits.py": {
+      "rawSha256": "e52a0ccb23bae8265d492e997c338e16fdaea3e16c37d2b22cf30cf7684f186c",
+      "canonicalSha256": "e52a0ccb23bae8265d492e997c338e16fdaea3e16c37d2b22cf30cf7684f186c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0014_scholarly_reconciliation.py": {
+      "rawSha256": "7a5229ec89021e671a191d33b5995d4b0dcd38384032d9f979ba305eb6dd4668",
+      "canonicalSha256": "7a5229ec89021e671a191d33b5995d4b0dcd38384032d9f979ba305eb6dd4668",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py": {
+      "rawSha256": "983ecc03af4458eba2e11051998970322bb45c9bb5445bb88b9c9a5c70bb3ea7",
+      "canonicalSha256": "983ecc03af4458eba2e11051998970322bb45c9bb5445bb88b9c9a5c70bb3ea7",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py": {
+      "rawSha256": "2d4e186b3771acc311a41e92dd83a247eccc4d578809f865b5c66f5688b27b77",
+      "canonicalSha256": "2d4e186b3771acc311a41e92dd83a247eccc4d578809f865b5c66f5688b27b77",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0017_corpus_items.py": {
+      "rawSha256": "774a210ef51076c6e3a0e4ca1f84be25c9460d868bae2853add54b6fff02223b",
+      "canonicalSha256": "774a210ef51076c6e3a0e4ca1f84be25c9460d868bae2853add54b6fff02223b",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py": {
+      "rawSha256": "05eabd58edac0ad1c56ecace92d17aa2077558cfaf4ea694b1123e4520b524f9",
+      "canonicalSha256": "05eabd58edac0ad1c56ecace92d17aa2077558cfaf4ea694b1123e4520b524f9",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0019_corpus_reports.py": {
+      "rawSha256": "e8c034c89d695d567927d8665d06a7f205e55952c7c79279bb2bfa9438216aa0",
+      "canonicalSha256": "e8c034c89d695d567927d8665d06a7f205e55952c7c79279bb2bfa9438216aa0",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0020_corpus_source_projection.py": {
+      "rawSha256": "d2a938e8dae13c06cf06d9eb6a7f9a7cbe7ccc78ca0dc8f982907d5dac4735be",
+      "canonicalSha256": "d2a938e8dae13c06cf06d9eb6a7f9a7cbe7ccc78ca0dc8f982907d5dac4735be",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0021_plugin_grants.py": {
+      "rawSha256": "69acf0891a28ef103144444feadc1b94a65b3a49b41d81ccc20731a4b397667a",
+      "canonicalSha256": "69acf0891a28ef103144444feadc1b94a65b3a49b41d81ccc20731a4b397667a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0022_document_attachments.py": {
+      "rawSha256": "1907451992875a8233caa4994f0c8206acf0b9822271d778c3c912e79b31775a",
+      "canonicalSha256": "1907451992875a8233caa4994f0c8206acf0b9822271d778c3c912e79b31775a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0023_attachment_operations.py": {
+      "rawSha256": "699a956f33633ee99b8e7f4b85b74d6ec39646b3eb74747fc93e863f0f93617d",
+      "canonicalSha256": "699a956f33633ee99b8e7f4b85b74d6ec39646b3eb74747fc93e863f0f93617d",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py": {
+      "rawSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+      "canonicalSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0025_document_intake_recovery.py": {
+      "rawSha256": "1dc43925fefbf8d62c13000addb14c9ceb6c26ed10182ecabc7aedfe2e2747e6",
+      "canonicalSha256": "1dc43925fefbf8d62c13000addb14c9ceb6c26ed10182ecabc7aedfe2e2747e6",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py": {
+      "rawSha256": "43de5b26420e3dd0d04fbf38f610c2061ae5f1673251594695dcd241b0f6fafc",
+      "canonicalSha256": "43de5b26420e3dd0d04fbf38f610c2061ae5f1673251594695dcd241b0f6fafc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py": {
+      "rawSha256": "399c3df514a4625a9876fe56fcb9b14680ad2f56c102d34b43c23dce6feee25a",
+      "canonicalSha256": "399c3df514a4625a9876fe56fcb9b14680ad2f56c102d34b43c23dce6feee25a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/runner.py": {
+      "rawSha256": "f8ad597e16b30d3da24a5e50f49643cb6008ba041c1abb27f77c819def1f7565",
+      "canonicalSha256": "f8ad597e16b30d3da24a5e50f49643cb6008ba041c1abb27f77c819def1f7565",
+      "equalsClaimGitBlob": true
+    },
+    "tests/corpus/__init__.py": {
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/__init__.py": {
+      "rawSha256": "1153bbd927be796f0deceed2db2f23dec21ce386e9cc27f1fe268e7637c9c711",
+      "canonicalSha256": "1153bbd927be796f0deceed2db2f23dec21ce386e9cc27f1fe268e7637c9c711",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/workflow.py": {
+      "rawSha256": "75f780a6810f3a6bd4cdef84b98cdcc5ee40366cd55dcc936bf178e0d3ac9941",
+      "canonicalSha256": "75f780a6810f3a6bd4cdef84b98cdcc5ee40366cd55dcc936bf178e0d3ac9941",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connector_repository.py": {
+      "rawSha256": "478b7a23abccc35280be237ffba6e85db417880f3eb397409fde0970a4dc87b8",
+      "canonicalSha256": "478b7a23abccc35280be237ffba6e85db417880f3eb397409fde0970a4dc87b8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/inspection.py": {
+      "rawSha256": "8f179c82ddff375a522437398006d6fa56f345bc331802e107b0ec571e1be3f9",
+      "canonicalSha256": "8f179c82ddff375a522437398006d6fa56f345bc331802e107b0ec571e1be3f9",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connector_worker.py": {
+      "rawSha256": "98dbf9e2fd6702491e4d997b461c10e775c09ddab9d157f64c87eb196fc2b72a",
+      "canonicalSha256": "98dbf9e2fd6702491e4d997b461c10e775c09ddab9d157f64c87eb196fc2b72a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/windows_credentials.py": {
+      "rawSha256": "4582bb3321c9c9028d5d88b3367671bdb5acdd77302c58f10a95f16e05bc536d",
+      "canonicalSha256": "4582bb3321c9c9028d5d88b3367671bdb5acdd77302c58f10a95f16e05bc536d",
+      "equalsClaimGitBlob": true
+    },
+    "tests/service/__init__.py": {
+      "rawSha256": "04ab88d9012be9906c4a05714ca84fd88e6a3e6406bed413dd77f19552827171",
+      "canonicalSha256": "04ab88d9012be9906c4a05714ca84fd88e6a3e6406bed413dd77f19552827171",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/authentication.py": {
+      "rawSha256": "97746d5eaa3f1002257203856efa8c067bfac4420a43e04d5fea183435c4fff8",
+      "canonicalSha256": "97746d5eaa3f1002257203856efa8c067bfac4420a43e04d5fea183435c4fff8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/config.py": {
+      "rawSha256": "3171d5ce84d8e76e3397214c16fd0f6128c5340975f7eedb7190da371aff3229",
+      "canonicalSha256": "3171d5ce84d8e76e3397214c16fd0f6128c5340975f7eedb7190da371aff3229",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/transport.py": {
+      "rawSha256": "14aaf6da50d50a34703307e06d8c53cf23599f76e53e83a991f900d93ac98564",
+      "canonicalSha256": "14aaf6da50d50a34703307e06d8c53cf23599f76e53e83a991f900d93ac98564",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connector_api.py": {
+      "rawSha256": "77f8d6549bcbb3afac52a44ab729e706392526f867a29839091b013f5883236d",
+      "canonicalSha256": "77f8d6549bcbb3afac52a44ab729e706392526f867a29839091b013f5883236d",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/corpus_reports.py": {
+      "rawSha256": "442400bea68c7a6a1db6f8e94b4a8da5d7fb924ab3b6d9d62ff89290a5e35033",
+      "canonicalSha256": "442400bea68c7a6a1db6f8e94b4a8da5d7fb924ab3b6d9d62ff89290a5e35033",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_service.py": {
+      "rawSha256": "ffc9a9de8c6d8acbdf941b663ffebb697ac50596fcf61fa99c3014211647130f",
+      "canonicalSha256": "ffc9a9de8c6d8acbdf941b663ffebb697ac50596fcf61fa99c3014211647130f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_api.py": {
+      "rawSha256": "33b0e94745b04e6d7cf0df2f8b360a012ebfbe9f47709b7c8d62a217527c6ae5",
+      "canonicalSha256": "33b0e94745b04e6d7cf0df2f8b360a012ebfbe9f47709b7c8d62a217527c6ae5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/preview_records.py": {
+      "rawSha256": "94b249c25082996375227d8c2b469fc793aa1e7ac217cc83ccb996bd53f34721",
+      "canonicalSha256": "94b249c25082996375227d8c2b469fc793aa1e7ac217cc83ccb996bd53f34721",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py": {
+      "rawSha256": "d53be40cfd0c0bd16415d073203e73e89877a9bef7551affb91a197bc0c54722",
+      "canonicalSha256": "d53be40cfd0c0bd16415d073203e73e89877a9bef7551affb91a197bc0c54722",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/import_commits.py": {
+      "rawSha256": "4c6742bf6480ae393487b910ace2bf448b62054bf9d464853f6d5c208312a488",
+      "canonicalSha256": "4c6742bf6480ae393487b910ace2bf448b62054bf9d464853f6d5c208312a488",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_review.py": {
+      "rawSha256": "3bb6a36c282e9beb7bc8c3c6f164e4afdf57e58a547f44801b769c09c401dfcb",
+      "canonicalSha256": "3bb6a36c282e9beb7bc8c3c6f164e4afdf57e58a547f44801b769c09c401dfcb",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/commit_activity.py": {
+      "rawSha256": "22d455f359cc50ddf2d3b65140f17fc14790b89d4d47e11ffaf9356b07ec2c7c",
+      "canonicalSha256": "22d455f359cc50ddf2d3b65140f17fc14790b89d4d47e11ffaf9356b07ec2c7c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/preview_activity.py": {
+      "rawSha256": "6b1983eb82076ca809bfc3362070fd74d8d4e0af065373ec06e60b69b10f16a2",
+      "canonicalSha256": "6b1983eb82076ca809bfc3362070fd74d8d4e0af065373ec06e60b69b10f16a2",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/summary_workflow.py": {
+      "rawSha256": "7285e2afc6a708cd426ecb5c494a2591a3712f2b95887b434b2d66ee6a36638f",
+      "canonicalSha256": "7285e2afc6a708cd426ecb5c494a2591a3712f2b95887b434b2d66ee6a36638f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/summary_activity.py": {
+      "rawSha256": "f4f4337ad731404c82bd8671c883b3a82b3172bdbf42158cf88464a94f5c3fc1",
+      "canonicalSha256": "f4f4337ad731404c82bd8671c883b3a82b3172bdbf42158cf88464a94f5c3fc1",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_preview_service.py": {
+      "rawSha256": "2d7f6ae246ad5b515e2820d6c16ff67330265c573b6fdb4fa41d11889edff4b2",
+      "canonicalSha256": "2d7f6ae246ad5b515e2820d6c16ff67330265c573b6fdb4fa41d11889edff4b2",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_api.py": {
+      "rawSha256": "2e87b1843433bb367d58e319186908da624d611ed91b6dbd0c6d0b04af9997ca",
+      "canonicalSha256": "2e87b1843433bb367d58e319186908da624d611ed91b6dbd0c6d0b04af9997ca",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_attachment_api.py": {
+      "rawSha256": "2951488e15443719e057fbfd4b795dc5c9dde3646f3545616335710beb1eb53c",
+      "canonicalSha256": "2951488e15443719e057fbfd4b795dc5c9dde3646f3545616335710beb1eb53c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_correction_api.py": {
+      "rawSha256": "7244553803c6262728d21e7c07597e314e7d013fba8cef1ea34d7c6695c54c1f",
+      "canonicalSha256": "7244553803c6262728d21e7c07597e314e7d013fba8cef1ea34d7c6695c54c1f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_reprocessing_api.py": {
+      "rawSha256": "8dce268d366361f9678710e105bad8c412590f98528b8fd62984602daa521a41",
+      "canonicalSha256": "8dce268d366361f9678710e105bad8c412590f98528b8fd62984602daa521a41",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_citations.py": {
+      "rawSha256": "e662632a61ca76d4b1f4ee9894160ce5b9081e9fd269eb42120049d16340c993",
+      "canonicalSha256": "e662632a61ca76d4b1f4ee9894160ce5b9081e9fd269eb42120049d16340c993",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_table_figures.py": {
+      "rawSha256": "dcf848a8014fd0a4279badda04beb357d80feb6fe43bcf968854941b7efce820",
+      "canonicalSha256": "dcf848a8014fd0a4279badda04beb357d80feb6fe43bcf968854941b7efce820",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_revision_api.py": {
+      "rawSha256": "552652a339b2717ce48e3c5a13da43c3bb6d4d292b03d62cffca353c7f00cc14",
+      "canonicalSha256": "552652a339b2717ce48e3c5a13da43c3bb6d4d292b03d62cffca353c7f00cc14",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/document_revisions.py": {
+      "rawSha256": "c4f2258fb3f15c6e1e39b3015ac51f5290d14756d68f7a0bd0dd628815bc9cb7",
+      "canonicalSha256": "c4f2258fb3f15c6e1e39b3015ac51f5290d14756d68f7a0bd0dd628815bc9cb7",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_parse_worker.py": {
+      "rawSha256": "e8929d4d461339d31ce2ca506258f3fa34c7806d4e22b821bf294004bbda6e2d",
+      "canonicalSha256": "e8929d4d461339d31ce2ca506258f3fa34c7806d4e22b821bf294004bbda6e2d",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/docling_parsing.py": {
+      "rawSha256": "c50def9a3c29f1a6424a714212b23c94c45f8e15bd0c6cfa0f7d825969630440",
+      "canonicalSha256": "c50def9a3c29f1a6424a714212b23c94c45f8e15bd0c6cfa0f7d825969630440",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/pdf_geometry.py": {
+      "rawSha256": "efdb4850cf90a6d63375aa8920793798ff9c0ceccc59caff730320e1f8d0baac",
+      "canonicalSha256": "efdb4850cf90a6d63375aa8920793798ff9c0ceccc59caff730320e1f8d0baac",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/parsing/docling.py": {
+      "rawSha256": "a9b8e230f28c4e268ade2d7c59263e18b90b72a8336d87897597b2dd40a9f67f",
+      "canonicalSha256": "a9b8e230f28c4e268ade2d7c59263e18b90b72a8336d87897597b2dd40a9f67f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/pdf_inspection.py": {
+      "rawSha256": "eed469248ce17a7a901457433dd718573f6e3b4271c959ed26b55b33c9e3c4d5",
+      "canonicalSha256": "eed469248ce17a7a901457433dd718573f6e3b4271c959ed26b55b33c9e3c4d5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/pdf_pages.py": {
+      "rawSha256": "b47c3684d9576121ed56be7f55b04b9db632a241794626a682cc3a0695e87d4e",
+      "canonicalSha256": "b47c3684d9576121ed56be7f55b04b9db632a241794626a682cc3a0695e87d4e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_parser_runtime.py": {
+      "rawSha256": "7861ec627bced95ba66a5d93a837a0b1f92919a33f181ef74e1e81f8ce0ebcd7",
+      "canonicalSha256": "7861ec627bced95ba66a5d93a837a0b1f92919a33f181ef74e1e81f8ce0ebcd7",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_revision_service.py": {
+      "rawSha256": "cb1c2a07928166d7e02e84cd52740a238e7174fb90931f3f659bd604fd226437",
+      "canonicalSha256": "cb1c2a07928166d7e02e84cd52740a238e7174fb90931f3f659bd604fd226437",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/document_viewer.py": {
+      "rawSha256": "9ef4dbd22e8402f8d1c8c1f322f15b707567324398edf44ff84feae45cd6cd87",
+      "canonicalSha256": "9ef4dbd22e8402f8d1c8c1f322f15b707567324398edf44ff84feae45cd6cd87",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/viewer_actions.py": {
+      "rawSha256": "ddf93cab5c7bcbdce7b7d8b1fd25e33f3f50726d82dfe9d571d168ee20a1efe4",
+      "canonicalSha256": "ddf93cab5c7bcbdce7b7d8b1fd25e33f3f50726d82dfe9d571d168ee20a1efe4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_viewer_api.py": {
+      "rawSha256": "9ac8fb5a337b2044f21f91477a7ccee407aea54d32c4d206deefe59e1643c091",
+      "canonicalSha256": "9ac8fb5a337b2044f21f91477a7ccee407aea54d32c4d206deefe59e1643c091",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_viewer_ranges.py": {
+      "rawSha256": "f51bee35eed1d1b7cf377bcf2b97fc049dbdffce4db08a353c175b7ed221afc3",
+      "canonicalSha256": "f51bee35eed1d1b7cf377bcf2b97fc049dbdffce4db08a353c175b7ed221afc3",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_viewer_service.py": {
+      "rawSha256": "d6862bc676ad43c36fb827873014b79db0f7249e094f947d46dde368144ea666",
+      "canonicalSha256": "d6862bc676ad43c36fb827873014b79db0f7249e094f947d46dde368144ea666",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_intake_api.py": {
+      "rawSha256": "eebee26269a9f2ae20646707c20e7ec76d9a740df260bc1b0e245a2d3ead930b",
+      "canonicalSha256": "eebee26269a9f2ae20646707c20e7ec76d9a740df260bc1b0e245a2d3ead930b",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_gateway_contracts.py": {
+      "rawSha256": "30d4b8e30a6c0f617eac83a490f3301fd71c7c480c6bb04f1b877302b0bef67f",
+      "canonicalSha256": "30d4b8e30a6c0f617eac83a490f3301fd71c7c480c6bb04f1b877302b0bef67f",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_registry_contracts.py": {
+      "rawSha256": "ec985f09ab715e64bc494546f54e3693c2897b27096fde7648e5a624365ff6b4",
+      "canonicalSha256": "ec985f09ab715e64bc494546f54e3693c2897b27096fde7648e5a624365ff6b4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/model_registry.py": {
+      "rawSha256": "213e4735a0b8cd4e0f1990667157e4c2cb78d385e54999bc16c7c0d140480554",
+      "canonicalSha256": "213e4735a0b8cd4e0f1990667157e4c2cb78d385e54999bc16c7c0d140480554",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_catalog.py": {
+      "rawSha256": "5fc1dee83dabe1fef8ba68443eebafed9d9b23ca9ee87715c650e6568fec708d",
+      "canonicalSha256": "5fc1dee83dabe1fef8ba68443eebafed9d9b23ca9ee87715c650e6568fec708d",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_registry.py": {
+      "rawSha256": "fd2c3fabda528c23580f29b567f51dcb7b801447eda425de3f6462dce36b8631",
+      "canonicalSha256": "fd2c3fabda528c23580f29b567f51dcb7b801447eda425de3f6462dce36b8631",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_routing_contracts.py": {
+      "rawSha256": "83ab7c1a4170cccc6038be258d1c9b935a9653a1b68c84080977d6eeb94a4cc1",
+      "canonicalSha256": "83ab7c1a4170cccc6038be258d1c9b935a9653a1b68c84080977d6eeb94a4cc1",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/model_gateway.py": {
+      "rawSha256": "8e2d90aa2c53e5f204e6df54222d84eab67b11e17c067317aa47f632df75c1da",
+      "canonicalSha256": "8e2d90aa2c53e5f204e6df54222d84eab67b11e17c067317aa47f632df75c1da",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_routing.py": {
+      "rawSha256": "13fea7358425d709079984b1d44b39097684b3efc53d40ef587d63816a90760e",
+      "canonicalSha256": "13fea7358425d709079984b1d44b39097684b3efc53d40ef587d63816a90760e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_routing_policy.py": {
+      "rawSha256": "032a37d471d0ec1d29e5570ddfc6da8e4ed46d53a135d42827c59b3037cf2ebc",
+      "canonicalSha256": "032a37d471d0ec1d29e5570ddfc6da8e4ed46d53a135d42827c59b3037cf2ebc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_gateway_service.py": {
+      "rawSha256": "370ef8a2fb4b5e40b68bf58eb0d0c2879748f01cd049b308a2e0f05fff1ec87c",
+      "canonicalSha256": "370ef8a2fb4b5e40b68bf58eb0d0c2879748f01cd049b308a2e0f05fff1ec87c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/modules.py": {
+      "rawSha256": "ec296a6447f5b7c7a74309031acfa9b0a529f27ece8cf8e31068996e3b5289ee",
+      "canonicalSha256": "ec296a6447f5b7c7a74309031acfa9b0a529f27ece8cf8e31068996e3b5289ee",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/operations.py": {
+      "rawSha256": "966b7bdd08b22a0e5b697a1aac58f95485efeaf6909297511251c83d31016fb4",
+      "canonicalSha256": "966b7bdd08b22a0e5b697a1aac58f95485efeaf6909297511251c83d31016fb4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_manifest.py": {
+      "rawSha256": "c101d5fae6658069edd44db3e2b5a0742e4ea4c4483ddfdc314618d4f37cd68a",
+      "canonicalSha256": "c101d5fae6658069edd44db3e2b5a0742e4ea4c4483ddfdc314618d4f37cd68a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_grants.py": {
+      "rawSha256": "bde905c204e9e14df0d84d34dbc4a64bea67203769feed5a98c425817f024bec",
+      "canonicalSha256": "bde905c204e9e14df0d84d34dbc4a64bea67203769feed5a98c425817f024bec",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_package_intake.py": {
+      "rawSha256": "fec412d2a8945b97b49e7658b29fecd6ab94480c36fffed89d6e0f51c58f415e",
+      "canonicalSha256": "fec412d2a8945b97b49e7658b29fecd6ab94480c36fffed89d6e0f51c58f415e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_package_store.py": {
+      "rawSha256": "3c16729e44a7d4c6bdd598a07fc9dde0f658d9773156c72768a1c671a1217569",
+      "canonicalSha256": "3c16729e44a7d4c6bdd598a07fc9dde0f658d9773156c72768a1c671a1217569",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/plugin_grants.py": {
+      "rawSha256": "b802495275bb4bf5e5d2c5de0d393fb26320f5ffc566613bd17b24d43190c5fc",
+      "canonicalSha256": "b802495275bb4bf5e5d2c5de0d393fb26320f5ffc566613bd17b24d43190c5fc",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_trust.py": {
+      "rawSha256": "baf218af6a82de47d51c849c51fc9c9e72cb8c8b3f12011eb47b2537461e0f95",
+      "canonicalSha256": "baf218af6a82de47d51c849c51fc9c9e72cb8c8b3f12011eb47b2537461e0f95",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/plugin_packages.py": {
+      "rawSha256": "215c3369a3c7b21096ee500cd97d776dc5aab38d6cf5fcbd0e29c601d7e41ebb",
+      "canonicalSha256": "215c3369a3c7b21096ee500cd97d776dc5aab38d6cf5fcbd0e29c601d7e41ebb",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_admin_service.py": {
+      "rawSha256": "fc314fae7fc038e9555cba0751156748131d70ff938408aa26d5e655dca964fe",
+      "canonicalSha256": "fc314fae7fc038e9555cba0751156748131d70ff938408aa26d5e655dca964fe",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_api.py": {
+      "rawSha256": "4123af36a717dca01cf570cb797aa4824ec626a5a66fccc845eadd2833f3c880",
+      "canonicalSha256": "4123af36a717dca01cf570cb797aa4824ec626a5a66fccc845eadd2833f3c880",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_consent.py": {
+      "rawSha256": "086630f9ee460aeadc6393bf9f8419bb2fec413241e1168cccfddc22ff12aac3",
+      "canonicalSha256": "086630f9ee460aeadc6393bf9f8419bb2fec413241e1168cccfddc22ff12aac3",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_credentials.py": {
+      "rawSha256": "4a081524706248e6b25fdca41767d5068cf1a8db128a6b39209a182ce5a97288",
+      "canonicalSha256": "4a081524706248e6b25fdca41767d5068cf1a8db128a6b39209a182ce5a97288",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_broker.py": {
+      "rawSha256": "e91956fa9c220fb35a653ac2becb5093b0481e1f448a57bbf1103b72b6e796d8",
+      "canonicalSha256": "e91956fa9c220fb35a653ac2becb5093b0481e1f448a57bbf1103b72b6e796d8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_result.py": {
+      "rawSha256": "252fdc76e8eb1056fd493d1106c315e5d6eb0235dbeb73b669f2fc0291d5196b",
+      "canonicalSha256": "252fdc76e8eb1056fd493d1106c315e5d6eb0235dbeb73b669f2fc0291d5196b",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py": {
+      "rawSha256": "2d04157bd9071e60aee21416c09fea64ffe23d6e4fe9bd28ba50db46307a66e5",
+      "canonicalSha256": "2d04157bd9071e60aee21416c09fea64ffe23d6e4fe9bd28ba50db46307a66e5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py": {
+      "rawSha256": "4d80b31d84ef218125abef14472f179dd8fd31c1fe7faf5e981e43c6b6fdc061",
+      "canonicalSha256": "4d80b31d84ef218125abef14472f179dd8fd31c1fe7faf5e981e43c6b6fdc061",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/connectors/plugin_workflow.py": {
+      "rawSha256": "651c74c02b7459124abbf5d0ea24f7f6743943d67718cf78d91f5f92d2f5b9c1",
+      "canonicalSha256": "651c74c02b7459124abbf5d0ea24f7f6743943d67718cf78d91f5f92d2f5b9c1",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_runtime.py": {
+      "rawSha256": "1b85c41540803b86c63ddf103ae7ce755b014eb94e301bf5685bfbb16498334e",
+      "canonicalSha256": "1b85c41540803b86c63ddf103ae7ce755b014eb94e301bf5685bfbb16498334e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/plugin_jobs.py": {
+      "rawSha256": "b20e5acc3224de03d77868834c5c04a1766b502c24472fa7800c33cbd8d753b5",
+      "canonicalSha256": "b20e5acc3224de03d77868834c5c04a1766b502c24472fa7800c33cbd8d753b5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_worker.py": {
+      "rawSha256": "441d313883cff337dc8f627a1e927474a9d847cb79cadb9f8608f8cbc0207d0a",
+      "canonicalSha256": "441d313883cff337dc8f627a1e927474a9d847cb79cadb9f8608f8cbc0207d0a",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_invocation_api.py": {
+      "rawSha256": "631c3bd185a76961c0ca26c49fe548ce3f2d7d34f3b1d52da9dfa151e0a552e5",
+      "canonicalSha256": "631c3bd185a76961c0ca26c49fe548ce3f2d7d34f3b1d52da9dfa151e0a552e5",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation/batch_inventory.py": {
+      "rawSha256": "e68c65f0d97b9dc979eef3d2ecf4e5bb940fcbf5709cd6b3cb1d745aec548a47",
+      "canonicalSha256": "e68c65f0d97b9dc979eef3d2ecf4e5bb940fcbf5709cd6b3cb1d745aec548a47",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation_worker.py": {
+      "rawSha256": "c0c01abf70392ea4328dac060598dc6aef7649c537e82c3eb06d687d3ef39ace",
+      "canonicalSha256": "c0c01abf70392ea4328dac060598dc6aef7649c537e82c3eb06d687d3ef39ace",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/task_center.py": {
+      "rawSha256": "131e0ed9396a85b312e3734850eb53f85ee8cfac7de0ce9e9eca70d0da161870",
+      "canonicalSha256": "131e0ed9396a85b312e3734850eb53f85ee8cfac7de0ce9e9eca70d0da161870",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation_service.py": {
+      "rawSha256": "058eedf8bac463b533c1cd4f9ebfc5531b64820d6f735d3f4a40070f2b182db4",
+      "canonicalSha256": "058eedf8bac463b533c1cd4f9ebfc5531b64820d6f735d3f4a40070f2b182db4",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/reconciliation_api.py": {
+      "rawSha256": "5371e2eda096bb49687e069a7e2541bfccb87086ef88feafd68cd82b2aeba08e",
+      "canonicalSha256": "5371e2eda096bb49687e069a7e2541bfccb87086ef88feafd68cd82b2aeba08e",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/selective_recalculation.py": {
+      "rawSha256": "9d3ebaf7a884671e6f7ae9dcf7554e1cd75affc77204551ea9cd772ba4c01dc8",
+      "canonicalSha256": "9d3ebaf7a884671e6f7ae9dcf7554e1cd75affc77204551ea9cd772ba4c01dc8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_progress.py": {
+      "rawSha256": "5b82ccf7ea6ce04cf8bca51b34ddbf15348a0b0572de659027918894b2eab5b8",
+      "canonicalSha256": "5b82ccf7ea6ce04cf8bca51b34ddbf15348a0b0572de659027918894b2eab5b8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/app.py": {
+      "rawSha256": "0fd031e3c353715e144a4fdc9fbd57613f8685ddf2a6b91a132912103ee61fe9",
+      "canonicalSha256": "0fd031e3c353715e144a4fdc9fbd57613f8685ddf2a6b91a132912103ee61fe9",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/__init__.py": {
+      "rawSha256": "0df73dd793d218ffb601f0b687abc20213355abffc684380e3827fde374152bd",
+      "canonicalSha256": "0df73dd793d218ffb601f0b687abc20213355abffc684380e3827fde374152bd",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/test_sqlite_migrations.py": {
+      "rawSha256": "67e4c2401cfd7b4855b2d88612eba867ef40851944267019c295267c5311900e",
+      "canonicalSha256": "67e4c2401cfd7b4855b2d88612eba867ef40851944267019c295267c5311900e",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/test_import_preview_migration.py": {
+      "rawSha256": "dd063aa3992e231b50848952ee57088fba6d5d6ccabb1f617eaa9a1e40f252d3",
+      "canonicalSha256": "dd063aa3992e231b50848952ee57088fba6d5d6ccabb1f617eaa9a1e40f252d3",
+      "equalsClaimGitBlob": true
+    },
+    "tests/service/test_research_intents.py": {
+      "rawSha256": "e156a602617f26216e1ae30020407942a85d5b9ab0811a5a455fd546547d3e60",
+      "canonicalSha256": "e156a602617f26216e1ae30020407942a85d5b9ab0811a5a455fd546547d3e60",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/test_connector_intent.py": {
+      "rawSha256": "51adf7c8f1a58f2a22213505dac6d64b40b5d832c73b437ddd13c6fe8bd32a6a",
+      "canonicalSha256": "51adf7c8f1a58f2a22213505dac6d64b40b5d832c73b437ddd13c6fe8bd32a6a",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/test_connector_transport.py": {
+      "rawSha256": "70f18a4da96ccd6ceadf48921623550f19aa8c47bfd2d0679bf3592b3ecaea16",
+      "canonicalSha256": "70f18a4da96ccd6ceadf48921623550f19aa8c47bfd2d0679bf3592b3ecaea16",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/test_scholarly_mapping.py": {
+      "rawSha256": "b597186a0052fe9bec85fc21f9025974623e68b61c156ceec4008b7a042ef1aa",
+      "canonicalSha256": "b597186a0052fe9bec85fc21f9025974623e68b61c156ceec4008b7a042ef1aa",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/test_connector_broker.py": {
+      "rawSha256": "1cd4e371f40f3dadada763fb5743dabc4ff986ddf6b7f3eb1bf05a58f81a82c4",
+      "canonicalSha256": "1cd4e371f40f3dadada763fb5743dabc4ff986ddf6b7f3eb1bf05a58f81a82c4",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/test_connector_authority.py": {
+      "rawSha256": "d6e0633e08f5bcfd23ed1a0bfce7bf91e5dfe435cfda0d4abc3f4ffd7eaa61eb",
+      "canonicalSha256": "d6e0633e08f5bcfd23ed1a0bfce7bf91e5dfe435cfda0d4abc3f4ffd7eaa61eb",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/test_encrypted_object_store.py": {
+      "rawSha256": "46a87fe9fa32bd174d0110df76030a7fd008635eac5f1aeacb20a8f360a0f133",
+      "canonicalSha256": "46a87fe9fa32bd174d0110df76030a7fd008635eac5f1aeacb20a8f360a0f133",
+      "equalsClaimGitBlob": true
+    },
+    "tests/connectors/test_connector_workflow.py": {
+      "rawSha256": "fe6edf4e4c2c5fc39733d1c2864ce5fab14c20324206cae4f4b30c1d74e10ed8",
+      "canonicalSha256": "fe6edf4e4c2c5fc39733d1c2864ce5fab14c20324206cae4f4b30c1d74e10ed8",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_preview_repository.py": {
+      "rawSha256": "d9e2cc6cf732ed2a0e74c4c9e84c218164a14f85df920f524af8e6be60358697",
+      "canonicalSha256": "d9e2cc6cf732ed2a0e74c4c9e84c218164a14f85df920f524af8e6be60358697",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_draft_repository.py": {
+      "rawSha256": "f95de7bf138329247aeadcecf54822b6ecdc4e8300514ee9ab88386ee63ef9a6",
+      "canonicalSha256": "f95de7bf138329247aeadcecf54822b6ecdc4e8300514ee9ab88386ee63ef9a6",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_summary_repository.py": {
+      "rawSha256": "d1634e106da216b711092616fa62a0d1df4c760ef795cb515e0b0ba4273f90c3",
+      "canonicalSha256": "d1634e106da216b711092616fa62a0d1df4c760ef795cb515e0b0ba4273f90c3",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ingestion/import_commits.py": {
+      "rawSha256": "4aa7231c8c65c058c621a3446074cfee550e1664d9b01db95b3648821421c8cd",
+      "canonicalSha256": "4aa7231c8c65c058c621a3446074cfee550e1664d9b01db95b3648821421c8cd",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/import_commit_repository.py": {
+      "rawSha256": "2f58afd33a881a6896ea2a164ecd2e28cf44bcb2e4013e14b7a85327f3754140",
+      "canonicalSha256": "2f58afd33a881a6896ea2a164ecd2e28cf44bcb2e4013e14b7a85327f3754140",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/acquisition/service.py": {
+      "rawSha256": "aaa3dea00d73e991005dbd671f10a26b4f1daed87036e34705861328d69a5730",
+      "canonicalSha256": "aaa3dea00d73e991005dbd671f10a26b4f1daed87036e34705861328d69a5730",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_query.py": {
+      "rawSha256": "090a16b3e49996f9de943ec9f212ce16d04bb8e568f9309ab5f75b17c62a13d2",
+      "canonicalSha256": "090a16b3e49996f9de943ec9f212ce16d04bb8e568f9309ab5f75b17c62a13d2",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/corpus_report_repository.py": {
+      "rawSha256": "6ea72abc1c846120dd23639ee661115012283188e3bfc9b4edad7a4f4b2b0517",
+      "canonicalSha256": "6ea72abc1c846120dd23639ee661115012283188e3bfc9b4edad7a4f4b2b0517",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/source_anchor_repository.py": {
+      "rawSha256": "e4dc70d69f4aaf45bb60133e0dea6a23a110c25d95f001e2af2136a2eb47e773",
+      "canonicalSha256": "e4dc70d69f4aaf45bb60133e0dea6a23a110c25d95f001e2af2136a2eb47e773",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_viewer_allocations.py": {
+      "rawSha256": "2adcf988a0d25c9707ecf06b75b05de44af06a376547ade311088f514d2f3fc2",
+      "canonicalSha256": "2adcf988a0d25c9707ecf06b75b05de44af06a376547ade311088f514d2f3fc2",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/document_viewer_repository.py": {
+      "rawSha256": "bcb11e997a9ed376eed46730240d207a9bac337fb6f1f08f43ec0d0348994b51",
+      "canonicalSha256": "bcb11e997a9ed376eed46730240d207a9bac337fb6f1f08f43ec0d0348994b51",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_registry_repository.py": {
+      "rawSha256": "df2e6e8eec7d4e4852e571b058284e9b490f743d38b56806127551ce5e19bd8b",
+      "canonicalSha256": "df2e6e8eec7d4e4852e571b058284e9b490f743d38b56806127551ce5e19bd8b",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_grant_repository.py": {
+      "rawSha256": "f6ce91e05f9e4a9ef670f00c16c5bccb432442540b99ac32044ad9b04378ae93",
+      "canonicalSha256": "f6ce91e05f9e4a9ef670f00c16c5bccb432442540b99ac32044ad9b04378ae93",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_job_repository.py": {
+      "rawSha256": "778859d9d75d3ad3d47c4316c2c52b3acf978972ef3a958fe4f77137a0dee189",
+      "canonicalSha256": "778859d9d75d3ad3d47c4316c2c52b3acf978972ef3a958fe4f77137a0dee189",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/plugin_package_repository.py": {
+      "rawSha256": "918c83edac85bdffed51b8a702ca82cd63db40007b01fd2c5b286f252c2e320c",
+      "canonicalSha256": "918c83edac85bdffed51b8a702ca82cd63db40007b01fd2c5b286f252c2e320c",
+      "equalsClaimGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/main.py": {
+      "rawSha256": "a94a579396fa7d14dd1481e85f4dcadf2d3cd733d7bbca169142bbf67f141cb4",
+      "canonicalSha256": "a94a579396fa7d14dd1481e85f4dcadf2d3cd733d7bbca169142bbf67f141cb4",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/test_import_source_chunks.py": {
+      "rawSha256": "9bc44c1f4cbfe2d6dbc0631947969ba447c74016088fb65fb24a444af2911db8",
+      "canonicalSha256": "9bc44c1f4cbfe2d6dbc0631947969ba447c74016088fb65fb24a444af2911db8",
+      "equalsClaimGitBlob": true
+    },
+    "tests/service/test_import_preview_service.py": {
+      "rawSha256": "89a279f2b1defc5ff1723020a5bafa8f3de12adcd2367da19b5248f252a733e3",
+      "canonicalSha256": "89a279f2b1defc5ff1723020a5bafa8f3de12adcd2367da19b5248f252a733e3",
+      "equalsClaimGitBlob": true
+    },
+    "tests/service/test_import_summary_workflow.py": {
+      "rawSha256": "aafdb218a78fef035fc305a0152eb6c4e92a72fdfc14f08a6cc833afb11d6de6",
+      "canonicalSha256": "aafdb218a78fef035fc305a0152eb6c4e92a72fdfc14f08a6cc833afb11d6de6",
+      "equalsClaimGitBlob": true
+    },
+    "tests/service/test_import_commit_workflow.py": {
+      "rawSha256": "2eb5048ec1c1cebe6df5464a9f24b84ad16a1b4e2b6126e32a233f21311281df",
+      "canonicalSha256": "2eb5048ec1c1cebe6df5464a9f24b84ad16a1b4e2b6126e32a233f21311281df",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/test_import_commit_preparation.py": {
+      "rawSha256": "fe071a2caf2bb9dcd73ffab37f8e2ad466e243b68b290bb10825ee181f5e20dd",
+      "canonicalSha256": "fe071a2caf2bb9dcd73ffab37f8e2ad466e243b68b290bb10825ee181f5e20dd",
+      "equalsClaimGitBlob": true
+    },
+    "tests/data/test_import_commit_publication.py": {
+      "rawSha256": "353540a0bb105659cba45852c396e03ef80198c644760004bb83e510f0441b0b",
+      "canonicalSha256": "353540a0bb105659cba45852c396e03ef80198c644760004bb83e510f0441b0b",
+      "equalsClaimGitBlob": true
+    },
+    "tests/corpus/test_repository.py": {
+      "rawSha256": "fa13d0a9d929d066d2509888d3172f07e213ee0a4992766a2dded48e2613dadb",
+      "canonicalSha256": "fa13d0a9d929d066d2509888d3172f07e213ee0a4992766a2dded48e2613dadb",
+      "equalsClaimGitBlob": true
+    },
+    "tests/documents/test_local_attachment.py": {
+      "rawSha256": "b770ea5d1617b82af8db1cc70bb7244f4f3229434322747999590dc4e4d047dc",
+      "canonicalSha256": "b770ea5d1617b82af8db1cc70bb7244f4f3229434322747999590dc4e4d047dc",
+      "equalsClaimGitBlob": true
+    },
+    "tests/documents/test_oa_acquisition.py": {
+      "rawSha256": "68f8aa803e9f61cf53ad9abf4ea3c9a9514d2f0d21a5b7102ebd06738de17c92",
+      "canonicalSha256": "68f8aa803e9f61cf53ad9abf4ea3c9a9514d2f0d21a5b7102ebd06738de17c92",
+      "equalsClaimGitBlob": true
+    },
+    "tests/parsing/test_protected_parse_source.py": {
+      "rawSha256": "030507a9c9713d0c20ccf052b1fe99479cdaebba3cf654b7fe29cfd1f7fea6c6",
+      "canonicalSha256": "030507a9c9713d0c20ccf052b1fe99479cdaebba3cf654b7fe29cfd1f7fea6c6",
+      "equalsClaimGitBlob": true
+    },
+    "tests/workflows/__init__.py": {
+      "rawSha256": "3d26592b9420b57b1397dd519faff74354a8aa23d671c30534f6910b84bd51c1",
+      "canonicalSha256": "3d26592b9420b57b1397dd519faff74354a8aa23d671c30534f6910b84bd51c1",
+      "equalsClaimGitBlob": true
+    },
+    "tests/workflows/test_local_workflow_executor.py": {
+      "rawSha256": "7f2309bf44182ec0d8241ba05087461aaf89ab8179d5bf549ec297357d0fea06",
+      "canonicalSha256": "7f2309bf44182ec0d8241ba05087461aaf89ab8179d5bf549ec297357d0fea06",
+      "equalsClaimGitBlob": true
+    },
+    "tests/documents/test_document_revision_repository.py": {
+      "rawSha256": "004ddef214fc120a5af16995c27c0060bf5a2f278776931c9a579c48b5c9d303",
+      "canonicalSha256": "004ddef214fc120a5af16995c27c0060bf5a2f278776931c9a579c48b5c9d303",
+      "equalsClaimGitBlob": true
+    },
+    "tests/documents/reference_catalog_fixture.py": {
+      "rawSha256": "b968dc8d612346dc54e5d5159b552c82f90baf085bb50473a6d179799716027d",
+      "canonicalSha256": "b968dc8d612346dc54e5d5159b552c82f90baf085bb50473a6d179799716027d",
+      "equalsClaimGitBlob": true
+    },
+    "tests/documents/test_reference_repository.py": {
+      "rawSha256": "89c554b16c60c04a4d4c1fcacc7785abdedebff3a8589daac69be147ce77907d",
+      "canonicalSha256": "89c554b16c60c04a4d4c1fcacc7785abdedebff3a8589daac69be147ce77907d",
+      "equalsClaimGitBlob": true
+    }
+  },
+  "archiveTransport": {
+    "format": "zip-lzma",
+    "originalArchiveSha256": "d6337d001a62e2cfe19f3594612e4d34772ce33498f9e40e2ff7aff1563ee484",
+    "originalFormat": "zip-deflated",
+    "exactMemberBytesUnchanged": true,
+    "memberNamesOrderAndNonCodecMetadataUnchanged": true,
+    "reason": "Independent full decoded synthetic review confirmed a random email-shaped sequence in ciphertext, not an email. Existing policy did not admit the original archive. Standard lossless ZIP transport correction preserves all original protected predecessor database and object bytes; exact new artifact independently admitted under unchanged policy."
+  }
+}

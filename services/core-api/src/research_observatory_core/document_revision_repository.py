@@ -688,6 +688,44 @@ class LocalDocumentRevisionRepository:
 
         return self._bounded(read)
 
+    def read_for_index(self, revision_id, *, cancelled=lambda: False):
+        """Read current accepted IR using explicit inspect/index local-search rights.
+
+        Source resolution precedes the writer; accepted bytes, immutable source
+        identity and current normalized-document head are then authenticated in
+        the one source-fenced connection. Callers apply derivatives afterwards.
+        """
+        if not is_uuid_v7(revision_id) or not callable(cancelled):
+            raise DocumentRevisionProblem("document-revision-unavailable")
+
+        def read():
+            with closing(open_canonical_database(self.database, expected_project_id=self.project)) as connection:
+                self._authority(connection, self.actor())
+                row = connection.execute(
+                    "SELECT result_id FROM document_normalized_revisions WHERE project_id=? AND revision_id=?",
+                    (self.project, revision_id),
+                ).fetchone()
+                if row is None:
+                    raise DocumentRevisionProblem("document-revision-unavailable")
+                source = self._receipt(connection, row[0]).binding.source
+            actor = self.actor()
+
+            def current(connection):
+                self._authority(connection, actor)
+                accepted = self._accepted(connection, revision_id)
+                with self._aggregates(connection) as aggregates:
+                    head = aggregates.get(accepted.document_id)
+                if head.revision_id != accepted.revision_id or accepted.result.binding.source != source:
+                    raise DocumentRevisionProblem("document-index-source-changed")
+                self._authority(connection, actor)
+                return accepted
+
+            return self.objects._read_indexed_document_context(
+                source, actor=actor, action=current, cancellation_requested=cancelled
+            )
+
+        return self._bounded(read)
+
     def result(self, result_id):
         if not is_uuid_v7(result_id):
             raise DocumentRevisionProblem("document-parse-result-unavailable")

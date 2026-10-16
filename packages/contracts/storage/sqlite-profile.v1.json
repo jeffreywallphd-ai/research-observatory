@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 28,
+  "databaseSchemaVersion": 29,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6",
+  "schemaFingerprintSha256": "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -139,7 +139,11 @@
     "document_enrichments",
     "document_enrichment_elements",
     "document_enrichment_identifiers",
-    "document_enrichment_targets"
+    "document_enrichment_targets",
+    "search_changes",
+    "search_generations",
+    "search_generation_events",
+    "search_selections"
   ],
   "mutableStateTables": [
     "object_records",
@@ -150,7 +154,8 @@
     "workflow_attempt_artifacts",
     "corpus_source_item_heads",
     "corpus_source_totals",
-    "corpus_source_overlap_totals"
+    "corpus_source_overlap_totals",
+    "search_generation_leases"
   ],
   "connectionProfile": {
     "foreignKeys": true,
@@ -296,6 +301,11 @@
     "document_enrichments",
     "document_enrichment_elements",
     "document_enrichment_identifiers",
-    "document_enrichment_targets"
+    "document_enrichment_targets",
+    "search_changes",
+    "search_generations",
+    "search_generation_leases",
+    "search_generation_events",
+    "search_selections"
   ]
 }

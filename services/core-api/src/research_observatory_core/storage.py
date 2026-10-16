@@ -50,10 +50,32 @@ from research_observatory_core.ports.database_keys import (
     DatabaseKeyProvider,
     validate_database_key_identity,
 )
+from research_observatory_core.search.canonical_schema import (
+    BINDING_DDL as SEARCH_INDEX_BINDING_DDL,
+)
+from research_observatory_core.search.canonical_schema import (
+    DDL as SEARCH_INDEX_DDL,
+)
+from research_observatory_core.search.canonical_schema import (
+    IMMUTABLE_TABLES as SEARCH_INDEX_IMMUTABLE_TABLES,
+)
+from research_observatory_core.search.canonical_schema import (
+    INDEX_DDL as SEARCH_INDEX_INDEX_DDL,
+)
+from research_observatory_core.search.canonical_schema import (
+    MUTABLE_TABLES as SEARCH_INDEX_MUTABLE_TABLES,
+)
+from research_observatory_core.search.canonical_schema import (
+    REPLACEMENT_DDL as SEARCH_INDEX_REPLACEMENT_DDL,
+)
+from research_observatory_core.search.canonical_schema import (
+    TABLES as SEARCH_INDEX_TABLES,
+)
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 28
+DATABASE_SCHEMA_VERSION = 29
+LEXICAL_INDEX_PREDECESSOR_DATABASE_SCHEMA_VERSION = 28
 DOCUMENT_ENRICHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 27
 REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 26
 DOCUMENT_REVISION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 25
@@ -247,6 +269,7 @@ EXPECTED_TABLES = (
     *DOCUMENT_INTAKE_TABLES,
     *DOCUMENT_REVISION_TABLES,
     *DOCUMENT_ENRICHMENT_TABLES,
+    *SEARCH_INDEX_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -309,6 +332,7 @@ IMMUTABLE_ROW_TABLES = (
     *DOCUMENT_INTAKE_TABLES,
     *DOCUMENT_REVISION_TABLES,
     *DOCUMENT_ENRICHMENT_TABLES,
+    *SEARCH_INDEX_IMMUTABLE_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -318,6 +342,7 @@ MUTABLE_STATE_TABLES = (
     "workflow_job_attempts",
     "workflow_attempt_artifacts",
     *CORPUS_SOURCE_PROJECTION_TABLES,
+    *SEARCH_INDEX_MUTABLE_TABLES,
 )
 EXPECTED_TRIGGERS = tuple(
     sorted(
@@ -393,6 +418,7 @@ EXPECTED_TRIGGERS = tuple(
             "plugin_grant_event_binding",
             "document_attachment_assertion_binding",
         ]
+        + [statement.split()[2] for statement in (*SEARCH_INDEX_BINDING_DDL, *SEARCH_INDEX_REPLACEMENT_DDL)]
     )
 )
 EXPECTED_INDEXES = (
@@ -467,6 +493,7 @@ EXPECTED_INDEXES = (
     "document_parse_results_job",
     "document_normalized_revisions_document",
     "document_structure_elements_revision",
+    *(statement.split()[2] for statement in SEARCH_INDEX_INDEX_DDL),
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -501,7 +528,8 @@ DOCUMENT_INTAKE_PREDECESSOR_SCHEMA_SHA256 = "8078a6f7132200e6cf9e729f116c7b8ad6c
 DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256 = "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
 REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256 = "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
 DOCUMENT_ENRICHMENT_PREDECESSOR_SCHEMA_SHA256 = "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
-EXPECTED_SCHEMA_SHA256 = "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6"
+LEXICAL_INDEX_PREDECESSOR_SCHEMA_SHA256 = "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6"
+EXPECTED_SCHEMA_SHA256 = "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -577,7 +605,8 @@ DOCUMENT_INTAKE_PREDECESSOR_PROFILE_SHA256 = "b8f925467533ee5810343ce3a83a0035b8
 DOCUMENT_REVISION_PREDECESSOR_PROFILE_SHA256 = "50c8583b7958c4e035690fdcf305c8d968b3a4c26a21f18e8744436eabf45721"
 REVISION_INVALIDATION_PREDECESSOR_PROFILE_SHA256 = "b29c98353dc218688eb20ce1dc60ca05ee7b62e59cdbe1e514caffa75544289c"
 DOCUMENT_ENRICHMENT_PREDECESSOR_PROFILE_SHA256 = "034d2b29092d29be8008cc7149287cf92c350aa31cd045451ca8bae0d563bf77"
-EXPECTED_PROFILE_SHA256 = "6cc9fc713678dcbaab23bd922a4010098cbd05922932a4b5f4840967f8f377e6"
+LEXICAL_INDEX_PREDECESSOR_PROFILE_SHA256 = "6cc9fc713678dcbaab23bd922a4010098cbd05922932a4b5f4840967f8f377e6"
+EXPECTED_PROFILE_SHA256 = "662d2a272faec2d6bad6d292140dca80e9c803bf6df0763f69bf63b223dd3dbb"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3665,6 +3694,7 @@ SCHEMA_METADATA_V25_DDL = SCHEMA_METADATA_V24_DDL.replace("schema_version = 24",
 SCHEMA_METADATA_V26_DDL = SCHEMA_METADATA_V25_DDL.replace("schema_version = 25", "schema_version = 26")
 SCHEMA_METADATA_V27_DDL = SCHEMA_METADATA_V26_DDL.replace("schema_version = 26", "schema_version = 27")
 SCHEMA_METADATA_V28_DDL = SCHEMA_METADATA_V27_DDL.replace("schema_version = 27", "schema_version = 28")
+SCHEMA_METADATA_V29_DDL = SCHEMA_METADATA_V28_DDL.replace("schema_version = 28", "schema_version = 29")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -5710,7 +5740,7 @@ DOCUMENT_REVISION_DDL = (
 
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V28_DDL,
+    SCHEMA_METADATA_V29_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5740,6 +5770,7 @@ _DDL_STATEMENTS = (
     *DOCUMENT_INTAKE_DDL,
     *DOCUMENT_REVISION_DDL,
     *DOCUMENT_ENRICHMENT_DDL,
+    *SEARCH_INDEX_DDL,
 )
 
 

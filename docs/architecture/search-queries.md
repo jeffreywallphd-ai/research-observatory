@@ -142,3 +142,64 @@ artifacts remain available.
 strict wire import, immutable snapshots and content-free error surfaces.
 `tests/search/test_query_contracts.py` exercises actual Core-to-JSON/schema
 roundtrips, forged graphs and an isolated process without UI/server imports.
+
+## Protected indexing Core commands
+
+CAP-06.S01.T02 supplies `CoreLexicalIndexService` in `lexical_index_repository`. Its
+`rebuild`, `begin_rebuild`/`run_build`, `resume`, `synchronize` and `retire`
+commands use injected Native session authority, current canonical sources and
+purpose-scoped derivative keys. They have no renderer dependency. A future
+headless client uses these same Core boundaries; no AI-mode authority or launcher
+is introduced. CAP-06.S01.T03 owns HTTP adapters, ranking, snippets and result UI.
+
+Canonical schema 29 adds append-only source-change, generation, event and
+selection records, plus fenced expiring writer leases. Migration starts from
+the literal schema 28 predecessor, verifies a protected backup and preserves
+earlier cells, objects and migration history. Source outbox publication and
+change sequencing share the canonical transaction. Controller-only index
+events do not feed their own consumer.
+
+The generated `indexes/lexical-<generation UUID>.sqlite3` file is a separate
+SQLCipher derivative. A revision-bound text mirror and external-content FTS5
+table share that encrypted database. Its keys bind project, generation, purpose,
+canonical-key version and package lifecycle. Files and ancestors retain identity
+and no-reparse holds through close; WAL and shared-memory names stay guarded,
+temporary tables remain in memory, and close checkpoints before owned cleanup.
+Derivative bytes remain excluded from portable backup/export by the existing
+package file-class policy.
+
+Metadata uses the current canonical field selection and exact source-copy
+`inspect` and `index` grants for `local-search`/`local-project`. Full text uses
+the current accepted normalized revision and authenticated original copy. One
+complete normalized projection is one FTS row, retaining its projection ID and
+half-open codepoint range. Projection IDs are not node IDs: a projection may
+have zero, one or several structural associations. This preserves phrases across
+node boundaries and discarded punctuation without creating phrases across
+separate projections or copies. Search never changes canonical normalization or
+anchor identity.
+
+Private commits and canonical acknowledgements are separate transactions.
+Shadow rows are unreadable until sealed; promotion rechecks source watermark,
+current authority, expiry, cancellation, integrity and expected pointer. An
+unacknowledged incremental commit requires complete validation or a fresh
+shadow, never blind batch replay. Failed or cancelled work preserves the prior
+selected generation. A stale readable corpus requires synchronization before
+Boolean results; current rights denial remains effective before physical purge.
+All command failures are content-free and leave canonical research authoritative.
+
+Queries load bounded, ordered batches of complete authorized items into memory
+tables. All permitted metadata/text rows for an item stay in one batch, so
+Boolean evaluation can be united across disjoint item sets without changing
+negation or cross-row conjunction. Batch bounds limit the working set; the
+100k-metadata/100k-passage qualification frame is not a corpus-import limit.
+The internal candidate-ID helper is separate from T03's bounded result delivery.
+
+Retirement recovery is a private Core operation returning no rows or reusable
+store. It authenticates the held main-file identity against canonical Retired
+metadata before opening SQLCipher, then uses only the exact historical vault
+version under repeated current Native/actor/nonselection checks. It can verify
+integrity, checkpoint and close, including after canonical-key rotation; it
+cannot search, stage, update or promote. Ordinary leases still reject old
+canonical-key versions. DELETE eligibility and reader drain precede key
+revocation. `IndexCleanupPending` identifies a valid new selection whose obsolete
+generation needs a cleanup retry; it does not mark the new generation incomplete.

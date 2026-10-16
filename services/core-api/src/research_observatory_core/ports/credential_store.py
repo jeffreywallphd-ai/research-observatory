@@ -55,6 +55,7 @@ class SecretPurpose(StrEnum):
     SIGNING_VERIFICATION = "signing-verification"
     OBJECT_ENCRYPTION = "object-encryption"
     DATABASE_ENCRYPTION = "database-encryption"
+    DERIVATIVE_INDEX_ENCRYPTION = "derivative-index-encryption"
 
 
 def _require_identifier(value: object, field: str) -> str:

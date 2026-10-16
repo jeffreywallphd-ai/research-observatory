@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 434688c3db106ad4724156a8b12c9fd40824ed8fecfbe366bc5c945cf22e1353
+source_sha256: 46d31281dd8fb4e4df3753f4b8157174725485e9797eba16b1cc6b212cdc4e5c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -14022,13 +14022,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-06.S01.T02 - Implement incremental FTS5 indexing and rebuild
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-06.S01.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w3-implementation / - (`-`)
 
 **Objective:** Index writers for canonical metadata and permitted document text with version markers, checkpoints, and full rebuild command.
 

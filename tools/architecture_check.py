@@ -26,6 +26,11 @@ _DATABASE_MODULES = {"sqlite3", "sqlalchemy"}
 _DATABASE_CALLS = {"connect", "cursor", "execute", "executemany", "executescript"}
 _CONNECTION_AUTHORITIES = {"CanonicalConnection", "open_canonical_database"}
 _REPOSITORY_ADAPTER_MODULES = {
+    "lexical_catalog_repository",
+    "lexical_index_io",
+    "lexical_index_store",
+    "lexical_source_repository",
+    "lexical_index_repository",
     "reconciliation_repository",
     "connector_repository",
     "repositories",

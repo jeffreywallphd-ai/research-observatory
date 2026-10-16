@@ -731,11 +731,15 @@ class SqliteRightsRepository:
                     self._insert_exact_recheck(connection, scoped, output_revision_id, item_id, path_id, occurred_at)
                 _publication_step("exact-recheck-batch-created")
                 if not self._exact_corpus_links(connection, scoped, source, limit=1, missing_only=True):
+                    completion_id = new_uuid_v7()
                     connection.execute(
                         "INSERT INTO rights_policy_recheck_completions "
                         "(completion_id,rights_revision_id,project_id,dimension,actor_id,occurred_at) "
                         "VALUES (?,?,?,'exact',?,?)",
-                        (new_uuid_v7(), scoped.revision_id, self._project, actor.actor_id, occurred_at),
+                        (completion_id, scoped.revision_id, self._project, actor.actor_id, occurred_at),
+                    )
+                    self._publish_recheck_completion(
+                        connection, scoped.revision_id, completion_id, "exact", actor, occurred_at
                     )
                     _publication_step("exact-recheck-completed")
             else:
@@ -792,11 +796,15 @@ class SqliteRightsRepository:
                             if _generic_budget_exceeded(deadline, callbacks):
                                 raise _ReachabilityBudgetExceeded
                             if not self._missing_generic_outputs(connection, scoped, limit=1):
+                                completion_id = new_uuid_v7()
                                 connection.execute(
                                     "INSERT INTO rights_policy_recheck_completions "
                                     "(completion_id,rights_revision_id,project_id,dimension,actor_id,occurred_at) "
                                     "VALUES (?,?,?,'generic',?,?)",
-                                    (new_uuid_v7(), scoped.revision_id, self._project, actor.actor_id, occurred_at),
+                                    (completion_id, scoped.revision_id, self._project, actor.actor_id, occurred_at),
+                                )
+                                self._publish_recheck_completion(
+                                    connection, scoped.revision_id, completion_id, "generic", actor, occurred_at
                                 )
                                 _publication_step("generic-recheck-completed")
                     except _DATABASE_ERRORS:
@@ -804,6 +812,43 @@ class SqliteRightsRepository:
                             raise _ReachabilityBudgetExceeded from None
                         raise
             return self._recheck_scope_with_connection(connection, current)
+
+    def _publish_recheck_completion(self, connection, revision_id, completion_id, dimension, actor, occurred_at):
+        """Wake canonical derivative consumers when pending authority completes.
+
+        The original policy's single provenance witness stays unchanged. This
+        content-free completion event and source revision outbox commit with the
+        receipt; a previously excluded source can then be indexed after regrant.
+        """
+        digest = _digest(
+            {
+                "rightsRevisionId": revision_id,
+                "completionId": completion_id,
+                "dimension": dimension,
+                "actorId": actor.actor_id,
+                "occurredAt": occurred_at,
+            }
+        )
+        connection.execute(
+            "INSERT INTO provenance_events(event_id,project_id,revision_id,event_type,occurred_at,trace_id,actor_"
+            "type,actor_id,record_sha256) "
+            "VALUES(?,?,NULL,'rights.recheck-completed',?,?,?,?,?)",
+            (new_uuid_v7(), self._project, occurred_at, actor.trace_id, actor.actor_type, actor.actor_id, digest),
+        )
+        connection.execute(
+            "INSERT INTO outbox_events(outbox_id,project_id,revision_id,event_type,occurred_at,available_at,state"
+            ",attempt_count,published_at,idempotency_key,record_sha256) "
+            "VALUES(?,?,?,'rights.recheck-completed',?,?,'pending',0,NULL,?,?)",
+            (
+                new_uuid_v7(),
+                self._project,
+                revision_id,
+                occurred_at,
+                occurred_at,
+                "rights-recheck-" + completion_id,
+                digest,
+            ),
+        )
 
     def evaluate_with_connection(
         self, connection: CanonicalConnection, request: RightsRequest, *, actor: RightsActor

@@ -15,6 +15,7 @@ from research_observatory_core.migrations import runner  # noqa: E402
 from research_observatory_core.migrations.versions import v0026_document_revisions as migration  # noqa: E402
 from research_observatory_core.migrations.versions import v0027_revision_invalidations as invalidation  # noqa: E402
 from research_observatory_core.migrations.versions import v0028_document_enrichments as enrichment  # noqa: E402
+from research_observatory_core.migrations.versions import v0029_lexical_index_generations as lexical  # noqa: E402
 
 from tests.documents import test_acquisition_recovery_migration as predecessor  # noqa: E402
 
@@ -33,7 +34,9 @@ class DocumentRevisionMigrationTests(unittest.TestCase):
             self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(manifest["schemaSha256"], storage._schema_fingerprint(db))
         plan = runner.plan_database_migration(database, expected_project_id=manifest["projectId"])
-        self.assertEqual((migration.revision, invalidation.revision, enrichment.revision), plan.migration_ids)
+        self.assertEqual(
+            (migration.revision, invalidation.revision, enrichment.revision, lexical.revision), plan.migration_ids
+        )
         result = runner.migrate_database(database, expected_project_id=manifest["projectId"])
         self.assertEqual("migrated", result.status)
         fixture.assert_predecessor_rows(database, manifest)
@@ -44,7 +47,7 @@ class DocumentRevisionMigrationTests(unittest.TestCase):
             self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(manifest["schemaSha256"], storage._schema_fingerprint(db))
         with closing(storage.open_canonical_database(database, expected_project_id=manifest["projectId"])) as db:
-            self.assertEqual(28, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertTrue(storage.database_integrity_report(db, expected_project_id=manifest["projectId"]).ok)
             for table in storage.DOCUMENT_REVISION_TABLES:
                 self.assertEqual(0, db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0])

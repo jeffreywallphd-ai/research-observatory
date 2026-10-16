@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 28
+      "const": 29
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6"
+      "const": "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"
@@ -190,7 +190,11 @@
         "document_enrichments",
         "document_enrichment_elements",
         "document_enrichment_identifiers",
-        "document_enrichment_targets"
+        "document_enrichment_targets",
+        "search_changes",
+        "search_generations",
+        "search_generation_events",
+        "search_selections"
       ]
     },
     "mutableStateTables": {
@@ -203,7 +207,8 @@
         "workflow_attempt_artifacts",
         "corpus_source_item_heads",
         "corpus_source_totals",
-        "corpus_source_overlap_totals"
+        "corpus_source_overlap_totals",
+        "search_generation_leases"
       ]
     },
     "connectionProfile": {
@@ -357,7 +362,12 @@
         "document_enrichments",
         "document_enrichment_elements",
         "document_enrichment_identifiers",
-        "document_enrichment_targets"
+        "document_enrichment_targets",
+        "search_changes",
+        "search_generations",
+        "search_generation_leases",
+        "search_generation_events",
+        "search_selections"
       ]
     }
   }

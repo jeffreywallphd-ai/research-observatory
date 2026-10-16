@@ -3628,6 +3628,39 @@ class _LocalObjectStore:
             raise _bounded(ObjectAccessDenied, "document context action invalid")
         return results[0]
 
+    def _read_indexed_document_context[Result](
+        self,
+        source: SourceIdentity,
+        *,
+        actor: CorpusActor,
+        action: Callable[[CanonicalConnection], Result],
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> Result:
+        """Trusted Core indexing callback under exact local-search copy rights.
+
+        It exposes no original stream. The callback must authenticate the
+        accepted protected IR and its current canonical head in this same
+        writer. Document-analysis grants never authorize this path.
+        """
+        from .parsing.contracts import SourceIdentity
+
+        source = SourceIdentity.model_validate(source)
+        if not callable(action):
+            raise ObjectAccessDenied("document index context invalid")
+        results: list[Result] = []
+        self._open_document_attachment(
+            source.attachment_id,
+            source.document_revision_id,
+            actor=actor,
+            expected_source=source,
+            context_action=lambda connection: results.append(action(connection)),
+            cancellation_requested=cancellation_requested,
+            index_context=True,
+        )
+        if len(results) != 1:
+            raise ObjectAccessDenied("document index context invalid")
+        return results[0]
+
     def _open_document_attachment(
         self,
         attachment_id: str,
@@ -3642,6 +3675,7 @@ class _LocalObjectStore:
         cancellation_requested: Callable[[], bool] | None = None,
         requested_range: tuple[int, int] | None = None,
         require_derive: bool = True,
+        index_context: bool = False,
     ) -> VerifiedObjectStream | None:
 
         from pydantic import ValidationError
@@ -3658,6 +3692,19 @@ class _LocalObjectStore:
             or not is_uuid_v7(document_revision_id)
             or (cancellation_requested is not None and not callable(cancellation_requested))
             or type(require_derive) is not bool
+            or type(index_context) is not bool
+            or (
+                index_context
+                and (
+                    expected_source is None
+                    or context_action is None
+                    or before_stream is not None
+                    or publication_connection is not None
+                    or context_source_resolver is not None
+                    or requested_range is not None
+                    or not require_derive
+                )
+            )
             or (
                 not require_derive
                 and (
@@ -3808,7 +3855,11 @@ class _LocalObjectStore:
                 from .rights_policy import RightsAction
 
                 actions: tuple[RightsAction, ...] = (
-                    ("inspect", "derive") if expected_source is not None and require_derive else ("inspect",)
+                    ("inspect", "index")
+                    if index_context
+                    else ("inspect", "derive")
+                    if expected_source is not None and require_derive
+                    else ("inspect",)
                 )
                 for action in actions:
                     decision = rights.evaluate_with_connection(
@@ -3816,7 +3867,11 @@ class _LocalObjectStore:
                         RightsRequest(
                             actor_id=actor.actor_id,
                             subject=subject,
-                            use=RightsUse(action=action, purpose="document-analysis", destination_kind="local-project"),
+                            use=RightsUse(
+                                action=action,
+                                purpose="local-search" if index_context else "document-analysis",
+                                destination_kind="local-project",
+                            ),
                         ),
                         actor=actor,
                     )
@@ -3841,6 +3896,9 @@ class _LocalObjectStore:
                         raise ObjectSourceTooLarge("document exceeds the local viewer source limit")
                     if requested_range[1] > metadata.byte_length:
                         raise ObjectAccessDenied("document byte range is invalid")
+                # Local document-object/classification admission is distinct
+                # from the exact-purpose source RightsUse checks above. This
+                # existing local-read request grants no source permission.
                 _authorize_access(
                     state,
                     _access_request(

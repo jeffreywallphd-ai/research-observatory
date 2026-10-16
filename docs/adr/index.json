@@ -602,6 +602,15 @@
       "linkedTasks": [
         "CAP-06.S01.T01"
       ]
+    },
+    {
+      "id": "ADR-0060",
+      "path": "docs/adr/ADR-0060-bind-protected-lexical-generations-to-accepted-storage-authority.md",
+      "title": "Bind protected lexical generations to accepted storage authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-06.S01.T02"
+      ]
     }
   ]
 }

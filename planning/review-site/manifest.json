@@ -28118,7 +28118,7 @@
             {
               "task_id": "CAP-06.S01.T02",
               "title": "Implement incremental FTS5 indexing and rebuild",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -28163,15 +28163,15 @@
             {
               "task_id": "CAP-06.S01.T02",
               "title": "Implement incremental FTS5 indexing and rebuild",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-06/CAP-06.S01.T02.html",
               "dependencies": [
                 "CAP-06.S01.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w3-implementation",
+                "branch": "codex/w3-implementation",
+                "base_sha": "c90c06dfaa3279e6602d4cad53091e7a04c35941"
               },
               "plan_section_sha256": "de62bbc3b18f8af895df436d8d2f7b5b2fe230fe4ebccdadfb518d4d026bc971",
               "worksheet": null

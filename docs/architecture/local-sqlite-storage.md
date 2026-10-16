@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-28 authority
+## Current version-29 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=28`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=29`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -93,6 +93,11 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `corpus_report_snapshots`, `corpus_report_members`, `corpus_report_paths`, `corpus_report_sources` | immutable report summary, exact member/path stream, and retained source/policy witnesses |
 | `corpus_source_item_heads`, `corpus_source_totals`, `corpus_source_overlap_totals` | mutable, rebuildable current-head source/path and pair counts; no rights authority or sealed-report replacement |
 | `acquisition_locations`, `acquisition_attempts`, `acquisition_attempt_results`, `document_acquisition_sources` | immutable exact-copy observations, admitted and terminal canonical workflow bindings, and protected candidate source/license/receipt facts; no reusable dispatch permission |
+| `search_changes` | immutable ordered canonical source/outbox authority; content-free, not indexed text |
+| `search_generations` | immutable project/key/lifecycle/analyzer identity for one replaceable protected derivative |
+| `search_generation_leases` | mutable expiring writer owner/epoch fence; never a source-use permission |
+| `search_generation_events` | append-only checkpoint, validation and generation lifecycle history |
+| `search_selections` | append-only expected-predecessor selection of validated Ready generations |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
 
 Object bytes, document content, indexes, models, caches, and other derived
@@ -116,20 +121,22 @@ Alongside object and outbox state, workflow queue/attempt/artifact state and
 `corpus_source_overlap_totals` are intentionally mutable. The source projection
 rows are rebuildable from immutable corpus history; they never grant rights or
 replace immutable sealed report snapshots.
+`search_generation_leases` are also mutable under exact owner/epoch/expiry
+fences. Search changes, generation identities, events and selections remain
+immutable; retries cannot replace their history.
 
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v27
-profiles to current schema v28. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v28
+profiles to current schema v29. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-28 database is detected
-idempotently and is never backed up or rewritten.
-A version-27 source receives a verified backup before migration to v28.
+verified backup remains available. A current version-29 database is detected idempotently and is never backed up or rewritten.
+A version-28 source receives a verified backup before migration to v29.
 Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -406,3 +413,25 @@ to the literal populated version-26 predecessor before normal retry. Earlier
 recovery-manifest branches retain their original fingerprints and interpretation;
 the appended target-v27 branch binds its exact source, migration chain, hashes
 and verified backup.
+
+## Version 29 protected lexical generations
+
+The additive v28-to-v29 migration preserves earlier schema objects, row/cell
+values, encrypted objects and exact migration-history identities after a verified
+protected backup. It appends five search authority tables and their invariants;
+it does not backfill researcher judgments, permissions or document text. Existing
+outbox events receive deterministic ordered change identities. New scholarly
+outbox publication and its search change commit together. Only the six exact
+index-controller event types with a null scholarly revision are excluded,
+preventing consumer feedback without hiding source revisions.
+
+Separate SQLCipher lexical derivatives contain the text mirror and FTS5 table
+under purpose-scoped generation keys. Canonical records retain content-free
+manifests, source watermarks, fenced writer leases and immutable lifecycle and
+selection history. Current rights, completeness, physical file ownership and
+cancellation are checked before atomic promotion. Interrupted private commits
+are validated or rebuilt; an incomplete shadow never becomes Ready. Rotation,
+relocation and restore require fresh derivative authority. Derivative files
+are excluded from portable backups under the existing project file classes.
+See [protected indexing Core commands](search-queries.md#protected-indexing-core-commands)
+and Accepted ADR-0057 for key retirement and recovery boundaries.
