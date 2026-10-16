@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-current14-exclusive-output-path-alignment-source-binding",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalDecisionIntroductionCommit": "db25c8c74e2432b6267d687edcfddae31dc070eb",
+  "scopeId": "W2-DESKTOP-CURRENT14-01",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-15.py",
+    "sha256": "553dc5fe23650f03d1f6e2c5c930c7f5bff7f811552ce78148f63a5be190fd4f"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-15.json",
+    "sha256": "d8008509e7631f2c44a57bd01001352bcb16a1802dcbf417b711af366656c232"
+  },
+  "manifest": null,
+  "originalProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py",
+    "sha256": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9"
+  },
+  "originalPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-05.json",
+    "sha256": "3ea4f05a87757e46856505c7e63fb65c37b65299e4a75880e2ee47773025a733"
+  },
+  "originalManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/source-proposal-manifest-05.json",
+    "sha256": "dd4218f44913fe2c56f3d57302f084d553f6661dafc0e7d8478b304667a88c9b"
+  },
+  "originalReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-05.json",
+    "sha256": "036b424806c36cbca9be78c2e97a49423ded4bc26f32ea4ffcbb537b683ea12a"
+  },
+  "diagnosis": {
+    "path": "artifacts/tmp/W2.C25.T01.runtime-alias-diagnostic-01.json",
+    "sha256": "beb53efe73e73fbbd808faf3a6db8b3f7a3d7730a584c792720c68b55a588b75"
+  },
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-15.py": "553dc5fe23650f03d1f6e2c5c930c7f5bff7f811552ce78148f63a5be190fd4f",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-12.py": "6ed071f8b8ef1b09a599a7e44aca57a8078edeea5af50c600f0ac2519eaa1a82",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-06.mjs": "ec143b2b39524f95badc2627123c3112a1c3bb99ea31fbf5f47a92e3db7c3186"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-15.json",
+    "sha256": "0d69b8137cf4f422048e2b3a5a6098c5a0ee83359f112e3ff25832d2c04eb73b"
+  },
+  "recordingReadiness": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.desktop-current14-exclusive-output-15.source-binding-01.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Existing34e/738a finite Current14 authority, path-only freshf07 rotation after actual successful reference-only refresh/originalsnapshot admission and genuine different review. Allf06FAIL/adverses retained; no input-inventory criterion exemption or capture success claim.",
+  "scope": "Only source15 parent/prep/method12/builder06/f07 path rotations using same4+2+1 literals. Original26assertions/2186calls/180captures90cases,300/3600 deadlines, fresh runtime snapshots/holds/alias/deny/error behavior, admitted205/85138FAIL/94cf/738ad and approved1.9 semantics stay exact. Reference outcome is unknown at preparation and later genuine evidence remains external; parent original dynamic reference snapshot and unchanged producer predicates decide actualfreshreference validity.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "baselineChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "publicationConditions": "Before any publication/execution, root must have successful real reference-only refresh and unchanged originalproducer_snapshot19 guard result underholds plus genuine different readiness. After genuine source review, only status/approvedBy/sourceReadiness/recordingSemantics may finalize; every other field remains exact, including all null preparation-time actualoutcomes/intro/recording/manifest. No new prospective finalization authority.",
+  "predecessorProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-14.py",
+    "sha256": "0bf6eb076c4f74aa546611d43d178b5ffea66e694749a86568f374ddee99aea2"
+  },
+  "predecessorPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-14.json",
+    "sha256": "2f2a585ee506461f20a2a537bc212d129069414978444dc68b57ae7e20a03a88"
+  },
+  "predecessorManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-successor-14.manifest.json",
+    "sha256": "9d67f684b6d0fdd50d2c2bf729516879c4c6699863108a15d639362a4c95cde9"
+  },
+  "preservedPriorBindingDraft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/normal-absent-workspace-alias-source-binding-07.draft.json",
+    "sha256": "af87dab026f93d21d0f087c671db73f90ea25ca502b5fd0f6c2d60feb5dfed56"
+  },
+  "actualPostInstallCapture": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-c34-01/receipt.json",
+    "sha256": "85138a54cc5792a9ed13c091d85cfdc7fe8bf3349918ee533f14cd2a7546beae"
+  },
+  "preservedImmediateBinding": {
+    "path": "artifacts/evidence/W2.desktop-current14-exclusive-output-14.source-binding-01.json",
+    "sha256": "d5be6c131762c1db7e1ccdf4b20076c8198dc5270c6eae633fd6ffc059073cf5"
+  },
+  "preservedActualFailure": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f06/receipt.json",
+    "sha256": "8cb29a9523bf8caa489c28181ee4e08be12c0e5397207cb821bd28aaeb6d282e"
+  },
+  "recordingSemantics": "Records existing prospective owner completion authorization34e and finite738a Current14 scope after genuine source15 path-only review0d69 and successful actual reference-only refresh/original snapshot admission at11f5, independently qualified37ef44. Only seven transport literals and authenticated source/preparation bindings change. Actual f06 FAIL, failed refresh02 WinError5 and original sources remain preserved. No later owner inspection, f07 execution/captures, product criterion/framework/baseline change or task/Wave/release approval is claimed. Actual introduction is recorded externally after publication; null manifest/actualIntroductionCommit/recordingReadiness and all preparation-time unknowns stay unchanged.",
+  "freshProductComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/independent-c34-actual-component-disposition-01.json",
+    "sha256": "94cfac10b8ed2a133eae6f144cb2a5dbd75e786a56b90fd359645e0871ec116f"
+  },
+  "frontendManifest": {
+    "path": "apps/desktop/product-dist/application-manifest.json",
+    "sha256": "738ad07bfa745d5636512029754fa99e662d204a305e71b4b88229afc6b25138"
+  },
+  "historicalPredecessorManifestBefore12": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/react-resolution-successor-11.manifest.json",
+    "sha256": "faa3ea83ad87578b64bde9eaf52399f80d25bcae19d743bba3ce0544d24d6e32"
+  },
+  "preservedActualFailureRaw": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f06/qualification-raw.log",
+    "sha256": "583da6a08063de3aaae1f01e7f5eb1f788942ab08ba9b4da6b8b895985a38bd5"
+  },
+  "preservedActualCompletion": {
+    "path": "artifacts/tmp/W2.current14-dispatch-20261016-02/completion.json",
+    "sha256": "011e87adcb3dc5261ba6166f3b1165e66b13fa0b835a9c7e384f8d5d6297355c"
+  },
+  "pathCoherenceWitness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-path-coherence-witness-15.json",
+    "sha256": "b03f62c8fefffa2b551005ae8c26a53f2f0e07756fa7fa80284c8a9b622dd9e5"
+  },
+  "permittedFinalizationFields": [
+    "status",
+    "approvedBy",
+    "sourceReadiness",
+    "recordingSemantics"
+  ],
+  "preservedActualChildReport": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f06/child-report.json",
+    "sha256": "3bb8959aa73b06aec96e03dde412aaaf1702398d636051bae2d0248385db8b74"
+  },
+  "actualRCA": {
+    "path": "artifacts/tmp/W2.Current14-f06-stale-reference-application-manifest-diagnosis-01.json",
+    "sha256": "b2e8a461e4e4cc39124c7ac2cbe16282b84d4c11559e7316b87de431a03d50b6"
+  },
+  "originalPrerequisiteMap": {
+    "path": "artifacts/tmp/W2.current14-pre-capture-prerequisite-map-01/prerequisite-map-01.json",
+    "sha256": "12ade92ae94c8f27b4604e2cb44b0c4db5d36f66e3dd11b3f0d2eb3119b3351f"
+  },
+  "preExecutionConditions": {
+    "actualReferenceRefreshOutcomeAtPreparation": null,
+    "actualOriginalProducerSnapshotAdmissionAtPreparation": null,
+    "actualIndependentSourceReadinessAtPreparation": null,
+    "beforeAnyPublicationOrExecution": [
+      "Successful actual original last2 canonical reference-only build stages with genuine owned normaldrain/currentdist inventory/unchanged product205 closure, preserving original42 dist and all f06 failures. No result or new reference digest is guessed.",
+      "Successful real repetition of original producer_snapshot_19 under unchanged source/runtime/205/reference custody after actualrefresh, preserving all its product/context/application/sourceNamespace/Git predicates; not a replacement or seven-second/capture PASS.",
+      "Genuine different source/readiness and truthful permitted4field recording/publication under existing34e/738a before any freshf07 invocation."
+    ],
+    "evidenceComposition": "Actual reference refresh and original snapshot admission records remain external genuine preexecution evidence. These null fields describe preparation-time unknowns and are not extra finalization fields. Parent15 still dynamically snapshots actualreference/dist and original predicates decide its validity; no new runtimeAPI/field/shim/exemption."
+  },
+  "approvedBy": "human:repository-owner"
+}
