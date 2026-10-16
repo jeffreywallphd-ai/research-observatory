@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d76a33a522a502d11bc0c3d9df0404a226e005df3cfee61458d1c2d613cd8ef8
+source_sha256: b94f8e18f2b992dc5057e711eaffe64fb842e8b6dd125d35492efc4926754a8b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -292,7 +292,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W2 - Windows local evidence foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
 
 **Capability contributions:** `CAP-04`, `CAP-05`
 
