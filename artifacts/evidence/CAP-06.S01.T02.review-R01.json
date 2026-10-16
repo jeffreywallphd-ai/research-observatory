@@ -1,0 +1,169 @@
+{
+  "task_id": "CAP-06.S01.T02",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/w3_query_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-16T22:02:08+00:00",
+  "reviewed_state_commit": "89a6d05e9287bae0e6afa56ea025c11ace841bde",
+  "candidate_commit": "89a6d05e9287bae0e6afa56ea025c11ace841bde",
+  "base_commit": "c90c06dfaa3279e6602d4cad53091e7a04c35941",
+  "packet_sha256": "9fa5cf800c1514fcec1f01d13babd656aa9cb4289610cf96d5c496a0858c4de1",
+  "evidence_sha256": "f227eb3aea712f2ffef4eb875906b3dba26b7dc8c8fb61ccea280ab2e15b915b",
+  "acceptance_criteria_sha256": "9e6da57e528ad5d3fd17b36d46891b8e3b282f1fc300fc7f76b1393294bb3156",
+  "selection_sha256": "d9a6ea64b0b3b9bf362d7f49185ce42df4b4c75b2c965fa00b1c9b4619adc90e",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The reviewed Core service consumes committed canonical changes and exact source/item/active Work/document heads, reconstructs complete permitted rows, and fences current actor/Intent, source/copy-specific inspect plus index local-search authority, expiry and canonical watermark before staging, promotion and delivery. Incremental updates/removal and private-commit/canonical-ack recovery preserve canonical history. Complete-item Boolean batches retain lawful AND/OR/NOT semantics, and the final DISTINCT restores one candidate ID per item. Authenticated current-candidate search/rights/document-source evidence covers revocation before purge, regrant, expiry, stale sources, withdrawal, checkpoint gaps and prior-selection preservation. Interrupted shadows resume or rebuild; witnessed never-admitted bootstrap files can retire without adopting unknown files. The bounded creation-only same-held-operation retry restores the observed transient native failure class while retaining identity, target, error and deadline denial."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "All sixteen fresh selected groups passed at the exact candidate. The raw search suite reports 98 tests with no skips; it includes expected indexing, query, persistence, incremental/rebuild and source projection behavior, plus material authority/key/path substitutions, rights denials, cancellation, expiry, checkpoint CAS, acknowledgement gaps, interrupted constructors, fourteen abrupt bootstrap child phases, populated encrypted-WAL crash replay and retirement retry. The actual protected-store bare/title/year and Core repeated accepted-projection regressions replay F01; constructor/owned-child and unknown-file regressions replay F02. All26 project-lifecycle cases,146 affected migration/attachment compatibility cases,17 rights cases,17 document-source cases,22 storage-contract cases,3 actual existing API cases and19 architecture regressions passed. Declared synthetic source/parser/key/actor/capacity fixtures remain distinct from real Windows kernel, SQLCipher, current-user DPAPI and Core composition evidence."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The76-path candidate stays within approved T02 and its necessary bounded creation reliability restoration. Accepted ADR0057 and immutable source/anchor ADR0029 remain governing; Proposed ADR0060 documents implementation without granting new authority. Complementary independent review authenticates purpose-bound derivative keys, exact root data adapters, canonical schema29 and the populated protected schema28 predecessor/verified backup, prior cell/object/history preservation, rollback/retry and unchanged historical migration modules. Current schema expectations append29. Audit/outbox controls remain immutable and content-free, and exact source changes are commit-coupled. Selected contracts, API availability, changed-file quality/types, architecture/regression, ADR and backlog checks pass. Exact synthetic fixture/test-token privacy admissions preserve existing baseline/scanner/configuration and prior admissions. Publication notes truthfully distinguish pre-retention full generated-tree checking from exact retained historical pages; no final retained-tree full-byte check is claimed."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "Authenticated fresh evidence exercises actual SQLCipher4.12 FTS5 and a same-database protected external-content mirror, encrypted main/populated WAL, MEMORY bootstrap/temp confinement, integrity, clean close and owned recovery. Complete accepted normalized projections preserve canonical projection/codepoint identity and phrases across structural nodes, uncovered text and long discarded punctuation; separate projections cannot manufacture a phrase. Current exact local-search permissions gate metadata and accepted text independently of document-analysis grants. Fresh/rebuilt equivalence, update/removal, shadow/late cancellation, owner fencing, abrupt bootstrap phases, populated-WAL replay, current-user DPAPI restart/key rotation and retirement before/after revocation pass. Unknown, redirected, hardlinked, substituted and preexisting files remain denied/preserved; reader drain and held DELETE eligibility precede key destruction. No plaintext research sidecar or UI-dependent authority is introduced."
+    }
+  ],
+  "pre_submission_advisory_reviews": [
+    {
+      "id": "T02-F01",
+      "kind": "independent-pre-submission-advisory-not-a-formal-round",
+      "status": "remediated-before-R01",
+      "original_candidate": "01237dd0742c4f0775e5251cb3a228bd66929de1",
+      "assessment": "Confirmed duplicate item IDs from multiple lawful rows at single text/year leaves also reached Core.match. Failure-first observations were preserved. Final compiler SELECT DISTINCT fixes cardinality without changing parameters or Boolean lowering; fresh protected bare/title/year and actual Core repeated-projection tests pass at the submitted candidate.",
+      "source_record": {
+        "path": "artifacts/tmp/CAP-06.S01.T02.query-component-preliminary-01.json",
+        "sha256": "1806f092434c183995b2845469adabd9630cbce91360c25fbe0034e93c4099d3"
+      }
+    },
+    {
+      "id": "T02-F02",
+      "source_finding_id": "T02-PRE-CODE-01",
+      "kind": "independent-pre-submission-advisory-not-a-formal-round",
+      "status": "remediated-before-R01",
+      "original_candidate": "01237dd0742c4f0775e5251cb3a228bd66929de1",
+      "assessment": "Confirmed creation-before-binding left partial mains that neither resume nor retirement could safely use. Exact kernel temporary ownership, canonical per-role witness/seal, persistent identity handoff, initialized acknowledgement before source admission and authenticated partial-role cleanup restore the interrupted lifecycle. Mixed-case unknown inventory, mutex unwind and handle inheritance gaps were corrected before submission. Complementary exact committed source review and fresh constructor/14-phase child/denial regressions support closure of the advisory risk.",
+      "source_record": {
+        "path": "artifacts/tmp/CAP-06.S01.T02.complementary-code-review-01/preliminary-01237dd0-01.json",
+        "sha256": "af406a2cdabd358f20b0df567ac1be838def37e944cebe81da62f10380b6ae8c"
+      }
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w3-implementation",
+    "complementary_reviewer": "agent:/root/w3_authority_review",
+    "statement": "I independently reviewed the exact base-to-candidate query/source/service/rights and compatibility boundaries, incrementally replayed changed source, and authenticated the actual current evidence and canonical R01 packet. I reused exact unchanged source and the complementary independent storage/key/migration/control and creation review. I authored no product code, committed tests, owner qualification producer or criterion manifest. Earlier separately authorized writes were ignored advisory/privacy reports and one exact-artifact privacy admission registry; they granted no product approval. For this formal disposition my only write is this new consolidated ledger. I ran no tests, product probes, generators, builds, credential scanners or full validator. The existing read-only task_submission_packet_errors helper returned no errors. A narrowly scoped read-only process query was unavailable; no PID/start/parent/executable facts are invented. I made no source, HEAD, index, refs, runtime, dependencies, backlog, taskctl-state or integration mutation. Owner post-submission Markdown/HTML publication is separate from candidate qualification."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:unit",
+      "search:unit",
+      "security-local:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Expanded task review is required by the protected-storage, secret-purpose, migration/destructive I/O, rights, cross-store checkpoint and public Core boundaries. Review covered typed lowering and item-set semantics; exact current source/copy/head authority; complete normalized projections; bounded Boolean batching; incremental/shadow promotion and cancellation/expiry; bootstrap ownership/recovery; key/path/retirement safety; exact predecessor and shared creation compatibility; and truthful evidence/privacy/publication. The complete selected sixteen-group matrix was freshly rerun after the creation source changed. No cached or mixed-attempt PASS substitution was used, and no unrelated full profile was requested.",
+    "deferred": [
+      "CAP-06.S01.T03 owns HTTP search delivery, ranking explanation, rights-filtered snippets, stable pagination, held-out known-item recall and governed desktop search/accessibility.",
+      "Slice/checkpoint integration owns the declared100k metadata/passage workload, integrated performance/resource and complete UI/Core/worker boundary proof; no corpus import cap or throughput qualification is inferred.",
+      "Full repository/deployment profiles, cross-capability packaging/security/privacy/rights/accessibility/performance/restart/recovery and independent Wave review precede separate human G3 release approval. Later platform qualification remains W6. Standalone headless launch and AI mode are outside this task."
+    ]
+  },
+  "evidence_authentication": {
+    "result": "PASS",
+    "canonical_submission": "planning/backlog.yaml: CAP-06.S01.T02.review_control.current_submission",
+    "packet_errors": [],
+    "no_prior_formal_attempts_or_open_findings": true,
+    "changed_paths": 76,
+    "criterion_rows": 4,
+    "authenticated_fresh_raw_log_hashes": 16,
+    "authenticated_adverse_raw_log_hashes": 30,
+    "frozen_binding_snapshot": {
+      "path": "artifacts/tmp/CAP-06.S01.T02.frozen-R01-binding-01.json",
+      "sha256": "b94c1bf80938f6e647768235688ed351649efe02241554c790e12b47a33d958f"
+    },
+    "manifest": {
+      "path": "artifacts/evidence/CAP-06.S01.T02.R01.json",
+      "raw_sha256": "fb7351c5b29381a705f9a9400772104b28ab0555ab388a32edf6336f26ad5312",
+      "canonical_sha256": "f227eb3aea712f2ffef4eb875906b3dba26b7dc8c8fb61ccea280ab2e15b915b",
+      "canonical_hash_matches_evidence_reference": true
+    },
+    "qualification_report": {
+      "path": "artifacts/tmp/CAP-06.S01.T02.qualification-04/report.json",
+      "sha256": "5381f0ef52c6fc4e4f40d56a5c829ef9b825f5c0e4cfadc71dfe0353d1dc018d",
+      "result": "PASS",
+      "fresh_groups": 16,
+      "reused": false,
+      "producer_path": "artifacts/tmp/CAP-06.S01.T02.qualify-04.py",
+      "producer_sha256": "0780939cc1ca161e0b10d606458a84804e0f44b957277c4a173987ee2233dc83",
+      "owner_execution_observation": "Owner reported session10518 exited0; reviewer authenticated actual report/producer/raw outputs and coordinated frozen candidate inputs. Optional independent process inspection was unavailable."
+    },
+    "fresh_selected_proof": "All16 distinct check observations and their actual command/timing/origin report fields match the manifest. Each raw and line-ending-canonical output digest matches, and verbose trailers show expected counts and OK with no search skips. Report records all six final fixity fields true across6880 tracked inputs and7559 installed runtime files; no reusable-cache or whole-OS closure is claimed. Reviewer bound all76 changed input contents to committed candidate blobs:68 raw digests match and8 ordinary CRLF worktree representations match exactly after canonical line-ending conversion. The original fixed candidate and test assertions were preserved throughout the selected run.",
+    "adverse_attempts": [
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T02.qualification-01/report.json",
+        "sha256": "fb9a92351daa85e5600ef780f3bb307c53a2941b5e8b111488a3cdd3bacd5147",
+        "candidate": "01237dd0742c4f0775e5251cb3a228bd66929de1",
+        "result": "FAIL",
+        "assessment": "Twelve groups passed; search, rights and migration-compatibility each retained one native staging-rename setupERROR. All15 raw and canonical hashes authenticate, with exact report fixity true. This run is not relabeled or used as submitted passing proof."
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T02.qualification-02/report.json",
+        "sha256": "a7280d729dae7743258aa5dcdbc135efe003c31b4475b4b5cc0e358d347886fa",
+        "candidate": "a41e1e299825d3ee0fff3d02487b5a9e14fe83f3",
+        "result": "FAIL",
+        "assessment": "Thirteen groups passed; search97PASS plus one setupERROR and document-source16PASS plus one setupERROR retained the same native staging-rename failure. All15 raw and canonical hashes authenticate and fixity is true. Planned mixed02/03 composition was abandoned; qualification03 was not executed."
+      }
+    ],
+    "diagnostic_assessment": "Native Trace03/04 retain the original failure; an identical held no-replace operation subsequently succeeded with matching identity in the diagnostic. The owner/root cause remains UNKNOWN. Current creation-only six-call retry admits only native5/32 under held identity/parent/target guards and a0.25s monotonic deadline for starting another attempt; it does not claim a bound on an already-entered syscall or identify an external cause. Fresh current-candidate positive/persistent-denial and negative authority/deadline tests pass. No concurrency, antivirus, power-loss or driver-cause attribution is inferred.",
+    "process_observation": {
+      "path": "artifacts/tmp/CAP-06.S01.T02.process-observation-01.json",
+      "sha256": "62788086e8a987673499403c5ac1c1598b2a0a88c042b8f73682a468cbfa44c4",
+      "result": "Exact-process CIM query unavailable; only provisional file hashes and HEAD/producer point fixity were observed. This is not independent PID/execution provenance."
+    },
+    "complementary_reviews": [
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T02.complementary-code-review-01/bootstrap-committed-incremental-advisory-03.json",
+        "sha256": "092e4cc502bd056a4814e700dea93de29afde8a14e57251545830b825efa64a1"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T02.complementary-code-review-01/creation-committed-incremental-advisory-02.json",
+        "sha256": "e997b561eb2fc3c4eec418867d7bf194d7d4a26f1011046e0db264218784f70a"
+      }
+    ],
+    "privacy_review": {
+      "path": "artifacts/tmp/CAP-06.S01.T02.creation-privacy-review-01.json",
+      "sha256": "ccac930a9f80b21768dc35e8e47d810eaf3c9c8fad7ddfc6a27bd5a7a90e36a3",
+      "installed_confirmation_path": "artifacts/tmp/CAP-06.S01.T02.creation-privacy-hook-confirmation-05.json",
+      "installed_confirmation_sha256": "62bc866e1fb7a24576344897c56887ad1748db3ff3dc5709ccad1d828ffa585f",
+      "assessment": "Independent complete exact staged-text review admits only the public deterministic local TestClient token blob/fingerprint; no actual external or production credential authority. Existing1532 admissions/preservation and baseline/policy/scanner/configuration remain unchanged; deliberate installer and normal hook passage are separately recorded."
+    }
+  },
+  "scope_limits": [
+    "This is an independent CAP-06.S01.T02 task disposition at the bound candidate only; no slice/checkpoint/Wave/G3, release or integration approval.",
+    "Reviewer inspected source and authenticated owner-produced execution evidence; reviewer did not execute runtime tests, benchmarks or product probes. The optional process query failed, so actual process PID/start/parent facts remain unavailable.",
+    "NativeWorkflowContext/capability and WorkerCapacity fixtures compose actual Core/DPAPI/storage but do not prove Rust supervisor, renderer, optional parser/model execution or installed packaging.",
+    "Owned abrupt-process tests transfer declared synthetic actor/key context and prove process/file/persistence boundaries, not Native authentication, sudden power-loss or filesystem-driver failure.",
+    "Pinned native runtime bytes/inventory equality is recorded; runtimeClosureAuthenticated remains false and no installed OS/driver/whole-system attestation or cached result reuse is claimed.",
+    "Historical failed qualifications, failure-first advisory findings, unavailable observations and unknown cause remain preserved. First formal R01 has no prior formal finding closures; pre-submission risks are reviewed separately above.",
+    "Owner post-submission planning/Markdown/HTML publication is outside candidate product qualification; retained-page/publication limits remain explicit."
+  ],
+  "notes": "Approved CAP-06.S01.T02 R01 at exact candidate89a6d05e9287bae0e6afa56ea025c11ace841bde. All four criteria are satisfied by the reviewed bounded implementation and authenticated fresh sixteen-group evidence. No open blocking or new formal finding. Pre-submission F01/F02 are remediated and replayed; both prior overallFAIL attempts and UNKNOWN native rename owner/root cause remain explicit. Formal packet authentication returned no errors. T03, slice/Wave qualification and separate human release authority remain unapproved."
+}

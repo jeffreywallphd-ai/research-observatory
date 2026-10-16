@@ -28118,20 +28118,210 @@
             {
               "task_id": "CAP-06.S01.T02",
               "title": "Implement incremental FTS5 indexing and rebuild",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:/root/w3_query_review",
+                "result": "approved",
+                "reviewed_at": "2026-10-16T22:19:28+00:00",
+                "notes": "Approved CAP-06.S01.T02 R01 at exact candidate89a6d05e9287bae0e6afa56ea025c11ace841bde. All four criteria are satisfied by the reviewed bounded implementation and authenticated fresh sixteen-group evidence. No open blocking or new formal finding. Pre-submission F01/F02 are remediated and replayed; both prior overallFAIL attempts and UNKNOWN native rename owner/root cause remain explicit. Formal packet authentication returned no errors. T03, slice/Wave qualification and separate human release authority remain unapproved."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w3-implementation",
+                      "submitted_at": "2026-10-16T21:45:47+00:00",
+                      "candidate_commit": "89a6d05e9287bae0e6afa56ea025c11ace841bde",
+                      "base_commit": "c90c06dfaa3279e6602d4cad53091e7a04c35941",
+                      "branch": "codex/w3-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-06.S01.T02.R01.json",
+                        "sha256": "f227eb3aea712f2ffef4eb875906b3dba26b7dc8c8fb61ccea280ab2e15b915b",
+                        "commit": "89a6d05e9287bae0e6afa56ea025c11ace841bde",
+                        "recorded_at": "2026-10-16T21:45:47+00:00"
+                      },
+                      "acceptance_criteria_sha256": "9e6da57e528ad5d3fd17b36d46891b8e3b282f1fc300fc7f76b1393294bb3156",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-06.S01.T02.bootstrap-remediation-note-01.md",
+                        "artifacts/evidence/CAP-06.S01.T02.candidate-publication-note-01.md",
+                        "artifacts/evidence/CAP-06.S01.T02.fixture-privacy-note-01.md",
+                        "artifacts/evidence/CAP-06.S01.T02.rename-remediation-note-01.md",
+                        "docs/adr/ADR-0060-bind-protected-lexical-generations-to-accepted-storage-authority.md",
+                        "docs/adr/index.json",
+                        "docs/architecture/local-sqlite-storage.md",
+                        "docs/architecture/project-package.md",
+                        "docs/architecture/search-queries.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/security/credential-store-profile.schema.json",
+                        "packages/contracts/security/credential-store-profile.v1.json",
+                        "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+                        "packages/contracts/storage/sqlite-profile.schema.json",
+                        "packages/contracts/storage/sqlite-profile.v1.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-06/CAP-06.S01.T02.html",
+                        "planning/review-site/CAP-06/CAP-06.S01.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W3.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/derivative_keys.py",
+                        "services/core-api/src/research_observatory_core/document_revision_repository.py",
+                        "services/core-api/src/research_observatory_core/lexical_catalog_repository.py",
+                        "services/core-api/src/research_observatory_core/lexical_index_io.py",
+                        "services/core-api/src/research_observatory_core/lexical_index_repository.py",
+                        "services/core-api/src/research_observatory_core/lexical_index_store.py",
+                        "services/core-api/src/research_observatory_core/lexical_source_repository.py",
+                        "services/core-api/src/research_observatory_core/migrations/runner.py",
+                        "services/core-api/src/research_observatory_core/migrations/versions/v0029_lexical_index_generations.py",
+                        "services/core-api/src/research_observatory_core/object_store.py",
+                        "services/core-api/src/research_observatory_core/ports/credential_store.py",
+                        "services/core-api/src/research_observatory_core/ports/derivative_keys.py",
+                        "services/core-api/src/research_observatory_core/projects.py",
+                        "services/core-api/src/research_observatory_core/rights_repository.py",
+                        "services/core-api/src/research_observatory_core/search/canonical_schema.py",
+                        "services/core-api/src/research_observatory_core/search/compiler.py",
+                        "services/core-api/src/research_observatory_core/storage.py",
+                        "tests/connectors/test_plugin_grant_migration.py",
+                        "tests/contracts/test_credential_store_contract.py",
+                        "tests/data/test_import_commit_migration.py",
+                        "tests/data/test_import_preview_migration.py",
+                        "tests/data/test_import_summary_migration.py",
+                        "tests/data/test_sqlite_migrations.py",
+                        "tests/documents/test_acquisition_recovery_migration.py",
+                        "tests/documents/test_anchor_invalidation_migration.py",
+                        "tests/documents/test_document_revision_migration.py",
+                        "tests/documents/test_local_attachment.py",
+                        "tests/documents/test_oa_acquisition.py",
+                        "tests/documents/test_reference_migration.py",
+                        "tests/fixtures/search/v28-populated-predecessor.json",
+                        "tests/fixtures/search/v28-populated-predecessor.zip",
+                        "tests/foundation/test_architecture_check.py",
+                        "tests/reconciliation/test_corpus_migration.py",
+                        "tests/reconciliation/test_migration.py",
+                        "tests/reconciliation/test_review_migration.py",
+                        "tests/reconciliation/test_version_migration.py",
+                        "tests/reports/test_migration.py",
+                        "tests/rights/test_migration.py",
+                        "tests/search/__init__.py",
+                        "tests/search/lexical_crash_child.py",
+                        "tests/search/test_derivative_keys.py",
+                        "tests/search/test_index_canonical_schema.py",
+                        "tests/search/test_index_catalog.py",
+                        "tests/search/test_index_document_source.py",
+                        "tests/search/test_index_migration.py",
+                        "tests/search/test_index_service.py",
+                        "tests/search/test_index_sources.py",
+                        "tests/search/test_index_text_chunks.py",
+                        "tests/search/test_lexical_compiler.py",
+                        "tests/search/test_native_index_service.py",
+                        "tests/search/test_protected_lexical_store.py",
+                        "tests/search/test_windows_derivative_index.py",
+                        "tests/service/test_project_lifecycle.py",
+                        "tools/architecture_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/derivative_keys.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py services/core-api/src/research_observatory_core/lexical_index_io.py services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_index_store.py services/core-api/src/research_observatory_core/lexical_source_repository.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0029_lexical_index_generations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/credential_store.py services/core-api/src/research_observatory_core/ports/derivative_keys.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/search/canonical_schema.py services/core-api/src/research_observatory_core/search/compiler.py services/core-api/src/research_observatory_core/storage.py tests/connectors/test_plugin_grant_migration.py tests/contracts/test_credential_store_contract.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/documents/test_reference_migration.py tests/foundation/test_architecture_check.py tests/reconciliation/test_corpus_migration.py tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py tests/reports/test_migration.py tests/rights/test_migration.py tests/search/__init__.py tests/search/lexical_crash_child.py tests/search/test_derivative_keys.py tests/search/test_index_canonical_schema.py tests/search/test_index_catalog.py tests/search/test_index_document_source.py tests/search/test_index_migration.py tests/search/test_index_service.py tests/search/test_index_sources.py tests/search/test_index_text_chunks.py tests/search/test_lexical_compiler.py tests/search/test_native_index_service.py tests/search/test_protected_lexical_store.py tests/search/test_windows_derivative_index.py tests/service/test_project_lifecycle.py tools/architecture_check.py",
+                        ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/derivative_keys.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py services/core-api/src/research_observatory_core/lexical_index_io.py services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_index_store.py services/core-api/src/research_observatory_core/lexical_source_repository.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0029_lexical_index_generations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/credential_store.py services/core-api/src/research_observatory_core/ports/derivative_keys.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/search/canonical_schema.py services/core-api/src/research_observatory_core/search/compiler.py services/core-api/src/research_observatory_core/storage.py tests/connectors/test_plugin_grant_migration.py tests/contracts/test_credential_store_contract.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/documents/test_reference_migration.py tests/foundation/test_architecture_check.py tests/reconciliation/test_corpus_migration.py tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py tests/reports/test_migration.py tests/rights/test_migration.py tests/search/__init__.py tests/search/lexical_crash_child.py tests/search/test_derivative_keys.py tests/search/test_index_canonical_schema.py tests/search/test_index_catalog.py tests/search/test_index_document_source.py tests/search/test_index_migration.py tests/search/test_index_service.py tests/search/test_index_sources.py tests/search/test_index_text_chunks.py tests/search/test_lexical_compiler.py tests/search/test_native_index_service.py tests/search/test_protected_lexical_store.py tests/search/test_windows_derivative_index.py tests/service/test_project_lifecycle.py tools/architecture_check.py",
+                        ".venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental --cache-dir artifacts/tmp/CAP-06.S01.T02.qualification-04/mypy-cache -- services/core-api/src/research_observatory_core/derivative_keys.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py services/core-api/src/research_observatory_core/lexical_index_io.py services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_index_store.py services/core-api/src/research_observatory_core/lexical_source_repository.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0029_lexical_index_generations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/credential_store.py services/core-api/src/research_observatory_core/ports/derivative_keys.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/search/canonical_schema.py services/core-api/src/research_observatory_core/search/compiler.py services/core-api/src/research_observatory_core/storage.py tests/connectors/test_plugin_grant_migration.py tests/contracts/test_credential_store_contract.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/documents/test_reference_migration.py tests/foundation/test_architecture_check.py tests/reconciliation/test_corpus_migration.py tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py tests/reports/test_migration.py tests/rights/test_migration.py tests/search/__init__.py tests/search/lexical_crash_child.py tests/search/test_derivative_keys.py tests/search/test_index_canonical_schema.py tests/search/test_index_catalog.py tests/search/test_index_document_source.py tests/search/test_index_migration.py tests/search/test_index_service.py tests/search/test_index_sources.py tests/search/test_index_text_chunks.py tests/search/test_lexical_compiler.py tests/search/test_native_index_service.py tests/search/test_protected_lexical_store.py tests/search/test_windows_derivative_index.py tests/service/test_project_lifecycle.py tools/architecture_check.py",
+                        ".venv/Scripts/python.exe -B -c \"import sys; from pathlib import Path; sys.path.insert(0,'tools'); from quality_check import load_scope; print('Declared/discovered Python files:',len(load_scope(Path.cwd())))\"",
+                        ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.foundation.test_architecture_check",
+                        ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base c90c06dfaa3279e6602d4cad53091e7a04c35941 --head 89a6d05e9287bae0e6afa56ea025c11ace841bde",
+                        ".venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check",
+                        ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.contracts.test_credential_store_contract tests.contracts.test_protected_database_contract tests.data.test_sqlite_schema tests.data.test_sqlite_recovery_contract",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.service.test_core_api.CoreApiTests.test_uvicorn_starts_on_an_os_assigned_loopback_port tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.service.test_project_lifecycle",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_derivative_keys tests.search.test_index_canonical_schema tests.search.test_index_catalog tests.search.test_index_document_source tests.search.test_index_migration tests.search.test_index_service tests.search.test_index_sources tests.search.test_index_text_chunks tests.search.test_lexical_compiler tests.search.test_native_index_service tests.search.test_protected_lexical_store tests.search.test_query_contracts tests.search.test_query_grammar tests.search.test_windows_derivative_index",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_sqlite_migrations tests.data.test_import_commit_migration tests.data.test_import_preview_migration tests.data.test_import_summary_migration tests.documents.test_acquisition_recovery_migration tests.documents.test_anchor_invalidation_migration tests.documents.test_document_revision_migration tests.documents.test_reference_migration tests.documents.test_local_attachment tests.documents.test_oa_acquisition tests.rights.test_migration tests.connectors.test_plugin_grant_migration tests.reconciliation.test_migration tests.reconciliation.test_review_migration tests.reconciliation.test_version_migration tests.reconciliation.test_corpus_migration tests.reports.test_migration",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.rights.test_repository tests.rights.test_corpus_recheck",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_document_revision_repository tests.parsing.test_protected_parse_source"
+                      ],
+                      "deferred_checks": [
+                        "CAP-06.S01.T03 owns HTTP search delivery, ranking explanation, rights-filtered snippets, stable pagination, held-out known-item recall and governed desktop search behavior/accessibility.",
+                        "Slice/checkpoint integration owns its declared100k metadata/passage workload, integrated performance/resource and actual complete UI/Core/worker boundary evidence. No import-throughput qualification is inferred from index tests.",
+                        "Fresh full repository/deployment/profile, cross-capability packaging/security/privacy/rights/accessibility/performance/restart/recovery qualification and independent Wave review precede separate G3 human release approval. W6 owns later platform qualification. No headless launcher or AI mode is planned."
+                      ],
+                      "selection_rationale": "High-risk protected-storage, secret-purpose, schema/migration, cross-store checkpoint, rights and filesystem lifecycle changes require expanded task review and real Windows/Core/SQLCipher/DPAPI principal proof. Run the full affected search modules and17 directly affected migration/attachment/OA/reconciliation/report modules, rights/document source compatibility, affected storage/credential contracts, actual API generation/availability, all26 affected project-lifecycle cases and changed-file quality/architecture/ADR/backlog checks. The shared creation correction requires a fully fresh selected matrix at the new candidate; no earlier PASS is substituted. No speculative unchanged full deployment profile at ordinary task scope. Installed-file inventory equality is recorded, cache reuse disabled.",
+                      "selection_sha256": "d9a6ea64b0b3b9bf362d7f49185ce42df4b4c75b2c965fa00b1c9b4619adc90e",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "contracts:unit",
+                        "data:unit",
+                        "documents:unit",
+                        "foundation:adr",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:unit",
+                        "search:unit",
+                        "security-local:unit",
+                        "service:unit"
+                      ],
+                      "packet_sha256": "9fa5cf800c1514fcec1f01d13babd656aa9cb4289610cf96d5c496a0858c4de1"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/w3_query_review",
+                      "result": "approved",
+                      "reviewed_at": "2026-10-16T22:19:28+00:00",
+                      "notes": "Approved CAP-06.S01.T02 R01 at exact candidate89a6d05e9287bae0e6afa56ea025c11ace841bde. All four criteria are satisfied by the reviewed bounded implementation and authenticated fresh sixteen-group evidence. No open blocking or new formal finding. Pre-submission F01/F02 are remediated and replayed; both prior overallFAIL attempts and UNKNOWN native rename owner/root cause remain explicit. Formal packet authentication returned no errors. T03, slice/Wave qualification and separate human release authority remain unapproved."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-06.S01.T02.review-R01.json",
+                      "sha256": "03d22ed8453fe8129f42ae0cbd1b760ce91e80df68773d6f642677273674fe2f"
+                    },
+                    "findings": [],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-06.S01.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-16T21:45:47+00:00",
+                      "reviewed_at": "2026-10-16T22:19:28+00:00",
+                      "duration_seconds": 2021,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "contracts:unit",
+                        "data:unit",
+                        "documents:unit",
+                        "foundation:adr",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:unit",
+                        "search:unit",
+                        "security-local:unit",
+                        "service:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-06.S01.T03",
               "title": "Implement fielded search, filters, snippets, and ranking explanation",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -28163,7 +28353,7 @@
             {
               "task_id": "CAP-06.S01.T02",
               "title": "Implement incremental FTS5 indexing and rebuild",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-06/CAP-06.S01.T02.html",
               "dependencies": [
                 "CAP-06.S01.T01"
@@ -28179,7 +28369,7 @@
             {
               "task_id": "CAP-06.S01.T03",
               "title": "Implement fielded search, filters, snippets, and ranking explanation",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-06/CAP-06.S01.T03.html",
               "dependencies": [
                 "CAP-06.S01.T02"

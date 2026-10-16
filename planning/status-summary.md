@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 46d31281dd8fb4e4df3753f4b8157174725485e9797eba16b1cc6b212cdc4e5c
+source_sha256: 5d78e8642f67920eaf22dac8d9a423bf760e04e659ca70f4971bb9373ece934f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,10 +52,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 217 |
-| `READY` | 1 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 101 |
+| `NOT_STARTED` | 216 |
+| `READY` | 2 |
+| `DONE` | 102 |
 | `DEFERRED` | 36 |
 
 ### Wave amendment lifecycle
@@ -931,6 +930,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-05.S06.T02` | `append-only v1` | 1 | `-` | approved / parsing_quality_review | - |
 | `CAP-05.S06.T03` | `append-only v1` | 1 | `-` | approved / parsing_quality_review | - |
 | `CAP-06.S01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w3_query_review | - |
+| `CAP-06.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/w3_query_review | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -1008,7 +1008,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
 | `W2` - Windows local evidence foundation | `APPROVED` | `COMPLETE` | `APPROVED` — artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json | 11/11 | 69/69 | `G2` / `APPROVED` |
-| `W3` - Windows local research workbench | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 0/16 | 1/48 | `G3` / `PENDING` |
+| `W3` - Windows local research workbench | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 0/16 | 2/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
 | `W6` - Cross-platform desktop qualification | `PENDING` | `NONE` | `PENDING` | 0/6 | 0/18 | `G6` / `PENDING` |
@@ -1029,7 +1029,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 6/6 | 20/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 5/5 | 15/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 6/6 | 18/18 | - |
-| CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 1/18 | `CAP-06.S01.T02` |
+| CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 2/18 | - |
 | CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 1/5 | 3/15 | - |
 | CAP-evidence-verification (`CAP-08`) — Evidence schemas, extraction, verification, and adjudication | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-scholarly-graph-synthesis (`CAP-09`) — Scholarly graph, comparison sets, synthesis, and reproducibility | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -1064,9 +1064,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-06.S01.T02` Implement incremental FTS5 indexing and rebuild | `IN_PROGRESS` | codex-w3-implementation | `codex/w3-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 
