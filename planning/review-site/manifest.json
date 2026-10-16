@@ -6306,7 +6306,7 @@
         {
           "task_id": "W2.C36.T01",
           "title": "Build secure local PDF/page and structured-text viewer",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Viewer opens local encrypted content through controlled streams, supports large documents without loading all pages, and never exposes direct file paths to untrusted content.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -6335,17 +6335,147 @@
           "task_review": {
             "task_id": "W2.C36.T01",
             "title": "Build secure local PDF/page and structured-text viewer",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/security_resolution_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-16T09:34:56+00:00",
+              "notes": "Approve the genuine frozen W2.C36.T01/R01 at measured fc694, with the later owner initial-W2 acceptance introduced at f86 explicitly distinguished. Reuse completed independent reviews of the two restorative CSS rules and specificity repair, fresh current205 and embedded Native206, reference/original snapshot19, and the full original Current14 90-case/180-capture machine component. All original machine predicates passed under actual closed inputs. Eight original Reader rights, streaming, cancellation, hostile-input and performance observations retain their historical provenance; they are not fresh C36 executions. The owner expressly ends further styling/checks and supersedes the unperformed capture-publication, final structural, visual and canonical-classification requirements for initial W2 closure. No canonical full-UI, credential scan, current Native GUI or fresh inherited latency PASS is claimed. Existing adverse evidence and limitations remain preserved for provisional W9 follow-up. This ledger records independent task disposition only; root records task/Wave/gate state through normal operations."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-16T09:19:04+00:00",
+                    "candidate_commit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+                    "base_commit": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C36.T01.R01.json",
+                      "sha256": "d2cd45478d699e797da5e49fe89a410b13abd58bc052c312f68291154bebd94c",
+                      "commit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+                      "recorded_at": "2026-10-16T09:19:04+00:00"
+                    },
+                    "acceptance_criteria_sha256": "746d0b01159a8ee9c013fbe9ad148c6d7321a6d7951936c404d5684dcde7eb69",
+                    "changed_paths": [
+                      "apps/desktop/src/app.css",
+                      "artifacts/evidence/W2.C36.T01.current14-source-binding-01.json",
+                      "artifacts/evidence/W2.C36.T01.current14-source-binding-02.json",
+                      "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-01.json",
+                      "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-02.json",
+                      "artifacts/evidence/W2.C36.T01.current14-source-readiness-18.json",
+                      "artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json",
+                      "artifacts/evidence/W2.C36.T01.independent-source-readiness-02.json",
+                      "artifacts/evidence/W2.C36.T01.source-application-01.json",
+                      "artifacts/evidence/W2.C36.T01.source-application-02.json",
+                      "artifacts/evidence/W2.C36.T01.specificity-correction-01.md",
+                      "artifacts/evidence/W2.C36.T01.specificity-independent-readiness-01.json",
+                      "artifacts/evidence/W2.C36.T01.specificity-preflight-01.json",
+                      "artifacts/evidence/W2.C36.T01.specificity-source-readiness-01.json",
+                      "artifacts/evidence/W2.C36.T01.task-start.md",
+                      "artifacts/evidence/W2.C36.T01.ui-authority-method-01.decision.json",
+                      "artifacts/evidence/W2.C36.T01.ui-authority-method-01.proposal.json",
+                      "artifacts/evidence/W2.C36.T01.ui-authority-method-01.readiness.json",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md"
+                    ],
+                    "selected_checks": [
+                      ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/.pnpm/vite@8.2.1_@types+node@26.2.0/node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+                      ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/assemble-application.mjs",
+                      ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/.pnpm/vite@8.2.1_@types+node@26.2.0/node_modules/vite/bin/vite.js build",
+                      ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/assemble-reference.mjs",
+                      ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/guard/unused-bytecode artifacts/tmp/W2.reference-application-refresh-01/owned-reference-refresh-05.py --guard-child --candidate 1b377b219039ac4eafb0715300a8e5d0c8af716e --preparation-sha256 670f2e043d1cefe9fe0482124b2f53d8ffc3649be68f61b594a80b806d8716d0 --source-readiness artifacts/tmp/W2.reference-application-refresh-01/independent-source-readiness-05.json --source-readiness-sha256 c9e39cee9579b40d3712c6a29515e1f840dc34ea55cb3868e431817401bee114 --input-manifest-sha256 4581ff9365d48d3c33b6ab91dc1abf6c81ba08fb8edb9753ca4720e11fc533eb",
+                      ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/unused-compiler-bytecode artifacts/tmp/W2.C36.T01.native-frontend-component-01/compile-native-02.py --receipt artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/compiler-job.json --preparation-sha256 6225bed742ec0fb907ff4d834cf9249e76dc92f753b97cf2cb6cf3b2227d524c",
+                      ".local/toolchains/node-v24.19.0-win-x64/node.exe artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-10.mjs artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/fixture",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-19.py --child --candidate fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc --preparation-sha256 ca0f89262ccc3f6a1bcb9611f1a20267436df2f7cb771018382ddb49a07e8def --source-binding-sha256 869a2b67d9db63cc0956fe8ef58d5a4de7d83c3788113bf921eccd9d4576bf1a --owner-decision artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json --owner-decision-sha256 738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2 --source-readiness artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json --source-readiness-sha256 cf940cb027b2446ccca0f5613246e34529d2c7acf29faa32859ec70df90aba4b --input-manifest-sha256 51a233f83234d79b1cfaa8a9d0cf61b772aefc3ba13a9780c4c068dd72f8e3b7",
+                      "authenticated-fixture-python -B -m unittest -v tests.documents.test_viewer_artifact_budget tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_and_text_use_admission_while_normal_revision_read_is_unchanged tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_denies_substituted_original_or_derive_permission tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_route_stops_the_owned_authentication_and_releases_its_actual_writer tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_ack_denies_at_deadline_while_real_authentication_is_still_held tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancelled_exact_follower_hands_off_real_reader_without_stopping_live_member tests.service.test_document_viewer_api.DocumentViewerApiTests.test_real_asgi_disconnect_reaches_cooperative_reader_and_denies_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_native_close_reopen_denies_the_old_session_before_any_source_authentication tests.service.test_document_viewer_api.DocumentViewerApiTests.test_current_original_metadata_and_exact_range_cross_the_authenticated_boundary tests.service.test_document_viewer_api.DocumentViewerApiTests.test_foreign_project_stale_session_and_source_substitution_deny tests.service.test_document_viewer_api.DocumentViewerApiTests.test_exact_accepted_text_crosses_private_transport_without_anchor_creation tests.service.test_document_viewer_api.DocumentViewerApiTests.test_rights_revoked_between_selection_and_physical_admission_deny_without_reading tests.service.test_document_viewer_api.DocumentViewerApiTests.test_rights_revoked_after_owned_physical_close_deny_private_api_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_renderer_origin_missing_native_auth_and_unbounded_commands_deny tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_inspect_only_original_remains_readable_but_derivative_still_requires_derive tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_derive_revoked_after_artifact_context_closes_denies_text_delivery tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_structured_text_is_bounded_exact_revision_and_does_not_create_anchors tests.documents.test_viewer_range_admission tests.documents.test_viewer_metadata_fairness tests.documents.test_viewer_read_cancellation.ViewerReadCancellationTests.test_corrupt_final_frame_with_live_cancel_probe_still_denies_before_first_byte tests.documents.test_viewer_object_ranges.ViewerObjectRangeTests.test_cancel_during_prefix_discard_rolls_back_and_fresh_retry_returns_exact_range",
+                      "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-worker-cancel-02/probe.py",
+                      "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentViewer.test.ts apps/desktop/src/app/documentViewerNative.test.ts apps/desktop/src/app/pdfDocumentViewer.test.ts apps/desktop/src/app/viewerAssets.test.ts apps/desktop/src/app/viewerWorkerMessages.test.ts apps/desktop/src/app/viewerWorkerQuota.test.ts",
+                      "./.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions tests.desktop.test_viewer_decoder",
+                      "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+                      "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+                      "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+                      "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8"
+                    ],
+                    "deferred_checks": [
+                      "No further product/styling/benchmark/profile rerun. Owner-accepted remaining W2 limitations go to provisional W9 follow-up; larger-compute product work remains W5."
+                    ],
+                    "selection_rationale": "CSS-only restorative layout/specificity change requires fresh product/reference build, current embedded Native package and original full90 matrix. Exact actual task-owned Current14 method maps these existing registry coverage domains; canonical profile commands are not represented as executed. Original Reader source/rights/performance boundaries remain distinctly inherited. Latest owner accepts initial W2 exit and defers residual obligations; no additional checks are selected.",
+                    "selection_sha256": "ec7dc14c337f2ca6225e86208e052adac3384cecf1bd7b90ee6ce3d85d598a33",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "desktop:unit",
+                      "desktop:performance",
+                      "documents:unit",
+                      "desktop:ui-token",
+                      "desktop:ui-route-page",
+                      "desktop:ui-workflow",
+                      "desktop:ui-accessibility",
+                      "desktop:ui-visual-regression",
+                      "foundation:ui-change"
+                    ],
+                    "packet_sha256": "d2e9d4a6c330070e2dff0849813d3b30af9896ca3c654251b7b31d0350266634"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/security_resolution_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-16T09:34:56+00:00",
+                    "notes": "Approve the genuine frozen W2.C36.T01/R01 at measured fc694, with the later owner initial-W2 acceptance introduced at f86 explicitly distinguished. Reuse completed independent reviews of the two restorative CSS rules and specificity repair, fresh current205 and embedded Native206, reference/original snapshot19, and the full original Current14 90-case/180-capture machine component. All original machine predicates passed under actual closed inputs. Eight original Reader rights, streaming, cancellation, hostile-input and performance observations retain their historical provenance; they are not fresh C36 executions. The owner expressly ends further styling/checks and supersedes the unperformed capture-publication, final structural, visual and canonical-classification requirements for initial W2 closure. No canonical full-UI, credential scan, current Native GUI or fresh inherited latency PASS is claimed. Existing adverse evidence and limitations remain preserved for provisional W9 follow-up. This ledger records independent task disposition only; root records task/Wave/gate state through normal operations."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C36.T01.review-R01.json",
+                    "sha256": "7d8dcc59aa6436921d498b61eaf4541003bcb1d2dc2d59fd92199df0f31c59de"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C36.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-16T09:19:04+00:00",
+                    "reviewed_at": "2026-10-16T09:34:56+00:00",
+                    "duration_seconds": 952,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "desktop:unit",
+                      "desktop:performance",
+                      "documents:unit",
+                      "desktop:ui-token",
+                      "desktop:ui-route-page",
+                      "desktop:ui-workflow",
+                      "desktop:ui-accessibility",
+                      "desktop:ui-visual-regression",
+                      "foundation:ui-change"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }
