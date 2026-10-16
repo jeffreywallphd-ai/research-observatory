@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-affected-CAP-05.S06-and-CP10-initial-W2-exit-disposition",
+  "scope": "CAP-05.S06",
+  "result": "approved",
+  "findings": [],
+  "reviewer": "agent:/root/c21_closeout_review",
+  "candidateCommit": "412952c0cbbefc217db0902ec57b49685a271a7c",
+  "qualificationSha256": "8b932f79613b268bea09cb906987dfb3ba910f56a061eab574f51b9d8a775b49",
+  "checkpointDisposition": "approved",
+  "reviewedAtUTC": "2026-10-16T10:06:17.933967+00:00",
+  "qualification": {
+    "path": "artifacts/evidence/W2.initial-exit-qualification-20261016-01.json",
+    "sha256": "8b932f79613b268bea09cb906987dfb3ba910f56a061eab574f51b9d8a775b49"
+  },
+  "reusedDataContentReadiness": {
+    "path": "artifacts/tmp/W2.final-qualification-summary-01/independent-data-content-readiness-01.json",
+    "sha256": "b9a5fcd6155248009f6f23e5a9c114d4c067d951b9f671129a989a8d823ff895"
+  },
+  "reusedOriginalS06ProductDisposition": {
+    "path": "artifacts/tmp/W2.final-s06-independent-review-01.json",
+    "sha256": "878e5f399f498cdf1837e0415880dd3fd29ebad8ea0ada4fed4134f496ae2480"
+  },
+  "reusedDetailedComposition": {
+    "path": "artifacts/tmp/W2.final-S06-qualification-assembly-draft-06/W2.S06.qualification.unfrozen-draft-06.json",
+    "sha256": "27b804b3929804d75178d68494ea67ce1b16675f32b690e9bc65fcdec1856bb7"
+  },
+  "reusedPredecessorCompact": {
+    "path": "artifacts/tmp/W2.final-qualification-summary-01/W2.qualification-summary.PRIVATE-01.json",
+    "sha256": "4874e1b1701dccd63abc8fa9949f189395155d79ef9a2c942cd6a5e35c3c25b4"
+  },
+  "ownerInitialExitAcceptance": {
+    "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+    "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4"
+  },
+  "postExitOwnerPlanningDirection": {
+    "path": "artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md",
+    "sha256": "933b9af5abc9cebf5ac5dd3a23ce425701de93aef359a50b77c96f002cd76b5d"
+  },
+  "actualC36Closure": {
+    "taskId": "W2.C36.T01",
+    "attemptId": "R01",
+    "status": "DONE",
+    "frozenPacketSHA256": "d2e9d4a6c330070e2dff0849813d3b30af9896ca3c654251b7b31d0350266634",
+    "packetReference": {
+      "evidence": "C36ActualSubmissionReceipt",
+      "pointer": "packet"
+    },
+    "formalReviewReferenceKey": "C36IndependentFormalReview",
+    "independentResult": "approved",
+    "normalReceiptReferenceKey": "C36NormalReviewReceipt",
+    "completionReferenceKey": "C36NormalReviewCompletion",
+    "normalReviewExitCode": 0,
+    "backlogAfterSHA256": "c61ead752b8f0c3a8a5beed64d6514d2b79c71907f473f153b5c67e041f09bf6",
+    "doesNotEstablishOrdinaryR20S06CheckpointWaveOrG2State": true
+  },
+  "actualC36References": {
+    "C36ActualSubmissionReceipt": {
+      "path": "artifacts/tmp/W2.C36.T01.normal-historical-submit-01/receipt.json",
+      "sha256": "ab24efcbaae75d5cfbb1f37328760525bee593dfc2f8fa7850e4af79f2cc36d7"
+    },
+    "C36IndependentFormalReview": {
+      "path": "artifacts/evidence/W2.C36.T01.review-R01.json",
+      "sha256": "7d8dcc59aa6436921d498b61eaf4541003bcb1d2dc2d59fd92199df0f31c59de"
+    },
+    "C36NormalReviewReceipt": {
+      "path": "artifacts/tmp/W2.C36.T01.normal-review-01/stdout.log",
+      "sha256": "fbaecfedca00c267c263433275170c6fe9ca0af029b89a6470ce9ff632672699"
+    },
+    "C36NormalReviewCompletion": {
+      "path": "artifacts/tmp/W2.C36.T01.normal-review-01/completion.json",
+      "sha256": "2d7e0e6f1b55d4c5137870584f28761be9c7d5440273288e57bceb33b4a11f1a"
+    }
+  },
+  "actualC36DoneCommit": "12c2a016b9d828f802df7526e8bc6814dc385a15",
+  "actualC36DoneBacklog": {
+    "gitLFSHA256": "024ec9f8f784c77508eb406ede18df640394d608b54f0d76532b7e26d03eb8fc",
+    "normalCompletionWorkingCRLFSHA256": "c61ead752b8f0c3a8a5beed64d6514d2b79c71907f473f153b5c67e041f09bf6",
+    "exactLFToCRLFInverse": true,
+    "C36Status": "DONE"
+  },
+  "verifiedIncrementalFacts": {
+    "publicQualificationRawEqualsCandidateGitBlob": true,
+    "all44OriginalRowsAliasesOutcomesAndDigestsIdenticalToReviewed4874": true,
+    "all28ComponentIndexIdentitiesAndOriginalScopedBodiesRetained": true,
+    "all10CurrentComponentAnd3G2MappingsIdenticalToReviewed4874": true,
+    "all8RetainedLimitObjectsAndFullPriorProseRemainReferenced": true,
+    "onlyUnfrozen20d3PublicationChangeIsPacketReferenceLabel": true,
+    "labelWholeRawInverseExact": true,
+    "labelChangesNoValueCriterionOutcomeFrozenSubmissionOrScannerPolicy": true,
+    "actualC36FrozenFormalReviewAndNormalDoneAuthenticated": true,
+    "futureR20S06CheckpointWaveG2AndIntegrationNotInvented": true
+  },
+  "judgment": "Approve affected integrated CAP-05.S06 initial scope and CP10 disposition at this actual qualification publication commit, reusing genuine original S06 and settled component judgments plus current C36 source/build/reference/Native/full90 machine evidence and explicit human initial-W2 acceptance. This approves the scoped factual composition and checkpoint judgment. Normal R20/S06/checkpoint/Wave/G2 state changes remain root operations; formal Wave disposition remains separate. No fresh all44/fullprofile/canonicalUI/credentialscan/publiccapture/visual-classification result is inferred.",
+  "retainedLimits": "All original FAIL/UNKNOWN/UNQUALIFIED/unperformed outcomes,100k commit limits,unknown409,security exceptions expiring2026-10-21,15warnings,Clippy36/21,foreignhardware/platform/installer gaps and historical candidate boundaries remain as exact detailed06 objects and predecessor4874 prose. Owner acceptance makes the disclosed initial-exit gaps nonblocking without turning them into PASS or disabling guards. No productcap or new model performance/hardware guarantee.",
+  "futurePlanningBoundary": "Owner9509 historical residualW9 assignment is preserved; later933b directs post-G2 newW10 cleanup/optimization, oldW10->W11 and oldW11->W12 before W3 planning. No future Wave mutation, W3/W10 implementation or packet approval is claimed. Comparable-trial median/all raw failures and hard security/memory/cancellation/functionality constraints remain. W5 larger computing and no8/16GiB model workloads remain.",
+  "normalStateRecordedByThisLedger": false,
+  "formalWaveApprovalPerformedByThisLedger": false,
+  "newProductChecksPerformed": false,
+  "actions": "Only committed qualification/source-data equality and actual C36 frozen/formal/normal completion bindings reviewed. No original44 replay, product/source/history re-audit, tests, scanners, renderers, imports, validators or canonical/HEAD/backlog mutations."
+}
