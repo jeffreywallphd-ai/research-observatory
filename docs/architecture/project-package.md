@@ -80,6 +80,12 @@ bounded atomic replacement and reject redirects or hardlinks; an audit failure
 rolls manifest and lock state back before the request reports failure. Project
 publication and recoverable-trash movement rename the held directory itself, so
 another local process cannot substitute a different validated project by path.
+Windows creation alone tolerates transient native rename errors 5/32 through at
+most six calls on that same held source, with a 0.25s retry deadline, bounded
+backoff, source-identity rechecks and no-replace destination checks. Persistent
+denial, changed identity, an arriving target or any other error still fails
+creation through owned cleanup. Recovery and recoverable-delete publication do
+not acquire this retry behavior.
 
 Open classifies the stable manifest envelope before granting access. The
 current package format and application range receive an exclusive `read-write`

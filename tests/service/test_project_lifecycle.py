@@ -8,6 +8,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
 
@@ -18,6 +19,7 @@ REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
+from research_observatory_core import projects as projects_module  # noqa: E402
 from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
@@ -66,6 +68,189 @@ class ProjectLifecycleTests(unittest.TestCase):
             template_id="theory-synthesis",
             trace_id=TRACE,
         )
+
+    @contextmanager
+    def creation_rename_observer(self, observer):
+        original = projects_module._held_directory_renamer
+
+        @contextmanager
+        def held(source):
+            with original(source) as rename:
+                yield lambda destination: observer(source, destination, rename)
+
+        with patch.object(projects_module, "_held_directory_renamer", side_effect=held):
+            yield
+
+    def deny_rename_with_native_child_handle(self, source, destination, rename):
+        import ctypes
+        from ctypes import wintypes
+
+        api = ctypes.WinDLL("kernel32", use_last_error=True)
+        api.CreateFileW.argtypes = (
+            wintypes.LPCWSTR,
+            wintypes.DWORD,
+            wintypes.DWORD,
+            wintypes.LPVOID,
+            wintypes.DWORD,
+            wintypes.DWORD,
+            wintypes.HANDLE,
+        )
+        api.CreateFileW.restype = wintypes.HANDLE
+        api.CloseHandle.argtypes = (wintypes.HANDLE,)
+        api.CloseHandle.restype = wintypes.BOOL
+        child = api.CreateFileW(str(source / "state/project.sqlite3"), 0x80000000, 3, None, 3, 0x00200000, None)
+        if child == wintypes.HANDLE(-1).value:
+            raise ctypes.WinError(ctypes.get_last_error())
+        try:
+            with self.assertRaises(PermissionError) as failure:
+                rename(destination)
+            self.assertIn(failure.exception.winerror, (5, 32))
+            raise failure.exception
+        finally:
+            self.assertTrue(api.CloseHandle(child))
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_recovers_native_share_conflict_without_reopening_source(self) -> None:
+        attempts = []
+
+        def observe(source, destination, rename):
+            attempts.append(projects_module._path_identity(source))
+            if len(attempts) == 1:
+                self.deny_rename_with_native_child_handle(source, destination, rename)
+            rename(destination)
+
+        with self.creation_rename_observer(observe):
+            project = self.create()
+        self.assertGreaterEqual(len(attempts), 2)
+        self.assertLessEqual(len(attempts), 6)
+        self.assertEqual([attempts[0]] * len(attempts), attempts)
+        self.assertEqual(attempts[0], projects_module._path_identity(Path(project.root)))
+        self.assertTrue((Path(project.root) / "state/project.sqlite3").is_file())
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_persistent_native_denial_exhausts_bounded_attempts(self) -> None:
+        attempts = []
+
+        def observe(source, destination, rename):
+            attempts.append(projects_module._path_identity(source))
+            self.deny_rename_with_native_child_handle(source, destination, rename)
+
+        with self.creation_rename_observer(observe), self.assertRaises(ProjectLifecycleProblem) as failure:
+            self.create()
+        self.assertEqual("RO-CORE-PROJECT-CREATE-FAILED", failure.exception.code)
+        self.assertGreaterEqual(len(attempts), 2)
+        self.assertLessEqual(len(attempts), 6)
+        self.assertEqual([attempts[0]] * len(attempts), attempts)
+        self.assertFalse((self.parent / "study-one").exists())
+        self.assertEqual([], list(self.parent.glob(".study-one.ro-staging-*")))
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_retry_preserves_a_new_destination(self) -> None:
+        import ctypes
+
+        calls = []
+
+        def observe(source, destination, rename):
+            calls.append(source)
+            destination.mkdir()
+            (destination / "sentinel").write_bytes(b"unrelated existing target")
+            raise ctypes.WinError(5)
+
+        with self.creation_rename_observer(observe), self.assertRaises(ProjectLifecycleProblem):
+            self.create()
+        self.assertEqual(1, len(calls))
+        self.assertEqual(b"unrelated existing target", (self.parent / "study-one/sentinel").read_bytes())
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_retry_denies_changed_source_identity(self) -> None:
+        import ctypes
+
+        original_identity = projects_module._path_identity
+        failed = []
+
+        def identity(path):
+            return (0, 0) if path in failed else original_identity(path)
+
+        def observe(source, destination, rename):
+            failed.append(source)
+            raise ctypes.WinError(5)
+
+        with (
+            self.creation_rename_observer(observe),
+            patch.object(projects_module, "_path_identity", side_effect=identity),
+            self.assertRaises(ProjectLifecycleProblem) as failure,
+        ):
+            self.create()
+        self.assertEqual("RO-CORE-PROJECT-PATH-INVALID", failure.exception.code)
+        self.assertEqual(1, len(failed))
+        self.assertFalse((self.parent / "study-one").exists())
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_does_not_retry_unlisted_native_errors(self) -> None:
+        import ctypes
+
+        calls = []
+
+        def observe(source, destination, rename):
+            calls.append(source)
+            raise ctypes.WinError(87)
+
+        with self.creation_rename_observer(observe), self.assertRaises(ProjectLifecycleProblem):
+            self.create()
+        self.assertEqual(1, len(calls))
+        self.assertFalse((self.parent / "study-one").exists())
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_does_not_retry_after_backoff_deadline(self) -> None:
+        import ctypes
+
+        clock = [0.0]
+        calls = []
+
+        def observe(source, destination, rename):
+            calls.append(source)
+            raise ctypes.WinError(5)
+
+        def oversleep(_duration):
+            clock[0] += 0.5
+
+        with (
+            self.creation_rename_observer(observe),
+            patch("time.monotonic", side_effect=lambda: clock[0]),
+            patch("time.sleep", side_effect=oversleep),
+            self.assertRaises(ProjectLifecycleProblem),
+        ):
+            self.create()
+        self.assertEqual(1, len(calls))
+        self.assertFalse((self.parent / "study-one").exists())
+
+    @unittest.skipUnless(os.name == "nt", "Windows held-handle publication boundary")
+    def test_creation_does_not_retry_after_slow_identity_recheck(self) -> None:
+        import ctypes
+
+        clock = [0.0]
+        calls = []
+        original_identity = projects_module._path_identity
+
+        def observe(source, destination, rename):
+            calls.append(source)
+            raise ctypes.WinError(5)
+
+        def identity(path):
+            if path in calls:
+                clock[0] += 0.5
+            return original_identity(path)
+
+        with (
+            self.creation_rename_observer(observe),
+            patch.object(projects_module, "_path_identity", side_effect=identity),
+            patch("time.monotonic", side_effect=lambda: clock[0]),
+            patch("time.sleep"),
+            self.assertRaises(ProjectLifecycleProblem),
+        ):
+            self.create()
+        self.assertEqual(1, len(calls))
+        self.assertFalse((self.parent / "study-one").exists())
 
     def test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata(self) -> None:
         project = self.create()

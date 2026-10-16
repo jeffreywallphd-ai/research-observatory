@@ -17,6 +17,7 @@ import shutil
 import stat
 import sys
 import threading
+import time
 import uuid
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from contextlib import ExitStack, contextmanager, suppress
@@ -1667,6 +1668,7 @@ class ProjectLifecycleService:
                 "displayName": display_name,
                 "templateId": template_id,
             }
+            staging_identity = _path_identity(staging)
             with _held_directory_renamer(staging) as rename_staging:
                 with _stable_directories([staging / ".locks", staging / "config", staging / "logs", staging / "state"]):
                     _atomic_json(staging / "project.ro.json", manifest)
@@ -1691,7 +1693,32 @@ class ProjectLifecycleService:
                                 retryable=True,
                             ) from error
                     self._audit(staging, "project.created", "active", trace_id)
-                rename_staging(target)
+                busy_deadline: float | None = None
+                for attempt in range(6):
+                    try:
+                        rename_staging(target)
+                    except PermissionError as error:
+                        if os.name != "nt" or getattr(error, "winerror", None) not in (5, 32) or attempt == 5:
+                            raise
+                        # Windows can transiently deny publication after local
+                        # handles close. Keep the same held source and parent;
+                        # never reopen a path or replace a newly arrived target.
+                        if busy_deadline is None:
+                            busy_deadline = time.monotonic() + 0.25
+                        pause = min(0.01 * 2 ** min(attempt, 3), busy_deadline - time.monotonic())
+                        if pause <= 0:
+                            raise
+                        time.sleep(pause)
+                        if time.monotonic() >= busy_deadline:
+                            raise
+                        if _redirect(staging) or _path_identity(staging) != staging_identity:
+                            raise ProjectLifecycleProblem.invalid_path() from error
+                        if os.path.lexists(target):
+                            raise
+                        if time.monotonic() >= busy_deadline:
+                            raise
+                    else:
+                        break
         except ProjectLifecycleProblem:
             self._remove_staging(staging)
             raise
