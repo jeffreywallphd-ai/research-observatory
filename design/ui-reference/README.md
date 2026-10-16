@@ -1,34 +1,21 @@
-# Research Observatory UI Reference Proposal
+# Research Observatory W3 experience reference proposal
 
-This directory is an inert **Academic Minimal 1.9 proposal**, copied from the approved 1.8 package. It is not the active experience authority. See `APPROVAL.yaml` for the pending status.
+This complete inert package uses **RO-UI-ACADEMIC-MINIMAL-1.10** only as an unreserved candidate identity. It inherits approved Academic Minimal 1.9. It is private and proposed; it grants no design acceptance, Wave approval, model readiness or implementation authority.
 
-## Start with the workflow
+## Review the proposed experience
 
-Open `ingestion-reconciliation.html#available-copies` for the remote-copy review proposal or `ingestion-reconciliation.html#attach-full-text` for the proposed selected work/version attachment interaction, `document-reader.html#reader-source-context` for the future reader and selected-version return contract, or `prototype-index.html` for every reference page. The fourteen guided workflow sequences are inherited unchanged.
+Start at `style-guide.html#w3-bounded-workbench`, then inspect Search Studio, Corpus Canvas, Screening, Model & Privacy Center, Schema Manager and Evidence Matrix. These seven authored HTML payloads and their reviewed style/page/workflow source documents are preserved exactly from the complete private W3 successor04. Existing illustrative records and inactive controls remain examples, never measured research/model/resource/license facts.
 
-## Authority
+The proposed scope adds per-role manual tiny/small and explicitly granted installed-qualified auto selections; unknown/denied/resource/remote-off states; source-first evidence and missingness; support/refute/coverage and extraction-token rules; human adjudication and bulk preview; precise return/focus/cancel/lock recovery. Existing tokens, all fourteen semantic1.5 workflow identities/objects, and the account-free local path remain. New reference/catalog root identity/version fields are proposed presentation metadata only; no stored-selection migration is implied.
 
-- The approved 1.8 package under `design/ui-reference/` remains the implementation authority until this exact proposal receives human approval and a new approval record.
-- The 1.9 change is bounded to remote-copy review, acquisition recovery and local access placeholders; it inherits 1.8. The inherited 1.8 change is bounded to the inline Ingestion Review attachment contract, an exact-revision status/route handoff, future Document Reader return, and proposal metadata; illustrative names, files, states and inactive actions create no backend scope.
-- `APPROVAL.yaml` records the proposal status; `REFERENCE_MANIFEST.yaml` identifies governed files.
+## Authority and pending decisions
 
-## Open locally
+`APPROVAL.yaml` and `REFERENCE_MANIFEST.yaml` deliberately remain **proposed**. Approved1.9 remains active in `design/ui-reference`. Actual final W2/G2 baseline reconciliation, genuine independent proposal review, explicit design decision, true approval/publication identities and one complete ordinary W3 planning approval remain pending. Candidate1.10 is not reserved. Do not fabricate approvers, dates, reference introductions, quality scores, hardware fit or adopted W9 work.
 
-```bash
-python -m http.server 8080
-```
+C35's separately selected initial functional commit proof qualifies1000 records only under04ed/31db;100k accepted publication/full manifest/paging/replay/reopen and continuous performance remain unqualified. Existing larger input policy is unchanged; no enforced1000 product cap exists. W3 metadata/vector/search100k targets do not establish import throughput. Carry final actual limitations into the later baseline reconciliation; this package creates no new limit or optimization commitment.
 
-Then open `http://localhost:8080/ingestion-reconciliation.html#attach-full-text`.
+## Deterministic reference-local generation
 
-## Shared implementation
+`scripts/build_mockups.py` inherits the existing deterministic generator. Only the seven affected page functions read their exact governed `source-pages/*.html.txt` payloads, and the README reads this `README_SOURCE.md`. The other page functions and the existing style/inventory source readers remain. These are inert reference templates, not product bundles or a new framework. Do not simplify the reviewed HTML to make generation pass.
 
-- `assets/tokens.css` — inherited light/dark tokens.
-- `assets/app.css` — shared components and proposed attachment panel styling.
-- `assets/app.js` — local, inert picker/drop interaction; no file bytes are read and no acquisition occurs.
-- `STYLE_GUIDE.md` / `style-guide.html` — technical and visual specification.
-- `WORKFLOW_CATALOG.md` / `.json` — fourteen inherited use-case sequences.
-- `CAPABILITY_COVERAGE.md` / `.json` — page contracts and capability mapping.
-- `scripts/build_mockups.py` — deterministic page generator.
-- `scripts/verify_site.py` — reference integrity checks.
-
-University/cloud administrator consoles remain deferred.
+`scripts/verify_site.py`, `render_previews.py` and `smoke_interactions.py` are inherited supporting scripts. Only generation/static checks are selected for this preparation; no browser/GUI/model/runtime workload or conformance claim is made. `ui_reference_check.py` requires approved metadata, so its full proposed-package invocation must retain the expected pending-approval failure rather than claim acceptance.

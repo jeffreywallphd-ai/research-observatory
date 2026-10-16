@@ -1,8 +1,10 @@
 # Research Observatory — Academic Minimal Style and Experience Guide
 
-**Version:** 1.9
-**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.9`
-**Purpose:** Inert proposed implementation specification; not active authority until exact human approval. The approved 1.8 visual system, local attachment and fourteen workflow sequences are inherited.
+**Proposal status:** PRIVATE / UNAPPROVED W3 payload; successor version and reference ID unassigned.
+
+**Base version:** 1.9
+**Base reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.9`
+**Purpose:** Complete proposed W3 reference content over actual approved1.9; new additions remain unapproved and inactive. Historical illustrative labels are not execution or approval facts.
 
 ## 1. Authority and design-first change order
 
@@ -168,6 +170,46 @@ to the same selected copy/work/version and primary step. Use existing cards, tab
 fields, notices, buttons and focus tokens with keyboard access, responsive layout
 and light/dark parity. The proposal contains synthetic examples and disabled network
 actions; it is not evidence that a download, rights decision or entitlement occurred.
+
+### 1.6 Proposed W3 bounded local workbench, source-first evidence and Model & Privacy
+
+W3 qualification remains Windows x64 PC/lab; inherited cross-platform parity intent does not assert current macOS/Linux/foreign-host qualification or move W6/W5 hardware work into this proposal.
+
+This section is proposed, not an approved successor reference. The actual base is approved RO-UI-ACADEMIC-MINIMAL-1.9; inherited historical “proposal/1.8” wording is provenance, not the current approval state. No new reference ID, approval, model qualification, license or measurement is asserted. Keep the existing tokens, components, semantic evidence states, fourteen workflow identities and catalog1.5 semantics. These supporting interactions add no research stage and cannot complete one automatically.
+
+#### Goal, starting point and return
+
+From a protected project's current primary step, the researcher searches lawful records, inspects sources, chooses an eligible local role/profile if one exists, produces candidates, reviews missingness/verifier results, and records human decisions before export. Manual search, inspection and coding remain accessible without a model or provider account. Supporting Model & Privacy, schema, source drawer and audit views carry the exact project, accepted Intent/workflow selection revision, primary stage/pass and return target. Preserve query/branch/filter, selected source revision/anchor, matrix row/cell, scroll and initiating control where still authorized. Never substitute another source revision or accepted schema after return. If the item disappeared or rights changed, explain the safe state and focus its stable list/heading. Lock clears protected context; unlocking requires a new authorized reopen, not restoration of consent or a running job.
+
+#### Per-role models and qualified auto sets
+
+Model & Privacy displays distinct embedding, reranking, extraction and verifier role rows. Each offers exact manual tiny/small model/profile choices and, only by explicit user choice, Auto-smallest qualified or Auto-best-fit from an enumerated installed, already-qualified and granted set. The user reviews that set, role/domain, aggregate budget and actual selection rule before saving; a blank set is unavailable. No recommendation appears before actual role/resource evaluation. Manual pins never substitute on absence, failure, OOM or changed quality. Auto choices exclude stale/unqualified/denied artifacts, respect current source rights and pressure, show and record actual selection/reason before dispatch and never download, accept a license or enable remote use. Selecting, inspecting or refreshing a row performs no inference. Import/download, evaluation, load/run and promotion are separate explicit actions with their own prerequisites.
+
+Show origin, immutable artifact/runtime/config hashes, local integrity, license review/consent, exact role evaluation scope/validity and retirement separately. Absent, staged, integrity-failed, unqualified, eligible, loading, active, stopped and failed are distinct states with safe cause and next action. Readiness is not inferred from a model name, small weight file, installed runtime or a valid schema. Model scores and private host paths/keys are not fabricated illustrative facts. This proposal shows unknown/unqualified examples; actual fit, terms, quality and people remain unknown.
+
+#### Resources and serial admission
+
+Display whole-application preferred2048MiB and explicitly selected qualified upper3072MiB budgets as proposed targets, not observed use. Tiny/small context, input/output/batch/thread caps come from refinement02's exact resource policy. Show separately actual whole-app/model A working set, B private commit plus mapped model spans, conservative max(A,B), private commit, mappings, pressure, observation age/gaps and incremental reserve; missing observations say Unknown. A Job private-commit limit is not a hard RSS or whole-machine RAM guarantee. No unmeasured “fits this PC” badge.
+
+Apply root-selected policy03 parserModelAdmission by exact manifest-bound reference: expensive protected parser and local inference share the existing LocalWorkerAdmission/LocalAdmissionController reservation before claim, across projects supervised by that Core. Queue the newcomer; retain capacity until actual drain/unload, then reobserve pressure and reauthorize. Unknown/insufficient capacity blocks or queues with an explanation, never a bypass confirmation or automatic pagefile change. Preserve parser security/quality/mutex and existing4096MiB private-commit ceiling; it is neither measured use nor a requirement to have4GiB free. Disclose the cooperative Core boundary; do not promise machine-wide exclusion.
+
+#### Remote off, consent and cancellation
+
+Remote is Off by default, with no DNS/HTTP and no automatic fallback. An explicit preview shows the exact minimized payload and omissions, source-specific rights/classification, destination/model, observed terms/retention, scope/expiry and maximum authorized spend. Unknown terms, rights, price, credentials, budget or eligibility disables Run once with nearby help. Source permission is not model-use permission; human consent cannot waive another holder's terms. Initial live remote scope is permitted public/open only. Closing/Escape sends nothing and restores focus. Any changed payload/source/policy/project/session/terms invalidates consent. Credentials show state only, never values. Cancellation stops new acceptance immediately; pending drain remains visible, and failed/unknown cleanup blocks unsafe retry. Serial same-model extraction/verification explicitly remains correlated.
+
+#### Search, coverage and human screening
+
+Search Studio keeps source selection, structured query, executed translation/loss report, immutable branch/run, candidate results and coverage together. Component rank/score is identified by method; it is not an uncalibrated relevance percentage. Semantic/rerank unavailable is explicit and lexical-only execution is labelled. Expansion previews seed/relation/depth/count/rights and requires explicit branch creation. No model query suggestion or branch preview changes corpus membership. Corpus Canvas is table-first with keyboard-accessible graph alternatives. Sampling displays actual frame/seed/selectedN/population/exclusions and limits; absent counts are Unknown, not zero. Boundary changes show set/downstream impact before human acceptance. Screening decisions bind protocol/source/actor/rationale; models prioritize only. Audit frames/actualNs/missingness/interval assumptions and stop rationale remain inspectable. No audit is “validated recall”; no model finalizes stopping. Local coder names are declared attribution tied to the Windows actor, not proof of different people or protection from a shared owner/admin.
+
+#### Schema, evidence and adjudication
+
+Schema Manager separates draft/fork/version comparison from the active pinned schema. Required-when-reported never demands invented content. Breaking adoption previews affected IDs/fields/accepted outputs, rights and migration; it requires explicit review, preserving old schema and evidence. Evidence Matrix is a virtual table with bounded Core cursors, saved filters and stable row/column focus. The source drawer stays beside selected candidates and original wording/anchor; no source is replaced by model rationale. Distinguish not reported, unclear, not applicable, inferred, unsupported and missing source. Show retrieval/source/extraction/comparability/interpretation/coverage uncertainty separately; no single probability certifies truth.
+
+Keep observed/extracted/inferred/verified/disputed/adjudicated/stale meanings. Extraction is candidate; separate deterministic/semantic verification does not silently adjudicate. Consequential/inferred/disputed/low-confidence fields require human review. Root-selected policy03 metricPolicy defines exact non-vacuous custom extraction and verifier promotion, including denominator/abstention failures, independently of schema validity. Display actual domain/frame/report scope when present, otherwise Not evaluated. Same-model serial checks retain correlated-error disclosure. Alternatives, explicit correction/adjudication rationale and unresolved plurality remain immutable. Bulk actions preview exact row/cell/source revisions, grants, proposed changes and per-item failures before confirmation. Cancelling leaves uncommitted items unchanged; partial successful immutable changes remain individually identified. Recheck authority at commit and reject late results after lock/project switch/rights change.
+
+#### Accessibility and proof
+
+Use inherited cards/fields/notices/tables/buttons and token-based focus in both themes, with visible text states and labelled help. Opening a supporting panel focuses its heading; Escape/cancel restores the invoking control, and source return restores the exact authorized cell or a clearly explained fallback. Keep keyboard-only selection, table navigation, focus order, reduced motion, responsive/scaled layouts and screen-reader status announcements. Do not announce readiness before actual admission or success before durable commit. Static reference states prove no GUI/API/principal/resource/quality boundary. Later ordinary validation and product conformance must cover these happy, unknown, denied, cancel, late-result, lock/reopen and recovery flows. The seven affected HTML pages and full page contracts define the proposed composition; other1.9 rules remain inherited.
 
 ## 2. Design character
 

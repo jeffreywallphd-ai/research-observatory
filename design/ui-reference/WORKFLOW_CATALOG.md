@@ -1,3 +1,7 @@
+# Private proposed W3 presentation supplement
+
+Base1.9 catalog text and every semantic workflow sequence below are retained. This is not a new approval or a durable selection migration.
+
 # Research Observatory Use-Case and Workflow Catalog
 
 **Version:** 1.9
@@ -294,3 +298,13 @@ reference proposal does not migrate those durable selections.
 | 6 | [Revision & Response](revision-response.html) | Triage issues, record dispositions, revise, and draft responses. |
 | 7 | [Revised Manuscript](manuscript-studio.html) | Review the integrated revised article and unresolved claims. |
 | 8 | [Review Audit](audit-lineage.html) | Export review prompts, evidence, decisions, revisions, and disclosure. |
+
+## Proposed W3 supporting-state and return contract
+
+Model & Privacy is supporting, never a new stage. From any existing primary step retain exact project/Intent/selection/stage/pass, route and authorized return control. Role choice/auto-set review, schema comparison, source inspection, audit and budget review do not complete a stage or execute a job. Exact catalog1.5 semantic identity, order, optionality, cycle and output meaning remain governed by ADR0026; the inherited1.9 JSON bytes are unchanged. A future visual reference identity must use the existing presentation compatibility witness, not rewrite stored selections or pretend its hash already matches a future publication.
+
+Search Studio returns its query/branch/filter and selected source revision. Canvas preserves population/frame/seed and selected lawful row. Screening retains protocol revision/queue item and manual decision authority. Schema Manager returns the exact active/draft revision and triggering field. Evidence Matrix/source drawer returns stable row/cell/filter/scroll/focus with current rights recheck. If exact context is no longer valid, show why and focus the stable containing heading; never silently choose a replacement.
+
+Offline/unqualified/resource-denied model states preserve manual work and visible missing capability; they do not bypass required G3 model outcomes. Parser/model contention queues through the existing shared Core admission authority before claim, not through navigation state. Run/attempt/cancel/cleanup is ADR0025 execution history. Navigation retains incomplete/attention/stale state until a researcher records the actual scholarly consequence.
+
+Cancel/Escape performs no hidden dispatch/adoption/consent, restores focus and retains allowed draft inputs. Project switch/lock invalidates pending consent and late results; lock clears protected selections and a later unlock requires a fresh authorized reopen. Bulk preview and per-item partial outcomes do not imply batch-wide acceptance. No new workflow key, reordered step, automatic stopping, dataset/model/human measurement or external service requirement is introduced.

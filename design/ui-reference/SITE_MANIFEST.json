@@ -1,8 +1,8 @@
 {
   "name": "Research Observatory Academic Minimal UI Reference",
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.9",
-  "version": "1.9",
-  "generated_at": "2026-10-01",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.10",
+  "version": "1.10",
+  "generated_at": "2026-10-16",
   "approval": "APPROVAL.yaml",
   "capability_coverage": "CAPABILITY_COVERAGE.json",
   "workflow_catalog": "WORKFLOW_CATALOG.json",
@@ -95,7 +95,7 @@
     {
       "file": "search-studio.html",
       "page": "Search Studio",
-      "purpose": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+      "purpose": "Reproducible source/query/translation branches, component ranks, explicit corpus changes and coverage without model-readiness assumptions.",
       "capabilities": [
         "CAP-06"
       ]
@@ -120,7 +120,7 @@
     {
       "file": "corpus-canvas.html",
       "page": "Corpus Canvas",
-      "purpose": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+      "purpose": "Table-first corpus/discovery/coverage inspection with explicitly sampled spatial projection and previewed human boundary decisions.",
       "capabilities": [
         "CAP-04",
         "CAP-06"
@@ -129,7 +129,7 @@
     {
       "file": "screening.html",
       "page": "Screening",
-      "purpose": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+      "purpose": "Human protocol-bound inclusion/exclusion/stopping, transparent model priority, actual audit frame and honest local assignment/blinding.",
       "capabilities": [
         "CAP-06"
       ]
@@ -166,7 +166,7 @@
     {
       "file": "evidence-matrix.html",
       "page": "Evidence Matrix",
-      "purpose": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+      "purpose": "Bounded source-first matrix with candidates/status/missingness/uncertainty, separate verification, alternatives, human adjudication and exact bulk/export effects.",
       "capabilities": [
         "CAP-08",
         "CAP-15",
@@ -177,7 +177,7 @@
     {
       "file": "schema-manager.html",
       "page": "Schema & Ontology Manager",
-      "purpose": "Versioned domain packs, fields, relations, constraints, and change-impact preview.",
+      "purpose": "Separate pinned active schema from draft/fork, explicit evidence/missingness constraints and impact-reviewed adoption with history.",
       "capabilities": [
         "CAP-03",
         "CAP-08",
@@ -267,7 +267,7 @@
     {
       "file": "model-center.html",
       "page": "Model & Privacy Center",
-      "purpose": "Local/remote model routing, egress preview, budgets, evaluation, and offline policy.",
+      "purpose": "Exact per-role tiny/small choices and explicit installed-qualified auto sets, independent integrity/terms/evaluation/resource states, shared serial admission and remote-off egress review.",
       "capabilities": [
         "CAP-07",
         "CAP-14",
@@ -378,9 +378,9 @@
     "manuscript-review-revision"
   ],
   "intentionally_deferred": [
-    "university deployment administration until W10",
-    "institutional identity and shared-project administration until W10",
-    "tenant administration, billing, entitlements, and managed-cloud operations until W11"
+    "university deployment administration until W11",
+    "institutional identity and shared-project administration until W11",
+    "tenant administration, billing, entitlements, and managed-cloud operations until W12"
   ],
   "validation": {
     "local_links": "required",
@@ -388,7 +388,7 @@
     "landmarks_labels_and_unique_ids": "required",
     "workflow_contracts": "required",
     "capability_coverage": "required",
-    "reference_approval": "proposed",
+    "reference_approval": "required",
     "cross_platform_theme_parity": "required",
     "research_production_safeguards": "required",
     "implementation_conformance": "enforced by repository automation"

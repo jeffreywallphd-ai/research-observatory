@@ -1,25 +1,31 @@
-reference_id: RO-UI-ACADEMIC-MINIMAL-1.9
-version: '1.9'
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.10
+version: '1.10'
 status: approved
 approval_kind: human
 approved_by: human:repository-owner
-approved_at: '2026-10-06T16:20:50.362826Z'
-supersedes: RO-UI-ACADEMIC-MINIMAL-1.8
+approved_at: '2026-10-16T12:46:39.941607+00:00'
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.9
 scope:
   normative:
-  - Inherit approved 1.8 except the bounded CAP-05.S01.T03 remote-copy review, confirmation,
-    recovery and local access placeholder addition in STYLE_GUIDE section 1.5.
+  - Inherit approved1.9 except the complete reviewed W3 Style Guide1.6, seven authored
+    affected HTML pages and their bound page/workflow contracts.
+  - Per-role local model selection/resource/unknown/denial/remote-off, source-first
+    evidence/missingness/adjudication/bulk preview and precise return/focus/cancel/lock
+    recovery. Preserve all14 semantic1.5 workflows and existing tokens.
   illustrative:
-  - Synthetic work/copy/provider/license and inactive network actions.
-implementation_rule: Inert proposal; exact human reference and source-free method
-  approval and separate publication must precede CAP-05.S01.T03 implementation.
-approval_basis: The owner explicitly approved exact EX01 after independent readiness
-  review. This record authorizes only metadata-only publication of the exact1.9 reference
-  and affected material-plan binding. Locked-Wave use of this existing record/publication
-  interface is authorized by planning/verification-method-approvals/CAP-05.S01.T03.EX01.json;
-  product code, equivalent qualification, task completion and release are not approved
-  by this record.
+  - Model/data/resource/people/terms/license values remain unobserved illustrative
+    examples; no runtime/model/quality or real-person readiness claim.
+implementation_rule: Inert proposed experience only. Actual independent review, explicit
+  design decision, truthful reference publication and separate complete W3 authority
+  must precede implementation.
+approval_basis: The owner explicitly approved W3 planning and directed implementation
+  of the complete W3 packet in the current chat on 2026-10-16. The reviewed packet
+  includes ADR-0056 through ADR-0058 and the exact proposed reference1.10. This record
+  binds the design portion to the reviewed proposal for metadata-only publication
+  and material-plan binding; the separate complete-Wave approval records execution
+  authority. No release, runtime qualification, external model call or spend is approved
+  here.
 authority:
-  design_approval_record: planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json
-  design_approval_record_sha256: b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e
-  design_approval_record_introduction_commit: 556369f77186324194789ee26eb0baf00fd936a8
+  design_approval_record: planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.10.json
+  design_approval_record_sha256: 9a7defc25b4b474d62b30f2aba90b97e2c90927c3be672f264ae22c23fca926e
+  design_approval_record_introduction_commit: e38cd64bed9db2df3af342a348b259b5d41627ef
