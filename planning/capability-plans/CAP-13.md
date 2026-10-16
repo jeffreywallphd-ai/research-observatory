@@ -241,12 +241,12 @@ The independent capability reviewer must trace each exit to immutable task, slic
 
 | Slice | Title | Outcome | Wave | Priority | Depends on |
 |---|---|---|---|---|---|
-| `CAP-13.S01` | SaaS organization and tenant control plane | Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows. | W11 | P3 | CAP-12.S06.T03 |
-| `CAP-13.S02` | Regional tenant data planes and isolation tiers | Tenant data is hosted in declared regions using pooled, dedicated-schema, dedicated-database, or dedicated-deployment isolation as policy requires. | W11 | P3 | CAP-13.S01.T03, CAP-12.S02.T03 |
-| `CAP-13.S03` | Cloud identity, entitlement, metering, and billing | Organizations can govern membership and plans while usage is measured transparently by value-driving resource. | W11 | P3 | CAP-13.S01.T02 |
-| `CAP-13.S04` | Elastic workers, models, search, and cost governance | Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls. | W11 | P3 | CAP-13.S02.T02, CAP-07.S05.T02 |
-| `CAP-13.S05` | Cloud security, privacy, residency, and compliance operations | Security and privacy controls operate continuously across tenant, regional, administrative, and software-supply-chain boundaries. | W11 | P3 | CAP-13.S02.T03, CAP-13.S03.T01 |
-| `CAP-13.S06` | Desktop-cloud experience, service reliability, and launch gate | Cloud customers use the canonical desktop with clear synchronization, reliability, support, and service-status behavior. | W11 | P3 | CAP-13.S04.T03, CAP-13.S05.T03 |
+| `CAP-13.S01` | SaaS organization and tenant control plane | Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows. | W12 | P3 | CAP-12.S06.T03 |
+| `CAP-13.S02` | Regional tenant data planes and isolation tiers | Tenant data is hosted in declared regions using pooled, dedicated-schema, dedicated-database, or dedicated-deployment isolation as policy requires. | W12 | P3 | CAP-13.S01.T03, CAP-12.S02.T03 |
+| `CAP-13.S03` | Cloud identity, entitlement, metering, and billing | Organizations can govern membership and plans while usage is measured transparently by value-driving resource. | W12 | P3 | CAP-13.S01.T02 |
+| `CAP-13.S04` | Elastic workers, models, search, and cost governance | Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls. | W12 | P3 | CAP-13.S02.T02, CAP-07.S05.T02 |
+| `CAP-13.S05` | Cloud security, privacy, residency, and compliance operations | Security and privacy controls operate continuously across tenant, regional, administrative, and software-supply-chain boundaries. | W12 | P3 | CAP-13.S02.T03, CAP-13.S03.T01 |
+| `CAP-13.S06` | Desktop-cloud experience, service reliability, and launch gate | Cloud customers use the canonical desktop with clear synchronization, reliability, support, and service-status behavior. | W12 | P3 | CAP-13.S04.T03, CAP-13.S05.T03 |
 
 Slices execute in backlog dependency order. A later slice may introduce an adapter or test fixture for an earlier contract, but it may not redefine an approved cross-slice decision. Each slice concludes with integration and independent review, after which the same campaign proceeds directly to the next ready slice. The capability pauses only for demonstrated infeasibility, a missing external prerequisite, unavailable required hardware, a genuinely new consequential human decision, a higher-authority conflict, or an approved design-reference gate.
 

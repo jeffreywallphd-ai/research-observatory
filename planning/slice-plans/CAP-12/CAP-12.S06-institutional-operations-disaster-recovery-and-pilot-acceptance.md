@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-12.S06
 title: Institutional operations, disaster recovery, and pilot acceptance
 status: proposed
-wave: W10
+wave: W11
 priority: P2
 deployment_profiles:
 - UNI
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Run the same scholarly application against institution-controlled services and storage while preserving the desktop client, domain contracts, evidence lineage, and rights-aware governance. |
 | Slice | `CAP-12.S06` — Institutional operations, disaster recovery, and pilot acceptance |
 | Slice outcome | The university edition is observable, supportable, recoverable, and validated with a real research group. |
-| Wave / priority | `W10` / `P2` |
+| Wave / priority | `W11` / `P2` |
 | Deployment profiles | `UNI` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-12.S06.T01`, `CAP-12.S06.T02`, `CAP-12.S06.T03` |

@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-13.S03
 title: Cloud identity, entitlement, metering, and billing
 status: proposed
-wave: W11
+wave: W12
 priority: P3
 deployment_profiles:
 - CLD
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Deliver the same desktop-led product as a secure managed service with regional tenant isolation, elastic workers, metering, residency, support, and commercial operations. |
 | Slice | `CAP-13.S03` — Cloud identity, entitlement, metering, and billing |
 | Slice outcome | Organizations can govern membership and plans while usage is measured transparently by value-driving resource. |
-| Wave / priority | `W11` / `P3` |
+| Wave / priority | `W12` / `P3` |
 | Deployment profiles | `CLD` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-13.S03.T01`, `CAP-13.S03.T02`, `CAP-13.S03.T03` |

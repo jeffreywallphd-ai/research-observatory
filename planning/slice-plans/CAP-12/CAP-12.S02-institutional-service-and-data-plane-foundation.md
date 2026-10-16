@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-12.S02
 title: Institutional service and data-plane foundation
 status: proposed
-wave: W10
+wave: W11
 priority: P2
 deployment_profiles:
 - UNI
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Run the same scholarly application against institution-controlled services and storage while preserving the desktop client, domain contracts, evidence lineage, and rights-aware governance. |
 | Slice | `CAP-12.S02` — Institutional service and data-plane foundation |
 | Slice outcome | A deployable server stack implements the shared domain services with production-grade relational, object, vector, and workflow infrastructure. |
-| Wave / priority | `W10` / `P2` |
+| Wave / priority | `W11` / `P2` |
 | Deployment profiles | `UNI` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-12.S02.T01`, `CAP-12.S02.T02`, `CAP-12.S02.T03` |

@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-12.S01
 title: Desktop remote connection mode and API abstraction
 status: proposed
-wave: W10
+wave: W11
 priority: P2
 deployment_profiles:
 - UNI
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Run the same scholarly application against institution-controlled services and storage while preserving the desktop client, domain contracts, evidence lineage, and rights-aware governance. |
 | Slice | `CAP-12.S01` — Desktop remote connection mode and API abstraction |
 | Slice outcome | The canonical client can connect securely to a university project home while retaining local caches and clear deployment context. |
-| Wave / priority | `W10` / `P2` |
+| Wave / priority | `W11` / `P2` |
 | Deployment profiles | `UNI` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-12.S01.T01`, `CAP-12.S01.T02`, `CAP-12.S01.T03` |

@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-12.S04
 title: Team collaboration and scholarly adjudication
 status: proposed
-wave: W10
+wave: W11
 priority: P2
 deployment_profiles:
 - UNI
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Run the same scholarly application against institution-controlled services and storage while preserving the desktop client, domain contracts, evidence lineage, and rights-aware governance. |
 | Slice | `CAP-12.S04` — Team collaboration and scholarly adjudication |
 | Slice outcome | Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality. |
-| Wave / priority | `W10` / `P2` |
+| Wave / priority | `W11` / `P2` |
 | Deployment profiles | `UNI` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-12.S04.T01`, `CAP-12.S04.T02`, `CAP-12.S04.T03` |

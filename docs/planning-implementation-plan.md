@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 59a61b6d5d096c68f253941553b59604a8b81926df670b6c9b343b6be4ceddd1
+source_sha256: feba51c6614a6217e8c55ac625a52c112d6c4594d062dc15d7a2685438831650
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -28,10 +28,10 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Slices | 117 |
 | Tasks | 356 |
 | Enabler tasks | 26 |
-| Waves | 12 |
+| Waves | 13 |
 | Wave approval bases | 2 |
 | Wave amendments | 15 |
-| Release gates | 12 |
+| Release gates | 13 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
 
@@ -70,9 +70,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W6` Cross-platform desktop qualification | cross-platform-desktop | Qualify the same desktop, project format, sidecars, security controls, and local workflows on macOS and Linux x86_64/ARM64 after the Windows release. | `G5` |
 | `W7` Study design and manuscript foundations | research-production | Add production-ready critical and hermeneutic research support, evidence-grounded empirical study design, and reusable conference/journal article blueprints for empirical, theory, and critical scholarship. | `G6` |
 | `W8` Results integration, manuscript drafting, and reviewer simulation | research-production | Ingest private technical reports, map verified results, draft source-grounded manuscripts, and conduct extended independent reviewer simulations and revision rounds. | `G7` |
-| `W9` Advanced research-intelligence preview | research-intelligence | Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation. Also optimize scholarly-source search latency and resource usage deferred from W2, retaining the initial seven-second median timing target and recorded variability. This is provisional future work; W9 implementation remains unapproved. | `G8` |
-| `W10` University-hosted pilot | institutional | Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after the complete local research-production gate. | `G8` |
-| `W11` Managed cloud delivery | cloud | Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance. | `G10` |
+| `W9` Advanced research-intelligence preview | research-intelligence | Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation. | `G8` |
+| `W10` Cleanup and optimization | local-baseline | Provisional cleanup and optimization of deferred nonfunctional cosmetics, scholarly-source latency/resource use and scoped style debt from W2 and W3–W9. Preserve all actual failures and hard functional, security, rights, memory and cancellation limits. Select tasks and estimates during rolling-wave initiation; planning/W10-cleanup-and-optimization.md records the intake and owner direction. | `G9` |
+| `W11` University-hosted pilot | institutional | Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after the complete local research-production gate. | `G12` |
+| `W12` Managed cloud delivery | cloud | Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance. | `G10` |
 
 ## Release gates
 
@@ -164,7 +165,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### G8 - End-to-end research-production desktop
 
-**After / unlocks / status:** `W8` / `W9`, `W10` / `PENDING`
+**After / unlocks / status:** `W8` / `W9` / `PENDING`
 
 **Criteria:**
 
@@ -175,7 +176,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### G9 - Advanced research-intelligence preview
 
-**After / unlocks / status:** `W9` / - / `PENDING`
+**After / unlocks / status:** `W9` / `W10` / `PENDING`
 
 **Criteria:**
 
@@ -183,9 +184,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Opportunity ranking, portfolio governance, duplication/convergence monitoring, and detector evidence remain transparent and multi-objective.
 - Living-monitor changes propagate to affected designs, manuscripts, reviews, claims, syntheses, and dossiers.
 
-### G10 - University pilot
+### G12 - Cleanup and optimization exit
 
 **After / unlocks / status:** `W10` / `W11` / `PENDING`
+
+**Criteria:**
+
+- Selected cleanup and optimization outcomes are evidenced with remaining limitations explicit; original adverse results are retained.
+- Affected functionality, provenance, rights, security, cancellation and resource boundaries retain then-valid qualification; suggested soft targets do not override hard criteria.
+- The ordinary independent Wave review and human exit decision dispose of residual risks before university work is activated.
+
+### G10 - University pilot
+
+**After / unlocks / status:** `W11` / `W12` / `PENDING`
 
 **Criteria:**
 
@@ -195,7 +206,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### G11 - Cloud limited availability
 
-**After / unlocks / status:** `W11` / - / `PENDING`
+**After / unlocks / status:** `W12` / - / `PENDING`
 
 **Criteria:**
 
@@ -219,7 +230,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Reviewer simulation uses independent role-bounded contexts, records evidence and uncertainty, avoids impersonating named real reviewers, and never represents simulated editorial outcomes as acceptance probabilities or actual peer review.
 - Rights, confidentiality, and entitlement metadata are enforced at acquisition, model egress, collaboration, manuscript drafting, report use, export, synchronization, and deletion boundaries.
 - University and cloud services implement the same versioned domain contracts rather than creating a separate product architecture.
-- During W0-W5, create only the Windows local desktop, core, worker, contracts, tests, documentation, task control, and Windows packaging structure. W6 adds macOS/Linux packaging and platform adapters; hosted infrastructure remains absent until W10.
+- During W0-W5, create only the Windows local desktop, core, worker, contracts, tests, documentation, task control, and Windows packaging structure. W6 adds macOS/Linux packaging and platform adapters; hosted infrastructure remains absent until W11.
 - The local vector backend remains behind a replaceable port. Select the production adapter through cross-platform reliability, recovery, filtering, portability, and performance benchmarks plus ADR.
 - Native scholarly and technical-report formats are preferred. Docling is the baseline local document parser; manuscript and report parsers preserve source locations, tables, figures, revisions, and rights metadata.
 - The approved UI reference under design/ui-reference is normative for user-facing routes, workflow profiles, required regions, tokens, semantic states, accessibility behavior, authoring/review interactions, and light/dark parity; mock content and values remain illustrative.
@@ -237,7 +248,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Close a Wave only after all of its slices are independently approved, the complete Wave-exit suite passes, criterion-linked evidence is attached, and an independent Wave review approves the integrated result. Capabilities remain cross-Wave product maps.
 - A Wave campaign may pause for an external dependency, explicit human/ADR/design gate, unavailable platform, or an in-boundary blocker. Resume the same Wave campaign after ordinary process or session interruption.
 - Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate never replace the current global wave/gate in selection output.
-- Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research production; W9 and W10 are parallel advanced-intelligence and university tracks after G8; W11 remains cloud-only after G10.
+- Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research production; W9 advanced intelligence follows G8; new W10 cleanup follows G9; W11 university delivery follows G12; W12 remains cloud-only after the preserved university gate G10.
 - Claim atomically with taskctl before edits. Wave and task leases record owner, branch/worktree, base SHA, and expiration.
 - Implement the complete selected task and the slice integration needed to satisfy its acceptance criteria. Record newly discovered work as backlog tasks rather than hidden TODOs.
 - Remain IN_PROGRESS while running verification. Attach criterion-to-evidence records tied to the exact commit, then submit to REVIEW only when required checks pass.
@@ -368,9 +379,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Ordered slices:** `CAP-10.S04`, `CAP-10.S06`, `CAP-10.S07`
 
-**Goal:** Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation. Also optimize scholarly-source search latency and resource usage deferred from W2, retaining the initial seven-second median timing target and recorded variability. This is provisional future work; W9 implementation remains unapproved.
+**Goal:** Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation.
 
-## W10 - University-hosted pilot
+## W10 - Cleanup and optimization
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** -
+
+**Ordered slices:** -
+
+**Goal:** Provisional cleanup and optimization of deferred nonfunctional cosmetics, scholarly-source latency/resource use and scoped style debt from W2 and W3–W9. Preserve all actual failures and hard functional, security, rights, memory and cancellation limits. Select tasks and estimates during rolling-wave initiation; planning/W10-cleanup-and-optimization.md records the intake and owner direction.
+
+## W11 - University-hosted pilot
 
 **Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
 
@@ -380,7 +401,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Goal:** Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after the complete local research-production gate.
 
-## W11 - Managed cloud delivery
+## W12 - Managed cloud delivery
 
 **Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
 
@@ -18360,7 +18381,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** The canonical client can connect securely to a university project home while retaining local caches and clear deployment context.
 
-**Wave / priority / status / review:** `W10` / `P2` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W11` / `P2` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `UNI` / `platform-neutral`
 
@@ -18477,7 +18498,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** A deployable server stack implements the shared domain services with production-grade relational, object, vector, and workflow infrastructure.
 
-**Wave / priority / status / review:** `W10` / `P2` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W11` / `P2` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `UNI` / `platform-neutral`
 
@@ -18591,7 +18612,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** University users authenticate through OIDC and access only permitted projects, sources, models, and administrative functions.
 
-**Wave / priority / status / review:** `W10` / `P2` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W11` / `P2` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `UNI` / `platform-neutral`
 
@@ -18703,7 +18724,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality.
 
-**Wave / priority / status / review:** `W10` / `P2` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W11` / `P2` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `UNI` / `platform-neutral`
 
@@ -18820,7 +18841,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Institutional entitlements and unpublished materials are governed consistently across search, storage, model egress, collaboration, and export.
 
-**Wave / priority / status / review:** `W10` / `P2` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W11` / `P2` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `UNI` / `platform-neutral`
 
@@ -18933,7 +18954,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** The university edition is observable, supportable, recoverable, and validated with a real research group.
 
-**Wave / priority / status / review:** `W10` / `P2` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W11` / `P2` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `UNI` / `platform-neutral`
 
@@ -19057,7 +19078,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows.
 
-**Wave / priority / status / review:** `W11` / `P3` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W12` / `P3` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `CLD` / `platform-neutral`
 
@@ -19169,7 +19190,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Tenant data is hosted in declared regions using pooled, dedicated-schema, dedicated-database, or dedicated-deployment isolation as policy requires.
 
-**Wave / priority / status / review:** `W11` / `P3` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W12` / `P3` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `CLD` / `platform-neutral`
 
@@ -19281,7 +19302,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Organizations can govern membership and plans while usage is measured transparently by value-driving resource.
 
-**Wave / priority / status / review:** `W11` / `P3` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W12` / `P3` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `CLD` / `platform-neutral`
 
@@ -19393,7 +19414,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls.
 
-**Wave / priority / status / review:** `W11` / `P3` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W12` / `P3` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `CLD` / `platform-neutral`
 
@@ -19505,7 +19526,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Security and privacy controls operate continuously across tenant, regional, administrative, and software-supply-chain boundaries.
 
-**Wave / priority / status / review:** `W11` / `P3` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W12` / `P3` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `CLD` / `platform-neutral`
 
@@ -19617,7 +19638,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Cloud customers use the canonical desktop with clear synchronization, reliability, support, and service-status behavior.
 
-**Wave / priority / status / review:** `W11` / `P3` / `DEFERRED` / `PENDING`
+**Wave / priority / status / review:** `W12` / `P3` / `DEFERRED` / `PENDING`
 
 **Profiles / platforms:** `CLD` / `platform-neutral`
 

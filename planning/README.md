@@ -79,6 +79,23 @@ records prototype delivery complete with retained qualification gaps. It does
 not report a full-green suite or approve W2 execution; future Waves retain the
 normal lifecycle above.
 
+## Initial-product priorities for proposed W3–W9
+
+After the actual W2/G2 exit, apply the
+[owner roadmap direction](../artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md):
+new W10 collects cleanup/optimization, old W10 becomes W11 and old W11 becomes W12.
+Preserve existing task IDs and historical gates; the provisional
+[W10 intake](W10-cleanup-and-optimization.md) is not execution approval.
+Before approving each future packet, distinguish suggested soft timing targets
+from hard functional/security/resource/cancellation requirements. Completed
+comparable-trial median overage strictly less than 7 seconds may be accepted
+with recorded W10 optimization debt and every raw outcome retained. Exactly
+7 seconds or more requires assessment in the active Wave. Minor nonfunctional
+cosmetics go to W10; functional, rights, privacy and safety defects do not become
+cosmetics. Larger-computing product work stays W5; no 8 GiB or 16 GiB workloads
+may run on this computer. Refresh W3 proposals only after this roadmap update;
+W3 product implementation still requires its own complete approved packet.
+
 ## Initiation assessment and controlled planning adaptation
 
 Plans are working hypotheses during initiation. Before a new Wave packet is

@@ -241,12 +241,12 @@ The independent capability reviewer must trace each exit to immutable task, slic
 
 | Slice | Title | Outcome | Wave | Priority | Depends on |
 |---|---|---|---|---|---|
-| `CAP-12.S01` | Desktop remote connection mode and API abstraction | The canonical client can connect securely to a university project home while retaining local caches and clear deployment context. | W10 | P2 | CAP-11.S06.T03 |
-| `CAP-12.S02` | Institutional service and data-plane foundation | A deployable server stack implements the shared domain services with production-grade relational, object, vector, and workflow infrastructure. | W10 | P2 | CAP-12.S01.T01, CAP-03.S04.T03 |
-| `CAP-12.S03` | Institutional identity, authorization, and project isolation | University users authenticate through OIDC and access only permitted projects, sources, models, and administrative functions. | W10 | P2 | CAP-12.S02.T03 |
-| `CAP-12.S04` | Team collaboration and scholarly adjudication | Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality. | W10 | P2 | CAP-12.S03.T03, CAP-08.S06.T02 |
-| `CAP-12.S05` | Licensed sources, institutional rights, retention, and compute policy | Institutional entitlements and unpublished materials are governed consistently across search, storage, model egress, collaboration, and export. | W10 | P2 | CAP-12.S03.T02, CAP-04.S05.T03, CAP-07.S01.T03 |
-| `CAP-12.S06` | Institutional operations, disaster recovery, and pilot acceptance | The university edition is observable, supportable, recoverable, and validated with a real research group. | W10 | P2 | CAP-12.S04.T03, CAP-12.S05.T03 |
+| `CAP-12.S01` | Desktop remote connection mode and API abstraction | The canonical client can connect securely to a university project home while retaining local caches and clear deployment context. | W11 | P2 | CAP-11.S06.T03 |
+| `CAP-12.S02` | Institutional service and data-plane foundation | A deployable server stack implements the shared domain services with production-grade relational, object, vector, and workflow infrastructure. | W11 | P2 | CAP-12.S01.T01, CAP-03.S04.T03 |
+| `CAP-12.S03` | Institutional identity, authorization, and project isolation | University users authenticate through OIDC and access only permitted projects, sources, models, and administrative functions. | W11 | P2 | CAP-12.S02.T03 |
+| `CAP-12.S04` | Team collaboration and scholarly adjudication | Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality. | W11 | P2 | CAP-12.S03.T03, CAP-08.S06.T02 |
+| `CAP-12.S05` | Licensed sources, institutional rights, retention, and compute policy | Institutional entitlements and unpublished materials are governed consistently across search, storage, model egress, collaboration, and export. | W11 | P2 | CAP-12.S03.T02, CAP-04.S05.T03, CAP-07.S01.T03 |
+| `CAP-12.S06` | Institutional operations, disaster recovery, and pilot acceptance | The university edition is observable, supportable, recoverable, and validated with a real research group. | W11 | P2 | CAP-12.S04.T03, CAP-12.S05.T03 |
 
 Slices execute in backlog dependency order. A later slice may introduce an adapter or test fixture for an earlier contract, but it may not redefine an approved cross-slice decision. Each slice concludes with integration and independent review, after which the same campaign proceeds directly to the next ready slice. The capability pauses only for demonstrated infeasibility, a missing external prerequisite, unavailable required hardware, a genuinely new consequential human decision, a higher-authority conflict, or an approved design-reference gate.
 

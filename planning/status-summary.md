@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 59a61b6d5d096c68f253941553b59604a8b81926df670b6c9b343b6be4ceddd1
+source_sha256: feba51c6614a6217e8c55ac625a52c112d6c4594d062dc15d7a2685438831650
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -18,10 +18,10 @@ manual_edit: prohibited
 | Slices | 117 |
 | Tasks | 356 |
 | Enabler tasks | 26 |
-| Waves | 12 |
+| Waves | 13 |
 | Wave approval bases | 2 |
 | Wave amendments | 15 |
-| Release gates | 12 |
+| Release gates | 13 |
 
 ## Status distributions
 
@@ -38,7 +38,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `COMPLETE` | 2 |
-| `NONE` | 10 |
+| `NONE` | 11 |
 
 ### Slice completion
 
@@ -1012,8 +1012,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W7` - Study design and manuscript foundations | `PENDING` | `NONE` | `PENDING` | 0/13 | 0/39 | `G7` / `PENDING` |
 | `W8` - Results integration, manuscript drafting, and reviewer simulation | `PENDING` | `NONE` | `PENDING` | 0/18 | 0/54 | `G8` / `PENDING` |
 | `W9` - Advanced research-intelligence preview | `PENDING` | `NONE` | `PENDING` | 0/3 | 0/9 | `G9` / `PENDING` |
-| `W10` - University-hosted pilot | `PENDING` | `NONE` | `PENDING` | 0/6 | 0/18 | `G10` / `PENDING` |
-| `W11` - Managed cloud delivery | `PENDING` | `NONE` | `PENDING` | 0/6 | 0/18 | `G11` / `PENDING` |
+| `W10` - Cleanup and optimization | `PENDING` | `NONE` | `PENDING` | 0/0 | 0/0 | `G12` / `PENDING` |
+| `W11` - University-hosted pilot | `PENDING` | `NONE` | `PENDING` | 0/6 | 0/18 | `G10` / `PENDING` |
+| `W12` - Managed cloud delivery | `PENDING` | `NONE` | `PENDING` | 0/6 | 0/18 | `G11` / `PENDING` |
 
 ## Capability progress
 
@@ -1052,10 +1053,11 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `G5` — W5 exit / W6 activation — Windows PC/lab version 1.0 | `W5` | `W6` | `PENDING` |
 | `G6` — W6 exit / W7 activation — Cross-platform desktop version 1.0 | `W6` | `W7` | `PENDING` |
 | `G7` — W7 exit / W8 activation — Study design and manuscript foundation | `W7` | `W8` | `PENDING` |
-| `G8` — W8 exit / W9, W10 activation — End-to-end research-production desktop | `W8` | `W9`, `W10` | `PENDING` |
-| `G9` — W9 exit / - activation — Advanced research-intelligence preview | `W9` | - | `PENDING` |
-| `G10` — W10 exit / W11 activation — University pilot | `W10` | `W11` | `PENDING` |
-| `G11` — W11 exit / - activation — Cloud limited availability | `W11` | - | `PENDING` |
+| `G8` — W8 exit / W9 activation — End-to-end research-production desktop | `W8` | `W9` | `PENDING` |
+| `G9` — W9 exit / W10 activation — Advanced research-intelligence preview | `W9` | `W10` | `PENDING` |
+| `G12` — W10 exit / W11 activation — Cleanup and optimization exit | `W10` | `W11` | `PENDING` |
+| `G10` — W11 exit / W12 activation — University pilot | `W11` | `W12` | `PENDING` |
+| `G11` — W12 exit / - activation — Cloud limited availability | `W12` | - | `PENDING` |
 
 ## Active work
 

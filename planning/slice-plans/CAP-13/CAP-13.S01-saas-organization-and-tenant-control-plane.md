@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-13.S01
 title: SaaS organization and tenant control plane
 status: proposed
-wave: W11
+wave: W12
 priority: P3
 deployment_profiles:
 - CLD
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Deliver the same desktop-led product as a secure managed service with regional tenant isolation, elastic workers, metering, residency, support, and commercial operations. |
 | Slice | `CAP-13.S01` — SaaS organization and tenant control plane |
 | Slice outcome | Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows. |
-| Wave / priority | `W11` / `P3` |
+| Wave / priority | `W12` / `P3` |
 | Deployment profiles | `CLD` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-13.S01.T01`, `CAP-13.S01.T02`, `CAP-13.S01.T03` |

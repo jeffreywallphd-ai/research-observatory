@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-13.S05
 title: Cloud security, privacy, residency, and compliance operations
 status: proposed
-wave: W11
+wave: W12
 priority: P3
 deployment_profiles:
 - CLD
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Deliver the same desktop-led product as a secure managed service with regional tenant isolation, elastic workers, metering, residency, support, and commercial operations. |
 | Slice | `CAP-13.S05` — Cloud security, privacy, residency, and compliance operations |
 | Slice outcome | Security and privacy controls operate continuously across tenant, regional, administrative, and software-supply-chain boundaries. |
-| Wave / priority | `W11` / `P3` |
+| Wave / priority | `W12` / `P3` |
 | Deployment profiles | `CLD` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-13.S05.T01`, `CAP-13.S05.T02`, `CAP-13.S05.T03` |

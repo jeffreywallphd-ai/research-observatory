@@ -9,7 +9,7 @@ planning_gate: capability-decision-complete
 slice_id: CAP-13.S04
 title: Elastic workers, models, search, and cost governance
 status: proposed
-wave: W11
+wave: W12
 priority: P3
 deployment_profiles:
 - CLD
@@ -40,7 +40,7 @@ approval:
 | Capability objective | Deliver the same desktop-led product as a secure managed service with regional tenant isolation, elastic workers, metering, residency, support, and commercial operations. |
 | Slice | `CAP-13.S04` — Elastic workers, models, search, and cost governance |
 | Slice outcome | Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls. |
-| Wave / priority | `W11` / `P3` |
+| Wave / priority | `W12` / `P3` |
 | Deployment profiles | `CLD` |
 | Platform targets | `platform-neutral` |
 | Backlog tasks | `CAP-13.S04.T01`, `CAP-13.S04.T02`, `CAP-13.S04.T03` |

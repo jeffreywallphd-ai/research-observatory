@@ -11,26 +11,48 @@
     },
     "nullableTimestamp": {
       "anyOf": [
-        {"$ref": "#/$defs/timestamp"},
-        {"type": "null"}
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "nullableCommit": {
       "anyOf": [
-        {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        {"type": "null"}
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "nullableLease": {
       "anyOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
-          "required": ["claimed_by", "claimed_at", "expires_at"],
+          "required": [
+            "claimed_by",
+            "claimed_at",
+            "expires_at"
+          ],
           "properties": {
-            "claimed_by": {"type": "string", "minLength": 1},
-            "claimed_at": {"$ref": "#/$defs/timestamp"},
-            "expires_at": {"$ref": "#/$defs/timestamp"}
+            "claimed_by": {
+              "type": "string",
+              "minLength": 1
+            },
+            "claimed_at": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/timestamp"
+            }
           },
           "additionalProperties": false
         }
@@ -39,39 +61,120 @@
     "waveResumeRecord": {
       "type": "object",
       "required": [
-        "id", "wave_id", "control_revision", "prior_status", "pre_resume_commit",
-        "prior_campaign_sha256", "branch", "worktree", "profile", "platform", "actor", "resumed_at"
+        "id",
+        "wave_id",
+        "control_revision",
+        "prior_status",
+        "pre_resume_commit",
+        "prior_campaign_sha256",
+        "branch",
+        "worktree",
+        "profile",
+        "platform",
+        "actor",
+        "resumed_at"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.R[0-9]{2,}$"},
-        "wave_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
-        "control_revision": {"enum": [6, 7, 8, 9, 10, 11, 12]},
-        "prior_status": {"const": "PAUSED"},
-        "pre_resume_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "prior_campaign_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "branch": {"type": "string", "minLength": 1},
-        "worktree": {"type": "string", "minLength": 1},
-        "profile": {"enum": ["LOC", "LAB", "UNI", "CLD"]},
-        "platform": {"type": "string", "minLength": 1},
-        "actor": {"type": "string", "minLength": 1},
-        "resumed_at": {"$ref": "#/$defs/timestamp"}
+        "id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.R[0-9]{2,}$"
+        },
+        "wave_id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])$"
+        },
+        "control_revision": {
+          "enum": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        "prior_status": {
+          "const": "PAUSED"
+        },
+        "pre_resume_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "prior_campaign_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "worktree": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile": {
+          "enum": [
+            "LOC",
+            "LAB",
+            "UNI",
+            "CLD"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resumed_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       },
       "additionalProperties": false
     },
     "evidenceReferences": {
       "type": "array",
-      "items": {"type": "string", "minLength": 1},
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "uniqueItems": true
     },
     "boundEvidenceReference": {
       "type": "object",
-      "required": ["type", "amendment_id", "path", "sha256", "commit"],
+      "required": [
+        "type",
+        "amendment_id",
+        "path",
+        "sha256",
+        "commit"
+      ],
       "properties": {
-        "type": {"enum": ["amendment-exit-evidence", "amendment-adoption-evidence"]},
-        "amendment_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
-        "path": {"type": "string", "pattern": "^artifacts/evidence/[A-Za-z0-9][A-Za-z0-9._/-]*\\.(json|ya?ml)$"},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        "type": {
+          "enum": [
+            "amendment-exit-evidence",
+            "amendment-adoption-evidence"
+          ]
+        },
+        "amendment_id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^artifacts/evidence/[A-Za-z0-9][A-Za-z0-9._/-]*\\.(json|ya?ml)$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
       },
       "additionalProperties": false
     },
@@ -80,133 +183,354 @@
       "minItems": 1,
       "items": {
         "anyOf": [
-          {"type": "string", "minLength": 1},
-          {"$ref": "#/$defs/boundEvidenceReference"}
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "$ref": "#/$defs/boundEvidenceReference"
+          }
         ]
       },
       "uniqueItems": true
     },
     "taskEvidenceReference": {
       "type": "object",
-      "required": ["type", "path", "sha256", "commit", "recorded_at"],
+      "required": [
+        "type",
+        "path",
+        "sha256",
+        "commit",
+        "recorded_at"
+      ],
       "properties": {
-        "type": {"const": "criterion-manifest"},
-        "path": {"type": "string", "minLength": 1},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "recorded_at": {"$ref": "#/$defs/timestamp"},
-        "legacy_policy": {"const": "pre-exact-evidence-hosted-ci-residual-v1"}
+        "type": {
+          "const": "criterion-manifest"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "legacy_policy": {
+          "const": "pre-exact-evidence-hosted-ci-residual-v1"
+        }
       },
       "additionalProperties": false
     },
     "taskEvidence": {
       "type": "array",
-      "items": {"$ref": "#/$defs/taskEvidenceReference"}
+      "items": {
+        "$ref": "#/$defs/taskEvidenceReference"
+      }
     },
     "review": {
       "type": "object",
-      "required": ["reviewer", "result", "reviewed_at", "notes"],
+      "required": [
+        "reviewer",
+        "result",
+        "reviewed_at",
+        "notes"
+      ],
       "properties": {
-        "reviewer": {"type": ["string", "null"]},
-        "result": {"enum": ["approved", "changes-requested", "blocked", null]},
-        "reviewed_at": {"$ref": "#/$defs/nullableTimestamp"},
-        "notes": {"type": ["string", "null"]}
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result": {
+          "enum": [
+            "approved",
+            "changes-requested",
+            "blocked",
+            null
+          ]
+        },
+        "reviewed_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "reviewFinding": {
       "type": "object",
       "required": [
-        "id", "severity", "blocking", "criterion_index", "title", "reproduction", "required_remediation"
+        "id",
+        "severity",
+        "blocking",
+        "criterion_index",
+        "title",
+        "reproduction",
+        "required_remediation"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
-        "severity": {"enum": ["critical", "high", "medium", "low"]},
-        "blocking": {"type": "boolean"},
-        "criterion_index": {"type": "integer", "minimum": 1},
-        "title": {"type": "string", "minLength": 1},
-        "reproduction": {"type": "string", "minLength": 1},
-        "required_remediation": {"type": "string", "minLength": 1}
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "criterion_index": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reproduction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_remediation": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
     "reviewFindingClosure": {
       "type": "object",
-      "required": ["finding_id", "disposition", "evidence"],
+      "required": [
+        "finding_id",
+        "disposition",
+        "evidence"
+      ],
       "properties": {
-        "finding_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
-        "disposition": {"enum": ["fixed", "not-reproduced", "superseded", "accepted-risk"]},
-        "evidence": {"type": "string", "minLength": 1}
+        "finding_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "disposition": {
+          "enum": [
+            "fixed",
+            "not-reproduced",
+            "superseded",
+            "accepted-risk"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
     "taskSubmissionPacket": {
       "type": "object",
       "required": [
-        "id", "submitted_by", "submitted_at", "candidate_commit", "base_commit", "branch",
-        "evidence_reference", "acceptance_criteria_sha256", "changed_paths", "selected_checks",
-        "deferred_checks", "selection_rationale", "selection_sha256", "prior_attempt_id",
-        "open_finding_ids", "root_cause_analysis", "packet_sha256"
+        "id",
+        "submitted_by",
+        "submitted_at",
+        "candidate_commit",
+        "base_commit",
+        "branch",
+        "evidence_reference",
+        "acceptance_criteria_sha256",
+        "changed_paths",
+        "selected_checks",
+        "deferred_checks",
+        "selection_rationale",
+        "selection_sha256",
+        "prior_attempt_id",
+        "open_finding_ids",
+        "root_cause_analysis",
+        "packet_sha256"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-        "submitted_by": {"type": "string", "minLength": 1},
-        "submitted_at": {"$ref": "#/$defs/timestamp"},
-        "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "branch": {"type": "string", "minLength": 1},
-        "evidence_reference": {"$ref": "#/$defs/taskEvidenceReference"},
-        "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2,}$"
+        },
+        "submitted_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "submitted_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "candidate_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "base_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_reference": {
+          "$ref": "#/$defs/taskEvidenceReference"
+        },
+        "acceptance_criteria_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
         "changed_paths": {
-          "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         },
         "selected_checks": {
-          "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         },
         "selected_command_ids": {
           "type": "array",
-          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._:-]*$"
+          },
           "uniqueItems": true
         },
-        "deferred_checks": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
-        "selection_rationale": {"type": "string", "minLength": 1},
-        "selection_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "prior_attempt_id": {"type": ["string", "null"], "pattern": "^R[0-9]{2,}$"},
+        "deferred_checks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "selection_rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selection_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "prior_attempt_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^R[0-9]{2,}$"
+        },
         "open_finding_ids": {
-          "type": "array", "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+          },
           "uniqueItems": true
         },
-        "root_cause_analysis": {"type": ["string", "null"]},
-        "packet_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "root_cause_analysis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "packet_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       },
       "additionalProperties": false
     },
     "reviewTelemetryFindingCounts": {
       "type": "object",
-      "required": ["critical", "high", "medium", "low", "blocking", "total"],
+      "required": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "blocking",
+        "total"
+      ],
       "properties": {
-        "critical": {"type": "integer", "minimum": 0},
-        "high": {"type": "integer", "minimum": 0},
-        "medium": {"type": "integer", "minimum": 0},
-        "low": {"type": "integer", "minimum": 0},
-        "blocking": {"type": "integer", "minimum": 0},
-        "total": {"type": "integer", "minimum": 0}
+        "critical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "high": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "medium": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "low": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocking": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "additionalProperties": false
     },
     "reviewTelemetryRemediation": {
       "type": "object",
-      "required": ["prior_attempt_id", "replayed_finding_ids", "closed_finding_ids"],
+      "required": [
+        "prior_attempt_id",
+        "replayed_finding_ids",
+        "closed_finding_ids"
+      ],
       "properties": {
-        "prior_attempt_id": {"type": ["string", "null"], "pattern": "^R[0-9]{2,}$"},
+        "prior_attempt_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^R[0-9]{2,}$"
+        },
         "replayed_finding_ids": {
           "type": "array",
-          "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+          },
           "uniqueItems": true
         },
         "closed_finding_ids": {
           "type": "array",
-          "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+          },
           "uniqueItems": true
         }
       },
@@ -215,61 +539,144 @@
     "taskReviewTelemetryEvent": {
       "type": "object",
       "required": [
-        "task_id", "amendment_id", "attempt_id", "submitted_at", "reviewed_at", "duration_seconds",
-        "outcome", "finding_counts", "command_ids", "remediation"
+        "task_id",
+        "amendment_id",
+        "attempt_id",
+        "submitted_at",
+        "reviewed_at",
+        "duration_seconds",
+        "outcome",
+        "finding_counts",
+        "command_ids",
+        "remediation"
       ],
       "properties": {
-        "task_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "task_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
         "amendment_id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
         },
-        "attempt_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-        "submitted_at": {"$ref": "#/$defs/timestamp"},
-        "reviewed_at": {"$ref": "#/$defs/timestamp"},
-        "duration_seconds": {"type": "integer", "minimum": 0},
-        "outcome": {"enum": ["approved", "changes-requested", "blocked"]},
-        "finding_counts": {"$ref": "#/$defs/reviewTelemetryFindingCounts"},
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2,}$"
+        },
+        "submitted_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "reviewed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outcome": {
+          "enum": [
+            "approved",
+            "changes-requested",
+            "blocked"
+          ]
+        },
+        "finding_counts": {
+          "$ref": "#/$defs/reviewTelemetryFindingCounts"
+        },
         "command_ids": {
           "type": "array",
-          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._:-]*$"
+          },
           "uniqueItems": true
         },
-        "remediation": {"$ref": "#/$defs/reviewTelemetryRemediation"}
+        "remediation": {
+          "$ref": "#/$defs/reviewTelemetryRemediation"
+        }
       },
       "additionalProperties": false
     },
     "taskReviewAttempt": {
       "type": "object",
-      "required": ["submission", "review", "ledger", "findings", "closures"],
+      "required": [
+        "submission",
+        "review",
+        "ledger",
+        "findings",
+        "closures"
+      ],
       "properties": {
-        "submission": {"$ref": "#/$defs/taskSubmissionPacket"},
-        "review": {"$ref": "#/$defs/review"},
+        "submission": {
+          "$ref": "#/$defs/taskSubmissionPacket"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        },
         "ledger": {
           "type": "object",
-          "required": ["path", "sha256"],
+          "required": [
+            "path",
+            "sha256"
+          ],
           "properties": {
-            "path": {"type": "string", "minLength": 1},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         },
-        "findings": {"type": "array", "items": {"$ref": "#/$defs/reviewFinding"}},
-        "closures": {"type": "array", "items": {"$ref": "#/$defs/reviewFindingClosure"}},
-        "telemetry": {"$ref": "#/$defs/taskReviewTelemetryEvent"}
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewFinding"
+          }
+        },
+        "closures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewFindingClosure"
+          }
+        },
+        "telemetry": {
+          "$ref": "#/$defs/taskReviewTelemetryEvent"
+        }
       },
       "additionalProperties": false
     },
     "taskReviewControl": {
       "type": "object",
-      "required": ["version", "attempts", "current_submission"],
+      "required": [
+        "version",
+        "attempts",
+        "current_submission"
+      ],
       "properties": {
-        "version": {"const": 1},
-        "attempts": {"type": "array", "items": {"$ref": "#/$defs/taskReviewAttempt"}},
+        "version": {
+          "const": 1
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taskReviewAttempt"
+          }
+        },
         "current_submission": {
           "anyOf": [
-            {"type": "null"},
-            {"$ref": "#/$defs/taskSubmissionPacket"}
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/taskSubmissionPacket"
+            }
           ]
         }
       },
@@ -289,24 +696,47 @@
         "new_base_sha"
       ],
       "properties": {
-        "version": {"const": 1},
-        "id": {"const": "CAP-02.S04.T03.RCV01"},
+        "version": {
+          "const": 1
+        },
+        "id": {
+          "const": "CAP-02.S04.T03.RCV01"
+        },
         "manifest": {
           "type": "object",
-          "required": ["path", "sha256"],
+          "required": [
+            "path",
+            "sha256"
+          ],
           "properties": {
-            "path": {"const": "artifacts/evidence/task-recovery/CAP-02.S04.T03.json"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            "path": {
+              "const": "artifacts/evidence/task-recovery/CAP-02.S04.T03.json"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         },
         "authority": {
           "type": "object",
-          "required": ["amendment_id", "hold_id", "checkpoint_id"],
+          "required": [
+            "amendment_id",
+            "hold_id",
+            "checkpoint_id"
+          ],
           "properties": {
-            "amendment_id": {"const": "W1.A03"},
-            "hold_id": {"const": "HOLD-W1-GRR-0001"},
-            "checkpoint_id": {"type": "string", "pattern": "^W1\\.CP[0-9]{2,}$"}
+            "amendment_id": {
+              "const": "W1.A03"
+            },
+            "hold_id": {
+              "const": "HOLD-W1-GRR-0001"
+            },
+            "checkpoint_id": {
+              "type": "string",
+              "pattern": "^W1\\.CP[0-9]{2,}$"
+            }
           },
           "additionalProperties": false
         },
@@ -322,13 +752,34 @@
             "pause_task_sha256"
           ],
           "properties": {
-            "base": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-            "foundation": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-            "candidate": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-            "block_record": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-            "pause_record": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-            "block_task_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "pause_task_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            "base": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "foundation": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "candidate": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "block_record": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "pause_record": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "block_task_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pause_task_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         },
@@ -369,136 +820,391 @@
             "review"
           ],
           "properties": {
-            "id": {"const": "CAP-02.S04.T03"},
-            "capability_id": {"const": "CAP-02"},
-            "slice_id": {"const": "CAP-02.S04"},
-            "title": {"type": "string", "minLength": 1},
-            "objective": {"type": "string", "minLength": 1},
+            "id": {
+              "const": "CAP-02.S04.T03"
+            },
+            "capability_id": {
+              "const": "CAP-02"
+            },
+            "slice_id": {
+              "const": "CAP-02.S04"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "objective": {
+              "type": "string",
+              "minLength": 1
+            },
             "deliverables": {
-              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             },
             "acceptance_criteria": {
-              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             },
             "dependencies": {
-              "type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}$"},
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}$"
+              },
               "uniqueItems": true
             },
-            "priority": {"enum": ["P0", "P1", "P2", "P3"]},
-            "wave": {"const": "W1"},
+            "priority": {
+              "enum": [
+                "P0",
+                "P1",
+                "P2",
+                "P3"
+              ]
+            },
+            "wave": {
+              "const": "W1"
+            },
             "deployment_profiles": {
-              "type": "array", "minItems": 1, "items": {"enum": ["LOC", "LAB", "SRV", "CLD", "ALL"]},
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "enum": [
+                  "LOC",
+                  "LAB",
+                  "SRV",
+                  "CLD",
+                  "ALL"
+                ]
+              },
               "uniqueItems": true
             },
             "platform_targets": {
-              "type": "array", "minItems": 1,
-              "items": {"enum": ["windows-x64", "macos-arm64", "linux-x64", "linux-arm64", "dgx-spark-arm64"]},
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "enum": [
+                  "windows-x64",
+                  "macos-arm64",
+                  "linux-x64",
+                  "linux-arm64",
+                  "dgx-spark-arm64"
+                ]
+              },
               "uniqueItems": true
             },
-            "estimate": {"enum": ["S", "M", "L", "XL"]},
-            "risk": {"enum": ["low", "medium", "high", "critical"]},
-            "review_gate": {"type": "string", "minLength": 1},
-            "experience_change": {"$ref": "#/$defs/experienceChange"},
+            "estimate": {
+              "enum": [
+                "S",
+                "M",
+                "L",
+                "XL"
+              ]
+            },
+            "risk": {
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            },
+            "review_gate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "experience_change": {
+              "$ref": "#/$defs/experienceChange"
+            },
             "verification_profiles": {
-              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
             },
             "verification_commands": {
-              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             },
-            "status": {"const": "BLOCKED"},
-            "owner": {"type": ["string", "null"]},
-            "branch": {"type": ["string", "null"]},
-            "base_sha": {"$ref": "#/$defs/nullableCommit"},
-            "worktree": {"type": ["string", "null"]},
-            "lease": {"$ref": "#/$defs/nullableLease"},
-            "started_at": {"$ref": "#/$defs/nullableTimestamp"},
-            "updated_at": {"$ref": "#/$defs/nullableTimestamp"},
-            "completed_at": {"$ref": "#/$defs/nullableTimestamp"},
-            "blocker": {"$ref": "#/$defs/nullableBlocker"},
-            "implementation_notes": {"type": "string"},
-            "evidence": {"$ref": "#/$defs/taskEvidence"},
-            "verification_state": {"type": ["string", "null"]},
-            "review": {"$ref": "#/$defs/review"}
+            "status": {
+              "const": "BLOCKED"
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "branch": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "base_sha": {
+              "$ref": "#/$defs/nullableCommit"
+            },
+            "worktree": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lease": {
+              "$ref": "#/$defs/nullableLease"
+            },
+            "started_at": {
+              "$ref": "#/$defs/nullableTimestamp"
+            },
+            "updated_at": {
+              "$ref": "#/$defs/nullableTimestamp"
+            },
+            "completed_at": {
+              "$ref": "#/$defs/nullableTimestamp"
+            },
+            "blocker": {
+              "$ref": "#/$defs/nullableBlocker"
+            },
+            "implementation_notes": {
+              "type": "string"
+            },
+            "evidence": {
+              "$ref": "#/$defs/taskEvidence"
+            },
+            "verification_state": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "review": {
+              "$ref": "#/$defs/review"
+            }
           },
           "additionalProperties": false
         },
-        "recovered_by": {"type": "string", "minLength": 1},
-        "recovered_at": {"$ref": "#/$defs/timestamp"},
-        "new_base_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        "recovered_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recovered_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "new_base_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
       },
       "additionalProperties": false
     },
     "amendmentExitSubmissionPacket": {
       "type": "object",
       "required": [
-        "id", "submitted_by", "submitted_at", "candidate_commit", "declared_candidate_commit", "branch",
-        "evidence_reference", "acceptance_criteria_sha256", "selected_checks", "selected_checks_sha256",
-        "prior_attempt_id", "open_finding_ids", "packet_sha256"
+        "id",
+        "submitted_by",
+        "submitted_at",
+        "candidate_commit",
+        "declared_candidate_commit",
+        "branch",
+        "evidence_reference",
+        "acceptance_criteria_sha256",
+        "selected_checks",
+        "selected_checks_sha256",
+        "prior_attempt_id",
+        "open_finding_ids",
+        "packet_sha256"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-        "submitted_by": {"type": "string", "minLength": 1},
-        "submitted_at": {"$ref": "#/$defs/timestamp"},
-        "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "declared_candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "branch": {"type": "string", "pattern": "^codex/.+$"},
-        "evidence_reference": {"$ref": "#/$defs/boundEvidenceReference"},
-        "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "selected_checks": {
-          "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2,}$"
         },
-        "selected_checks_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "prior_attempt_id": {"type": ["string", "null"], "pattern": "^R[0-9]{2,}$"},
-        "open_finding_ids": {
-          "type": "array", "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "submitted_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "submitted_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "candidate_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "declared_candidate_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "branch": {
+          "type": "string",
+          "pattern": "^codex/.+$"
+        },
+        "evidence_reference": {
+          "$ref": "#/$defs/boundEvidenceReference"
+        },
+        "acceptance_criteria_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "selected_checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         },
-        "packet_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "selected_checks_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "prior_attempt_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^R[0-9]{2,}$"
+        },
+        "open_finding_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+          },
+          "uniqueItems": true
+        },
+        "packet_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       },
       "additionalProperties": false
     },
     "amendmentExitReview": {
       "type": "object",
-      "required": ["reviewer", "result", "reviewed_at", "reviewed_state_commit", "notes"],
+      "required": [
+        "reviewer",
+        "result",
+        "reviewed_at",
+        "reviewed_state_commit",
+        "notes"
+      ],
       "properties": {
-        "reviewer": {"type": "string", "minLength": 1},
-        "result": {"enum": ["approved", "changes-requested", "blocked"]},
-        "reviewed_at": {"$ref": "#/$defs/timestamp"},
-        "reviewed_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "notes": {"type": ["string", "null"]}
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "enum": [
+            "approved",
+            "changes-requested",
+            "blocked"
+          ]
+        },
+        "reviewed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "reviewed_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "amendmentExitReviewAttempt": {
       "type": "object",
-      "required": ["submission", "review", "ledger", "findings", "closures"],
+      "required": [
+        "submission",
+        "review",
+        "ledger",
+        "findings",
+        "closures"
+      ],
       "properties": {
-        "submission": {"$ref": "#/$defs/amendmentExitSubmissionPacket"},
-        "review": {"$ref": "#/$defs/amendmentExitReview"},
+        "submission": {
+          "$ref": "#/$defs/amendmentExitSubmissionPacket"
+        },
+        "review": {
+          "$ref": "#/$defs/amendmentExitReview"
+        },
         "ledger": {
           "type": "object",
-          "required": ["path", "sha256"],
+          "required": [
+            "path",
+            "sha256"
+          ],
           "properties": {
-            "path": {"type": "string", "pattern": "^artifacts/evidence/[A-Za-z0-9][A-Za-z0-9._/-]*\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            "path": {
+              "type": "string",
+              "pattern": "^artifacts/evidence/[A-Za-z0-9][A-Za-z0-9._/-]*\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         },
-        "findings": {"type": "array", "items": {"$ref": "#/$defs/reviewFinding"}},
-        "closures": {"type": "array", "items": {"$ref": "#/$defs/reviewFindingClosure"}}
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewFinding"
+          }
+        },
+        "closures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewFindingClosure"
+          }
+        }
       },
       "additionalProperties": false
     },
     "amendmentExitReviewControl": {
       "type": "object",
-      "required": ["version", "attempts", "current_submission"],
+      "required": [
+        "version",
+        "attempts",
+        "current_submission"
+      ],
       "properties": {
-        "version": {"const": 1},
-        "attempts": {"type": "array", "items": {"$ref": "#/$defs/amendmentExitReviewAttempt"}},
+        "version": {
+          "const": 1
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/amendmentExitReviewAttempt"
+          }
+        },
         "current_submission": {
           "anyOf": [
-            {"type": "null"},
-            {"$ref": "#/$defs/amendmentExitSubmissionPacket"}
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/amendmentExitSubmissionPacket"
+            }
           ]
         }
       },
@@ -506,15 +1212,35 @@
     },
     "nullableBlocker": {
       "anyOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
-          "required": ["reason", "next_action", "recorded_at", "owner"],
+          "required": [
+            "reason",
+            "next_action",
+            "recorded_at",
+            "owner"
+          ],
           "properties": {
-            "reason": {"type": "string", "minLength": 1},
-            "next_action": {"type": "string", "minLength": 1},
-            "recorded_at": {"$ref": "#/$defs/timestamp"},
-            "owner": {"type": ["string", "null"]}
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            },
+            "recorded_at": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           },
           "additionalProperties": false
         }
@@ -534,17 +1260,38 @@
       ],
       "properties": {
         "kind": {
-          "enum": ["intentional-design-change", "approved-reference-implementation", "defect-restoration"]
+          "enum": [
+            "intentional-design-change",
+            "approved-reference-implementation",
+            "defect-restoration"
+          ]
         },
         "contract_path": {
           "type": "string",
           "pattern": "^artifacts/evidence/ui-change/(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})\\.json$"
         },
-        "reference_id": {"type": "string", "minLength": 1},
-        "reference_version": {"type": "string", "minLength": 1},
-        "reference_package_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "reference_approval_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "previous_reference_id": {"type": ["string", "null"]},
+        "reference_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_package_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reference_approval_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "previous_reference_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "implementation_agent": {
           "type": "string",
           "pattern": "^(agent|human):[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$"
@@ -554,120 +1301,336 @@
     },
     "waveApproval": {
       "type": "object",
-      "required": ["status", "approved_by", "approved_at", "approved_commit", "capability_ids", "decision_ids", "slice_ids", "notes"],
+      "required": [
+        "status",
+        "approved_by",
+        "approved_at",
+        "approved_commit",
+        "capability_ids",
+        "decision_ids",
+        "slice_ids",
+        "notes"
+      ],
       "properties": {
-        "status": {"const": "APPROVED"},
-        "approved_by": {"type": "string", "minLength": 1},
-        "approved_at": {"$ref": "#/$defs/timestamp"},
-        "approved_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "capability_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}$"}, "uniqueItems": true},
-        "decision_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"}, "uniqueItems": true},
-        "slice_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}$"}, "uniqueItems": true},
-        "notes": {"type": ["string", "null"]}
+        "status": {
+          "const": "APPROVED"
+        },
+        "approved_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approved_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "approved_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "capability_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CAP-[0-9]{2}$"
+          },
+          "uniqueItems": true
+        },
+        "decision_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"
+          },
+          "uniqueItems": true
+        },
+        "slice_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}$"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "approvalReference": {
       "type": "object",
-      "required": ["path", "sha256", "introduction_commit"],
+      "required": [
+        "path",
+        "sha256",
+        "introduction_commit"
+      ],
       "properties": {
-        "path": {"type": "string", "pattern": "^planning/wave-amendment-approvals/W(?:[0-9]|1[01])\\.A[0-9]{2}\\.json$"},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        "path": {
+          "type": "string",
+          "pattern": "^planning/wave-amendment-approvals/W(?:[0-9]|1[01])\\.A[0-9]{2}\\.json$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "introduction_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
       },
       "additionalProperties": false
     },
     "scopeAddendumReference": {
       "type": "object",
-      "required": ["path", "sha256", "introduction_commit"],
+      "required": [
+        "path",
+        "sha256",
+        "introduction_commit"
+      ],
       "properties": {
         "path": {
           "type": "string",
           "pattern": "^planning/wave-amendment-approvals/W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}\\.addendum-[0-9]{2}\\.json$"
         },
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "introduction_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
       },
       "additionalProperties": false
     },
     "appendOnlyEvent": {
       "type": "object",
-      "required": ["id", "status", "actor", "at", "rationale"],
+      "required": [
+        "id",
+        "status",
+        "actor",
+        "at",
+        "rationale"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^E[0-9]{2,}$"},
-        "status": {"enum": ["APPROVED", "MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "ADOPTED", "DEFERRED", "WITHDRAWN", "SUPERSEDED", "BLOCKED"]},
-        "actor": {"type": "string", "minLength": 1},
-        "at": {"$ref": "#/$defs/timestamp"},
-        "rationale": {"type": "string", "minLength": 1}
+        "id": {
+          "type": "string",
+          "pattern": "^E[0-9]{2,}$"
+        },
+        "status": {
+          "enum": [
+            "APPROVED",
+            "MATERIALIZED",
+            "ACTIVE",
+            "PAUSED",
+            "REVIEW",
+            "ADOPTED",
+            "DEFERRED",
+            "WITHDRAWN",
+            "SUPERSEDED",
+            "BLOCKED"
+          ]
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
     "governanceMaintenanceIncrement": {
       "type": "object",
       "required": [
-        "id", "kind", "predecessor_revision", "successor_revision", "change_request_id", "amendment_id",
-        "approval_reference", "migration_reference", "applied_by", "applied_at"
+        "id",
+        "kind",
+        "predecessor_revision",
+        "successor_revision",
+        "change_request_id",
+        "amendment_id",
+        "approval_reference",
+        "migration_reference",
+        "applied_by",
+        "applied_at"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^MI-[0-9]{4}$"},
-        "kind": {"const": "post-migration-amendment-bootstrap"},
-        "predecessor_revision": {"const": 11},
-        "successor_revision": {"const": 12},
-        "change_request_id": {"type": "string", "pattern": "^ECR-[0-9]{4}$"},
-        "amendment_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
-        "approval_reference": {"$ref": "#/$defs/approvalReference"},
+        "id": {
+          "type": "string",
+          "pattern": "^MI-[0-9]{4}$"
+        },
+        "kind": {
+          "const": "post-migration-amendment-bootstrap"
+        },
+        "predecessor_revision": {
+          "const": 11
+        },
+        "successor_revision": {
+          "const": 12
+        },
+        "change_request_id": {
+          "type": "string",
+          "pattern": "^ECR-[0-9]{4}$"
+        },
+        "amendment_id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+        },
+        "approval_reference": {
+          "$ref": "#/$defs/approvalReference"
+        },
         "migration_reference": {
           "type": "object",
-          "required": ["id", "path", "sha256", "commit"],
+          "required": [
+            "id",
+            "path",
+            "sha256",
+            "commit"
+          ],
           "properties": {
-            "id": {"type": "string", "pattern": "^GOV-MIG-[0-9]{4}$"},
-            "path": {"type": "string", "pattern": "^planning/governance-migrations/GOV-MIG-[0-9]{4}\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            "id": {
+              "type": "string",
+              "pattern": "^GOV-MIG-[0-9]{4}$"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-migrations/GOV-MIG-[0-9]{4}\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           },
           "additionalProperties": false
         },
-        "applied_by": {"type": "string", "minLength": 1},
-        "applied_at": {"$ref": "#/$defs/timestamp"}
+        "applied_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "applied_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       },
       "additionalProperties": false
     },
     "bootstrapReviewAttempt": {
       "type": "object",
-      "required": ["id", "implementer", "implementation_commit", "submission_branch", "evidence", "review"],
+      "required": [
+        "id",
+        "implementer",
+        "implementation_commit",
+        "submission_branch",
+        "evidence",
+        "review"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-        "implementer": {"type": "string", "minLength": 1},
-        "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
-        "scope_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "evidence": {"$ref": "#/$defs/taskEvidence"},
-        "review": {"$ref": "#/$defs/review"}
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2,}$"
+        },
+        "implementer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "submission_branch": {
+          "type": "string",
+          "pattern": "^codex/.+$"
+        },
+        "scope_base_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "evidence": {
+          "$ref": "#/$defs/taskEvidence"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
       },
       "additionalProperties": false
     },
     "amendmentBootstrap": {
       "anyOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
-          "required": ["id", "status", "implementer", "implementation_commit", "submission_branch", "evidence", "review"],
+          "required": [
+            "id",
+            "status",
+            "implementer",
+            "implementation_commit",
+            "submission_branch",
+            "evidence",
+            "review"
+          ],
           "properties": {
-            "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"},
-            "status": {"enum": ["PENDING", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"]},
-            "implementer": {"type": ["string", "null"]},
-            "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
-            "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
-            "scope_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-            "evidence": {"$ref": "#/$defs/taskEvidence"},
-            "review": {"$ref": "#/$defs/review"},
+            "id": {
+              "type": "string",
+              "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"
+            },
+            "status": {
+              "enum": [
+                "PENDING",
+                "REVIEW",
+                "APPROVED",
+                "CHANGES_REQUESTED",
+                "BLOCKED"
+              ]
+            },
+            "implementer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "implementation_commit": {
+              "$ref": "#/$defs/nullableCommit"
+            },
+            "submission_branch": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^codex/.+$"
+            },
+            "scope_base_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "evidence": {
+              "$ref": "#/$defs/taskEvidence"
+            },
+            "review": {
+              "$ref": "#/$defs/review"
+            },
             "attempts": {
               "type": "array",
-              "items": {"$ref": "#/$defs/bootstrapReviewAttempt"}
+              "items": {
+                "$ref": "#/$defs/bootstrapReviewAttempt"
+              }
             },
             "scope_addenda": {
               "type": "array",
-              "items": {"$ref": "#/$defs/scopeAddendumReference"},
+              "items": {
+                "$ref": "#/$defs/scopeAddendumReference"
+              },
               "uniqueItems": true
             }
           },
@@ -677,38 +1640,84 @@
     },
     "recoveryEvidenceReference": {
       "type": "object",
-      "required": ["type", "path", "sha256", "commit", "recorded_at"],
+      "required": [
+        "type",
+        "path",
+        "sha256",
+        "commit",
+        "recorded_at"
+      ],
       "properties": {
-        "type": {"const": "governance-recovery-evidence"},
+        "type": {
+          "const": "governance-recovery-evidence"
+        },
         "path": {
           "type": "string",
           "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}(?:\\.remediation-[0-9]{2})?\\.evidence\\.json$"
         },
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "recorded_at": {"$ref": "#/$defs/timestamp"}
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       },
       "additionalProperties": false
     },
     "recoveryReviewAttempt": {
       "type": "object",
-      "required": ["id", "implementer", "implementation_commit", "submission_branch", "evidence", "review", "ledger"],
+      "required": [
+        "id",
+        "implementer",
+        "implementation_commit",
+        "submission_branch",
+        "evidence",
+        "review",
+        "ledger"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-        "implementer": {"type": "string", "minLength": 1},
-        "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
-        "evidence": {"$ref": "#/$defs/recoveryEvidenceReference"},
-        "review": {"$ref": "#/$defs/review"},
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2,}$"
+        },
+        "implementer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "submission_branch": {
+          "type": "string",
+          "pattern": "^codex/.+$"
+        },
+        "evidence": {
+          "$ref": "#/$defs/recoveryEvidenceReference"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        },
         "ledger": {
           "type": "object",
-          "required": ["path", "sha256"],
+          "required": [
+            "path",
+            "sha256"
+          ],
           "properties": {
             "path": {
               "type": "string",
               "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}\\.review-R[0-9]{2,}\\.json$"
             },
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         }
@@ -717,38 +1726,84 @@
     },
     "recoverySupplementEvidenceReference": {
       "type": "object",
-      "required": ["type", "path", "sha256", "commit", "recorded_at"],
+      "required": [
+        "type",
+        "path",
+        "sha256",
+        "commit",
+        "recorded_at"
+      ],
       "properties": {
-        "type": {"const": "governance-recovery-supplement-evidence"},
+        "type": {
+          "const": "governance-recovery-supplement-evidence"
+        },
         "path": {
           "type": "string",
           "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}(?:\\.remediation-[0-9]{2})?\\.evidence\\.json$"
         },
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "recorded_at": {"$ref": "#/$defs/timestamp"}
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       },
       "additionalProperties": false
     },
     "recoverySupplementReviewAttempt": {
       "type": "object",
-      "required": ["id", "implementer", "implementation_commit", "submission_branch", "evidence", "review", "ledger"],
+      "required": [
+        "id",
+        "implementer",
+        "implementation_commit",
+        "submission_branch",
+        "evidence",
+        "review",
+        "ledger"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-        "implementer": {"type": "string", "minLength": 1},
-        "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
-        "evidence": {"$ref": "#/$defs/recoverySupplementEvidenceReference"},
-        "review": {"$ref": "#/$defs/review"},
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2,}$"
+        },
+        "implementer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "submission_branch": {
+          "type": "string",
+          "pattern": "^codex/.+$"
+        },
+        "evidence": {
+          "$ref": "#/$defs/recoverySupplementEvidenceReference"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        },
         "ledger": {
           "type": "object",
-          "required": ["path", "sha256"],
+          "required": [
+            "path",
+            "sha256"
+          ],
           "properties": {
             "path": {
               "type": "string",
               "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}\\.review-R[0-9]{2,}\\.json$"
             },
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           },
           "additionalProperties": false
         }
@@ -758,293 +1813,880 @@
     "recoverySupplementBootstrap": {
       "type": "object",
       "required": [
-        "id", "status", "implementer", "implementation_commit", "submission_branch", "evidence", "review",
-        "current_submission", "attempts"
+        "id",
+        "status",
+        "implementer",
+        "implementation_commit",
+        "submission_branch",
+        "evidence",
+        "review",
+        "current_submission",
+        "attempts"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
-        "status": {"enum": ["IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"]},
-        "implementer": {"type": "string", "minLength": 1},
-        "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
-        "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
-        "evidence": {
-          "anyOf": [{"type": "null"}, {"$ref": "#/$defs/recoverySupplementEvidenceReference"}]
+        "id": {
+          "type": "string",
+          "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"
         },
-        "review": {"$ref": "#/$defs/review"},
+        "status": {
+          "enum": [
+            "IN_PROGRESS",
+            "REVIEW",
+            "APPROVED",
+            "CHANGES_REQUESTED",
+            "BLOCKED"
+          ]
+        },
+        "implementer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_commit": {
+          "$ref": "#/$defs/nullableCommit"
+        },
+        "submission_branch": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^codex/.+$"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/recoverySupplementEvidenceReference"
+            }
+          ]
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        },
         "current_submission": {
           "anyOf": [
-            {"type": "null"},
+            {
+              "type": "null"
+            },
             {
               "type": "object",
-              "required": ["attempt_id", "candidate_commit", "evidence_sha256", "acceptance_criteria_sha256"],
+              "required": [
+                "attempt_id",
+                "candidate_commit",
+                "evidence_sha256",
+                "acceptance_criteria_sha256"
+              ],
               "properties": {
-                "attempt_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-                "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-                "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-                "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                "attempt_id": {
+                  "type": "string",
+                  "pattern": "^R[0-9]{2,}$"
+                },
+                "candidate_commit": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "evidence_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "acceptance_criteria_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
               },
               "additionalProperties": false
             }
           ]
         },
-        "attempts": {"type": "array", "items": {"$ref": "#/$defs/recoverySupplementReviewAttempt"}}
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/recoverySupplementReviewAttempt"
+          }
+        }
       },
       "additionalProperties": false
     },
     "recoverySupplement": {
       "type": "object",
       "required": [
-        "id", "predecessor_control_revision", "packet_reference", "approval_reference", "bootstrap", "created_at"
+        "id",
+        "predecessor_control_revision",
+        "packet_reference",
+        "approval_reference",
+        "bootstrap",
+        "created_at"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.S[0-9]{2}$"},
-        "predecessor_control_revision": {"type": "integer", "minimum": 4},
-        "successor_control_revision": {"type": "integer", "minimum": 5, "maximum": 12},
+        "id": {
+          "type": "string",
+          "pattern": "^GRR-[0-9]{4}\\.S[0-9]{2}$"
+        },
+        "predecessor_control_revision": {
+          "type": "integer",
+          "minimum": 4
+        },
+        "successor_control_revision": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 12
+        },
         "packet_reference": {
           "type": "object",
-          "required": ["path", "sha256", "commit"],
+          "required": [
+            "path",
+            "sha256",
+            "commit"
+          ],
           "properties": {
-            "path": {"type": "string", "pattern": "^planning/governance-recovery-requests/GRR-[0-9]{4}\\.S[0-9]{2}\\.packet\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-recovery-requests/GRR-[0-9]{4}\\.S[0-9]{2}\\.packet\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           },
           "additionalProperties": false
         },
         "approval_reference": {
           "type": "object",
-          "required": ["path", "sha256", "introduction_commit"],
+          "required": [
+            "path",
+            "sha256",
+            "introduction_commit"
+          ],
           "properties": {
-            "path": {"type": "string", "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.S[0-9]{2}\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.S[0-9]{2}\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "introduction_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           },
           "additionalProperties": false
         },
-        "bootstrap": {"$ref": "#/$defs/recoverySupplementBootstrap"},
-        "created_at": {"$ref": "#/$defs/timestamp"}
+        "bootstrap": {
+          "$ref": "#/$defs/recoverySupplementBootstrap"
+        },
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       },
       "additionalProperties": false
     },
     "governanceControlGeneration": {
       "oneOf": [
-        {"$ref": "#/$defs/governanceControlGenerationV1"},
-        {"$ref": "#/$defs/governanceControlGenerationV2"},
-        {"$ref": "#/$defs/governanceControlGenerationV3"},
-        {"$ref": "#/$defs/governanceControlGenerationV4"}
+        {
+          "$ref": "#/$defs/governanceControlGenerationV1"
+        },
+        {
+          "$ref": "#/$defs/governanceControlGenerationV2"
+        },
+        {
+          "$ref": "#/$defs/governanceControlGenerationV3"
+        },
+        {
+          "$ref": "#/$defs/governanceControlGenerationV4"
+        }
       ]
     },
     "governanceControlGenerationV1": {
       "$ref": "#/$defs/governanceControlGenerationBase",
       "unevaluatedProperties": false,
       "properties": {
-        "id": {"const": "GCR-0001"}, "bootstrap_id": {"const": "GCR-0001.B00"},
-        "hold_id": {"const": "HOLD-W1-GRR-0002"}, "predecessor_revision": {"const": 6},
-        "successor_revision": {"const": 7},
-        "approval_reference": {"$ref": "#/$defs/governanceControlApprovalReferenceV1"},
-        "review_reference": {"$ref": "#/$defs/governanceControlReviewReferenceV1"}
+        "id": {
+          "const": "GCR-0001"
+        },
+        "bootstrap_id": {
+          "const": "GCR-0001.B00"
+        },
+        "hold_id": {
+          "const": "HOLD-W1-GRR-0002"
+        },
+        "predecessor_revision": {
+          "const": 6
+        },
+        "successor_revision": {
+          "const": 7
+        },
+        "approval_reference": {
+          "$ref": "#/$defs/governanceControlApprovalReferenceV1"
+        },
+        "review_reference": {
+          "$ref": "#/$defs/governanceControlReviewReferenceV1"
+        }
       }
     },
     "governanceControlGenerationV2": {
       "$ref": "#/$defs/governanceControlGenerationBase",
       "unevaluatedProperties": false,
       "properties": {
-        "id": {"const": "GCR-0002"}, "bootstrap_id": {"const": "GCR-0002.B00"},
-        "hold_id": {"const": "HOLD-W1-GRR-0002"}, "predecessor_revision": {"const": 8},
-        "successor_revision": {"const": 9},
-        "approval_reference": {"$ref": "#/$defs/governanceControlApprovalReferenceV2"},
-        "review_reference": {"$ref": "#/$defs/governanceControlReviewReferenceV2"}
+        "id": {
+          "const": "GCR-0002"
+        },
+        "bootstrap_id": {
+          "const": "GCR-0002.B00"
+        },
+        "hold_id": {
+          "const": "HOLD-W1-GRR-0002"
+        },
+        "predecessor_revision": {
+          "const": 8
+        },
+        "successor_revision": {
+          "const": 9
+        },
+        "approval_reference": {
+          "$ref": "#/$defs/governanceControlApprovalReferenceV2"
+        },
+        "review_reference": {
+          "$ref": "#/$defs/governanceControlReviewReferenceV2"
+        }
       }
     },
     "governanceControlGenerationV3": {
       "$ref": "#/$defs/governanceControlGenerationBase",
       "unevaluatedProperties": false,
-      "required": ["supported_control_ceiling"],
+      "required": [
+        "supported_control_ceiling"
+      ],
       "properties": {
-        "id": {"const": "GCR-0003"}, "bootstrap_id": {"const": "GCR-0003.B00"},
-        "hold_id": {"const": "HOLD-W1-GRR-0002"}, "predecessor_revision": {"const": 9},
-        "successor_revision": {"const": 10}, "supported_control_ceiling": {"const": 11},
-        "approval_reference": {"$ref": "#/$defs/governanceControlApprovalReferenceV3"},
-        "review_reference": {"$ref": "#/$defs/governanceControlReviewReferenceV3"}
+        "id": {
+          "const": "GCR-0003"
+        },
+        "bootstrap_id": {
+          "const": "GCR-0003.B00"
+        },
+        "hold_id": {
+          "const": "HOLD-W1-GRR-0002"
+        },
+        "predecessor_revision": {
+          "const": 9
+        },
+        "successor_revision": {
+          "const": 10
+        },
+        "supported_control_ceiling": {
+          "const": 11
+        },
+        "approval_reference": {
+          "$ref": "#/$defs/governanceControlApprovalReferenceV3"
+        },
+        "review_reference": {
+          "$ref": "#/$defs/governanceControlReviewReferenceV3"
+        }
       }
     },
     "governanceControlGenerationV4": {
       "$ref": "#/$defs/governanceControlGenerationBase",
       "unevaluatedProperties": false,
-      "required": ["supported_control_ceiling", "generation_neutral"],
+      "required": [
+        "supported_control_ceiling",
+        "generation_neutral"
+      ],
       "properties": {
-        "id": {"const": "GCR-0007"}, "bootstrap_id": {"const": "GCR-0007.B00"},
-        "hold_id": {"const": "HOLD-W1-GRR-0002"}, "predecessor_revision": {"const": 11},
-        "successor_revision": {"const": 11}, "supported_control_ceiling": {"const": 12},
-        "generation_neutral": {"const": true},
-        "approval_reference": {"$ref": "#/$defs/governanceControlApprovalReferenceV4"},
-        "review_reference": {"$ref": "#/$defs/governanceControlReviewReferenceV4"}
+        "id": {
+          "const": "GCR-0007"
+        },
+        "bootstrap_id": {
+          "const": "GCR-0007.B00"
+        },
+        "hold_id": {
+          "const": "HOLD-W1-GRR-0002"
+        },
+        "predecessor_revision": {
+          "const": 11
+        },
+        "successor_revision": {
+          "const": 11
+        },
+        "supported_control_ceiling": {
+          "const": 12
+        },
+        "generation_neutral": {
+          "const": true
+        },
+        "approval_reference": {
+          "$ref": "#/$defs/governanceControlApprovalReferenceV4"
+        },
+        "review_reference": {
+          "$ref": "#/$defs/governanceControlReviewReferenceV4"
+        }
       }
     },
     "governanceControlGenerationBase": {
       "type": "object",
-      "required": ["id", "bootstrap_id", "hold_id", "predecessor_revision", "successor_revision", "approval_reference", "review_reference", "adopted_by", "adopted_at"],
+      "required": [
+        "id",
+        "bootstrap_id",
+        "hold_id",
+        "predecessor_revision",
+        "successor_revision",
+        "approval_reference",
+        "review_reference",
+        "adopted_by",
+        "adopted_at"
+      ],
       "properties": {
-        "id": {"type": "string"}, "bootstrap_id": {"type": "string"}, "hold_id": {"type": "string"},
-        "predecessor_revision": {"type": "integer"}, "successor_revision": {"type": "integer"},
-        "approval_reference": {"type": "object"}, "review_reference": {"type": "object"},
-        "adopted_by": {"type": "string", "minLength": 1}, "adopted_at": {"$ref": "#/$defs/timestamp"}
+        "id": {
+          "type": "string"
+        },
+        "bootstrap_id": {
+          "type": "string"
+        },
+        "hold_id": {
+          "type": "string"
+        },
+        "predecessor_revision": {
+          "type": "integer"
+        },
+        "successor_revision": {
+          "type": "integer"
+        },
+        "approval_reference": {
+          "type": "object"
+        },
+        "review_reference": {
+          "type": "object"
+        },
+        "adopted_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adopted_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       }
     },
     "governanceControlApprovalReferenceV1": {
-      "type": "object", "required": ["path", "sha256", "introduction_commit"],
-      "properties": {"path": {"const": "planning/governance-control-recovery/GCR-0001.approval.json"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "introduction_commit"
+      ],
+      "properties": {
+        "path": {
+          "const": "planning/governance-control-recovery/GCR-0001.approval.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "introduction_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlApprovalReferenceV2": {
-      "type": "object", "required": ["path", "sha256", "introduction_commit"],
-      "properties": {"path": {"const": "planning/governance-control-recovery/GCR-0002.approval.json"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "introduction_commit"
+      ],
+      "properties": {
+        "path": {
+          "const": "planning/governance-control-recovery/GCR-0002.approval.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "introduction_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlApprovalReferenceV3": {
-      "type": "object", "required": ["path", "sha256", "introduction_commit"],
-      "properties": {"path": {"const": "planning/governance-control-recovery/GCR-0003.approval.json"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "introduction_commit"
+      ],
+      "properties": {
+        "path": {
+          "const": "planning/governance-control-recovery/GCR-0003.approval.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "introduction_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlApprovalReferenceV4": {
-      "type": "object", "required": ["path", "sha256", "introduction_commit"],
-      "properties": {"path": {"const": "planning/governance-control-recovery/GCR-0007.approval.json"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "introduction_commit"
+      ],
+      "properties": {
+        "path": {
+          "const": "planning/governance-control-recovery/GCR-0007.approval.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "introduction_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlReviewReferenceV1": {
-      "type": "object", "required": ["path", "sha256", "reviewed_state_commit", "approved_state_commit"],
-      "properties": {"path": {"type": "string", "pattern": "^planning/governance-control-recovery/GCR-0001\\.B00\\.review-R[0-9]{2,}\\.json$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "reviewed_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "approved_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "reviewed_state_commit",
+        "approved_state_commit"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^planning/governance-control-recovery/GCR-0001\\.B00\\.review-R[0-9]{2,}\\.json$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reviewed_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "approved_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlReviewReferenceV2": {
-      "type": "object", "required": ["path", "sha256", "reviewed_state_commit", "approved_state_commit"],
-      "properties": {"path": {"type": "string", "pattern": "^planning/governance-control-recovery/GCR-0002\\.B00\\.review-R[0-9]{2,}\\.json$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "reviewed_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "approved_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "reviewed_state_commit",
+        "approved_state_commit"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^planning/governance-control-recovery/GCR-0002\\.B00\\.review-R[0-9]{2,}\\.json$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reviewed_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "approved_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlReviewReferenceV3": {
-      "type": "object", "required": ["path", "sha256", "reviewed_state_commit", "approved_state_commit"],
-      "properties": {"path": {"type": "string", "pattern": "^planning/governance-control-recovery/GCR-0003\\.B00\\.review-R[0-9]{2,}\\.json$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "reviewed_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "approved_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "reviewed_state_commit",
+        "approved_state_commit"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^planning/governance-control-recovery/GCR-0003\\.B00\\.review-R[0-9]{2,}\\.json$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reviewed_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "approved_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "governanceControlReviewReferenceV4": {
-      "type": "object", "required": ["path", "sha256", "reviewed_state_commit", "approved_state_commit"],
-      "properties": {"path": {"type": "string", "pattern": "^planning/governance-control-recovery/GCR-0007\\.B00\\.review-R[0-9]{2,}\\.json$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "reviewed_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "approved_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "reviewed_state_commit",
+        "approved_state_commit"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^planning/governance-control-recovery/GCR-0007\\.B00\\.review-R[0-9]{2,}\\.json$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reviewed_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "approved_state_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
       "additionalProperties": false
     },
     "recoveryHold": {
       "type": "object",
       "required": [
-        "id", "recovery_request_id", "target_wave", "status", "approval_reference", "packet_reference",
-        "bootstrap", "post_bootstrap", "release_conditions", "created_at", "released_at"
+        "id",
+        "recovery_request_id",
+        "target_wave",
+        "status",
+        "approval_reference",
+        "packet_reference",
+        "bootstrap",
+        "post_bootstrap",
+        "release_conditions",
+        "created_at",
+        "released_at"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^HOLD-W(?:[0-9]|1[01])-GRR-[0-9]{4}$"},
-        "recovery_request_id": {"type": "string", "pattern": "^GRR-[0-9]{4}$"},
-        "target_wave": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
-        "status": {"enum": ["ACTIVE", "RELEASED"]},
+        "id": {
+          "type": "string",
+          "pattern": "^HOLD-W(?:[0-9]|1[01])-GRR-[0-9]{4}$"
+        },
+        "recovery_request_id": {
+          "type": "string",
+          "pattern": "^GRR-[0-9]{4}$"
+        },
+        "target_wave": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])$"
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "RELEASED"
+          ]
+        },
         "approval_reference": {
           "type": "object",
-          "required": ["path", "sha256", "introduction_commit"],
+          "required": [
+            "path",
+            "sha256",
+            "introduction_commit"
+          ],
           "properties": {
-            "path": {"type": "string", "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "introduction_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           },
           "additionalProperties": false
         },
         "packet_reference": {
           "type": "object",
-          "required": ["path", "sha256", "commit"],
+          "required": [
+            "path",
+            "sha256",
+            "commit"
+          ],
           "properties": {
-            "path": {"type": "string", "pattern": "^planning/governance-recovery-requests/GRR-[0-9]{4}\\.packet\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-recovery-requests/GRR-[0-9]{4}\\.packet\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           },
           "additionalProperties": false
         },
         "bootstrap": {
           "type": "object",
           "required": [
-            "id", "status", "implementer", "implementation_commit", "submission_branch", "evidence", "review",
-            "current_submission", "attempts"
+            "id",
+            "status",
+            "implementer",
+            "implementation_commit",
+            "submission_branch",
+            "evidence",
+            "review",
+            "current_submission",
+            "attempts"
           ],
           "properties": {
-            "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
-            "status": {"enum": ["IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"]},
-            "implementer": {"type": "string", "minLength": 1},
-            "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
-            "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
-            "evidence": {
-              "anyOf": [{"type": "null"}, {"$ref": "#/$defs/recoveryEvidenceReference"}]
+            "id": {
+              "type": "string",
+              "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"
             },
-            "review": {"$ref": "#/$defs/review"},
+            "status": {
+              "enum": [
+                "IN_PROGRESS",
+                "REVIEW",
+                "APPROVED",
+                "CHANGES_REQUESTED",
+                "BLOCKED"
+              ]
+            },
+            "implementer": {
+              "type": "string",
+              "minLength": 1
+            },
+            "implementation_commit": {
+              "$ref": "#/$defs/nullableCommit"
+            },
+            "submission_branch": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^codex/.+$"
+            },
+            "evidence": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/recoveryEvidenceReference"
+                }
+              ]
+            },
+            "review": {
+              "$ref": "#/$defs/review"
+            },
             "current_submission": {
               "anyOf": [
-                {"type": "null"},
+                {
+                  "type": "null"
+                },
                 {
                   "type": "object",
-                  "required": ["attempt_id", "candidate_commit", "evidence_sha256", "acceptance_criteria_sha256"],
+                  "required": [
+                    "attempt_id",
+                    "candidate_commit",
+                    "evidence_sha256",
+                    "acceptance_criteria_sha256"
+                  ],
                   "properties": {
-                    "attempt_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
-                    "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-                    "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-                    "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                    "attempt_id": {
+                      "type": "string",
+                      "pattern": "^R[0-9]{2,}$"
+                    },
+                    "candidate_commit": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{40}$"
+                    },
+                    "evidence_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "acceptance_criteria_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    }
                   },
                   "additionalProperties": false
                 }
               ]
             },
-            "attempts": {"type": "array", "items": {"$ref": "#/$defs/recoveryReviewAttempt"}}
+            "attempts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/recoveryReviewAttempt"
+              }
+            }
           },
           "additionalProperties": false
         },
         "supplements": {
           "type": "array",
-          "items": {"$ref": "#/$defs/recoverySupplement"},
+          "items": {
+            "$ref": "#/$defs/recoverySupplement"
+          },
           "uniqueItems": true
         },
         "post_bootstrap": {
           "type": "object",
           "required": [
-            "required_change_request_id", "required_amendment_id", "required_proposed_task_ids", "execution_authority"
+            "required_change_request_id",
+            "required_amendment_id",
+            "required_proposed_task_ids",
+            "execution_authority"
           ],
           "properties": {
-            "required_change_request_id": {"type": "string", "pattern": "^ECR-[0-9]{4}$"},
-            "required_amendment_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+            "required_change_request_id": {
+              "type": "string",
+              "pattern": "^ECR-[0-9]{4}$"
+            },
+            "required_amendment_id": {
+              "type": "string",
+              "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+            },
             "required_proposed_task_ids": {
               "type": "array",
               "minItems": 1,
               "uniqueItems": true,
-              "items": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"}
+              "items": {
+                "type": "string",
+                "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"
+              }
             },
-            "execution_authority": {"const": false}
+            "execution_authority": {
+              "const": false
+            }
           },
           "additionalProperties": false
         },
-        "release_conditions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-        "created_at": {"$ref": "#/$defs/timestamp"},
-        "released_at": {"$ref": "#/$defs/nullableTimestamp"}
+        "release_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "released_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        }
       },
       "additionalProperties": false
     },
     "amendmentCampaign": {
       "anyOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
-          "required": ["status", "scope", "owner", "branch", "worktree", "base_sha", "profile", "platform", "started_at", "updated_at", "pause_reason", "lease"],
+          "required": [
+            "status",
+            "scope",
+            "owner",
+            "branch",
+            "worktree",
+            "base_sha",
+            "profile",
+            "platform",
+            "started_at",
+            "updated_at",
+            "pause_reason",
+            "lease"
+          ],
           "properties": {
-            "status": {"enum": ["ACTIVE", "PAUSED", "REVIEW", "COMPLETE"]},
-            "scope": {"const": "wave-amendment"},
-            "owner": {"type": ["string", "null"]},
-            "branch": {"type": ["string", "null"]},
-            "worktree": {"type": ["string", "null"]},
-            "base_sha": {"$ref": "#/$defs/nullableCommit"},
-            "profile": {"enum": ["LOC", "LAB", "UNI", "CLD", "ALL"]},
-            "platform": {"type": "string", "minLength": 1},
-            "started_at": {"$ref": "#/$defs/nullableTimestamp"},
-            "updated_at": {"$ref": "#/$defs/nullableTimestamp"},
-            "pause_reason": {"type": ["string", "null"]},
-            "lease": {"$ref": "#/$defs/nullableLease"}
+            "status": {
+              "enum": [
+                "ACTIVE",
+                "PAUSED",
+                "REVIEW",
+                "COMPLETE"
+              ]
+            },
+            "scope": {
+              "const": "wave-amendment"
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "branch": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "worktree": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "base_sha": {
+              "$ref": "#/$defs/nullableCommit"
+            },
+            "profile": {
+              "enum": [
+                "LOC",
+                "LAB",
+                "UNI",
+                "CLD",
+                "ALL"
+              ]
+            },
+            "platform": {
+              "type": "string",
+              "minLength": 1
+            },
+            "started_at": {
+              "$ref": "#/$defs/nullableTimestamp"
+            },
+            "updated_at": {
+              "$ref": "#/$defs/nullableTimestamp"
+            },
+            "pause_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lease": {
+              "$ref": "#/$defs/nullableLease"
+            }
           },
           "additionalProperties": false
         }
@@ -1053,35 +2695,143 @@
     "enablerTask": {
       "type": "object",
       "required": [
-        "id", "amendment_id", "title", "objective", "dependencies", "acceptance_criteria", "verification_commands",
-        "packet_task_sha256", "status", "owner", "branch", "base_sha", "worktree", "lease", "started_at", "updated_at",
-        "completed_at", "blocker", "implementation_notes", "evidence", "verification_state", "review"
+        "id",
+        "amendment_id",
+        "title",
+        "objective",
+        "dependencies",
+        "acceptance_criteria",
+        "verification_commands",
+        "packet_task_sha256",
+        "status",
+        "owner",
+        "branch",
+        "base_sha",
+        "worktree",
+        "lease",
+        "started_at",
+        "updated_at",
+        "completed_at",
+        "blocker",
+        "implementation_notes",
+        "evidence",
+        "verification_state",
+        "review"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"},
-        "amendment_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
-        "title": {"type": "string", "minLength": 1},
-        "objective": {"type": "string", "minLength": 1},
-        "dependencies": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
-        "acceptance_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-        "verification_commands": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-        "packet_task_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "status": {"enum": ["NOT_STARTED", "READY", "IN_PROGRESS", "BLOCKED", "REVIEW", "DONE", "DEFERRED", "CANCELLED"]},
-        "owner": {"type": ["string", "null"]},
-        "branch": {"type": ["string", "null"]},
-        "base_sha": {"$ref": "#/$defs/nullableCommit"},
-        "worktree": {"type": ["string", "null"]},
-        "lease": {"$ref": "#/$defs/nullableLease"},
-        "started_at": {"$ref": "#/$defs/nullableTimestamp"},
-        "updated_at": {"$ref": "#/$defs/nullableTimestamp"},
-        "completed_at": {"$ref": "#/$defs/nullableTimestamp"},
-        "blocker": {"$ref": "#/$defs/nullableBlocker"},
-        "implementation_notes": {"type": "string"},
-        "evidence": {"$ref": "#/$defs/taskEvidence"},
-        "experience_change": {"$ref": "#/$defs/experienceChange"},
-        "verification_state": {"type": ["string", "null"]},
-        "review": {"$ref": "#/$defs/review"},
-        "review_control": {"$ref": "#/$defs/taskReviewControl"}
+        "id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"
+        },
+        "amendment_id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "verification_commands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "packet_task_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "enum": [
+            "NOT_STARTED",
+            "READY",
+            "IN_PROGRESS",
+            "BLOCKED",
+            "REVIEW",
+            "DONE",
+            "DEFERRED",
+            "CANCELLED"
+          ]
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "base_sha": {
+          "$ref": "#/$defs/nullableCommit"
+        },
+        "worktree": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lease": {
+          "$ref": "#/$defs/nullableLease"
+        },
+        "started_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "completed_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "blocker": {
+          "$ref": "#/$defs/nullableBlocker"
+        },
+        "implementation_notes": {
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/taskEvidence"
+        },
+        "experience_change": {
+          "$ref": "#/$defs/experienceChange"
+        },
+        "verification_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        },
+        "review_control": {
+          "$ref": "#/$defs/taskReviewControl"
+        }
       },
       "additionalProperties": false
     },
@@ -1345,72 +3095,232 @@
     },
     "waveApprovalBase": {
       "type": "object",
-      "required": ["wave_id", "packet_commit", "record_commit", "approval", "canonical_sha256"],
+      "required": [
+        "wave_id",
+        "packet_commit",
+        "record_commit",
+        "approval",
+        "canonical_sha256"
+      ],
       "properties": {
-        "wave_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
-        "packet_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "record_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "approval": {"$ref": "#/$defs/waveApproval"},
-        "canonical_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "wave_id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])$"
+        },
+        "packet_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "record_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "approval": {
+          "$ref": "#/$defs/waveApproval"
+        },
+        "canonical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       },
       "additionalProperties": false
     },
     "pausedAmendmentCorrection": {
       "type": "object",
-      "required": ["id", "changeRequestId", "status", "packetCommit", "approvalReference", "effectiveStateCommit", "recordSha256", "returnPolicy"],
+      "required": [
+        "id",
+        "changeRequestId",
+        "status",
+        "packetCommit",
+        "approvalReference",
+        "effectiveStateCommit",
+        "recordSha256",
+        "returnPolicy"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
-        "changeRequestId": {"type": ["string", "null"]},
-        "status": {"const": "PAUSED"},
-        "packetCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+        },
+        "changeRequestId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "const": "PAUSED"
+        },
+        "packetCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
         "approvalReference": {
           "type": "object",
-          "required": ["path", "sha256", "introductionCommit"],
+          "required": [
+            "path",
+            "sha256",
+            "introductionCommit"
+          ],
           "properties": {
-            "path": {"type": "string", "pattern": "^planning/wave-amendment-approvals/W(?:[0-9]|1[01])\\.A[0-9]{2}\\.json$"},
-            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-            "introductionCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            "path": {
+              "type": "string",
+              "pattern": "^planning/wave-amendment-approvals/W(?:[0-9]|1[01])\\.A[0-9]{2}\\.json$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "introductionCommit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           },
           "additionalProperties": false
         },
-        "effectiveStateCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "recordSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "returnPolicy": {"const": "paused-predecessor"}
+        "effectiveStateCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "recordSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "returnPolicy": {
+          "const": "paused-predecessor"
+        }
       },
       "additionalProperties": false
     },
     "waveAmendment": {
       "type": "object",
-      "required": ["id", "change_request_id", "target_wave", "kind", "approval_reference", "lifecycle", "bootstrap", "campaign", "tasks", "completion"],
+      "required": [
+        "id",
+        "change_request_id",
+        "target_wave",
+        "kind",
+        "approval_reference",
+        "lifecycle",
+        "bootstrap",
+        "campaign",
+        "tasks",
+        "completion"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
-        "change_request_id": {"type": ["string", "null"]},
-        "target_wave": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
-        "kind": {"enum": ["migrated-replanning", "gate-integrity-safety-defect", "control-plane-improvement", "operational-clarification", "product-scope-security-experience"]},
-        "approval_reference": {"$ref": "#/$defs/approvalReference"},
-        "correction": {"$ref": "#/$defs/pausedAmendmentCorrection"},
+        "id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+        },
+        "change_request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "target_wave": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])$"
+        },
+        "kind": {
+          "enum": [
+            "migrated-replanning",
+            "gate-integrity-safety-defect",
+            "control-plane-improvement",
+            "operational-clarification",
+            "product-scope-security-experience"
+          ]
+        },
+        "approval_reference": {
+          "$ref": "#/$defs/approvalReference"
+        },
+        "correction": {
+          "$ref": "#/$defs/pausedAmendmentCorrection"
+        },
         "lifecycle": {
           "type": "object",
-          "required": ["status", "history"],
+          "required": [
+            "status",
+            "history"
+          ],
           "properties": {
-            "status": {"enum": ["APPROVED", "MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "ADOPTED", "DEFERRED", "WITHDRAWN", "SUPERSEDED", "BLOCKED"]},
-            "history": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/appendOnlyEvent"}}
+            "status": {
+              "enum": [
+                "APPROVED",
+                "MATERIALIZED",
+                "ACTIVE",
+                "PAUSED",
+                "REVIEW",
+                "ADOPTED",
+                "DEFERRED",
+                "WITHDRAWN",
+                "SUPERSEDED",
+                "BLOCKED"
+              ]
+            },
+            "history": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/appendOnlyEvent"
+              }
+            }
           },
           "additionalProperties": false
         },
-        "bootstrap": {"$ref": "#/$defs/amendmentBootstrap"},
-        "campaign": {"$ref": "#/$defs/amendmentCampaign"},
-        "tasks": {"type": "array", "items": {"$ref": "#/$defs/enablerTask"}},
+        "bootstrap": {
+          "$ref": "#/$defs/amendmentBootstrap"
+        },
+        "campaign": {
+          "$ref": "#/$defs/amendmentCampaign"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/enablerTask"
+          }
+        },
         "completion": {
           "type": "object",
-          "required": ["status", "reviewer", "reviewed_at", "evidence", "notes"],
+          "required": [
+            "status",
+            "reviewer",
+            "reviewed_at",
+            "evidence",
+            "notes"
+          ],
           "properties": {
-            "status": {"enum": ["PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"]},
-            "reviewer": {"type": ["string", "null"]},
-            "reviewed_at": {"$ref": "#/$defs/nullableTimestamp"},
-            "evidence": {"$ref": "#/$defs/evidenceReferences"},
-            "notes": {"type": ["string", "null"]},
-            "exit_review_control": {"$ref": "#/$defs/amendmentExitReviewControl"}
+            "status": {
+              "enum": [
+                "PENDING",
+                "IN_PROGRESS",
+                "REVIEW",
+                "APPROVED",
+                "CHANGES_REQUESTED",
+                "BLOCKED",
+                "PAUSED"
+              ]
+            },
+            "reviewer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "reviewed_at": {
+              "$ref": "#/$defs/nullableTimestamp"
+            },
+            "evidence": {
+              "$ref": "#/$defs/evidenceReferences"
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "exit_review_control": {
+              "$ref": "#/$defs/amendmentExitReviewControl"
+            }
           },
           "additionalProperties": false
         }
@@ -1501,49 +3411,104 @@
         "type": "string"
       }
     },
-    "priority_definitions": {"type": "object"},
-    "deployment_profiles": {"type": "object"},
-    "estimate_scale": {"type": "object"},
-    "definition_of_ready": {"type": "array", "items": {"type": "string"}},
-    "definition_of_done": {"type": "array", "items": {"type": "string"}},
+    "priority_definitions": {
+      "type": "object"
+    },
+    "deployment_profiles": {
+      "type": "object"
+    },
+    "estimate_scale": {
+      "type": "object"
+    },
+    "definition_of_ready": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "definition_of_done": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "control_plane": {
       "type": "object",
-      "required": ["revision", "minimum_tool_revision", "active_amendment", "recovery_holds"],
+      "required": [
+        "revision",
+        "minimum_tool_revision",
+        "active_amendment",
+        "recovery_holds"
+      ],
       "properties": {
-        "revision": {"enum": [4, 5, 6, 7, 8, 9, 10, 11, 12]},
-        "minimum_tool_revision": {"type": "integer", "minimum": 4, "maximum": 12},
-        "active_amendment": {
-          "anyOf": [
-            {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
-            {"type": "null"}
+        "revision": {
+          "enum": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
           ]
         },
-        "recovery_holds": {"type": "array", "items": {"$ref": "#/$defs/recoveryHold"}},
+        "minimum_tool_revision": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 12
+        },
+        "active_amendment": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recovery_holds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/recoveryHold"
+          }
+        },
         "control_generations": {
           "type": "array",
           "maxItems": 4,
-          "items": {"$ref": "#/$defs/governanceControlGeneration"}
+          "items": {
+            "$ref": "#/$defs/governanceControlGeneration"
+          }
         },
         "maintenance_increments": {
           "type": "array",
           "maxItems": 1,
-          "items": {"$ref": "#/$defs/governanceMaintenanceIncrement"}
+          "items": {
+            "$ref": "#/$defs/governanceMaintenanceIncrement"
+          }
         }
       },
       "additionalProperties": false
     },
     "wave_approval_bases": {
       "type": "array",
-      "items": {"$ref": "#/$defs/waveApprovalBase"}
+      "items": {
+        "$ref": "#/$defs/waveApprovalBase"
+      }
     },
     "wave_amendments": {
       "type": "array",
-      "items": {"$ref": "#/$defs/waveAmendment"}
+      "items": {
+        "$ref": "#/$defs/waveAmendment"
+      }
     },
     "waves": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
+      "minItems": 13,
+      "maxItems": 13,
       "items": {
         "type": "object",
         "required": [
@@ -1571,7 +3536,8 @@
               "W8",
               "W9",
               "W10",
-              "W11"
+              "W11",
+              "W12"
             ]
           },
           "activation_gate": {
@@ -1592,7 +3558,8 @@
               "G9",
               "G10",
               "G11",
-              null
+              null,
+              "G12"
             ]
           },
           "track": {
@@ -1607,43 +3574,158 @@
           },
           "approval": {
             "type": "object",
-            "required": ["status", "approved_by", "approved_at", "approved_commit", "capability_ids", "decision_ids", "slice_ids", "notes"],
+            "required": [
+              "status",
+              "approved_by",
+              "approved_at",
+              "approved_commit",
+              "capability_ids",
+              "decision_ids",
+              "slice_ids",
+              "notes"
+            ],
             "properties": {
-              "status": {"enum": ["PENDING", "APPROVED", "CHANGES_REQUESTED"]},
-              "approved_by": {"type": ["string", "null"]},
-              "approved_at": {"$ref": "#/$defs/nullableTimestamp"},
-              "approved_commit": {"$ref": "#/$defs/nullableCommit"},
-              "capability_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}$"}, "uniqueItems": true},
-              "decision_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"}, "uniqueItems": true},
-              "slice_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}$"}, "uniqueItems": true},
-              "notes": {"type": ["string", "null"]}
+              "status": {
+                "enum": [
+                  "PENDING",
+                  "APPROVED",
+                  "CHANGES_REQUESTED"
+                ]
+              },
+              "approved_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "approved_at": {
+                "$ref": "#/$defs/nullableTimestamp"
+              },
+              "approved_commit": {
+                "$ref": "#/$defs/nullableCommit"
+              },
+              "capability_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^CAP-[0-9]{2}$"
+                },
+                "uniqueItems": true
+              },
+              "decision_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"
+                },
+                "uniqueItems": true
+              },
+              "slice_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}$"
+                },
+                "uniqueItems": true
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
             "additionalProperties": false
           },
           "campaign": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
-              "status": {"enum": ["PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"]},
-              "scope": {"enum": ["wave", "amendment-hold"]},
-              "owner": {"type": ["string", "null"]},
-              "branch": {"type": ["string", "null"]},
-              "worktree": {"type": ["string", "null"]},
-              "base_sha": {"$ref": "#/$defs/nullableCommit"},
-              "profile": {"enum": ["LOC", "LAB", "UNI", "CLD", "ALL"]},
-              "platform": {"type": "string", "minLength": 1},
-              "started_at": {"$ref": "#/$defs/nullableTimestamp"},
-              "updated_at": {"$ref": "#/$defs/nullableTimestamp"},
-              "pause_reason": {"type": ["string", "null"]},
-              "pause_category": {"type": ["string", "null"]},
-              "lease": {"$ref": "#/$defs/nullableLease"},
+              "status": {
+                "enum": [
+                  "PLANNED",
+                  "ACTIVE",
+                  "PAUSED",
+                  "REVIEW",
+                  "COMPLETE",
+                  "CANCELLED"
+                ]
+              },
+              "scope": {
+                "enum": [
+                  "wave",
+                  "amendment-hold"
+                ]
+              },
+              "owner": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "branch": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "worktree": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "base_sha": {
+                "$ref": "#/$defs/nullableCommit"
+              },
+              "profile": {
+                "enum": [
+                  "LOC",
+                  "LAB",
+                  "UNI",
+                  "CLD",
+                  "ALL"
+                ]
+              },
+              "platform": {
+                "type": "string",
+                "minLength": 1
+              },
+              "started_at": {
+                "$ref": "#/$defs/nullableTimestamp"
+              },
+              "updated_at": {
+                "$ref": "#/$defs/nullableTimestamp"
+              },
+              "pause_reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pause_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lease": {
+                "$ref": "#/$defs/nullableLease"
+              },
               "resume_records": {
                 "type": "array",
-                "items": {"$ref": "#/$defs/waveResumeRecord"}
+                "items": {
+                  "$ref": "#/$defs/waveResumeRecord"
+                }
               },
               "corrective_tasks": {
                 "type": "array",
                 "minItems": 1,
-                "items": {"$ref": "#/$defs/correctiveTask"}
+                "items": {
+                  "$ref": "#/$defs/correctiveTask"
+                }
               }
             },
             "additionalProperties": false
@@ -1652,27 +3734,87 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["id", "kind", "recorded_by", "recorded_at", "evidence", "notes"],
+              "required": [
+                "id",
+                "kind",
+                "recorded_by",
+                "recorded_at",
+                "evidence",
+                "notes"
+              ],
               "properties": {
-                "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.CP[0-9]{2}$"},
-                "kind": {"enum": ["interface", "risk-cluster", "mid-wave", "migration", "security"]},
-                "recorded_by": {"type": "string", "minLength": 1},
-                "recorded_at": {"$ref": "#/$defs/timestamp"},
-                "evidence": {"$ref": "#/$defs/checkpointEvidenceReferences"},
-                "notes": {"type": ["string", "null"]}
+                "id": {
+                  "type": "string",
+                  "pattern": "^W(?:[0-9]|1[01])\\.CP[0-9]{2}$"
+                },
+                "kind": {
+                  "enum": [
+                    "interface",
+                    "risk-cluster",
+                    "mid-wave",
+                    "migration",
+                    "security"
+                  ]
+                },
+                "recorded_by": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "recorded_at": {
+                  "$ref": "#/$defs/timestamp"
+                },
+                "evidence": {
+                  "$ref": "#/$defs/checkpointEvidenceReferences"
+                },
+                "notes": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               },
               "additionalProperties": false
             }
           },
           "completion": {
             "type": "object",
-            "required": ["status", "reviewer", "reviewed_at", "evidence", "notes"],
+            "required": [
+              "status",
+              "reviewer",
+              "reviewed_at",
+              "evidence",
+              "notes"
+            ],
             "properties": {
-              "status": {"enum": ["PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"]},
-              "reviewer": {"type": ["string", "null"]},
-              "reviewed_at": {"$ref": "#/$defs/nullableTimestamp"},
-              "evidence": {"$ref": "#/$defs/evidenceReferences"},
-              "notes": {"type": ["string", "null"]}
+              "status": {
+                "enum": [
+                  "PENDING",
+                  "IN_PROGRESS",
+                  "REVIEW",
+                  "APPROVED",
+                  "CHANGES_REQUESTED",
+                  "BLOCKED",
+                  "PAUSED"
+                ]
+              },
+              "reviewer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reviewed_at": {
+                "$ref": "#/$defs/nullableTimestamp"
+              },
+              "evidence": {
+                "$ref": "#/$defs/evidenceReferences"
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
             "additionalProperties": false
           }
@@ -1682,8 +3824,8 @@
     },
     "release_gates": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
+      "minItems": 13,
+      "maxItems": 13,
       "items": {
         "type": "object",
         "required": [
@@ -1709,7 +3851,8 @@
               "G8",
               "G9",
               "G10",
-              "G11"
+              "G11",
+              "G12"
             ]
           },
           "after_wave": {
@@ -1725,7 +3868,8 @@
               "W8",
               "W9",
               "W10",
-              "W11"
+              "W11",
+              "W12"
             ]
           },
           "status": {
@@ -1751,7 +3895,8 @@
                 "W8",
                 "W9",
                 "W10",
-                "W11"
+                "W11",
+                "W12"
               ]
             },
             "uniqueItems": true
@@ -1968,7 +4113,10 @@
             }
           },
           "execution_mode": {
-            "enum": ["wave_contribution", "capability_campaign"]
+            "enum": [
+              "wave_contribution",
+              "capability_campaign"
+            ]
           },
           "campaign": {
             "type": [
@@ -2004,7 +4152,8 @@
                   "W8",
                   "W9",
                   "W10",
-                  "W11"
+                  "W11",
+                  "W12"
                 ]
               },
               "increment_id": {
@@ -2136,7 +4285,8 @@
                     "W8",
                     "W9",
                     "W10",
-                    "W11"
+                    "W11",
+                    "W12"
                   ]
                 },
                 "priority": {
@@ -2318,7 +4468,8 @@
                           "W8",
                           "W9",
                           "W10",
-                          "W11"
+                          "W11",
+                          "W12"
                         ]
                       },
                       "deployment_profiles": {

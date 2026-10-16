@@ -129,6 +129,19 @@ functional, accessibility, security, privacy and integrity checks. Record new
 optional suggestions for later selection instead of repeatedly reopening a
 completed styling result.
 
+For W3–W9, implement the architecture and reasonably optimized core function.
+Under the [owner roadmap direction](../../artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md),
+record minor nonfunctional cosmetics and optional optimization for new W10.
+Before a future packet is approved, make latency criteria explicitly suggested
+soft targets or hard requirements. A completed comparable-trial median overage
+strictly below 7 seconds against a suggested target may be accepted with W10
+optimization debt; preserve every raw outcome and original benchmark FAIL.
+Exactly 7 seconds or more is not automatically minor: assess it in the active
+Wave. Never change test assertions just to pass, omit failed/timed-out
+trials, or relax hard functional, security, rights, resource or cancellation limits.
+Unknown functional causes, unqualified large imports, expiring security exceptions
+and unavailable-hardware evidence are separate risks, not cosmetic debt.
+
 ## Review each boundary once
 
 | Stage | Required focus |

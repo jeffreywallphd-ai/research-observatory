@@ -9095,9 +9095,7 @@ waves:
 - id: W9
   title: Advanced research-intelligence preview
   goal: Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research
-    memory on the cross-platform research-production foundation. Also optimize scholarly-source search latency and resource
-    usage deferred from W2, retaining the initial seven-second median timing target and recorded variability. This is provisional
-    future work; W9 implementation remains unapproved.
+    memory on the cross-platform research-production foundation.
   activation_gate: G8
   track: research-intelligence
   approval:
@@ -9118,11 +9116,13 @@ waves:
     evidence: []
     notes: null
 - id: W10
-  title: University-hosted pilot
-  goal: Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after
-    the complete local research-production gate.
-  activation_gate: G8
-  track: institutional
+  title: Cleanup and optimization
+  goal: Provisional cleanup and optimization of deferred nonfunctional cosmetics, scholarly-source latency/resource use and
+    scoped style debt from W2 and W3–W9. Preserve all actual failures and hard functional, security, rights, memory and cancellation
+    limits. Select tasks and estimates during rolling-wave initiation; planning/W10-cleanup-and-optimization.md records the
+    intake and owner direction.
+  activation_gate: G9
+  track: local-baseline
   approval:
     status: PENDING
     approved_by: null
@@ -9141,6 +9141,29 @@ waves:
     evidence: []
     notes: null
 - id: W11
+  title: University-hosted pilot
+  goal: Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after
+    the complete local research-production gate.
+  activation_gate: G12
+  track: institutional
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    decision_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
+- id: W12
   title: Managed cloud delivery
   goal: Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance.
   activation_gate: G10
@@ -9322,7 +9345,6 @@ release_gates:
   status: PENDING
   unlocks_waves:
   - W9
-  - W10
   approval:
     approved_by: null
     approved_at: null
@@ -9337,19 +9359,22 @@ release_gates:
     and multi-objective.
   - Living-monitor changes propagate to affected designs, manuscripts, reviews, claims, syntheses, and dossiers.
   status: PENDING
-  unlocks_waves: []
+  unlocks_waves:
+  - W10
   approval:
     approved_by: null
     approved_at: null
     evidence: []
     notes: null
-- id: G10
+- id: G12
   after_wave: W10
-  name: University pilot
+  name: Cleanup and optimization exit
   criteria:
-  - Institutional deployment meets identity, rights, isolation, backup, observability, and support requirements.
-  - Desktop remote mode uses the same stable domain contracts as local mode.
-  - A university pilot completes a full literature-to-study/manuscript/review workflow.
+  - Selected cleanup and optimization outcomes are evidenced with remaining limitations explicit; original adverse results
+    are retained.
+  - Affected functionality, provenance, rights, security, cancellation and resource boundaries retain then-valid qualification;
+    suggested soft targets do not override hard criteria.
+  - The ordinary independent Wave review and human exit decision dispose of residual risks before university work is activated.
   status: PENDING
   unlocks_waves:
   - W11
@@ -9358,8 +9383,23 @@ release_gates:
     approved_at: null
     evidence: []
     notes: null
-- id: G11
+- id: G10
   after_wave: W11
+  name: University pilot
+  criteria:
+  - Institutional deployment meets identity, rights, isolation, backup, observability, and support requirements.
+  - Desktop remote mode uses the same stable domain contracts as local mode.
+  - A university pilot completes a full literature-to-study/manuscript/review workflow.
+  status: PENDING
+  unlocks_waves:
+  - W12
+  approval:
+    approved_by: null
+    approved_at: null
+    evidence: []
+    notes: null
+- id: G11
+  after_wave: W12
   name: Cloud limited availability
   criteria:
   - Tenant isolation, residency, metering, security operations, and disaster recovery are independently validated.
@@ -9402,7 +9442,7 @@ architecture_constraints:
   report use, export, synchronization, and deletion boundaries.
 - University and cloud services implement the same versioned domain contracts rather than creating a separate product architecture.
 - During W0-W5, create only the Windows local desktop, core, worker, contracts, tests, documentation, task control, and Windows
-  packaging structure. W6 adds macOS/Linux packaging and platform adapters; hosted infrastructure remains absent until W10.
+  packaging structure. W6 adds macOS/Linux packaging and platform adapters; hosted infrastructure remains absent until W11.
 - The local vector backend remains behind a replaceable port. Select the production adapter through cross-platform reliability,
   recovery, filtering, portability, and performance benchmarks plus ADR.
 - Native scholarly and technical-report formats are preferred. Docling is the baseline local document parser; manuscript and
@@ -9434,7 +9474,8 @@ selection_policy:
 - Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate
   never replace the current global wave/gate in selection output.
 - Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research
-  production; W9 and W10 are parallel advanced-intelligence and university tracks after G8; W11 remains cloud-only after G10.
+  production; W9 advanced intelligence follows G8; new W10 cleanup follows G9; W11 university delivery follows G12; W12 remains
+  cloud-only after the preserved university gate G10.
 - Claim atomically with taskctl before edits. Wave and task leases record owner, branch/worktree, base SHA, and expiration.
 - Implement the complete selected task and the slice integration needed to satisfy its acceptance criteria. Record newly discovered
   work as backlog tasks rather than hidden TODOs.
@@ -46480,7 +46521,7 @@ capabilities:
     title: Desktop remote connection mode and API abstraction
     outcome: The canonical client can connect securely to a university project home while retaining local caches and clear
       deployment context.
-    wave: W10
+    wave: W11
     priority: P2
     deployment_profiles: &id167
     - UNI
@@ -46505,7 +46546,7 @@ capabilities:
       dependencies:
       - CAP-11.S06.T03
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id167
       estimate: L
       risk: high
@@ -46553,7 +46594,7 @@ capabilities:
       dependencies:
       - CAP-12.S01.T01
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id167
       estimate: L
       risk: high
@@ -46603,7 +46644,7 @@ capabilities:
       dependencies:
       - CAP-12.S01.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id167
       estimate: L
       risk: high
@@ -46648,7 +46689,7 @@ capabilities:
     title: Institutional service and data-plane foundation
     outcome: A deployable server stack implements the shared domain services with production-grade relational, object, vector,
       and workflow infrastructure.
-    wave: W10
+    wave: W11
     priority: P2
     deployment_profiles: &id168
     - UNI
@@ -46677,7 +46718,7 @@ capabilities:
       - CAP-12.S01.T01
       - CAP-03.S04.T03
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id168
       estimate: L
       risk: high
@@ -46723,7 +46764,7 @@ capabilities:
       dependencies:
       - CAP-12.S02.T01
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id168
       estimate: L
       risk: high
@@ -46771,7 +46812,7 @@ capabilities:
       dependencies:
       - CAP-12.S02.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id168
       estimate: L
       risk: high
@@ -46814,7 +46855,7 @@ capabilities:
     title: Institutional identity, authorization, and project isolation
     outcome: University users authenticate through OIDC and access only permitted projects, sources, models, and administrative
       functions.
-    wave: W10
+    wave: W11
     priority: P2
     deployment_profiles: &id169
     - UNI
@@ -46838,7 +46879,7 @@ capabilities:
       dependencies:
       - CAP-12.S02.T03
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id169
       estimate: L
       risk: high
@@ -46884,7 +46925,7 @@ capabilities:
       dependencies:
       - CAP-12.S03.T01
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id169
       estimate: L
       risk: high
@@ -46930,7 +46971,7 @@ capabilities:
       dependencies:
       - CAP-12.S03.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id169
       estimate: L
       risk: high
@@ -46970,7 +47011,7 @@ capabilities:
   - id: CAP-12.S04
     title: Team collaboration and scholarly adjudication
     outcome: Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality.
-    wave: W10
+    wave: W11
     priority: P2
     deployment_profiles: &id170
     - UNI
@@ -46995,7 +47036,7 @@ capabilities:
       - CAP-12.S03.T03
       - CAP-08.S06.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id170
       estimate: L
       risk: high
@@ -47042,7 +47083,7 @@ capabilities:
       dependencies:
       - CAP-12.S04.T01
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id170
       estimate: L
       risk: high
@@ -47092,7 +47133,7 @@ capabilities:
       dependencies:
       - CAP-12.S04.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id170
       estimate: L
       risk: high
@@ -47137,7 +47178,7 @@ capabilities:
     title: Licensed sources, institutional rights, retention, and compute policy
     outcome: Institutional entitlements and unpublished materials are governed consistently across search, storage, model
       egress, collaboration, and export.
-    wave: W10
+    wave: W11
     priority: P2
     deployment_profiles: &id171
     - UNI
@@ -47166,7 +47207,7 @@ capabilities:
       - CAP-04.S05.T03
       - CAP-07.S01.T03
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id171
       estimate: L
       risk: high
@@ -47212,7 +47253,7 @@ capabilities:
       dependencies:
       - CAP-12.S05.T01
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id171
       estimate: L
       risk: high
@@ -47258,7 +47299,7 @@ capabilities:
       dependencies:
       - CAP-12.S05.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id171
       estimate: L
       risk: high
@@ -47300,7 +47341,7 @@ capabilities:
   - id: CAP-12.S06
     title: Institutional operations, disaster recovery, and pilot acceptance
     outcome: The university edition is observable, supportable, recoverable, and validated with a real research group.
-    wave: W10
+    wave: W11
     priority: P2
     deployment_profiles: &id172
     - UNI
@@ -47327,7 +47368,7 @@ capabilities:
       - CAP-12.S04.T03
       - CAP-12.S05.T03
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id172
       estimate: L
       risk: high
@@ -47373,7 +47414,7 @@ capabilities:
       dependencies:
       - CAP-12.S06.T01
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id172
       estimate: L
       risk: high
@@ -47419,7 +47460,7 @@ capabilities:
       dependencies:
       - CAP-12.S06.T02
       priority: P2
-      wave: W10
+      wave: W11
       deployment_profiles: *id172
       estimate: L
       risk: high
@@ -47479,7 +47520,7 @@ capabilities:
   - id: CAP-13.S01
     title: SaaS organization and tenant control plane
     outcome: Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows.
-    wave: W11
+    wave: W12
     priority: P3
     deployment_profiles: &id173
     - CLD
@@ -47504,7 +47545,7 @@ capabilities:
       dependencies:
       - CAP-12.S06.T03
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id173
       estimate: L
       risk: high
@@ -47550,7 +47591,7 @@ capabilities:
       dependencies:
       - CAP-13.S01.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id173
       estimate: L
       risk: high
@@ -47596,7 +47637,7 @@ capabilities:
       dependencies:
       - CAP-13.S01.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id173
       estimate: L
       risk: high
@@ -47637,7 +47678,7 @@ capabilities:
     title: Regional tenant data planes and isolation tiers
     outcome: Tenant data is hosted in declared regions using pooled, dedicated-schema, dedicated-database, or dedicated-deployment
       isolation as policy requires.
-    wave: W11
+    wave: W12
     priority: P3
     deployment_profiles: &id174
     - CLD
@@ -47664,7 +47705,7 @@ capabilities:
       - CAP-13.S01.T03
       - CAP-12.S02.T03
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id174
       estimate: L
       risk: high
@@ -47710,7 +47751,7 @@ capabilities:
       dependencies:
       - CAP-13.S02.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id174
       estimate: L
       risk: high
@@ -47756,7 +47797,7 @@ capabilities:
       dependencies:
       - CAP-13.S02.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id174
       estimate: L
       risk: high
@@ -47796,7 +47837,7 @@ capabilities:
   - id: CAP-13.S03
     title: Cloud identity, entitlement, metering, and billing
     outcome: Organizations can govern membership and plans while usage is measured transparently by value-driving resource.
-    wave: W11
+    wave: W12
     priority: P3
     deployment_profiles: &id175
     - CLD
@@ -47821,7 +47862,7 @@ capabilities:
       dependencies:
       - CAP-13.S01.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id175
       estimate: L
       risk: high
@@ -47867,7 +47908,7 @@ capabilities:
       dependencies:
       - CAP-13.S03.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id175
       estimate: L
       risk: high
@@ -47913,7 +47954,7 @@ capabilities:
       dependencies:
       - CAP-13.S03.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id175
       estimate: L
       risk: high
@@ -47953,7 +47994,7 @@ capabilities:
   - id: CAP-13.S04
     title: Elastic workers, models, search, and cost governance
     outcome: Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls.
-    wave: W11
+    wave: W12
     priority: P3
     deployment_profiles: &id176
     - CLD
@@ -47980,7 +48021,7 @@ capabilities:
       - CAP-13.S02.T02
       - CAP-07.S05.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id176
       estimate: L
       risk: high
@@ -48026,7 +48067,7 @@ capabilities:
       dependencies:
       - CAP-13.S04.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id176
       estimate: L
       risk: high
@@ -48072,7 +48113,7 @@ capabilities:
       dependencies:
       - CAP-13.S04.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id176
       estimate: L
       risk: high
@@ -48113,7 +48154,7 @@ capabilities:
     title: Cloud security, privacy, residency, and compliance operations
     outcome: Security and privacy controls operate continuously across tenant, regional, administrative, and software-supply-chain
       boundaries.
-    wave: W11
+    wave: W12
     priority: P3
     deployment_profiles: &id177
     - CLD
@@ -48140,7 +48181,7 @@ capabilities:
       - CAP-13.S02.T03
       - CAP-13.S03.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id177
       estimate: L
       risk: high
@@ -48186,7 +48227,7 @@ capabilities:
       dependencies:
       - CAP-13.S05.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id177
       estimate: L
       risk: high
@@ -48232,7 +48273,7 @@ capabilities:
       dependencies:
       - CAP-13.S05.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id177
       estimate: L
       risk: high
@@ -48273,7 +48314,7 @@ capabilities:
     title: Desktop-cloud experience, service reliability, and launch gate
     outcome: Cloud customers use the canonical desktop with clear synchronization, reliability, support, and service-status
       behavior.
-    wave: W11
+    wave: W12
     priority: P3
     deployment_profiles: &id178
     - CLD
@@ -48300,7 +48341,7 @@ capabilities:
       - CAP-13.S04.T03
       - CAP-13.S05.T03
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id178
       estimate: L
       risk: high
@@ -48348,7 +48389,7 @@ capabilities:
       dependencies:
       - CAP-13.S06.T01
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id178
       estimate: L
       risk: high
@@ -48394,7 +48435,7 @@ capabilities:
       dependencies:
       - CAP-13.S06.T02
       priority: P3
-      wave: W11
+      wave: W12
       deployment_profiles: *id178
       estimate: L
       risk: high

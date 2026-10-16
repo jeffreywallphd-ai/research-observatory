@@ -108,6 +108,16 @@ and release decisions also require human authority.
 Restoring approved behavior and bounded control maintenance do not require new
 product approval. Owner acceptance ends optional styling iteration, not
 functional, accessibility, security, privacy, or integrity obligations.
+For proposed W3–W9, prioritize architecture and core functionality. Follow the
+[post-W2 owner direction](artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md):
+defer minor nonfunctional cosmetics and eligible suggested soft-target optimization
+to new W10. Before future approval, classify soft targets separately from hard
+functional, security, memory and cancellation limits. Comparable completed-trial
+median overage strictly less than 7 seconds may be accepted with recorded W10
+debt; preserve all raw results and failures. Exactly 7 seconds or more needs
+assessment in the active Wave. This does not waive functional, accessibility,
+privacy, security or integrity defects or authorize W3 implementation.
+
 GOV-MIG-0001 retires new GRR/GCR/controller escalation; historical commands are
 not a current repair recipe. The generic kernel remains evidence-only; current
 W1 mutations use the taskctl compatibility adapter.

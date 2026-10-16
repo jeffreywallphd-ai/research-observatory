@@ -32,7 +32,10 @@
       "type": "string"
     },
     "planning_policy_version": {
-      "enum": ["initiation-assessment-1.0", "initiation-assessment-2.0"]
+      "enum": [
+        "initiation-assessment-1.0",
+        "initiation-assessment-2.0"
+      ]
     },
     "initiation_assessment": {
       "type": [
@@ -165,7 +168,8 @@
                 "W8",
                 "W9",
                 "W10",
-                "W11"
+                "W11",
+                "W12"
               ]
             }
           }
