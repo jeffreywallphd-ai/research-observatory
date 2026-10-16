@@ -12,7 +12,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from bootstrap import BootstrapError, bootstrap, run_step  # noqa: E402
+from bootstrap import BootstrapError, bootstrap, bootstrap_commands  # noqa: E402
 
 DECLARATION_FILES = [
     ".node-version",
@@ -60,6 +60,52 @@ def seed_checkout(destination: Path) -> None:
 
 
 class DeveloperBootstrapTests(unittest.TestCase):
+    def test_default_setup_selects_only_dependency_and_workspace_smoke(self) -> None:
+        commands = bootstrap_commands(Path("checkout"), "nt")
+        self.assertEqual(7, len(commands))
+        flattened = [argument for _, command in commands for argument in command]
+        for broad in ("tools/verify.py", "foundation", "discover", "tools/benchmark_registry.py", "tools/taskctl.py"):
+            self.assertNotIn(broad, flattened)
+        self.assertEqual("Python dependency smoke", commands[4][0])
+        self.assertEqual("Desktop dependency smoke", commands[5][0])
+        self.assertEqual(["corepack.cmd", "pnpm", "--dir", "apps/desktop", "exec", "vite", "--version"], commands[5][1])
+        self.assertEqual("Locked workspace smoke", commands[6][0])
+        self.assertIn("tools/packaging_smoke_check.py", commands[6][1])
+
+    def test_real_step_streams_progress_before_child_completion(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary)
+            released = checkout / "progress-observed"
+            child = (
+                "from pathlib import Path; import sys,time; print('LIVE-SMOKE-PROGRESS',flush=True); "
+                "deadline=time.monotonic()+4; "
+                "\nwhile not Path(sys.argv[1]).exists() and time.monotonic()<deadline: time.sleep(.01)"
+                "\nsys.exit(0 if Path(sys.argv[1]).exists() else 41)"
+            )
+            harness = (
+                f"import sys; from pathlib import Path; sys.path.insert(0,{str(REPO / 'tools')!r}); "
+                "from bootstrap import run_step; import subprocess; "
+                f"run_step(Path({str(checkout)!r}), 'Progress smoke', "
+                f"[sys.executable,'-B','-s','-u','-c',{child!r},{str(released)!r}],subprocess.run)"
+            )
+            with subprocess.Popen(
+                [sys.executable, "-B", "-s", "-u", "-c", harness],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            ) as process:
+                assert process.stdout is not None
+                lines = []
+                for line in process.stdout:
+                    lines.append(line)
+                    if line.strip() == "LIVE-SMOKE-PROGRESS":
+                        released.touch()
+                        break
+                remaining, errors = process.communicate(timeout=10)
+                output = "".join(lines) + remaining + errors
+                self.assertTrue(released.exists(), output)
+                self.assertEqual(0, process.returncode, output)
+
     def test_clean_windows_checkout_runs_frozen_steps_and_writes_only_documented_config(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             checkout = Path(temporary)
@@ -84,45 +130,54 @@ class DeveloperBootstrapTests(unittest.TestCase):
     def test_real_failed_step_preserves_stdout_and_stderr(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             checkout = Path(temporary)
-            command = [
-                sys.executable,
-                "-B",
-                "-s",
-                "-c",
+            child = (
                 "import sys; print('actual check failure'); "
-                "print('broad profile advisory', file=sys.stderr); sys.exit(23)",
-            ]
+                "print('broad profile advisory', file=sys.stderr); sys.exit(23)"
+            )
+            harness = (
+                f"import sys; from pathlib import Path; sys.path.insert(0,{str(REPO / 'tools')!r}); "
+                "from bootstrap import run_step; import subprocess; "
+                f"run_step(Path({str(checkout)!r}), 'Controlled diagnostic', "
+                f"[sys.executable,'-B','-s','-c',{child!r}],subprocess.run)"
+            )
+            result = subprocess.run(
+                [sys.executable, "-B", "-s", "-c", harness],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn("Controlled diagnostic failed with exit code 23", result.stderr)
+            self.assertIn("actual check failure", result.stdout)
+            self.assertIn("broad profile advisory", result.stderr)
+            self.assertIn("BOOTSTRAP: Controlled diagnostic - FAIL (", result.stdout)
 
-            with self.assertRaises(BootstrapError) as failure:
-                run_step(checkout, "Controlled diagnostic", command, subprocess.run)
-
-            diagnostic = str(failure.exception)
-            self.assertIn("Controlled diagnostic failed with exit code 23", diagnostic)
-            self.assertIn("stdout:\nactual check failure", diagnostic)
-            self.assertIn("stderr:\nbroad profile advisory", diagnostic)
-
-    def test_failed_foundation_requests_report_and_does_not_publish_config(self) -> None:
+    def test_failed_workspace_smoke_requests_report_and_does_not_publish_config(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             checkout = Path(temporary)
             seed_checkout(checkout)
-            runner = ControlledRunner(failing_step="tools/verify.py")
+            runner = ControlledRunner(failing_step="tools/packaging_smoke_check.py")
 
             with self.assertRaises(BootstrapError) as failure:
                 bootstrap(checkout, runner=runner, platform_name="nt")
 
-            self.assertIn("Foundation smoke gate failed with exit code 19", str(failure.exception))
+            self.assertIn("Locked workspace smoke failed with exit code 19", str(failure.exception))
             self.assertIn(
-                "Foundation verification report path: artifacts/tmp/bootstrap-foundation-report.json",
+                "Workspace smoke report path: artifacts/tmp/bootstrap-smoke-report.json",
                 str(failure.exception),
             )
             self.assertEqual(
                 [
                     str(checkout / ".venv" / "Scripts" / "python.exe"),
-                    "tools/verify.py",
-                    "--profile",
-                    "foundation",
+                    "-B",
+                    "-s",
+                    "-u",
+                    "tools/packaging_smoke_check.py",
+                    "--repo",
+                    str(checkout),
                     "--report",
-                    "artifacts/tmp/bootstrap-foundation-report.json",
+                    "artifacts/tmp/bootstrap-smoke-report.json",
                 ],
                 runner.commands[-1],
             )

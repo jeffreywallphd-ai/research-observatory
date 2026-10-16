@@ -3,8 +3,10 @@
 The bootstrap is one sustained, fail-closed setup command. It checks every
 runtime and package manager against `runtime-versions.json`, installs only from
 committed lockfiles, installs the checksum-pinned security scanner, creates the
-local development configuration, and ends by running the foundation smoke
-profile.
+local development configuration, and ends with dependency and workspace health
+checks. Each command streams its output live and reports its elapsed time. Normal
+setup does not run the Foundation qualification profile or its broad unit suite,
+benchmarks, quality checks, or backlog validation.
 
 ## Prerequisites
 
@@ -69,7 +71,23 @@ Successful execution is idempotent. It runs these governed operations:
 2. `uv sync --frozen --no-install-project`
 3. `.venv` Python `tools/install_trivy.py --repo <checkout>`
 4. `cargo fetch --locked`
-5. `.venv` Python foundation verification
+5. `.venv` Python imports for FastAPI, Pydantic, PyNaCl, YAML, and a working
+   in-memory SQLCipher backend
+6. Desktop Vite executable/version check through the installed pnpm workspace
+7. Existing locked packaging-input smoke (`cargo metadata --locked --no-deps`);
+   no Rust compilation, app launch, signing, or installer creation
+
+These health checks establish that the installed dependencies can load and the
+workspace metadata is readable. They do not qualify product behavior or replace
+required development/release checks. Run the full, unchanged Foundation profile
+explicitly when qualification is wanted:
+
+```powershell
+.venv\Scripts\python.exe tools/verify.py --profile foundation --report artifacts/tmp/bootstrap-foundation-report.json
+```
+
+That profile includes broad tests and governance checks and can take substantially
+longer than setup. Its assertions and settings remain unchanged.
 
 The foundation bootstrap does not download a browser. Before the Windows x64
 desktop profile is first run, install its lock-pinned Chromium build:
@@ -98,9 +116,14 @@ Package managers also use their normal user-level download caches outside the
 checkout. `.local/development.json` contains no credential or secret. Do not put
 tokens, passwords, or keys in that file or in any `.env` file.
 
-If setup fails, its error includes both standard output and standard error. The
-foundation gate saves its results, including the first failing check and its
-diagnostics, to `artifacts/tmp/bootstrap-foundation-report.json`. An error before
-verification starts may leave no current report. Correct the reported error and
-run the same command again. The configuration file is written atomically only
-after every dependency step and the smoke check pass.
+During setup, standard output and standard error appear directly in the terminal,
+including download/install progress and failure details. A failure names the
+command's step and exit code and stops subsequent steps. The locked workspace
+smoke writes `artifacts/tmp/bootstrap-smoke-report.json`; an earlier failure may
+leave no current report. Correct the reported error and run the same command
+again. The configuration file is written atomically only after every dependency
+step and all three health checks pass.
+
+If an older checkout is already displaying `Foundation smoke gate`, it is still
+running the old full profile; updating files will not change that running process.
+The new setup behavior applies on the next invocation.

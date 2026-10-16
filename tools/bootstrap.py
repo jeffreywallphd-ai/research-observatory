@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from collections.abc import Callable
 from pathlib import Path
 
@@ -17,7 +18,7 @@ from runtime_check import declaration_errors, installed_errors, load_contract
 CommandRunner = Callable[..., subprocess.CompletedProcess[str]]
 
 
-FOUNDATION_REPORT = "artifacts/tmp/bootstrap-foundation-report.json"
+SMOKE_REPORT = "artifacts/tmp/bootstrap-smoke-report.json"
 
 
 class BootstrapError(RuntimeError):
@@ -39,18 +40,42 @@ def bootstrap_commands(repo: Path, platform_name: str) -> list[tuple[str, list[s
         ("Security scanner", [python, "tools/install_trivy.py", "--repo", str(repo)]),
         ("Rust dependencies", ["cargo", "fetch", "--locked"]),
         (
-            "Foundation smoke gate",
-            [python, "tools/verify.py", "--profile", "foundation", "--report", FOUNDATION_REPORT],
+            "Python dependency smoke",
+            [
+                python,
+                "-B",
+                "-s",
+                "-u",
+                "-c",
+                "import fastapi, nacl.bindings, pydantic, yaml; "
+                "from sqlcipher3 import dbapi2; connection=dbapi2.connect(':memory:'); "
+                "version=connection.execute('PRAGMA cipher_version').fetchone(); connection.close(); "
+                "assert version and version[0], 'SQLCipher backend unavailable'; "
+                "print('Python dependency smoke: PASS (FastAPI, Pydantic, PyNaCl, YAML, SQLCipher)')",
+            ],
+        ),
+        (
+            "Desktop dependency smoke",
+            [corepack, "pnpm", "--dir", "apps/desktop", "exec", "vite", "--version"],
+        ),
+        (
+            "Locked workspace smoke",
+            [python, "-B", "-s", "-u", "tools/packaging_smoke_check.py", "--repo", str(repo), "--report", SMOKE_REPORT],
         ),
     ]
 
 
 def run_step(repo: Path, label: str, command: list[str], runner: CommandRunner) -> None:
     print(f"BOOTSTRAP: {label} - {subprocess.list2cmdline(command)}", flush=True)
+    started = time.monotonic()
     try:
-        result = runner(command, cwd=repo, capture_output=True, text=True, check=False)
+        # Inherit both streams so package-manager and smoke progress is visible immediately.
+        result = runner(command, cwd=repo, text=True, check=False)
     except OSError as exc:
         raise BootstrapError(f"{label} could not start: {exc}") from exc
+    duration = time.monotonic() - started
+    status = "PASS" if result.returncode == 0 else "FAIL"
+    print(f"BOOTSTRAP: {label} - {status} ({duration:.2f}s)", flush=True)
     if result.returncode == 0:
         return
     details = "\n".join(
@@ -58,11 +83,11 @@ def run_step(repo: Path, label: str, command: list[str], runner: CommandRunner) 
         for name, output in (("stdout", result.stdout), ("stderr", result.stderr))
         if output and output.strip()
     )
-    if label == "Foundation smoke gate":
-        report_note = f"Foundation verification report path: {FOUNDATION_REPORT}"
+    if label == "Locked workspace smoke":
+        report_note = f"Workspace smoke report path: {SMOKE_REPORT}"
         details = f"{details}\n{report_note}" if details else report_note
-    suffix = f"\n{details}" if details else ""
-    raise BootstrapError(f"{label} failed with exit code {result.returncode}.{suffix}")
+    suffix = f"\n{details}" if details else "\nSee the live command output above."
+    raise BootstrapError(f"{label} failed with exit code {result.returncode} after {duration:.2f}s.{suffix}")
 
 
 def development_config(repo: Path, contract: dict[str, object]) -> dict[str, object]:
