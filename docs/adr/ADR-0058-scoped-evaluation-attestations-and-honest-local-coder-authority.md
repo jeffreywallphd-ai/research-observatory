@@ -1,9 +1,10 @@
 ---
 id: ADR-0058
 title: Scoped evaluation attestations and honest local coder authority
-status: Proposed
+status: Accepted
 date: 2026-10-16
-deciders: []
+deciders:
+- human:repository-owner
 linked_tasks:
 - CAP-07.S04.T03
 - CAP-07.S05.T03
@@ -18,7 +19,7 @@ linked_tasks:
 - CAP-08.S06.T01
 - CAP-08.S06.T02
 - CAP-08.S06.T03
-decision_scope: Proposed support-only gold, runtime role eligibility, source-first verification, local attribution/blinding, adjudication and export limits.
+decision_scope: support-only gold, runtime role eligibility, source-first verification, local attribution/blinding, adjudication and export limits.
 affected_paths:
 - evaluation/**
 - services/core-api/src/research_observatory_core/**
@@ -29,6 +30,20 @@ superseded_by: null
 ---
 
 # ADR-0058: Scoped evaluation attestations and honest local coder authority
+
+## Acceptance chronology
+
+The repository owner accepted this selected decision in the complete W3 planning
+approval on 2026-10-16. See
+[the append-only owner record](../../artifacts/evidence/W3.owner-planning-approval-20261016-01.md).
+The reviewed proposal is committed at
+`45216934b81c4a437b3707df0f9e7f79a825e271`; its independent commit-bound
+planning disposition is retained at
+`artifacts/tmp/W3.final-incremental-planning-preintegration-disposition-01.json`.
+The proposal text below is retained as decision history, including its original
+private-draft descriptions. This indexed record's Accepted status and this
+chronology establish current authority. Qualification results remain unmeasured
+until actual implementation proof; task claims and release retain their normal gates.
 
 Unnumbered private proposal, not accepted architecture, a gold approval, a named-human assignment or an evaluation result. There is no reserved ADR ID, release, model eligibility or W3 execution authority.
 

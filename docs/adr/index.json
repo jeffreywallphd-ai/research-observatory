@@ -543,7 +543,7 @@
       "id": "ADR-0056",
       "path": "docs/adr/ADR-0056-model-purpose-authority-and-isolated-local-execution.md",
       "title": "Model-purpose authority and isolated local execution",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-07.S02.T01",
         "CAP-07.S02.T02",
@@ -560,7 +560,7 @@
       "id": "ADR-0057",
       "path": "docs/adr/ADR-0057-protected-rebuildable-lexical-and-vector-projections.md",
       "title": "Protected rebuildable lexical and vector projections",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-06.S01.T01",
         "CAP-06.S01.T02",
@@ -577,7 +577,7 @@
       "id": "ADR-0058",
       "path": "docs/adr/ADR-0058-scoped-evaluation-attestations-and-honest-local-coder-authority.md",
       "title": "Scoped evaluation attestations and honest local coder authority",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-07.S04.T03",
         "CAP-07.S05.T03",

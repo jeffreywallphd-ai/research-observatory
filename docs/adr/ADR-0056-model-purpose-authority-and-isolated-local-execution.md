@@ -1,9 +1,10 @@
 ---
 id: ADR-0056
 title: Model-purpose authority and isolated local execution
-status: Proposed
+status: Accepted
 date: 2026-10-16
-deciders: []
+deciders:
+- human:repository-owner
 linked_tasks:
 - CAP-07.S02.T01
 - CAP-07.S02.T02
@@ -14,7 +15,7 @@ linked_tasks:
 - CAP-07.S04.T02
 - CAP-07.S05.T01
 - CAP-07.S05.T02
-decision_scope: Proposed Windows local model-purpose authorization, worker isolation, qualification purpose, and shared resource admission; no accepted authority or W3 execution.
+decision_scope: Windows local model-purpose authorization, worker isolation, qualification purpose, and shared resource admission; accepted for the approved W3 packet, with taskctl execution and separate release gates.
 affected_paths:
 - services/core-api/src/research_observatory_core/model_*.py
 - services/core-api/src/research_observatory_core/workflow_executor.py
@@ -26,6 +27,20 @@ superseded_by: null
 ---
 
 # ADR-0056: Model-purpose authority and isolated local execution
+
+## Acceptance chronology
+
+The repository owner accepted this selected decision in the complete W3 planning
+approval on 2026-10-16. See
+[the append-only owner record](../../artifacts/evidence/W3.owner-planning-approval-20261016-01.md).
+The reviewed proposal is committed at
+`45216934b81c4a437b3707df0f9e7f79a825e271`; its independent commit-bound
+planning disposition is retained at
+`artifacts/tmp/W3.final-incremental-planning-preintegration-disposition-01.json`.
+The proposal text below is retained as decision history, including its original
+private-draft descriptions. This indexed record's Accepted status and this
+chronology establish current authority. Qualification results remain unmeasured
+until actual implementation proof; task claims and release retain their normal gates.
 
 This is an unnumbered private proposal using the existing ADR template. `id: null` reserves nothing; this file is not indexed, accepted, or a valid substitute for an accepted architecture record. Acceptance and the single complete W3 approval remain future actions after W2/G2. Exact proposed policy inputs are listed in the accompanying manifest.
 

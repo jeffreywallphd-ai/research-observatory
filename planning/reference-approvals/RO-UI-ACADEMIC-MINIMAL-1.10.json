@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "ui-reference-design-approval",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.10",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-16T12:46:39.941607+00:00",
+  "scope": "reference-publication-and-plan-binding-only",
+  "proposal": {
+    "commit": "45216934b81c4a437b3707df0f9e7f79a825e271",
+    "path": "planning/W3-reference-1.10",
+    "packageSha256": "6fe6bc0d531b22a472286b836c1b663ddd744d9faa5ded2e3a75e6c9f6a0ed3a"
+  },
+  "basis": "The owner explicitly approved W3 planning and directed implementation of the complete W3 packet in the current chat on 2026-10-16. The reviewed packet includes ADR-0056 through ADR-0058 and the exact proposed reference1.10. This record binds the design portion to the reviewed proposal for metadata-only publication and material-plan binding; the separate complete-Wave approval records execution authority. No release, runtime qualification, external model call or spend is approved here."
+}

@@ -1,9 +1,10 @@
 ---
 id: ADR-0057
 title: Protected rebuildable lexical and vector projections
-status: Proposed
+status: Accepted
 date: 2026-10-16
-deciders: []
+deciders:
+- human:repository-owner
 linked_tasks:
 - CAP-06.S01.T01
 - CAP-06.S01.T02
@@ -14,7 +15,7 @@ linked_tasks:
 - CAP-06.S03.T01
 - CAP-06.S03.T02
 - CAP-06.S03.T03
-decision_scope: Proposed Windows protected derivative lexical/vector storage, keys, generation and recovery semantics; canonical data stays authoritative.
+decision_scope: Windows protected derivative lexical/vector storage, keys, generation and recovery semantics; canonical data stays authoritative.
 affected_paths:
 - services/core-api/src/research_observatory_core/ports/**
 - services/core-api/src/research_observatory_core/**
@@ -24,6 +25,20 @@ superseded_by: null
 ---
 
 # ADR-0057: Protected rebuildable lexical and vector projections
+
+## Acceptance chronology
+
+The repository owner accepted this selected decision in the complete W3 planning
+approval on 2026-10-16. See
+[the append-only owner record](../../artifacts/evidence/W3.owner-planning-approval-20261016-01.md).
+The reviewed proposal is committed at
+`45216934b81c4a437b3707df0f9e7f79a825e271`; its independent commit-bound
+planning disposition is retained at
+`artifacts/tmp/W3.final-incremental-planning-preintegration-disposition-01.json`.
+The proposal text below is retained as decision history, including its original
+private-draft descriptions. This indexed record's Accepted status and this
+chronology establish current authority. Qualification results remain unmeasured
+until actual implementation proof; task claims and release retain their normal gates.
 
 Private, unnumbered and unaccepted. The broad architectural ownership patterns above are proposal scope, not a product edit allowlist. Implementation tasks must select exact affected files through the normal route; no schema/ADR number or reference identity is reserved.
 
