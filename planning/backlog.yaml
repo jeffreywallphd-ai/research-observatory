@@ -1490,21 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 4b19b1d36c2ffe0f090e39aa2b5cb59c66969830
+    base_sha: 8de7a8c4e6dc6c6c02690377302b36d95c1ccfb3
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-14T02:46:59+00:00'
-    pause_reason: Final qualification is terminal with retained failures. The owner pre-authorized necessary W2 completion
-      and W3 transition decisions; bounded current-W2 fixture corrections proceed through the linked correction route while
-      the exact consolidated security and verification choices are recorded.
-    pause_category: human-decision
-    lease: null
+    updated_at: '2026-10-16T04:03:06+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-16T04:03:06+00:00'
+      expires_at: '2026-10-17T04:03:06+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -8554,6 +8555,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-13T05:05:09+00:00'
+    - id: W2.R19
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 8de7a8c4e6dc6c6c02690377302b36d95c1ccfb3
+      prior_campaign_sha256: 8700c64578062bb1583579b2aef7e17dc5759baa0a2ff1d7ebe31e265ef4fc9e
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-16T04:03:06+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -8657,7 +8670,7 @@ waves:
       commit: 29241f6c8008ff0dd72fdbec862e25f5ed3122f2
     notes: Adopted W2.A06 control-plane amendment.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
