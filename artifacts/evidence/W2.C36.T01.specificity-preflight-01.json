@@ -1,0 +1,34 @@
+{
+  "documentType": "actual-C36-specificity-failure-and-proposed-source-preflight",
+  "preparedAtUtc": "2026-10-16T08:12:33.102799+00:00",
+  "target": "apps/desktop/src/app.css",
+  "predecessorSHA256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f",
+  "proposedSHA256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac",
+  "patchSHA256": "1b2b4f582c62a3d8bafdbf81058c18409d5450c43071e6599199c51b9e845f9d",
+  "reproduction": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f10/child-report.json",
+    "sha256": "bb20f712bd1bf5b1064f7304f5e89e969f3a7d64faf156fe8c8ec3705aa37ff2"
+  },
+  "originalStaticAnalysisSource": {
+    "path": "tools/product_style_check.py",
+    "sha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0"
+  },
+  "originalStaticErrors": [
+    "[selector-specificity] apps/desktop/src/app.css:224 selector '.protected-document-viewer .document-inspector > .ro-stack' has uncontrolled specificity (0, 3, 0)"
+  ],
+  "proposedStaticErrors": [],
+  "originalSpecificity": [
+    0,
+    3,
+    0
+  ],
+  "proposedSpecificity": [
+    0,
+    2,
+    0
+  ],
+  "sourceProjection": "Only the proposed app.css byte replacement is passed to the unchanged analyze_product_style_sources function; all current token/CSS/renderer/exception inputs otherwise identical. This is a private proposed-source static preflight, not committed product or renderer qualification.",
+  "productApplied": false,
+  "fullMatrixPassed": false,
+  "predicateChanged": false
+}

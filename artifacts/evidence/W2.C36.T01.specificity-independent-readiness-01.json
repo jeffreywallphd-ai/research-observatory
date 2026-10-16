@@ -1,0 +1,82 @@
+{
+  "documentType": "independent-C36-specificity-only-source-readiness",
+  "reviewer": "agent:/root/c21_closeout_review",
+  "result": "SOURCE_READY_PENDING_ACTUAL_APPLICATION_FRESH_BUILDS_AND_FULL_QUALIFICATION",
+  "blockingFindings": [],
+  "taskId": "W2.C36.T01",
+  "proposedSource": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/app.proposed.css",
+    "sha256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/preparation.json",
+    "sha256": "3f72058f3ecc08887dfebfcf96be8b866815d4f708dcc9405e8b7415fffcf92c"
+  },
+  "exactPatch": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/specificity.patch",
+    "sha256": "1b2b4f582c62a3d8bafdbf81058c18409d5450c43071e6599199c51b9e845f9d"
+  },
+  "predecessorSource": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/app.proposed-02.css",
+    "sha256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f"
+  },
+  "sourceScope": "Only wrap the existing .protected-document-viewer ancestor in :where(); keep the descendant/combinator/class match condition, direct-child scope and minmax declaration. All other bytes, including thumbnail padding-block and responsive/permission/action controls, are identical.",
+  "authentication": {
+    "oneRawSubstitution": true,
+    "wholeRawInverseRestores894ee": true,
+    "oldSelector": ".protected-document-viewer .document-inspector > .ro-stack",
+    "newSelector": ":where(.protected-document-viewer) .document-inspector > .ro-stack",
+    "oldSpecificity": [
+      0,
+      3,
+      0
+    ],
+    "newSpecificity": [
+      0,
+      2,
+      0
+    ],
+    "sameSelectorMatchSet": true,
+    "cascadeSourceReview": "Shared .ro-stack sets display/min-width/gap and no competing columns; existing outline columns selector is confined to .document-outline and responsive column rules target ancestor layouts. No competing grid-template-columns declaration for this direct inspector actions stack was identified in affected application/shared component CSS. Rendered conformance still requires actual full matrix."
+  },
+  "unchangedStaticPredicate": {
+    "source": {
+      "path": "tools/product_style_check.py",
+      "sha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0"
+    },
+    "anchors": "MAX_CLASS_SPECIFICITY=2 at39; _selector_specificity288-350 treats :where arguments as zero specificity; unchanged uncontrolled threshold at651. Existing application/shared CSS already uses :where.",
+    "rootActualProposedSourcePreflight": {
+      "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/preparation.json",
+      "sha256": "3f72058f3ecc08887dfebfcf96be8b866815d4f708dcc9405e8b7415fffcf92c"
+    },
+    "rootReportedOriginalErrors": 1,
+    "rootReportedProposedErrors": 0,
+    "reviewerReranPredicate": false,
+    "committedOrRendererPASSInferred": false
+  },
+  "preservedMissedFinding": {
+    "id": "C36-STATIC-SPECIFICITY-OMITTED-01",
+    "severity": "P2",
+    "criterion": "Original complete product-style static specificity control; valid and unchanged.",
+    "actualFailedChild": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f10/child-report.json",
+      "sha256": "bb20f712bd1bf5b1064f7304f5e89e969f3a7d64faf156fe8c8ec3705aa37ff2"
+    },
+    "failure": "Current894ee selector has three classes above the original maximum2. Full f10 stopped before browser observations; no after-UI result exists.",
+    "priorSourcePreflight": {
+      "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/independent-spec-preflight-02.json",
+      "sha256": "242f97c4d221caac072fcb061d1484f692f9c4cdd9a5c7287f85c7ca47db1511"
+    },
+    "priorReviewOmission": "This reviewer previously checked two-rule restoration scope/raw inverse but failed to identify the existing selector-specificity criterion before f10. That preflight remains immutable and does not erase the actual failure.",
+    "prospectiveClosure": "Exact9e685 source conforms to the original specificity calculation and root proposed-source static check reports no errors. This closes the source-preparation finding only; actual applied current-source/full qualification remains pending."
+  },
+  "authority": "Ordinary debugging of the same claimed C36 approved-reference restoration, one existing app.css path. No new product design, approval, predicate exception, shared control edit or method substitution.",
+  "historicalArtifacts": "Old894ee product/reference/Native/fixture and f10 outputs remain at their actual identities and outcomes. Fresh current source/build/fixture/embedded-Native closure is required before calling any resulting capture/package current.",
+  "nextProof": "One original full90/180 Current14 on exact new committed candidate and genuinely admitted fresh product/reference/fixture/runtime. Its12 affected Reader/Quality cases supply after-proof; no extra12 driver. Current source UI lineage/classification/visual and later task review remain.",
+  "actions": "Source and retained JSON/patch reads plus raw byte comparison only; no product/helper imports, predicate/test/browser/build/runtime capture, fixture or canonical/HEAD mutation.",
+  "actualAppliedCandidate": null,
+  "actualFullCurrent14": null,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

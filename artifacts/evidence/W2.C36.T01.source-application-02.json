@@ -1,0 +1,28 @@
+{
+  "documentType": "actual-C36-ordinary-specificity-source-application",
+  "recordedAtUtc": "2026-10-16T08:19:20.584312+00:00",
+  "taskId": "W2.C36.T01",
+  "taskBase": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "target": "apps/desktop/src/app.css",
+  "previousSHA256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f",
+  "appliedSHA256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac",
+  "proposal": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/app.proposed.css",
+    "sha256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/security-source-readiness-01.json",
+    "sha256": "b49babd5fa1452c628d4d1395112812954137e2b08d55e45d43f4890f5dbb8f7"
+  },
+  "additionalIndependentSourceReadiness": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/independent-source-readiness-01.json",
+    "sha256": "e1e9885358c50ff623c01e38d08abc778e75504f8d953fac8cc3be85ce2e60bb"
+  },
+  "previousApplication": {
+    "path": "artifacts/evidence/W2.C36.T01.source-application-01.json",
+    "sha256": "6f006036a143e9e6f35048dd7254d4ae34bd79b497be08940fd67c7e6ae5d647"
+  },
+  "predecessorCommit": "ba75a668f9e964048cf00f515d9ccb393b714960",
+  "normalClaimUnchanged": true,
+  "qualificationClaimed": false
+}

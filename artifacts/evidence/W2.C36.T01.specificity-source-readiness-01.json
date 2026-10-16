@@ -1,0 +1,82 @@
+{
+  "documentType": "independent-C36-selected-CSS-specificity-source-readiness",
+  "reviewer": "agent:/root/security_resolution_review",
+  "reviewedAtUtc": "2026-10-16T08:18:48.119982+00:00",
+  "result": "SOURCE_READY",
+  "blockingFindings": [],
+  "taskId": "W2.C36.T01",
+  "proposedSource": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/app.proposed.css",
+    "sha256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac"
+  },
+  "predecessorSource": {
+    "path": "apps/desktop/src/app.css",
+    "sha256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/preparation.json",
+    "sha256": "3f72058f3ecc08887dfebfcf96be8b866815d4f708dcc9405e8b7415fffcf92c"
+  },
+  "exactPatch": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/specificity.patch",
+    "sha256": "1b2b4f582c62a3d8bafdbf81058c18409d5450c43071e6599199c51b9e845f9d"
+  },
+  "otherIndependentSourceReadiness": {
+    "path": "artifacts/tmp/W2.C36.T01.specificity-correction-01/independent-source-readiness-01.json",
+    "sha256": "e1e9885358c50ff623c01e38d08abc778e75504f8d953fac8cc3be85ce2e60bb"
+  },
+  "reviewedDelta": {
+    "oneRawSelectorSubstitution": true,
+    "wholeRawInverseRestores894ee": true,
+    "oldSelector": ".protected-document-viewer .document-inspector > .ro-stack",
+    "newSelector": ":where(.protected-document-viewer) .document-inspector > .ro-stack",
+    "sameMatchingElements": true,
+    "oldSpecificity": [
+      0,
+      3,
+      0
+    ],
+    "newSpecificity": [
+      0,
+      2,
+      0
+    ],
+    "allDeclarationsAndOtherBytesUnchanged": true,
+    "thumbnailPaddingRestorationUnchanged": true,
+    "minimumTrackRuleUnchanged": "grid-template-columns: minmax(0, 1fr)",
+    "scope": "The same protected viewer ancestor, inspector descendant and direct child stack remain mandatory. :where removes the ancestor specificity contribution, not its match condition. No domain/action/rights, target text, reference, measurement, token or exception changes."
+  },
+  "originalStaticPredicate": {
+    "source": {
+      "path": "tools/product_style_check.py",
+      "sha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0"
+    },
+    "unchanged": true,
+    "rootRetainedFullSourcePreflightOriginalErrors": [
+      "[selector-specificity] apps/desktop/src/app.css:224 selector '.protected-document-viewer .document-inspector > .ro-stack' has uncontrolled specificity (0, 3, 0)"
+    ],
+    "rootRetainedFullSourcePreflightProposedErrors": [],
+    "reviewerExecutedPredicate": false,
+    "limit": "Retained proposed-source static preflight only. No committed-source, rendered conformance or full matrix result is inferred."
+  },
+  "preservedActualFailure": {
+    "childReport": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f10/child-report.json",
+      "sha256": "bb20f712bd1bf5b1064f7304f5e89e969f3a7d64faf156fe8c8ec3705aa37ff2"
+    },
+    "priorSecurityCSSReadiness": {
+      "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/independent-source-readiness-02.json",
+      "sha256": "130fac5ce521545ab967dc697d2d2283087298dc5eaff8360b3015c62c3d42de"
+    },
+    "meaning": "Original f10 failed the valid unchanged specificity criterion before browser observations. Prior Security scope/raw-delta review did not catch the specificity defect; its record and f10 failure stay immutable. This correction closes only the selected-source issue."
+  },
+  "authority": "Ordinary debugging within the same claimed C36 app.css-only approved-reference restoration and actual34e. No new source path, product design, criterion reduction, shared control edit or authority exception.",
+  "futureProof": "Actual application and clean source commit, fresh input capture with current source/reference baseline, genuine current product/reference/embedded-Native components, then exact independently reviewed successor transport and one original complete90/180 qualification. No extra12 driver or old894ee artifact retargeting.",
+  "actualAppliedCandidate": null,
+  "actualFullCurrent14": null,
+  "canonicalUiGatePassClaimed": false,
+  "taskApproved": false,
+  "WaveApproved": false,
+  "releaseApproved": false,
+  "reviewActions": "Exact named CSS/patch/preparation/retained child/checker/C21 disposition reads and raw single-change comparison only. No product/checker imports, static analyzer execution, tests, browser, build, runtime capture, canonical source or HEAD changes."
+}

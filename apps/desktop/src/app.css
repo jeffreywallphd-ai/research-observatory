@@ -221,7 +221,7 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .protected-document-viewer .document-outline { min-width: 0; }
 .document-outline .ro-panel > div { grid-template-columns: minmax(0, 1fr); }
 .protected-document-viewer .document-outline select, .protected-document-viewer .source-anchor-list > li { min-width: 0; }
-.protected-document-viewer .document-inspector > .ro-stack { grid-template-columns: minmax(0, 1fr); }
+:where(.protected-document-viewer) .document-inspector > .ro-stack { grid-template-columns: minmax(0, 1fr); }
 .viewer-paper { min-width: 0; overflow-x: auto; padding: var(--space-5); }
 .viewer-page-surface { position: relative; width: fit-content; max-width: 100%; }
 .viewer-page-surface > canvas { display: block; max-width: 100%; height: auto; background: var(--surface-1); }
