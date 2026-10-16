@@ -1,0 +1,559 @@
+{
+  "documentType": "independent-actual-Current14-full90-machine-component-and-C36-layout-criterion-disposition",
+  "reviewer": "agent:/root/security_resolution_review",
+  "reviewedAtUtc": "2026-10-16T08:52:29.158754+00:00",
+  "result": "APPROVED_ACTUAL_CURRENT14_ORIGINAL_90_CASE_MACHINE_COMPONENT_ONLY",
+  "blockingFindings": [],
+  "reviewedCandidate": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+  "candidateCommit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+  "actualReceipt": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/receipt.json",
+    "sha256": "68aa45b83c5f650af25fb1c5c23e70a89dd9035cc9be056dd65677446ca31f40"
+  },
+  "actualChildReport": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/child-report.json",
+    "sha256": "7580df1f565e582e5fdc4e9847d855f2d7b6612187c144db2c860aa64456f24c"
+  },
+  "actualInputManifest": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/input-manifest.json",
+    "sha256": "51a233f83234d79b1cfaa8a9d0cf61b772aefc3ba13a9780c4c068dd72f8e3b7"
+  },
+  "actualFixtureInputManifest": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/fixture-input-manifest.json",
+    "sha256": "9c689fea17cbe8957281133197d6af5da3a8ae8038965f79220862d2f4050f81"
+  },
+  "actualFixtureBuildReceipt": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/fixture/fixture-build-receipt.json",
+    "sha256": "1a4f3cb8626b208e1f2288a3c208d4f0d9f225b635c4882bf6ed6588643d28ef"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json",
+    "sha256": "cf940cb027b2446ccca0f5613246e34529d2c7acf29faa32859ec70df90aba4b"
+  },
+  "sourceRecordingReadiness": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-02.json",
+    "sha256": "753c2efe46bb9beae35b6acec923810eb2c2d92a15b5cad49c1defc7fec89718"
+  },
+  "supplementalSourceBinding": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-binding-02.json",
+    "sha256": "869a2b67d9db63cc0956fe8ef58d5a4de7d83c3788113bf921eccd9d4576bf1a"
+  },
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/receipt.json",
+    "sha256": "9cc414021c0e18bfbf3d3f1ae74976030dad33c075dc7a7453c727c6618091bb"
+  },
+  "freshProductComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/independent-c36-actual-component-disposition-02.json",
+    "sha256": "3d6655c37c9726aad7df6bab6d603d2c05e35439eddc2960f374cb0bddb5db92"
+  },
+  "currentFrontendManifest": {
+    "path": "apps/desktop/product-dist/application-manifest.json",
+    "sha256": "9c7170ccd7a58fd79e6b996502aea8cd459dcbe1f65994decfa9e6bc0c4007b7"
+  },
+  "referenceComponentDisposition": {
+    "path": "artifacts/tmp/W2.C36.T01.reference-refresh-independent-actual-disposition-02.json",
+    "sha256": "8731531263495caeb387f27aa1c589d2a1dd55d5d68094ee2915dcaa3c020416"
+  },
+  "currentReferenceManifest": {
+    "path": "apps/desktop/dist/application-manifest.json",
+    "sha256": "7d4b9962448bdfa61836261600e7ff7436aa234788414376388d78fa1841e694"
+  },
+  "NativeComponentDisposition": {
+    "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/independent-actual-component-disposition-02.json",
+    "sha256": "9074d5b916cfd3137830a3769b1e59a4bba075135820ebe7db82f4612f7decd7"
+  },
+  "actualCoverage": {
+    "workspaces": 14,
+    "workspaceCases": 84,
+    "designatedBoundaryCases": 6,
+    "uniqueCaseIds": 90,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "workspaceViewports": [
+      {
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "width": 720,
+        "height": 450
+      }
+    ],
+    "allOriginalMachineErrors": [],
+    "allRepresentativeStatesVisible": true,
+    "exactCaseIds": [
+      "workspace:diagnostics:light:1440x900",
+      "workspace:diagnostics:dark:1440x900",
+      "workspace:diagnostics:light:1280x720",
+      "workspace:diagnostics:dark:1280x720",
+      "workspace:diagnostics:light:720x450",
+      "workspace:diagnostics:dark:720x450",
+      "workspace:projects:light:1440x900",
+      "workspace:projects:dark:1440x900",
+      "workspace:projects:light:1280x720",
+      "workspace:projects:dark:1280x720",
+      "workspace:projects:light:720x450",
+      "workspace:projects:dark:720x450",
+      "workspace:imports:light:1440x900",
+      "workspace:imports:dark:1440x900",
+      "workspace:imports:light:1280x720",
+      "workspace:imports:dark:1280x720",
+      "workspace:imports:light:720x450",
+      "workspace:imports:dark:720x450",
+      "workspace:corpus:light:1440x900",
+      "workspace:corpus:dark:1440x900",
+      "workspace:corpus:light:1280x720",
+      "workspace:corpus:dark:1280x720",
+      "workspace:corpus:light:720x450",
+      "workspace:corpus:dark:720x450",
+      "workspace:sources:light:1440x900",
+      "workspace:sources:dark:1440x900",
+      "workspace:sources:light:1280x720",
+      "workspace:sources:dark:1280x720",
+      "workspace:sources:light:720x450",
+      "workspace:sources:dark:720x450",
+      "workspace:intent:light:1440x900",
+      "workspace:intent:dark:1440x900",
+      "workspace:intent:light:1280x720",
+      "workspace:intent:dark:1280x720",
+      "workspace:intent:light:720x450",
+      "workspace:intent:dark:720x450",
+      "workspace:audit:light:1440x900",
+      "workspace:audit:dark:1440x900",
+      "workspace:audit:light:1280x720",
+      "workspace:audit:dark:1280x720",
+      "workspace:audit:light:720x450",
+      "workspace:audit:dark:720x450",
+      "workspace:home:light:1440x900",
+      "workspace:home:dark:1440x900",
+      "workspace:home:light:1280x720",
+      "workspace:home:dark:1280x720",
+      "workspace:home:light:720x450",
+      "workspace:home:dark:720x450",
+      "workspace:models:light:1440x900",
+      "workspace:models:dark:1440x900",
+      "workspace:models:light:1280x720",
+      "workspace:models:dark:1280x720",
+      "workspace:models:light:720x450",
+      "workspace:models:dark:720x450",
+      "workspace:settings:light:1440x900",
+      "workspace:settings:dark:1440x900",
+      "workspace:settings:light:1280x720",
+      "workspace:settings:dark:1280x720",
+      "workspace:settings:light:720x450",
+      "workspace:settings:dark:720x450",
+      "workspace:tasks:light:1440x900",
+      "workspace:tasks:dark:1440x900",
+      "workspace:tasks:light:1280x720",
+      "workspace:tasks:dark:1280x720",
+      "workspace:tasks:light:720x450",
+      "workspace:tasks:dark:720x450",
+      "workspace:application-settings:light:1440x900",
+      "workspace:application-settings:dark:1440x900",
+      "workspace:application-settings:light:1280x720",
+      "workspace:application-settings:dark:1280x720",
+      "workspace:application-settings:light:720x450",
+      "workspace:application-settings:dark:720x450",
+      "workspace:reader:light:1440x900",
+      "workspace:reader:dark:1440x900",
+      "workspace:reader:light:1280x720",
+      "workspace:reader:dark:1280x720",
+      "workspace:reader:light:720x450",
+      "workspace:reader:dark:720x450",
+      "workspace:parsing-quality:light:1440x900",
+      "workspace:parsing-quality:dark:1440x900",
+      "workspace:parsing-quality:light:1280x720",
+      "workspace:parsing-quality:dark:1280x720",
+      "workspace:parsing-quality:light:720x450",
+      "workspace:parsing-quality:dark:720x450",
+      "boundary:recovery-required:light:720x450",
+      "boundary:recovery-required:dark:720x450",
+      "boundary:locked:light:720x450",
+      "boundary:locked:dark:720x450",
+      "boundary:shortcut-dialog:light:720x450",
+      "boundary:shortcut-dialog:dark:720x450"
+    ],
+    "logicalCaptureEntries": 180,
+    "physicalPngFiles": 180,
+    "captureManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/captures/manifest.json",
+      "sha256": "1e1f3c3c7dd7b51003c5389534df9f3eaf10f89f96330f3d0a2fdd54a7170b62"
+    },
+    "all180MetadataIdentitiesAndWriterFilenamesMatchOriginalContract": true,
+    "distinctPixelPayloadCountClaimed": false,
+    "capturePayloadStructuralReaderAndSelectedVisualReview": "Separately assigned to C21; this reviewer did not repeat PNG byte/dimension/visual inspection or claim its future delivery/classification result.",
+    "noSeparateAffected12Run": true,
+    "caseScope": "Original production-renderer components/styles with controlled authored fixture ports and synthetic state. This is not a live project/Core/worker/principal or Native GUI execution."
+  },
+  "affectedCriterionEvidence": {
+    "correctedTwelveReaderQualityCases": [
+      {
+        "caseId": "workspace:reader:light:1440x900",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1440,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false,
+        "surfaceLeft": 268,
+        "surfaceRight": 1412,
+        "mainPadding": 28,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1440,
+        "shellFooterRight": 1440,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:reader:dark:1440x900",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1440,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false,
+        "surfaceLeft": 268,
+        "surfaceRight": 1412,
+        "mainPadding": 28,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1440,
+        "shellFooterRight": 1440,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:reader:light:1280x720",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1280,
+        "horizontalOverflow": false,
+        "surfaceLeft": 236,
+        "surfaceRight": 1260,
+        "mainPadding": 20,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1280,
+        "shellFooterRight": 1280,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:reader:dark:1280x720",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1280,
+        "horizontalOverflow": false,
+        "surfaceLeft": 236,
+        "surfaceRight": 1260,
+        "mainPadding": 20,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1280,
+        "shellFooterRight": 1280,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:reader:light:720x450",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 720,
+        "documentScrollWidth": 720,
+        "horizontalOverflow": false,
+        "surfaceLeft": 16,
+        "surfaceRight": 704,
+        "mainPadding": 16,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 720,
+        "shellFooterRight": 720,
+        "stackedShell": true,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:reader:dark:720x450",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 720,
+        "documentScrollWidth": 720,
+        "horizontalOverflow": false,
+        "surfaceLeft": 16,
+        "surfaceRight": 704,
+        "mainPadding": 16,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 720,
+        "shellFooterRight": 720,
+        "stackedShell": true,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:parsing-quality:light:1440x900",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1440,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false,
+        "surfaceLeft": 268,
+        "surfaceRight": 1412,
+        "mainPadding": 28,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1440,
+        "shellFooterRight": 1440,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:parsing-quality:dark:1440x900",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1440,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false,
+        "surfaceLeft": 268,
+        "surfaceRight": 1412,
+        "mainPadding": 28,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1440,
+        "shellFooterRight": 1440,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:parsing-quality:light:1280x720",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1280,
+        "horizontalOverflow": false,
+        "surfaceLeft": 236,
+        "surfaceRight": 1260,
+        "mainPadding": 20,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1280,
+        "shellFooterRight": 1280,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:parsing-quality:dark:1280x720",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1280,
+        "horizontalOverflow": false,
+        "surfaceLeft": 236,
+        "surfaceRight": 1260,
+        "mainPadding": 20,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 1280,
+        "shellFooterRight": 1280,
+        "stackedShell": false,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:parsing-quality:light:720x450",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 720,
+        "documentScrollWidth": 720,
+        "horizontalOverflow": false,
+        "surfaceLeft": 16,
+        "surfaceRight": 704,
+        "mainPadding": 16,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 720,
+        "shellFooterRight": 720,
+        "stackedShell": true,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      },
+      {
+        "caseId": "workspace:parsing-quality:dark:720x450",
+        "representativeStateVisible": true,
+        "ownStateWitness": true,
+        "documentClientWidth": 720,
+        "documentScrollWidth": 720,
+        "horizontalOverflow": false,
+        "surfaceLeft": 16,
+        "surfaceRight": 704,
+        "mainPadding": 16,
+        "shellBodyLeft": 0,
+        "shellBodyRight": 720,
+        "shellFooterRight": 720,
+        "stackedShell": true,
+        "controlInlinePaddingValues": [
+          16
+        ],
+        "controlRadiusValues": [
+          10
+        ],
+        "focusTargetFocused": true,
+        "focusContained": true
+      }
+    ],
+    "sourceSpecificity": "Actual committed9e685 and unchanged original source-level/style predicates were exercised by the successful original method. f10 max2 specificity failure is closed in this new current-source machine result without changing the rule or adding an exception.",
+    "oldF09ShellGroup": "All12 corrected Reader/Quality cases pass original shell/geometry predicates. Recorded body/footer span exactly viewport and correct div-root relation; old24 wrong-root relation occurrences remain adverse only in old f09.",
+    "oldF09ControlGroup": "All6 Reader cases report control inline padding16 and radius10, including original thumbnail controls; original18 padding occurrences no longer occur at this candidate.",
+    "oldF09OverflowGroup": "Both1280 Reader themes now report client1280/scroll1280, no document horizontal overflow and surfaceRight1260. Original bounds/overflow predicates all passed; old6 overflow occurrences remain preserved at f09.",
+    "focusKeyboardAndOtherMachineRules": "All original focus/keyboard/tokens/heights/gaps/geometry/state/denial/network/source predicates retained in source19 passed through the original aggregate method. No broader accessibility or unmeasured platform guarantee is inferred."
+  },
+  "fixtureAndRequestEvidence": {
+    "admittedFixtureFileCount": 199,
+    "fixtureBuilderSHA256": "05727682e2e3e5634236ed4e6bd69f20e1420df8cf7e32cca303ded53fc2c115",
+    "readerAndQualityOriginalFixtureObservationsPresent": true,
+    "readerPopulation": "Recorded original handoff observed source/revision calls, two rendered pages and a text query; no substituted or denied source/text and no script execution.",
+    "qualityPopulation": "Original Quality fixture and controls were observed through all six cases; this is renderer/fixture evidence, not an assertion of accepted backend publication.",
+    "unexpectedRequests": 0,
+    "scriptErrors": 0,
+    "localAssetRequestCount": 108,
+    "allLocalAssetRequestDigestsAccountedForInHeldInputs": true
+  },
+  "actualExecutionAndClosure": {
+    "fixtureBuildExitCode": 0,
+    "qualificationExitCode": 0,
+    "ownedJobs": {
+      "fixtureBuild": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "totalLifetimeProcesses": 7,
+        "timedOut": false,
+        "terminationRequested": false,
+        "descendantsOutlivedRoot": false,
+        "breakawayAllowed": false
+      },
+      "qualification": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "totalLifetimeProcesses": 184,
+        "timedOut": false,
+        "terminationRequested": false,
+        "descendantsOutlivedRoot": false,
+        "breakawayAllowed": false
+      }
+    },
+    "selectedInputsUnchanged": true,
+    "admittedGeneratedFixtureUnchanged": true,
+    "inputClosureAssessment": "ACTUAL_HELD_EQUALITY_THROUGH_ALL_OWNED_DRAINS",
+    "selectedInputCount": 6861,
+    "runtimeRootCount": 11,
+    "all171PreparationPinsMatchActualHeldInputMap": true,
+    "sourceCssGitBlobAndActualHeldPinSHA256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac",
+    "publicBindingAndReadinessBytesMatchActualCandidateGitBlobs": true,
+    "producerSnapshot999DigestsAccountedForInActualHeldMaps": true,
+    "snapshotProductAndReferenceManifestsMatchActualCurrentComponents": true,
+    "componentCandidateComposition": "Actual machine run is fc694. Product/reference/Native components ran at1b377; exact Git delta1b377 tofc694 contains only three task-owned binding/readiness/recording files. Those components are composed through unchanged current source/artifact inputs; their executions are not relabeled as fc694 Native runtime tests.",
+    "producerSeconds": 123.01428950001718,
+    "childSeconds": 87.07488229998853,
+    "hostCompletion": {
+      "path": "artifacts/tmp/W2.C36.T01.current14-dispatch-02/completion.json",
+      "sha256": "39ecfc37692ea5747ebecd6d7043f944322eeb266cf070de1f22e670ef77746c"
+    },
+    "hostSeconds": 145.5188068,
+    "hostExitCode": 0,
+    "fixtureBuildRaw": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/fixture-build-raw.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    "qualificationRaw": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/qualification-raw.log",
+      "sha256": "d791e1730020e15d3a1b17337c5c607e5c07482ab53e6341bc1831490acd96ab"
+    }
+  },
+  "authorityAndLimits": {
+    "finiteMethod": "Actual34e/738a and C36 d167/d680 method, with exact source19cf940/recording753/binding869. All original valid machine predicates remain; this disposition supplies no new exception.",
+    "canonicalUiGatePassClaimed": false,
+    "canonicalRestorationClassifierPassClaimed": false,
+    "visualOrHumanReferenceApprovalClaimed": false,
+    "NativeGUIOrCoreWorkerExecutionClaimed": false,
+    "formalTaskAndWaveApproval": "Pending normal frozen evidence and genuine different task/Wave dispositions. This record closes the original machine component and affected C36 layout assertions only."
+  },
+  "preservedAdverse": "All original f05-f10 outcomes, f09 layout48 findings, before-CSS nonqualifying diagnosis, f10 specificity FAIL and capture01/earlier source findings remain immutable. Old failed aggregates are never converted to PASS; this is new full original90/180 execution at fc694.",
+  "taskApproved": false,
+  "sliceApproved": false,
+  "WaveApproved": false,
+  "releaseApproved": false,
+  "reviewActions": "Bounded actual matrix/provenance/held-map/capture-metadata and corrected12-row inspection, exact candidate Git binding/CSS checks only. No product/source re-audit, installed runtime scan, PNG payload replay, validator/test/browser execution, extra12 driver, fixture opening or canonical/HEAD mutation."
+}
