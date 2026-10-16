@@ -1,0 +1,66 @@
+{
+  "task_id": "W2.C36.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+  "base_commit": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "notes": "Approve the genuine frozen W2.C36.T01/R01 at measured fc694, with the later owner initial-W2 acceptance introduced at f86 explicitly distinguished. Reuse completed independent reviews of the two restorative CSS rules and specificity repair, fresh current205 and embedded Native206, reference/original snapshot19, and the full original Current14 90-case/180-capture machine component. All original machine predicates passed under actual closed inputs. Eight original Reader rights, streaming, cancellation, hostile-input and performance observations retain their historical provenance; they are not fresh C36 executions. The owner expressly ends further styling/checks and supersedes the unperformed capture-publication, final structural, visual and canonical-classification requirements for initial W2 closure. No canonical full-UI, credential scan, current Native GUI or fresh inherited latency PASS is claimed. Existing adverse evidence and limitations remain preserved for provisional W9 follow-up. This ledger records independent task disposition only; root records task/Wave/gate state through normal operations.",
+  "findings": [],
+  "closures": [],
+  "corrective_integration": {
+    "evidence_sha256": "d2cd45478d699e797da5e49fe89a410b13abd58bc052c312f68291154bebd94c",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Completed CAP-05.S04.T01 remains the origin and approved 1.9 reference remains unchanged. Changes restore shared thumbnail padding and constrain the Reader action grid; :where preserves matching while satisfying the original specificity ceiling. Exact current product/reference/Native and full90 machine components establish affected integration, with the private DIV-root restoration disclosed. Prospective34e, the recorded C36 method and direct owner950986 govern only their stated finite scope. The exact one-use historical recording preserves all normal manifest/packet/criteria/lease/worktree/index/recovery/CAS/schema/semantic/append-only guards while openly waiving only currentHEAD-equals-measured-candidate. Actual current f86 differs from fc694 by exactly the owner and component metadata files; no source or evidence outcome is retargeted."
+  },
+  "evidence_authentication": {
+    "frozen_packet_sha256": "d2e9d4a6c330070e2dff0849813d3b30af9896ca3c654251b7b31d0350266634",
+    "canonical_frozen_packet_matches_actual_recording_receipt": true,
+    "criteria_and_selection_hashes_recomputed": true,
+    "completed_prior_rounds": 0,
+    "manifest": {
+      "path": "artifacts/evidence/W2.C36.T01.R01.json",
+      "sha256": "d2cd45478d699e797da5e49fe89a410b13abd58bc052c312f68291154bebd94c"
+    },
+    "actual_recording_receipt": {
+      "path": "artifacts/tmp/W2.C36.T01.normal-historical-submit-01/receipt.json",
+      "sha256": "ab24efcbaae75d5cfbb1f37328760525bee593dfc2f8fa7850e4af79f2cc36d7"
+    },
+    "recording_source_readiness": {
+      "path": "artifacts/tmp/W2.C36.T01.record-qualified-submission-readiness-01.json",
+      "sha256": "5cea1369949c1e109a3a4a5e11446d8da3fba947513b489af966da05f1baa5cc"
+    },
+    "actual_recording_head": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+    "actual_owner_authority_introduction_commit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+    "owner_acceptance": {
+      "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+      "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4"
+    },
+    "actual_full90_component": {
+      "path": "artifacts/evidence/W2.C36.T01.current14-component-disposition-01.json",
+      "sha256": "6b7e662cd2b04b713ca442fb1108f680dc1c6cd4ebb062a3fa1f7f5c6d91d091"
+    },
+    "exact_selected_commands": 16,
+    "exact_changed_paths": 24,
+    "all16_selected_commands_match_manifest": true,
+    "all24_changed_paths_match_manifest": true,
+    "observed_backlog_sha256": "8f2218266d60ef89707796096cd31205e9c28050064dc4228b488efcd6bb16c8"
+  },
+  "known_limits": [
+    "Earlier failed Current14/build/diagnostic aggregates remain FAIL; the full90 success does not relabel them.",
+    "Capture publication remained blocked by the unchanged privacy hook. Images and copies are retained privately, the sealed hook was restored, and no credential-scan or delivery PASS is claimed.",
+    "Final structural reader, selected visual review and canonical UI classification were not performed; owner acceptance explicitly supersedes these initial-exit requirements, without inventing results.",
+    "Strict Clippy debt, protected100k commit qualification and review latency, unknown409 and all other recorded W2 residual/platform/installer/signing/security-expiry limits remain as recorded. No expiry extension, larger-compute claim or W3/W9 implementation approval follows."
+  ],
+  "independence": {
+    "task_owner": "agent:/root",
+    "reviewer_is_different_from_task_owner_and_product_author": true,
+    "existing_source_and_component_reviews_reused": true,
+    "new_product_tests_builds_scans_or_fixture_access": false
+  },
+  "canonical_full_ui_pass_claimed": false,
+  "credential_scan_pass_claimed": false,
+  "current_native_gui_execution_claimed": false,
+  "wave_approval_performed_by_this_ledger": false
+}

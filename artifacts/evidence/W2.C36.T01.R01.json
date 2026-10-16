@@ -1,0 +1,817 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "draftState": "SUBMISSION_MANIFEST_FOR_ACTUAL_QUALIFIED_CANDIDATE_WITH_OWNER_ACCEPTED_INITIAL_W2_SCOPE",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "preparedAtUtc": "2026-10-16T09:09:11.147663+00:00",
+  "taskId": "W2.C36.T01",
+  "baseCommit": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "commit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "artifacts/evidence/W2.C36.T01.current14-source-binding-01.json",
+    "artifacts/evidence/W2.C36.T01.current14-source-binding-02.json",
+    "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-01.json",
+    "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-02.json",
+    "artifacts/evidence/W2.C36.T01.current14-source-readiness-18.json",
+    "artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json",
+    "artifacts/evidence/W2.C36.T01.independent-source-readiness-02.json",
+    "artifacts/evidence/W2.C36.T01.source-application-01.json",
+    "artifacts/evidence/W2.C36.T01.source-application-02.json",
+    "artifacts/evidence/W2.C36.T01.specificity-correction-01.md",
+    "artifacts/evidence/W2.C36.T01.specificity-independent-readiness-01.json",
+    "artifacts/evidence/W2.C36.T01.specificity-preflight-01.json",
+    "artifacts/evidence/W2.C36.T01.specificity-source-readiness-01.json",
+    "artifacts/evidence/W2.C36.T01.task-start.md",
+    "artifacts/evidence/W2.C36.T01.ui-authority-method-01.decision.json",
+    "artifacts/evidence/W2.C36.T01.ui-authority-method-01.proposal.json",
+    "artifacts/evidence/W2.C36.T01.ui-authority-method-01.readiness.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "inheritedCriterion": "Viewer opens local encrypted content through controlled streams, supports large documents without loading all pages, and never exposes direct file paths to untrusted content.",
+      "checkIds": [
+        "current14-full90-original-matrix",
+        "core-selected-closure",
+        "actual-worker-cancel-reopen",
+        "renderer-ownership-units",
+        "mounted-and-hostile-decoder",
+        "real-native-accepted-boundaries",
+        "real-native-maximum-cancel",
+        "actual-renderer-maximum-document",
+        "actual-renderer-cold-warm-p95"
+      ],
+      "status": "SUPPORTED_SCOPED_ACTUAL_PROOF_AND_EXPLICIT_OWNER_INITIAL_EXIT_ACCEPTANCE_PENDING_FORMAL_RECORD",
+      "evidence": [
+        "Fresh actual full90/180 machine component has no errors and includes all12 affected Reader/Quality tuples.",
+        "Original controlled encrypted-source/rights/cancellation/maximum-document and 3s Reader evidence is inherited at its actual91fe candidate; no CSS-based claim of fresh Core/Native execution.",
+        "Owner explicit initial-W2 acceptance supersedes pending structural/selected-visual/classification completion requirements without representing them as PASS.",
+        "Exact published owner950986 atf86 explicitly accepts initialW2/G2, marksC36 complete and assigns all residualW2 limitations including capture publication toW9. Original failures/UNKNOWN and immutable security expiry remain visible."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "inheritedCriterion": "Automated tests cover the expected path and at least one material failure or boundary condition.",
+      "checkIds": [
+        "current14-full90-original-matrix",
+        "current14-fixture-build",
+        "core-selected-closure",
+        "actual-worker-cancel-reopen",
+        "renderer-ownership-units",
+        "mounted-and-hostile-decoder",
+        "real-native-accepted-boundaries",
+        "real-native-maximum-cancel",
+        "actual-renderer-maximum-document"
+      ],
+      "status": "SUPPORTED_SCOPED_ACTUAL_PROOF_AND_EXPLICIT_OWNER_INITIAL_EXIT_ACCEPTANCE_PENDING_FORMAL_RECORD",
+      "evidence": [
+        "Fresh actual full90/180 machine component has no errors and includes all12 affected Reader/Quality tuples.",
+        "Original controlled encrypted-source/rights/cancellation/maximum-document and 3s Reader evidence is inherited at its actual91fe candidate; no CSS-based claim of fresh Core/Native execution.",
+        "Owner explicit initial-W2 acceptance supersedes pending structural/selected-visual/classification completion requirements without representing them as PASS.",
+        "Exact published owner950986 atf86 explicitly accepts initialW2/G2, marksC36 complete and assigns all residualW2 limitations including capture publication toW9. Original failures/UNKNOWN and immutable security expiry remain visible."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "inheritedCriterion": "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.",
+      "checkIds": [
+        "original-vite-product-build",
+        "original-application-assembly",
+        "original-reference-vite-build",
+        "original-reference-assembly",
+        "original-producer-snapshot-19-admission",
+        "compile-native",
+        "current14-full90-original-matrix"
+      ],
+      "status": "SUPPORTED_SCOPED_ACTUAL_PROOF_AND_EXPLICIT_OWNER_INITIAL_EXIT_ACCEPTANCE_PENDING_FORMAL_RECORD",
+      "evidence": [
+        "Fresh actual full90/180 machine component has no errors and includes all12 affected Reader/Quality tuples.",
+        "Original controlled encrypted-source/rights/cancellation/maximum-document and 3s Reader evidence is inherited at its actual91fe candidate; no CSS-based claim of fresh Core/Native execution.",
+        "Owner explicit initial-W2 acceptance supersedes pending structural/selected-visual/classification completion requirements without representing them as PASS.",
+        "Exact published owner950986 atf86 explicitly accepts initialW2/G2, marksC36 complete and assigns all residualW2 limitations including capture publication toW9. Original failures/UNKNOWN and immutable security expiry remain visible."
+      ]
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "desktop:performance",
+      "documents:unit",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "CSS-only restorative layout/specificity change requires fresh product/reference build, current embedded Native package and original full90 matrix. Exact actual task-owned Current14 method maps these existing registry coverage domains; canonical profile commands are not represented as executed. Original Reader source/rights/performance boundaries remain distinctly inherited. Latest owner accepts initial W2 exit and defers residual obligations; no additional checks are selected.",
+    "deferred": [
+      "No further product/styling/benchmark/profile rerun. Owner-accepted remaining W2 limitations go to provisional W9 follow-up; larger-compute product work remains W5."
+    ]
+  },
+  "checks": [
+    {
+      "id": "original-vite-product-build",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/.pnpm/vite@8.2.1_@types+node@26.2.0/node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      "commandMeaning": "Portable DISPLAY of actual argv; exact private invocation/working directory retained in receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 1.6485781000228599,
+      "commit": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "provenance": "fresh-C36-affected-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/receipt.json",
+        "sha256": "9cc414021c0e18bfbf3d3f1ae74976030dad33c075dc7a7453c727c6618091bb"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/original-vite-product-build.raw.log",
+        "sha256": "05fa54ed84963910fae296866ed7a125dda740796ab00eefece548587d56ddb4"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "original-application-assembly",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/assemble-application.mjs",
+      "commandMeaning": "Portable DISPLAY of actual argv; exact private invocation/working directory retained in receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 0.17102900001918897,
+      "commit": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "provenance": "fresh-C36-affected-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/receipt.json",
+        "sha256": "9cc414021c0e18bfbf3d3f1ae74976030dad33c075dc7a7453c727c6618091bb"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/original-application-assembly.raw.log",
+        "sha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "original-reference-vite-build",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/.pnpm/vite@8.2.1_@types+node@26.2.0/node_modules/vite/bin/vite.js build",
+      "commandMeaning": "Portable DISPLAY of actual argv; exact private invocation/working directory retained in receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 0.38577670001541264,
+      "commit": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "provenance": "fresh-C36-affected-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/receipt.json",
+        "sha256": "fb4cc55ea2ae4d039e1a8c5c252a4678477205bf4286022cea0d6debcefc3e34"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/original-reference-vite-build.raw.log",
+        "sha256": "240987b57fefc2391d60b09f994abba9bf08a698f51c3837fb8984d73351790b"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "original-reference-assembly",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/assemble-reference.mjs",
+      "commandMeaning": "Portable DISPLAY of actual argv; exact private invocation/working directory retained in receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 0.2863478999934159,
+      "commit": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "provenance": "fresh-C36-affected-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/receipt.json",
+        "sha256": "fb4cc55ea2ae4d039e1a8c5c252a4678477205bf4286022cea0d6debcefc3e34"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/original-reference-assembly.raw.log",
+        "sha256": "0c513bfef307a1e043ca5736e3d6532c81661027e415acfac39fdb50792d25ff"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "original-producer-snapshot-19-admission",
+      "command": ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/guard/unused-bytecode artifacts/tmp/W2.reference-application-refresh-01/owned-reference-refresh-05.py --guard-child --candidate 1b377b219039ac4eafb0715300a8e5d0c8af716e --preparation-sha256 670f2e043d1cefe9fe0482124b2f53d8ffc3649be68f61b594a80b806d8716d0 --source-readiness artifacts/tmp/W2.reference-application-refresh-01/independent-source-readiness-05.json --source-readiness-sha256 c9e39cee9579b40d3712c6a29515e1f840dc34ea55cb3868e431817401bee114 --input-manifest-sha256 4581ff9365d48d3c33b6ab91dc1abf6c81ba08fb8edb9753ca4720e11fc533eb",
+      "commandMeaning": "Portable DISPLAY of actual argv; exact private invocation/working directory retained in receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 7.942391299991868,
+      "commit": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "provenance": "fresh-C36-affected-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/receipt.json",
+        "sha256": "fb4cc55ea2ae4d039e1a8c5c252a4678477205bf4286022cea0d6debcefc3e34"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/original-producer-snapshot-19-admission.raw.log",
+        "sha256": "b5569378d09b55bff16afc47ab1349c502fd93c4bb48e50fc428e72b5e5e51b6"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "compile-native",
+      "command": ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/unused-compiler-bytecode artifacts/tmp/W2.C36.T01.native-frontend-component-01/compile-native-02.py --receipt artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/compiler-job.json --preparation-sha256 6225bed742ec0fb907ff4d834cf9249e76dc92f753b97cf2cb6cf3b2227d524c",
+      "commandMeaning": "Portable DISPLAY of actual argv; exact private invocation/working directory retained in receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 169.49243939999724,
+      "commit": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "provenance": "fresh-C36-affected-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/receipt.json",
+        "sha256": "4470f97652ebeff0b2ea2ea3b4096a28e67f796cf258fb0fd9521322f30076a2"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/compile-native.raw.log",
+        "sha256": "42a5dacde8c991e8a403b98800cf3a53a8dec1f0e216b6dae21b433ac664b21f"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "current14-fixture-build",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-10.mjs artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/fixture",
+      "commandMeaning": "Portable DISPLAY of actual invocation, exact private argv retained in original receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "commit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+      "provenance": "fresh-current14-full-original-matrix-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/receipt.json",
+        "sha256": "68aa45b83c5f650af25fb1c5c23e70a89dd9035cc9be056dd65677446ca31f40"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "current14-full90-original-matrix",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-19.py --child --candidate fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc --preparation-sha256 ca0f89262ccc3f6a1bcb9611f1a20267436df2f7cb771018382ddb49a07e8def --source-binding-sha256 869a2b67d9db63cc0956fe8ef58d5a4de7d83c3788113bf921eccd9d4576bf1a --owner-decision artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json --owner-decision-sha256 738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2 --source-readiness artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json --source-readiness-sha256 cf940cb027b2446ccca0f5613246e34529d2c7acf29faa32859ec70df90aba4b --input-manifest-sha256 51a233f83234d79b1cfaa8a9d0cf61b772aefc3ba13a9780c4c068dd72f8e3b7",
+      "commandMeaning": "Portable DISPLAY of actual invocation, exact private argv retained in original receipt.",
+      "result": "PASS",
+      "exitCode": 0,
+      "commit": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+      "provenance": "fresh-current14-full-original-matrix-component",
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/receipt.json",
+        "sha256": "68aa45b83c5f650af25fb1c5c23e70a89dd9035cc9be056dd65677446ca31f40"
+      },
+      "normalOwnedCleanup": true
+    },
+    {
+      "id": "core-selected-closure",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 71.42038589998265,
+      "command": "authenticated-fixture-python -B -m unittest -v tests.documents.test_viewer_artifact_budget tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_and_text_use_admission_while_normal_revision_read_is_unchanged tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_denies_substituted_original_or_derive_permission tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_route_stops_the_owned_authentication_and_releases_its_actual_writer tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_ack_denies_at_deadline_while_real_authentication_is_still_held tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancelled_exact_follower_hands_off_real_reader_without_stopping_live_member tests.service.test_document_viewer_api.DocumentViewerApiTests.test_real_asgi_disconnect_reaches_cooperative_reader_and_denies_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_native_close_reopen_denies_the_old_session_before_any_source_authentication tests.service.test_document_viewer_api.DocumentViewerApiTests.test_current_original_metadata_and_exact_range_cross_the_authenticated_boundary tests.service.test_document_viewer_api.DocumentViewerApiTests.test_foreign_project_stale_session_and_source_substitution_deny tests.service.test_document_viewer_api.DocumentViewerApiTests.test_exact_accepted_text_crosses_private_transport_without_anchor_creation tests.service.test_document_viewer_api.DocumentViewerApiTests.test_rights_revoked_between_selection_and_physical_admission_deny_without_reading tests.service.test_document_viewer_api.DocumentViewerApiTests.test_rights_revoked_after_owned_physical_close_deny_private_api_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_renderer_origin_missing_native_auth_and_unbounded_commands_deny tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_inspect_only_original_remains_readable_but_derivative_still_requires_derive tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_derive_revoked_after_artifact_context_closes_denies_text_delivery tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_structured_text_is_bounded_exact_revision_and_does_not_create_anchors tests.documents.test_viewer_range_admission tests.documents.test_viewer_metadata_fairness tests.documents.test_viewer_read_cancellation.ViewerReadCancellationTests.test_corrupt_final_frame_with_live_cancel_probe_still_denies_before_first_byte tests.documents.test_viewer_object_ranges.ViewerObjectRangeTests.test_cancel_during_prefix_discard_rolls_back_and_fresh_retry_returns_exact_range",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.core-selected-closure.log",
+      "rawOutputSha256": "f27783cc6e6c6aeaa140103fe8a8ed24ab95466594a3fcf6fb7e23d54a3a053f",
+      "rawOutputCanonicalSha256": "3d20f2f95eec27c3ff74d86de038513427483015a3ae018d9f1cbb80db13c86f",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.json",
+      "inputReportSha256": "44fd136dfe30b6e6ae1fb1849c0785e6119d7d3ac94849cf9ab578a0d2694ad5",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed.",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "actual-worker-cancel-reopen",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 3.4230284999939613,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-worker-cancel-02/probe.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.actual-worker-cancel-reopen.log",
+      "rawOutputSha256": "ae7efe5dc72b313f24f5860e4a0591120ed92e8f68f5c8ae0d23577c82b1f436",
+      "rawOutputCanonicalSha256": "41c833ed19b87cc5f539b3f82f2f8296893ce3ad1d8e8f946d20b1ec67e12be7",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed.",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "renderer-ownership-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 5.900487000006251,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentViewer.test.ts apps/desktop/src/app/documentViewerNative.test.ts apps/desktop/src/app/pdfDocumentViewer.test.ts apps/desktop/src/app/viewerAssets.test.ts apps/desktop/src/app/viewerWorkerMessages.test.ts apps/desktop/src/app/viewerWorkerQuota.test.ts",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.renderer-ownership-units.log",
+      "rawOutputSha256": "d8869470ca91524609d2e38d6af525ba44cf4c81d6b7782c62972058a4f0c7e2",
+      "rawOutputCanonicalSha256": "d8869470ca91524609d2e38d6af525ba44cf4c81d6b7782c62972058a4f0c7e2",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed.",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "mounted-and-hostile-decoder",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 6.517855500016594,
+      "command": "./.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions tests.desktop.test_viewer_decoder",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.mounted-and-hostile-decoder.log",
+      "rawOutputSha256": "6713d91bf4ea4b34f218c0855c7568decfc91a9c6e0f2984395773181eca6814",
+      "rawOutputCanonicalSha256": "d7ae7bc715431f920984b61b6dfc4e9df046563a236bd5bbe9ab5dea19ade111",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed.",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "real-native-accepted-boundaries",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 12.190485300001455,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.run.log",
+      "rawOutputSha256": "512852b75c10a15ddd2e0b857ffa435f2a6387a7bc3728b62538fa5621c57ada",
+      "rawOutputCanonicalSha256": "814268881362d9b4b9e3687e5126c28fcd0aa2c0c98282ba5bb66bc8ef21f893",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.json",
+      "inputReportSha256": "181b8cccccc9a20c20404268dcc1622af5030f35997780ecd8950c7a0970b8bb",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "real-native-maximum-cancel",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 9.805462099990109,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.run.log",
+      "rawOutputSha256": "bd20dd6a4dc0b6ca2e74da83769396a96a41787ffe110edc088c983a06d84055",
+      "rawOutputCanonicalSha256": "19d7b5a9198ef4d9507be9da434dd4f1bfa018656ff27706269802ae848e57d8",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.json",
+      "inputReportSha256": "03445fbe64cd98b7bb7a8ea63b529a0913bf0e67821d00a828629e35e950aaa3",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "actual-renderer-maximum-document",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 80.41204770002514,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.run.log",
+      "rawOutputSha256": "e2bb27d8717d3dd7e55b5d12620dac39cb3a9df5978bf1ddb784c49b57b5626f",
+      "rawOutputCanonicalSha256": "a72fcb338424729c70537033253470dab4b1e94b08e2400eed7f628f21d9e413",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.json",
+      "inputReportSha256": "dd5bf84137a39ebcbe767308b792dcf2df030d5aaadab1549ce9797a0ba3054b",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    },
+    {
+      "id": "actual-renderer-cold-warm-p95",
+      "commandId": "desktop:performance",
+      "exitCode": 0,
+      "durationSeconds": 715.4071192999836,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.run.log",
+      "rawOutputSha256": "02b6aa8fa1dabde9836ae298647f5850fd4a6471cc23f3e94e9ca6448a0a3d5d",
+      "rawOutputCanonicalSha256": "54d43a0ffd49c91ed49c619b9d23289fdf4f2483715796e4fe7da24af1585fc4",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.json",
+      "inputReportSha256": "fb7100db71a517d835a261bb6cbf3e54384ee447c08db4cf6375d988296adcd1",
+      "provenance": "inherited-original-reviewed-Reader-component-not-fresh-C36",
+      "originManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      "originReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    }
+  ],
+  "unverifiedItems": [],
+  "unverifiedItemsMeaning": "No unverified product criterion remains mandatory within explicitly owner-accepted initialW2 scope. Capture publication/structural reader/selected quality visual/canonical classification remain unperformed or blocked and disclosed forW9 under actual950986 owner authority. Frozen/formal/normal state records are procedural pending, not invented approvals.",
+  "sourceFacts": {
+    "currentCSS": {
+      "path": "apps/desktop/src/app.css",
+      "sha256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac"
+    },
+    "actualBuildReferenceNativeCandidate": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+    "actualFullMatrixCandidate": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+    "product205ManifestSHA256": "9c7170ccd7a58fd79e6b996502aea8cd459dcbe1f65994decfa9e6bc0c4007b7",
+    "originalTaskCanonicalSHA256": "26e4a67ef9ed4f5fe3c9e1e0f5c3227917ae16974000520ab8ce4314cb25c3fa"
+  },
+  "references": {
+    "originalTaskSnapshot": {
+      "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/origin-snapshot.json",
+      "sha256": "cdf70e7e478167016852706f94f9429413d17d208c1dfe186df6f7256814ffb4"
+    },
+    "originManifest": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+      "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+    },
+    "originReview": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+      "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+    },
+    "specification": {
+      "path": "artifacts/evidence/W2.C36.T01.spec.json",
+      "sha256": "4daaaf650dbb4f67bd9b0aaa934a36c5c0787cd2903d34edb468d81ac5e0e3d5"
+    },
+    "verificationRegistry": {
+      "path": "verification-profiles.json",
+      "sha256": "673c3b6075a14c145aff86bb2184f139e9593c894714595b1f4fad56ea5a955f"
+    },
+    "sourceApplication02": {
+      "path": "artifacts/evidence/W2.C36.T01.source-application-02.json",
+      "sha256": "e95bda281d4b3ba06dfe8192225fa4dd313b890cba88c1fa6ec1c4830414056d"
+    },
+    "current14SourceBinding": {
+      "path": "artifacts/evidence/W2.C36.T01.current14-source-binding-02.json",
+      "sha256": "869a2b67d9db63cc0956fe8ef58d5a4de7d83c3788113bf921eccd9d4576bf1a"
+    },
+    "current14SourceReadiness": {
+      "path": "artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json",
+      "sha256": "cf940cb027b2446ccca0f5613246e34529d2c7acf29faa32859ec70df90aba4b"
+    },
+    "current14Producer": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-19.py",
+      "sha256": "b81d614f51474cc7c9fa270257d6f6421673d609d6da3a6995c4077fea6d0742"
+    },
+    "current14Preparation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-19.json",
+      "sha256": "ca0f89262ccc3f6a1bcb9611f1a20267436df2f7cb771018382ddb49a07e8def"
+    },
+    "current14Receipt": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/receipt.json",
+      "sha256": "68aa45b83c5f650af25fb1c5c23e70a89dd9035cc9be056dd65677446ca31f40"
+    },
+    "current14MachineDisposition": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/independent-actual-current14-component-disposition-01.json",
+      "sha256": "6b7e662cd2b04b713ca442fb1108f680dc1c6cd4ebb062a3fa1f7f5c6d91d091"
+    },
+    "current14ChildReport": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/child-report.json",
+      "sha256": "7580df1f565e582e5fdc4e9847d855f2d7b6612187c144db2c860aa64456f24c"
+    },
+    "current14InputManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/input-manifest.json",
+      "sha256": "51a233f83234d79b1cfaa8a9d0cf61b772aefc3ba13a9780c4c068dd72f8e3b7"
+    },
+    "actualCaptureManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/captures/manifest.json",
+      "sha256": "1e1f3c3c7dd7b51003c5389534df9f3eaf10f89f96330f3d0a2fdd54a7170b62"
+    },
+    "buildReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/receipt.json",
+      "sha256": "9cc414021c0e18bfbf3d3f1ae74976030dad33c075dc7a7453c727c6618091bb"
+    },
+    "buildDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/independent-c36-actual-component-disposition-02.json",
+      "sha256": "3d6655c37c9726aad7df6bab6d603d2c05e35439eddc2960f374cb0bddb5db92"
+    },
+    "referenceReceipt": {
+      "path": "artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/receipt.json",
+      "sha256": "fb4cc55ea2ae4d039e1a8c5c252a4678477205bf4286022cea0d6debcefc3e34"
+    },
+    "referenceDisposition": {
+      "path": "artifacts/tmp/W2.C36.T01.reference-refresh-independent-actual-disposition-02.json",
+      "sha256": "8731531263495caeb387f27aa1c589d2a1dd55d5d68094ee2915dcaa3c020416"
+    },
+    "nativeReceipt": {
+      "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/receipt.json",
+      "sha256": "4470f97652ebeff0b2ea2ea3b4096a28e67f796cf258fb0fd9521322f30076a2"
+    },
+    "nativeDisposition": {
+      "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/independent-actual-component-disposition-02.json",
+      "sha256": "9074d5b916cfd3137830a3769b1e59a4bba075135820ebe7db82f4612f7decd7"
+    },
+    "nativePackage": {
+      "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/package.json",
+      "sha256": "7a500496b5e6cd4fd094c1a8be6992ec034cf17dccd639fd32071e9b164ed289"
+    },
+    "nativeThreeObservations": {
+      "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/artifact-observations.json",
+      "sha256": "7e3d5b34211136429a5cb7b04675bedd7644f0dbfca7c6e04fb07769762f0ac7"
+    },
+    "uiDataRecipe": {
+      "path": "artifacts/tmp/W2.C36.T01.ui-evidence-data-recipe-01/data-recipe-01.json",
+      "sha256": "e06839b0865d0e1676cba759fc7767fdad84bce8ee3576804a106648540abc1e"
+    },
+    "uiDataRecipeClarification": {
+      "path": "artifacts/tmp/W2.C36.T01.ui-evidence-data-recipe-01/data-recipe-clarification-02.json",
+      "sha256": "5c145b22de0fee81dac24fbc48a88d79a5f550e206876edbb3628009a43873d5"
+    },
+    "privacySecond90": {
+      "path": "artifacts/tmp/W2.C36.T01.capture-privacy-second90-01/independent-decoded-privacy-review-second90-01.json",
+      "sha256": "4edc25e379e46ae8e60fde00d2a8926ae9ba1c517a2352e2d2a508054974f3e1"
+    },
+    "privacyCombined": {
+      "path": ".local/W2.C36.T01.capture-privacy-review-01/independent-privacy-admission-disposition-01.json",
+      "sha256": "ba6f8a8284db07883ad1647bd3c50655fe2f9a51fe35feed3e66fe0eeef17220"
+    },
+    "sealedRegistryPreparation": {
+      "path": ".local/W2.C36.T01.capture-privacy-review-01/reviewed-artifacts-01.json",
+      "sha256": "0b18b24bc36ed5a0372a992735e7cd8c31d93c61d7061a9f7c72127fe289fe12"
+    },
+    "publishedCurrent14MachineDisposition": {
+      "path": "artifacts/evidence/W2.C36.T01.current14-component-disposition-01.json",
+      "sha256": "6b7e662cd2b04b713ca442fb1108f680dc1c6cd4ebb062a3fa1f7f5c6d91d091"
+    },
+    "unpublishedCaptureRetention": {
+      "path": "artifacts/tmp/W2.C36.T01.unpublished-capture-retention-01.json",
+      "sha256": "a3db40210f1722e4e3059b9afc8c096ef6384772ecbcd6d1b07cbb69a51c3f4d"
+    }
+  },
+  "actualCurrent14": {
+    "caseCount": 90,
+    "captureCount": 180,
+    "errors": [],
+    "all12AffectedCasesIncluded": true,
+    "normalOwnedCleanup": true,
+    "inputsStable": true,
+    "genuineMachineComponent": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/independent-actual-current14-component-disposition-01.json",
+      "sha256": "6b7e662cd2b04b713ca442fb1108f680dc1c6cd4ebb062a3fa1f7f5c6d91d091"
+    },
+    "boundary": "Production renderer/components/styles with controlled synthetic fixture ports; not actual Native GUI/Core/worker/principal execution."
+  },
+  "actualNative": {
+    "componentDisposition": {
+      "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/independent-actual-component-disposition-02.json",
+      "sha256": "9074d5b916cfd3137830a3769b1e59a4bba075135820ebe7db82f4612f7decd7"
+    },
+    "scope": "Fresh release-probe206 with current embedded205 plus exactly3 artifact observations; no Native runtime GUI/installer/Core rebuild or full Rust test claim."
+  },
+  "inheritedReaderPerformance": {
+    "sourceManifest": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+      "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+    },
+    "sourceReview": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+      "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+    },
+    "candidateCommit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+    "measuredLatency": {
+      "cold": {
+        "count": 20,
+        "nearestRankP95Ms": 2659.1579,
+        "minimumMs": 2341.1053,
+        "maximumMs": 2663.047,
+        "limitMs": 3000
+      },
+      "warm": {
+        "count": 20,
+        "nearestRankP95Ms": 2728.0284,
+        "minimumMs": 2478.1011000000003,
+        "maximumMs": 2939.7765,
+        "limitMs": 3000
+      }
+    },
+    "freshC36LatencyClaimed": false,
+    "causalScope": "CSS padding/grid/specificity restoration changes no stream/decoder/rights/lifetime/worker algorithm. Original measured3s target and actual p95 remain historical evidence, not a new C36 timing observation."
+  },
+  "ownerExitAcceptance": {
+    "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+    "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4",
+    "actualIntroductionCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+    "publishedClaimed": true
+  },
+  "supersededInitialExitUIRequirements": {
+    "authority": {
+      "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+      "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4",
+      "actualIntroductionCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+      "publishedClaimed": true
+    },
+    "status": "OWNER_ACCEPTED_INITIAL_W2_CLOSURE_REQUIREMENT_SUPERSEDED_NOT_TEST_PASS",
+    "unperformed": [
+      "capture public delivery blocked and withdrawn",
+      "final structural capture-reader",
+      "selected quality/UX visual review",
+      "canonical restoration classification"
+    ],
+    "originalRecipeAndTemplatesPreserved": true,
+    "newPassingResultsClaimed": false,
+    "W9FollowUp": "Remaining cosmetics and visual/conformance coverage, unless an actual functional defect requires separate attention; no further styling work selected now."
+  },
+  "privacy": {
+    "combinedActualReview": {
+      "path": ".local/W2.C36.T01.capture-privacy-review-01/independent-privacy-admission-disposition-01.json",
+      "sha256": "ba6f8a8284db07883ad1647bd3c50655fe2f9a51fe35feed3e66fe0eeef17220"
+    },
+    "scope": "Independent decoded-content/metadata privacy component remains genuine for exact180 synthetic PNGs. This does not substitute for the uncompleted credential scan or establish public artifact admission.",
+    "credentialScannerWaived": false,
+    "publicCaptureDeliveryCommit": null,
+    "publicationStatus": "BLOCKED_BY_UNCHANGED_PRIVACY_HOOK_WITHDRAWN_AND_RETAINED_IGNORED_FOR_W9",
+    "unpublishedRetention": {
+      "path": "artifacts/tmp/W2.C36.T01.unpublished-capture-retention-01.json",
+      "sha256": "a3db40210f1722e4e3059b9afc8c096ef6384772ecbcd6d1b07cbb69a51c3f4d"
+    },
+    "credentialScanPassed": false,
+    "hookBypassed": false,
+    "priorSealedHookRestored": true
+  },
+  "pendingActualBindings": {
+    "finalCandidateCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+    "exactBaseToFinalCandidateChangedFiles": [
+      "apps/desktop/src/app.css",
+      "artifacts/evidence/W2.C36.T01.current14-component-disposition-01.json",
+      "artifacts/evidence/W2.C36.T01.current14-source-binding-01.json",
+      "artifacts/evidence/W2.C36.T01.current14-source-binding-02.json",
+      "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-01.json",
+      "artifacts/evidence/W2.C36.T01.current14-source-binding-recording-readiness-02.json",
+      "artifacts/evidence/W2.C36.T01.current14-source-readiness-18.json",
+      "artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json",
+      "artifacts/evidence/W2.C36.T01.independent-source-readiness-02.json",
+      "artifacts/evidence/W2.C36.T01.source-application-01.json",
+      "artifacts/evidence/W2.C36.T01.source-application-02.json",
+      "artifacts/evidence/W2.C36.T01.specificity-correction-01.md",
+      "artifacts/evidence/W2.C36.T01.specificity-independent-readiness-01.json",
+      "artifacts/evidence/W2.C36.T01.specificity-preflight-01.json",
+      "artifacts/evidence/W2.C36.T01.specificity-source-readiness-01.json",
+      "artifacts/evidence/W2.C36.T01.task-start.md",
+      "artifacts/evidence/W2.C36.T01.ui-authority-method-01.decision.json",
+      "artifacts/evidence/W2.C36.T01.ui-authority-method-01.proposal.json",
+      "artifacts/evidence/W2.C36.T01.ui-authority-method-01.readiness.json",
+      "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/index.html",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "captureDeliveryCommit": null,
+    "ownerAcceptanceIntroductionCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+    "finalSourceAndEvidenceProjectionDisposition": null,
+    "frozenR01PacketSHA256": null,
+    "formalIndependentReview": null,
+    "normalTaskDoneReceipt": null,
+    "captureDeliveryMeaning": "Not pending initialW2 criterion: publication is withdrawn and owner-deferredW9. No delivery commit exists."
+  },
+  "preservedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f05/receipt.json",
+      "sha256": "74c27f8c6334500f7603a3781970a6c26833d332cbc01a211961bfa08737f5b4"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f06/receipt.json",
+      "sha256": "8cb29a9523bf8caa489c28181ee4e08be12c0e5397207cb821bd28aaeb6d282e"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f07/receipt.json",
+      "sha256": "eb78acc3c9f622d2220a7a5868c7c8cefb3667309d94c9a071c7e2b6900c754a"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/receipt.json",
+      "sha256": "cd0c41229a64fd285c18ae47bc43ee4438cc98b1e31536ab798bbfe9e82fc5cc"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f09/receipt.json",
+      "sha256": "f9e174c183afebca90f93b20cc8465b9e054cac41d1c62bbd063f96ee9f9dd36"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f10/receipt.json",
+      "sha256": "101491147e8d11969efae974d87f2114996bdd2b91e95310548249dfa0a8c405"
+    },
+    {
+      "path": "artifacts/tmp/W2.Current14-f09-complete-layout-findings-diagnosis-01.json",
+      "sha256": "9a232320559bba33ea4c5896c4bfb4e5b38546e0c0fae52a794847a814c3125d"
+    },
+    {
+      "path": "artifacts/tmp/W2.Current14-f08-quality-preview-encoding-diagnosis-01.json",
+      "sha256": "38148d5d22fe19ddb59815bcf1e40c0c614f9983d48157f0ef018545731dacee"
+    }
+  ],
+  "preservedAdverseSemantics": "All original f05-f10 outcomes, f09 layout48 findings, before-CSS nonqualifying diagnosis, f10 specificity FAIL and capture01/earlier source findings remain immutable. Old failed aggregates are never converted to PASS; this is new full original90/180 execution at fc694.",
+  "correctiveIntegration": {
+    "originSha256": "26e4a67ef9ed4f5fe3c9e1e0f5c3227917ae16974000520ab8ce4314cb25c3fa",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/.pnpm/vite@8.2.1_@types+node@26.2.0/node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/assemble-application.mjs",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/.pnpm/vite@8.2.1_@types+node@26.2.0/node_modules/vite/bin/vite.js build",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/assemble-reference.mjs",
+      ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.reference-application-refresh-01/actual-refresh-04/guard/unused-bytecode artifacts/tmp/W2.reference-application-refresh-01/owned-reference-refresh-05.py --guard-child --candidate 1b377b219039ac4eafb0715300a8e5d0c8af716e --preparation-sha256 670f2e043d1cefe9fe0482124b2f53d8ffc3649be68f61b594a80b806d8716d0 --source-readiness artifacts/tmp/W2.reference-application-refresh-01/independent-source-readiness-05.json --source-readiness-sha256 c9e39cee9579b40d3712c6a29515e1f840dc34ea55cb3868e431817401bee114 --input-manifest-sha256 4581ff9365d48d3c33b6ab91dc1abf6c81ba08fb8edb9753ca4720e11fc533eb",
+      ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/unused-compiler-bytecode artifacts/tmp/W2.C36.T01.native-frontend-component-01/compile-native-02.py --receipt artifacts/tmp/W2.C36.T01.native-frontend-component-01/actual-native-02/compiler-job.json --preparation-sha256 6225bed742ec0fb907ff4d834cf9249e76dc92f753b97cf2cb6cf3b2227d524c",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-10.mjs artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f11/fixture",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-19.py --child --candidate fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc --preparation-sha256 ca0f89262ccc3f6a1bcb9611f1a20267436df2f7cb771018382ddb49a07e8def --source-binding-sha256 869a2b67d9db63cc0956fe8ef58d5a4de7d83c3788113bf921eccd9d4576bf1a --owner-decision artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json --owner-decision-sha256 738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2 --source-readiness artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json --source-readiness-sha256 cf940cb027b2446ccca0f5613246e34529d2c7acf29faa32859ec70df90aba4b --input-manifest-sha256 51a233f83234d79b1cfaa8a9d0cf61b772aefc3ba13a9780c4c068dd72f8e3b7"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038"
+      }
+    ],
+    "rationale": "Restore original Reader layout under unchanged approved1.9 and retain all original criteria. Fresh C36 product/ref/Native artifacts and full90 actual machine proof establish affected restoration. Original boundary and latency evidence remain named historical components. New explicit owner acceptance closes initialW2 with all residual coverage/failures disclosed for W9; no prior FAIL or unperformed visual/classification step becomes PASS."
+  },
+  "formalTaskApproval": null,
+  "taskCompleteRecorded": false,
+  "waveQualifiedByThisDraft": false,
+  "publicEvidenceWritten": true,
+  "supersedesUnfrozenDraft": {
+    "path": "artifacts/tmp/W2.C36.T01.evidence-draft-02/R01.unfrozen-draft-02.json",
+    "sha256": "fff1ef8f501b6feb65df7e35974b60856967b90c2cc843fd48872e47bbd04661"
+  },
+  "candidateEvidenceComposition": {
+    "manifestCandidate": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+    "actualFull90Candidate": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+    "actualBuildReferenceNativeCandidate": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+    "originalBoundaryLatencyCandidate": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+    "measuredCheckCommitsRetained": true,
+    "noSameCandidateFreshAllClaim": true,
+    "projectionBasis": "Actual full90 candidate fc694 is the immutable product/evidence candidate. Current f86 adds only the exact owner exit acceptance and byte-exact public independent component disposition. Their later introduction is explicit; no historical candidate, execution or prior approval is rewritten.",
+    "actualCurrentMetadataCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d"
+  },
+  "recordingException": {
+    "kind": "one-use-historical-qualified-candidate-submission",
+    "scope": "Only W2.C36.T01 R01 at actual fc694; current HEAD f86 is metadata-only. Preserve branch/worktree/owner/lease/criteria/Git scope, all normal packet/review/CAS/schema/semantic/append-only checks.",
+    "reason": "The later owner exit acceptance uses a Wave-level path outside the frozen correction namespace. Record the already-qualified historical candidate through existing taskctl APIs without rewriting history, inventing a current HEAD measurement, changing shared source or starting another correction.",
+    "actualCurrentHead": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+    "ownerAuthority": {
+      "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+      "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4",
+      "introductionCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d"
+    },
+    "prospectiveAuthorization": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "currentHeadEqualityPredicateWaived": true,
+    "allProductCheckOutcomesAndActualCandidatesUnchanged": true,
+    "normalIndependentFrozenReviewStillRequired": true,
+    "noSharedSourceOrPolicyChange": true
+  }
+}
