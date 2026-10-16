@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 732aeabd2ea1216bfd67fdc736c2e4521ed62771e00bd49dcb52438d2416e3de
+source_sha256: 434688c3db106ad4724156a8b12c9fd40824ed8fecfbe366bc5c945cf22e1353
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -13941,21 +13941,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5.
 
-**Wave / priority / status / review:** `W3` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W3` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-05.S03.T03`
 
-#### - [ ] CAP-06.S01.T01 - Define searchable fields, analyzers, and query grammar
+#### - [x] CAP-06.S01.T01 - Define searchable fields, analyzers, and query grammar
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-05.S03.T03`
 
-**Owner / review:** codex-w3-implementation / - (`-`)
+**Owner / review:** codex-w3-implementation / agent:/root/w3_query_review (`approved`)
 
 **Objective:** Search contract covering title, abstract, full text, authors, venue, identifiers, year, tags, decisions, and exact/phrase/Boolean syntax.
 
@@ -13974,17 +13974,55 @@ Original tasks and approvals remain unchanged.
 
 - python tools/verify.py --profile search
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-06.S01.T01.R01.json` at `460b07c6189263c250853a9ecf36d11a4d3ed44c`
+
 ##### Review history — CAP-06.S01.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `2665d28fcfbb93ac4b0d1ffeaec53fba23be2e08c1b236e9878abb250c6f23b6`
+
+- Candidate / base / branch: `460b07c6189263c250853a9ecf36d11a4d3ed44c` / `f295e80e2ec8bfdd6711411759612f4bae23e80d` / `codex/w3-implementation`
+- Submitted by / at: codex-w3-implementation / `2026-10-16T16:02:01+00:00`
+- Evidence: `artifacts/evidence/CAP-06.S01.T01.R01.json` / `7e7dc6c8fa2ab2239180497865d427cd957fd7b64c84a545121c12ce3f26ce3b` / `460b07c6189263c250853a9ecf36d11a4d3ed44c`
+- Acceptance-criteria SHA-256: `f4b9610dbfad265eed57b7b6a477d81eb928de70b1c142ffa89e1630375a8bfd`
+- Verification-selection SHA-256: `c155084275165619d25046bcfdc0e57ffa092ffcfcc7f2f4913008aaa38c8c97`
+- Changed paths: `artifacts/evidence/CAP-06.S01.T01.publication-note-01.md`, `docs/adr/ADR-0059-bounded-portable-local-query-snapshots.md`, `docs/adr/index.json`, `docs/architecture/search-queries.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/search/README.md`, `packages/contracts/search/analyzer-profile.schema.json`, `packages/contracts/search/query-diagnostic.schema.json`, `packages/contracts/search/query-document.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-06/CAP-06.S01.T01.html`, `planning/review-site/CAP-06/CAP-06.S01.html`, `planning/review-site/CAP-06/index.html`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W3.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/search/__init__.py`, `services/core-api/src/research_observatory_core/search/contracts.py`, `services/core-api/src/research_observatory_core/search/grammar.py`, `services/core-api/src/research_observatory_core/search/schemas.py`, `tests/fixtures/search/core-api.pre-w3.v1.json`, `tests/search/test_query_contracts.py`, `tests/search/test_query_grammar.py`, `tools/core_api_contract.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest discover -v -s tests/search -p test_*.py`, `.venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/search/__init__.py services/core-api/src/research_observatory_core/search/contracts.py services/core-api/src/research_observatory_core/search/grammar.py services/core-api/src/research_observatory_core/search/schemas.py tests/search/test_query_grammar.py tests/search/test_query_contracts.py tools/core_api_contract.py tools/core_api_reconciliation.py`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/search/__init__.py services/core-api/src/research_observatory_core/search/contracts.py services/core-api/src/research_observatory_core/search/grammar.py services/core-api/src/research_observatory_core/search/schemas.py tests/search/test_query_grammar.py tests/search/test_query_contracts.py tools/core_api_contract.py tools/core_api_reconciliation.py`, `.venv/Scripts/python.exe -B -m mypy --no-incremental --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/search/__init__.py services/core-api/src/research_observatory_core/search/contracts.py services/core-api/src/research_observatory_core/search/grammar.py services/core-api/src/research_observatory_core/search/schemas.py tests/search/test_query_grammar.py tests/search/test_query_contracts.py tools/core_api_contract.py tools/core_api_reconciliation.py`, `.venv/Scripts/python.exe -B -c "import sys; from pathlib import Path; sys.path.insert(0,'tools'); from quality_check import load_scope; print('Complete declared/discovered Python inventory:', len(load_scope(Path.cwd())))"`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`, `.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base f295e80e2ec8bfdd6711411759612f4bae23e80d --head 460b07c6189263c250853a9ecf36d11a4d3ed44c`, `.venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe -B -c " import hashlib,json,sys from pathlib import Path sys.path.insert(0,'tools') from core_api_contract import generated_artifacts repo=Path.cwd() prior=json.loads((repo/'artifacts/tmp/W3-activation-temp/api-contract-predecessor-inventory-01.json').read_text('utf-8')) assert hashlib.sha256((repo/'artifacts/tmp/W3-activation-temp/api-contract-predecessor-inventory-01.json').read_bytes()).hexdigest()=='5a110961c7f69ff4e2426895cfc0beba95d01adfeb59c916bef21acbd0c2bb19' assert prior['commit']=='f295e80e2ec8bfdd6711411759612f4bae23e80d' generated=generated_artifacts(repo) assert len(generated)==39 for relative,entry in prior['artifacts'].items(): assert hashlib.sha256(generated[repo/relative]).hexdigest()==entry['sha256'],relative print('36/36 exact predecessor generated artifact bytes preserved; three additive search schemas.') "`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.service.test_core_api.CoreApiTests.test_uvicorn_starts_on_an_os_assigned_loopback_port tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current`
+- Deferred checks: `Protected SQLCipher FTS5, derivative key/path authority, compiler/rights/index incremental/rebuild/crash/cancel/recovery proof belongs to CAP-06.S01.T02.`, `Search HTTP/result/rank/snippet/pagination and governed UI/native/accessibility proof belongs to CAP-06.S01.T03 and slice integration.`, `Full deployment/repository profiles, packaging, resource/performance and cross-capability qualification remain at their owning slice/checkpoint and fresh Wave qualification. A standalone headless launcher or AI mode is outside this task.`
+- Selection rationale: Pure Core parsing plus a new cross-process snapshot contract expose syntax/normalization/identity/privacy and hostile-input risks. Select actual Core-to-JSON/schema and isolated-process proof, strict bounds/forgery/location/error tests, exact predecessor generated bytes and API availability, affected quality/ADR/architecture and normal backlog-view checks. No product persistence, migration, runtime dependency, UI or security authority changes. Fresh-only execution, fixed committed HEAD and inputs; no receipt reuse. Independent task review is expanded for portable contracts.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w3_query_review / `2026-10-16T16:35:36+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-06.S01.T01.review-R01.json` / `806ac514449eb2fb7ecbe9e93e769e288b8ec56db299050b84b6c638d2d3cd1a`
+
+**Review notes:** Approved CAP-06.S01.T01 R01 at exact candidate 460b07c6189263c250853a9ecf36d11a4d3ed44c. All four criteria are satisfied by the reviewed bounded implementation and authenticated selected evidence. No findings or prior closures. Original qualification FAIL, recorder limitations and targeted native API recovery remain explicit. T02/T03, slice/Wave qualification and human release authority remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/w3_query_review at `2026-10-16T16:35:36+00:00`
+
+**Latest notes:** Approved CAP-06.S01.T01 R01 at exact candidate 460b07c6189263c250853a9ecf36d11a4d3ed44c. All four criteria are satisfied by the reviewed bounded implementation and authenticated selected evidence. No findings or prior closures. Original qualification FAIL, recorder limitations and targeted native API recovery remain explicit. T02/T03, slice/Wave qualification and human release authority remain separate.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-06.S01.T02 - Implement incremental FTS5 indexing and rebuild
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

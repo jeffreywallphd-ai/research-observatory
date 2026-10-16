@@ -1,0 +1,86 @@
+{
+  "task_id": "CAP-06.S01.T01",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/w3_query_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-16T16:17:31+00:00",
+  "reviewed_state_commit": "460b07c6189263c250853a9ecf36d11a4d3ed44c",
+  "candidate_commit": "460b07c6189263c250853a9ecf36d11a4d3ed44c",
+  "base_commit": "f295e80e2ec8bfdd6711411759612f4bae23e80d",
+  "packet_sha256": "2665d28fcfbb93ac4b0d1ffeaec53fba23be2e08c1b236e9878abb250c6f23b6",
+  "evidence_sha256": "7e7dc6c8fa2ab2239180497865d427cd957fd7b64c84a545121c12ce3f26ce3b",
+  "acceptance_criteria_sha256": "f4b9610dbfad265eed57b7b6a477d81eb928de70b1c142ffa89e1630375a8bfd",
+  "selection_sha256": "c155084275165619d25046bcfdc0e57ffa092ffcfcc7f2f4913008aaa38c8c97",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The documented grammar and pure Core implementation retain exact original codepoints, deterministic normalized text, an immutable typed AST, and schema/grammar/analyzer identities. Inspection and the authenticated 17-case search suite support all named fields, literals, phrases, Boolean precedence, implicit conjunction, year filters, Unicode preservation and semantic roundtrips. Syntax errors use original-relative half-open codepoint locations, including EOF, CRLF and astral cases. Import and serialization independently reparse original and normalized forms and reject substituted snapshot fields. Unsupported syntax is explicit, and literal terminology is correctly distinguished from byte/case/diacritic-exact analyzer matching."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The authenticated search log records 17 passing tests covering expected Core/JSON/schema roundtrips, isolated execution without UI/server imports, strict decoding, snapshot substitution, limits, forged cycles, expanded aliases, partial construction, immutable children and content-free error surfaces. The failure-first UTF8 predecode regression and development adverse observations remain separate from candidate qualification. The unchanged three-test API group passed natively in 8.44563040000503 seconds, with unittest reporting 5.273 seconds, and exercises an actual authenticated ephemeral numeric-loopback listener, readiness, typed runtime/OpenAPI compatibility and shutdown. The original sandbox overall attempt remains FAIL and is not relabeled as passing."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The 27-path candidate stays within approved T01 implementation and ordinary campaign/claim publication. Three generated search schemas are additive through the existing generator; authenticated fresh predecessor comparison preserves all 36 previous generated artifact bytes, while the committed availability fixture retains 102 method/path/operation identities. Existing connector DTO and API/client contracts are preserved. All six new Python sources/tests are registered in quality scope, and selected quality, architecture, ADR and backlog-view checks pass. Proposed ADR0059 documents implementation under Accepted ADR0057 and CAP-06-D01/D06 without changing accepted authority. This pure contract has no durable mutation, migration, operational audit event or governed UX change. The publication note truthfully separates its pre-retention generated-tree checker PASS from exact historical-page retention and does not claim a final retained-tree full-byte PASS."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "Inspection and the selected tests support exact/literal, phrase, Boolean, field and integer-filter roundtrips with original text and operand order preserved. Original and normalized query lengths are capped at 8192 codepoints; syntax and AST depth, 256 expanded node occurrences, 32 junction operands and 262144 UTF8 wire bytes are bounded, with at-cap and material over-cap coverage. String-aware byte/container/Unicode preflight precedes recursive JSON decoding. Duplicate members, unknown versions/fields/kinds, coercive years, invalid Unicode and malformed or cyclic graphs fail closed. Schema documentation accurately requires Core semantic loading after structural validation. Query representations and generated error surfaces omit private content; source text and ADR0029 anchor identities are unchanged."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w3-implementation",
+    "statement": "I independently inspected the exact base-to-candidate source, contracts, tests, governing approved scope and relevant accepted decisions; then incrementally reviewed recovered execution provenance and authenticated the frozen canonical R01 packet. I authored no product code, committed tests, owner qualification producer or evidence manifest. I ran no tests, generators, builds, credential scanners or full validator. My only execution beyond read-only inspection and hashing was the existing read-only task_submission_packet_errors helper for exact packet authentication. This new consolidated review ledger is my sole file write. I made no HEAD, index, backlog, planning, worksheet, source, referenced-evidence, taskctl or integration mutation. Parent-owned REVIEW publication is separate and is not represented as candidate product qualification."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "search:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Expanded task review is appropriate for this new portable contract. Review covered grammar/normalization identity, original/normalized/AST rebinding, strict wire and scalar rules, bounded graph traversal, diagnostic privacy, analyzer/source integrity, additive generated contracts and credible compatibility failures. Authenticated the selected narrow proof and its retained adverse attempt rather than repeating completed suites or an unchanged full profile. No blocking finding or scope conflict was identified.",
+    "deferred": [
+      "CAP-06.S01.T02 owns actual protected SQLCipher FTS5, derivative key/path authority, compiler/lowering, rights, indexing, rebuild, cancellation, crash and recovery proof.",
+      "CAP-06.S01.T03 and slice integration own search HTTP delivery, results, rank explanation, snippets, pagination, governed UI/native and accessibility proof.",
+      "Full repository/deployment profiles, packaging, performance/resource and cross-capability qualification remain at their owning slice/checkpoint/Wave boundaries. Standalone headless launch and AI mode are outside T01."
+    ]
+  },
+  "evidence_authentication": {
+    "result": "PASS",
+    "canonical_submission": "planning/backlog.yaml: CAP-06.S01.T01.review_control.current_submission",
+    "packet_errors": [],
+    "no_prior_attempts_or_open_findings": true,
+    "changed_paths": 27,
+    "criterion_rows": 4,
+    "authenticated_raw_log_hashes": 11,
+    "frozen_binding_snapshot": {
+      "path": "artifacts/tmp/CAP-06.S01.T01.frozen-R01-binding-01.json",
+      "sha256": "fae6c190a66e55f24c4283c8324233d7bfe7d902175a002a298e64b0fc3ca7d6"
+    },
+    "qualification_report": {
+      "path": "artifacts/tmp/CAP-06.S01.T01.qualification-01/report.json",
+      "sha256": "875b5dd1eddc65fcfd37d9d5990f0667bd125b8f753271774a000817ff39f229"
+    },
+    "fresh_selected_proof": "Ten completed original check groups retain complete passing raw logs. Their durations and exit codes are explicitly transcribed from actual owner execution-tool records after TimeoutExpired escaped the task-local recorder. Only the affected API group reran, with unchanged candidate, tests and pinned .venv, outside the sandbox. Owner/read-only-reviewer coordination held HEAD and tracked inputs fixed; reviewer independently observed the same candidate throughout. No completed-group rerun, receipt reuse or original before/after hash-equality report is claimed.",
+    "adverse_attempt": "The original overall qualification attempt is FAIL: its API command timed out after 180 seconds and its recorder did not preserve a final report, original before-hash snapshot or failed API partial stdout. These missing artifacts remain missing and are explicitly disclosed. Minimal no-Core Starlette diagnosis timed out in sandbox socketpair accept after 35 seconds and passed natively in 0.4421820999996271 seconds. This supports the targeted native rerun without claiming a product fix or inventing the lost output.",
+    "cleanup": "Read-only scoped cleanup observations report zero matching owned original API-test and minimal-diagnostic processes. The successful native API receipt records owned process exit and unchanged candidate."
+  },
+  "scope_limits": [
+    "This is an independent disposition of CAP-06.S01.T01 at the bound candidate only. It grants no slice, checkpoint, Wave or G3 release approval.",
+    "Reviewer authenticated owner-produced execution evidence and inspected source; reviewer did not independently execute runtime tests or measure performance.",
+    "Fresh qualification uses the pinned .venv. Earlier system-Python prerequisite evidence is not candidate qualification; no installed OS/stdlib attestation or cached-result reuse is claimed.",
+    "Parser/schema and existing API compatibility proof establish neither protected search persistence/authorization nor installed native application, standalone headless launcher or AI-mode behavior."
+  ],
+  "notes": "Approved CAP-06.S01.T01 R01 at exact candidate 460b07c6189263c250853a9ecf36d11a4d3ed44c. All four criteria are satisfied by the reviewed bounded implementation and authenticated selected evidence. No findings or prior closures. Original qualification FAIL, recorder limitations and targeted native API recovery remain explicit. T02/T03, slice/Wave qualification and human release authority remain separate."
+}
