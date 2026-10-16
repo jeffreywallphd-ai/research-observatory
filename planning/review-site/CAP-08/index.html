@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-08 · immutable evidence key</span><h1>CAP-evidence-verification</h1><p>Evidence schemas, extraction, verification, and adjudication</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>23</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>2d9f7bd19c34</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>23</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>82ed1a08ff38</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -51,7 +51,7 @@
   <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
   <div class="feedback-message" data-feedback-message role="status"></div>
   <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-08
-python tools/planctl.py --repo . wave approve W3 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# W3 approval is immutable; later changes use an append-only Wave amendment.
 # Only for overrides or notes:
 python tools/planctl.py --repo . apply-feedback CAP-08 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-08 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
@@ -59,7 +59,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-08-D01" data-recommendation="Small stable core plus versioned, forkable schema/ontology packs; original source wording retained" data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D01" data-recommendation="Small stable core plus versioned, forkable schema/ontology packs; original source wording retained" data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D01</span><h3>Ontology authority</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -86,7 +86,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D02" data-recommendation="Source passage/section candidates with immutable document revision and multi-selector anchors" data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D02" data-recommendation="Source passage/section candidates with immutable document revision and multi-selector anchors" data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D02</span><h3>Extraction unit</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D03" data-recommendation="Observed, Extracted, Inferred, Verified, Disputed, Adjudicated and Stale are explicit states with immutable transitions" data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D03" data-recommendation="Observed, Extracted, Inferred, Verified, Disputed, Adjudicated and Stale are explicit states with immutable transitions" data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D03</span><h3>Evidence state model</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -140,7 +140,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D04" data-recommendation="Separate verifier packet/prompt/role and serial execution; same-model use explicitly correlated, consequential/inferred/disputed/low-confidence cases require human review." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D04" data-recommendation="Separate verifier packet/prompt/role and serial execution; same-model use explicitly correlated, consequential/inferred/disputed/low-confidence cases require human review." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D04</span><h3>Verification independence</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -170,7 +170,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D05" data-recommendation="Decomposed retrieval, anchor, extraction, schema-fit, comparability and interpretation uncertainty" data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D05" data-recommendation="Decomposed retrieval, anchor, extraction, schema-fit, comparability and interpretation uncertainty" data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D05</span><h3>Confidence representation</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -197,7 +197,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D06" data-recommendation="Core covers work/document/passage, claim/evidence, theory/construct/method/context, provenance/status/decision and opportunity references; domain detail lives in packs." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D06" data-recommendation="Core covers work/document/passage, claim/evidence, theory/construct/method/context, provenance/status/decision and opportunity references; domain detail lives in packs." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D06</span><h3>Core scope</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -224,7 +224,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D07" data-recommendation="JSON Schema 2020-12 for record shape plus a constrained semantic-rule registry and JSON-LD context for export." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D07" data-recommendation="JSON Schema 2020-12 for record shape plus a constrained semantic-rule registry and JSON-LD context for export." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D07</span><h3>Schema format</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -251,7 +251,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D08" data-recommendation="Immutable pack versions, explicit compatible/breaking diff, project pinning, fork lineage and migration preview." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D08" data-recommendation="Immutable pack versions, explicit compatible/breaking diff, project pinning, fork lineage and migration preview." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D08</span><h3>Evolution</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -278,7 +278,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D09" data-recommendation="Deterministic structural/lexical retrieval plus optional semantic reranking selects bounded passages; packet records included and excluded rationale." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D09" data-recommendation="Deterministic structural/lexical retrieval plus optional semantic reranking selects bounded passages; packet records included and excluded rationale." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D09</span><h3>Selection strategy</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -305,7 +305,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D10" data-recommendation="Every field supports observed value, not reported, unclear, inapplicable and inferred candidate according to schema." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D10" data-recommendation="Every field supports observed value, not reported, unclear, inapplicable and inferred candidate according to schema." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D10</span><h3>Absence handling</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -332,7 +332,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D11" data-recommendation="Generate ranked entity-link candidates with lexical/semantic evidence; original source string remains canonical observation until human/rule acceptance." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D11" data-recommendation="Generate ranked entity-link candidates with lexical/semantic evidence; original source string remains canonical observation until human/rule acceptance." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D11</span><h3>Normalization</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -359,7 +359,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D12" data-recommendation="UUIDv7 evidence assertion identity plus immutable revision/attempt IDs; semantic duplicate linking is separate." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D12" data-recommendation="UUIDv7 evidence assertion identity plus immutable revision/attempt IDs; semantic duplicate linking is separate." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D12</span><h3>Record identity</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -386,7 +386,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D13" data-recommendation="Commands enforce allowed state transitions, actor role and required evidence; adjudication creates a new resolution record." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D13" data-recommendation="Commands enforce allowed state transitions, actor role and required evidence; adjudication creates a new resolution record." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D13</span><h3>Transition authority</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -413,7 +413,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D14" data-recommendation="Store component assessments and calibration bands, with “unknown/not assessed” first-class." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D14" data-recommendation="Store component assessments and calibration bands, with “unknown/not assessed” first-class." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D14</span><h3>Confidence</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -440,7 +440,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D15" data-recommendation="Verifier sees candidate plus exact cited source/schema, not extractor rationale; distinct evaluated model preferred only when resource-eligible, never an independence claim from a second prompt." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D15" data-recommendation="Verifier sees candidate plus exact cited source/schema, not extractor rationale; distinct evaluated model preferred only when resource-eligible, never an independence claim from a second prompt." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D15</span><h3>Independence</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -470,7 +470,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D16" data-recommendation="Return anchor-valid, entailed/contradicted/insufficient, schema-fit and inference-supported as separate judgments." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D16" data-recommendation="Return anchor-valid, entailed/contradicted/insufficient, schema-fit and inference-supported as separate judgments." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D16</span><h3>Decision dimensions</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -497,7 +497,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D17" data-recommendation="Stratify by field consequence, model/version, confidence band, schema, novelty and detected disagreement; estimate error with confidence intervals." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D17" data-recommendation="Stratify by field consequence, model/version, confidence band, schema, novelty and detected disagreement; estimate error with confidence intervals." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D17</span><h3>Human sampling</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -524,7 +524,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D18" data-recommendation="Server/core-side filtered cursor queries plus row/column virtualization; cells render domain status and provenance." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D18" data-recommendation="Server/core-side filtered cursor queries plus row/column virtualization; cells render domain status and provenance." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D18</span><h3>Grid architecture</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -551,7 +551,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D19" data-recommendation="All changes are explicit candidate/correction/adjudication commands with preview; direct cell edit opens the correct workflow." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D19" data-recommendation="All changes are explicit candidate/correction/adjudication commands with preview; direct cell edit opens the correct workflow." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D19</span><h3>Editing</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -578,7 +578,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D20" data-recommendation="Persistent details drawer with passage, anchor, document context, verifier, alternatives and history; keyboard focus returns to cell." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D20" data-recommendation="Persistent details drawer with passage, anchor, document context, verifier, alternatives and history; keyboard focus returns to cell." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D20</span><h3>Source interaction</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -605,7 +605,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D21" data-recommendation="Application-level local named-coder blinding/immutable assignments, explicit same Windows project-owner/admin limits; no hosted identity or physical foreign-host claim." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D21" data-recommendation="Application-level local named-coder blinding/immutable assignments, explicit same Windows project-owner/admin limits; no hosted identity or physical foreign-host claim." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D21</span><h3>Assignment independence</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -635,7 +635,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>ADR-0058</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D22" data-recommendation="Report raw agreement and field-appropriate statistics: Cohen kappa for two nominal coders, weighted kappa for ordered categories, Krippendorff alpha for multiple/missing data; always show N and missingness." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D22" data-recommendation="Report raw agreement and field-appropriate statistics: Cohen kappa for two nominal coders, weighted kappa for ordered categories, Krippendorff alpha for multiple/missing data; always show N and missingness." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D22</span><h3>Agreement metrics</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -662,7 +662,7 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-08-D23" data-recommendation="Create a named resolution record referencing all coder records and allow unresolved outcome." data-plan-hash="2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2">
+<section class="decision-card" data-decision-id="CAP-08-D23" data-recommendation="Create a named resolution record referencing all coder records and allow unresolved outcome." data-plan-hash="82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-08-D23</span><h3>Adjudication</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -695,37 +695,37 @@ python tools/planctl.py --repo . ready CAP-08 --wave &lt;active-wave&gt; --requi
   <div class="slice-card-index">1</div>
   <div><span class="eyebrow">SLICE-core-ontology-and-schema-pack-registry</span><h3>Core ontology and schema-pack registry</h3>
   <p>3 tasks · W3 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-08.S03.html">
   <div class="slice-card-index">2</div>
   <div><span class="eyebrow">SLICE-evidence-record-status-confidence-and-uncertainty-model</span><h3>Evidence record, status, confidence, and uncertainty model</h3>
   <p>3 tasks · W3 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-08.S02.html">
   <div class="slice-card-index">3</div>
   <div><span class="eyebrow">SLICE-source-grounded-extraction-pipeline</span><h3>Source-grounded extraction pipeline</h3>
   <p>3 tasks · W3 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-08.S04.html">
   <div class="slice-card-index">4</div>
   <div><span class="eyebrow">SLICE-independent-evidence-verification</span><h3>Independent evidence verification</h3>
   <p>3 tasks · W3 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-08.S05.html">
   <div class="slice-card-index">5</div>
   <div><span class="eyebrow">SLICE-evidence-matrix-and-source-first-analysis-ui</span><h3>Evidence matrix and source-first analysis UI</h3>
   <p>3 tasks · W3 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-08.S06.html">
   <div class="slice-card-index">6</div>
   <div><span class="eyebrow">SLICE-coder-comparison-adjudication-and-evidence-export</span><h3>Coder comparison, adjudication, and evidence export</h3>
   <p>3 tasks · W3 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a></div>
 <details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>PRIVATE PROPOSED W3 CONTRIBUTION. Approval, accepted status and execution remain pending. Original source: `planning/capability-plans/CAP-08.md` / `ddf910493846d24572db880ad5dc1c6109eda4f4e7d03bc8774a0d46c9f4d084`. Preserve inherited W1 selections; recommended W3 values are resolved draft choices subject to one complete Wave review, not existing approvals. `required_adr: null` here does not waive the three material architecture topics; unassigned historical ADR-CAP placeholders are replaced by the explicit topic register.
 
@@ -867,7 +867,29 @@ Proposed W3 execution order: CAP-08.S01, CAP-08.S03, CAP-08.S02, CAP-08.S04, CAP
 
 ## Canonical proposed-publication reconciliation
 
-Actual W2/G2 initial completion is recorded at1cc8131d8b74cf6c536d48ce4badc25933981bbb; the current planning predecessor and committed post-exit roadmap is2e2f1a9d042c3dd8db3f8f31b648a36ad004c505. See artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json and the independent Wave/S06/CP10 records. Historical3541 product,1b377 build/reference/Native,fc694 full90 and ownerf86 identities remain distinct. Initial1000 functional commit is qualified, but100k publication/fullmanifest/replay/reopen and continuous performance remain UNQUALIFIED; no1000 productcap or W3metadata/vector100k import-throughput inference. All failed/UNKNOWN/UNTESTED evidence, parser-only2.5333542s acceptance, source-search median7s/all24raws, strictClippyFAIL,409UNKNOWN, security expiry and platform/installer gaps remain. Owner933b moves optional cosmetics and optimization/performance intake to newW10; functional/security qualification residuals remain separately trackedW9, and larger-computing product workW5. Before W3 approval, suggested soft median timing overage strictly&lt;7s may be accepted with W10 debt; completed comparable trials/allraws retained, failed/timeouts and hard functional/security/resource/cancellation bounds unchanged. Hosted university/cloud labels areW11/W12. All48IDs/16slices/924hours including28once, ordered proof ownership, policy03 metrics/token semantics and serial admission are retained. ADR0056–58/reference1.10 remain Proposed, active1.9 unchanged and W3approvalPENDING; no implementation is authorized.</pre></article></details>
+Actual W2/G2 initial completion is recorded at1cc8131d8b74cf6c536d48ce4badc25933981bbb; the current planning predecessor and committed post-exit roadmap is2e2f1a9d042c3dd8db3f8f31b648a36ad004c505. See artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json and the independent Wave/S06/CP10 records. Historical3541 product,1b377 build/reference/Native,fc694 full90 and ownerf86 identities remain distinct. Initial1000 functional commit is qualified, but100k publication/fullmanifest/replay/reopen and continuous performance remain UNQUALIFIED; no1000 productcap or W3metadata/vector100k import-throughput inference. All failed/UNKNOWN/UNTESTED evidence, parser-only2.5333542s acceptance, source-search median7s/all24raws, strictClippyFAIL,409UNKNOWN, security expiry and platform/installer gaps remain. Owner933b moves optional cosmetics and optimization/performance intake to newW10; functional/security qualification residuals remain separately trackedW9, and larger-computing product workW5. Before W3 approval, suggested soft median timing overage strictly&lt;7s may be accepted with W10 debt; completed comparable trials/allraws retained, failed/timeouts and hard functional/security/resource/cancellation bounds unchanged. Hosted university/cloud labels areW11/W12. All48IDs/16slices/924hours including28once, ordered proof ownership, policy03 metrics/token semantics and serial admission are retained. ADR0056–58/reference1.10 remain Proposed, active1.9 unchanged and W3approvalPENDING; no implementation is authorized.
+
+## W3 authority recording — 2026-10-16
+
+The owner approved the complete reviewed W3 proposal at
+`45216934b81c4a437b3707df0f9e7f79a825e271` and directed implementation; see
+`artifacts/evidence/W3.owner-planning-approval-20261016-01.md`.
+ADR-0056, ADR-0057 and ADR-0058 are now Accepted. The exact reviewed experience
+is published as RO-UI-ACADEMIC-MINIMAL-1.10 at
+`3b47dfd4f332805e66c58542d3decd4e56c7f45e`, following its immutable human
+design approval record. This is authority recording and material-plan binding,
+with no change to selected decisions, task IDs, dependencies, criteria, proof
+ownership, estimates or allocations. Earlier proposed/private wording remains
+the original planning history. This paragraph applies only to the W3 contribution;
+inherited decisions and future Waves retain their own authority.
+
+The ordinary complete-Wave approval below/beside this plan binds the final
+acceptance snapshot once. Taskctl readiness and dependency-eligible claims remain
+mandatory; no actual model fit, quality, annotation, runtime, product proof or
+release approval is supplied by planning acceptance. Minor nonfunctional styling
+and eligible suggested-target median timing optimization go to W10 under the
+latest owner direction; all hard functional/security/rights/resource/cancellation
+limits and every raw failed or unknown result remain preserved.</pre></article></details>
 
     </main>
   </div>

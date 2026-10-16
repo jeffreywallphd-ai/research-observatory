@@ -8,7 +8,7 @@ capability_plan: planning/capability-plans/CAP-07.md
 planning_gate: capability-decision-complete
 slice_id: CAP-07.S05
 title: AI observability, budgets, and evaluation operations
-status: proposed
+status: approved
 wave: W3
 priority: P0
 deployment_profiles:
@@ -23,12 +23,11 @@ task_ids:
 - CAP-07.S05.T03
 ui_reference: RO-UI-ACADEMIC-MINIMAL-1.10
 approval:
-  status: pending
-  approved_by: null
-  approved_at: null
-  approved_commit: null
+  status: approved
+  approved_by: human:repository-owner
+  approved_at: '2026-10-16T13:10:45.921360+00:00'
+  approved_commit: d91e6b3b280e082f824498cbd06cfa5fd09b8f1d
 ---
-
 # CAP-07.S05 — AI observability, budgets, and evaluation operations
 
 PRIVATE PROPOSAL; NO IMPLEMENTATION AUTHORITY.

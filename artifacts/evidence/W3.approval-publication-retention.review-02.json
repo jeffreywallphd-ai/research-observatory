@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-incremental-W3-approval-publication-two-page-retention-disposition",
+  "reviewer": "agent:/root/w3_authority_review",
+  "reviewedAtUtc": "2026-10-16T13:54:22.685582+00:00",
+  "result": "APPROVED_FOR_EXACT_TWO_PAGE_RETENTION_AND_NOTE_REVISION",
+  "baseCommit": "d91e6b3b280e082f824498cbd06cfa5fd09b8f1d",
+  "reviewedStagedDiffSHA256": "a8c26fa7c019d771e5f0d8991946f4e95536740bc6bcbcd0bf87504157534eb1",
+  "scope": "Incremental second normal unchanged-hook failure: ECR0014 credential-stage diagnostics, exact historical-page byte comparison, and proposed extension of the reviewed exact-retention publication route. Reuses the first review for unchanged W3 approval sources and ECR0008. Does not approve the currently stale one-page draft note or claim final committed-candidate integration.",
+  "findings": [],
+  "blockingFindings": [],
+  "judgment": "The second failure is material new publication evidence, so exact ECR0014 predecessor retention is now justified too. Its two flagged lines are unchanged between already admitted predecessor and rejected successor. All observed successor changes are generated navigation or historical-reference presentation, not a product/approval decision. Retaining both exact already committed pages preserves approved authority and avoids new historical-content publication. Proceed with the unchanged hook after revising the unpublished draft note to cover both actual failures, both retained hashes and both presentation limitations. No control/framework or product scope change is needed.",
+  "authenticatedFacts": {
+    "ECR0014Path": "planning/review-site/enablers/ECR-0014.html",
+    "admittedPredecessorCanonicalSHA256": "48a8b708dcb49dd38f4b83b92332baf9d5020c35d76a3ded6230d40b7c33abea",
+    "rejectedSuccessorCanonicalSHA256": "7668ee3075f4566201d5f359603dd12a3a30fc02ab9668a59d762172e0041759",
+    "savedPagesEqualActualHEADAndIndex": true,
+    "exactDeltaRanges": [
+      {
+        "oldLines": [
+          33,
+          33
+        ],
+        "newLines": [
+          33,
+          33
+        ],
+        "meaning": "Global Waves navigation labels and W12 link"
+      },
+      {
+        "oldLines": [
+          85,
+          86
+        ],
+        "newLines": [
+          85,
+          86
+        ],
+        "meaning": "Historical approved1.9 binding/current published1.10 explanatory prose and immutable Git-source link presentation"
+      }
+    ],
+    "allOtherLinesEqual": true,
+    "credentialDiagnosticFindingCount": 2,
+    "credentialDiagnosticRules": [
+      "generic-api-key",
+      "generic-api-key"
+    ],
+    "credentialDiagnosticLines": [
+      500,
+      520
+    ],
+    "flaggedLinesUnchangedAtSameLocationsInPredecessorAndSuccessor": true,
+    "rawFlaggedValuesNotPrintedOrCopiedIntoDisposition": true,
+    "fiveNewEvidenceFilesDiagnosticFindingCount": 0,
+    "firstActualReviewPreservedExact": true,
+    "firstReviewSHA256": "232bf06e9751bacb6fb34ef73bb0f94c15d99f05fafc1b85bc446be3be77d652",
+    "HEADRemainsAcceptanceSnapshot": true,
+    "reviewerDidNotRecheckOrChangeAlreadyReviewedProductScope": true
+  },
+  "requiredFinalEdits": {
+    "exactRetention": "Keep both ECR0008 and ECR0014 equal to their full already committed predecessor bytes. Do not redact, move, normalize or reencode historical values to evade controls.",
+    "draftNoteTruth": "Revise the unpublished artifacts/evidence/W3.approval-publication-retention-20261016-01.md. Its present statement that the ECR0014 successor is published is stale after failure02 and must be removed/replaced before commit. Preserve first and second failures and separate diagnostic scope; do not claim a scanner false positive or no secret without evidence.",
+    "historicalPresentationLimit": "Disclose both pages retaining earlier W10/W11 sidebar labels without W12. ECR0014 also retains old approved1.9 reference presentation instead of the new generated historical-source clarification; its immutable historical packet remains controlling, and actual current reference1.10 approval/publication is separate. Provide authoritative paths/commit references in the new note without copying flagged historical content.",
+    "proofAndOutcome": "Preserve both rejection rounds, first review and exact saved pages. Record equality of every other reviewed source/generated input and the revised new evidence files. Normal unchanged privacy hook must pass; final independently reviewed committed candidate follows.",
+    "checkerScope": "Keep the original full-byte generated-tree PASS at its actual pre-retention scope. Do not claim full-byte checker PASS for a final tree retaining either historical page."
+  },
+  "evidence": {
+    "secondRejection": {
+      "path": "artifacts/tmp/W3.approval-publication-privacy-01/rejection-02.json",
+      "sha256": "5836e35b62643e6ff17785bbf26f9ed02a6cf8f38f8e4acbdbe07b2bc1789c7e"
+    },
+    "credentialDiagnostic": {
+      "path": "artifacts/tmp/W3.approval-publication-privacy-01/credential-diagnostic-02.json",
+      "sha256": "cef85f53caa80ddec91cd5914929083c8511ea422e36220ee6fb247e26c61546"
+    },
+    "savedPredecessor": "artifacts/tmp/W3.approval-publication-privacy-01/ECR-0014-admitted-predecessor.html",
+    "savedSuccessor": "artifacts/tmp/W3.approval-publication-privacy-01/ECR-0014-rejected-successor.html",
+    "firstDisposition": {
+      "path": "artifacts/tmp/W3.approval-publication-privacy-01/independent-retention-disposition-01.json",
+      "sha256": "232bf06e9751bacb6fb34ef73bb0f94c15d99f05fafc1b85bc446be3be77d652"
+    },
+    "executionProvenance": "Parent reports unchanged normal hook exit1 followed by narrow pinned credential_report diagnostic. Reviewer inspected recorded fingerprints/counts, authenticated saved pages to exact HEAD/index bytes, and proved flagged-line equality; reviewer did not execute scanner or infer secret validity."
+  },
+  "limits": [
+    "First disposition correctly did not authorize extra ECR0014 retention before observed failure02; this append-only second disposition expands only that bounded publication response based on new evidence.",
+    "Current uncommitted one-page draft is not a truthful final note for the two-page retention; revision specified above is necessary before publication.",
+    "No product/task/slice/Wave completion, current readiness, live model/provider authority, headless-mode scope or G3 release is conferred."
+  ],
+  "reviewerActions": {
+    "tests": false,
+    "validators": false,
+    "credentialScanner": false,
+    "generators": false,
+    "HEADIndexCanonicalFilesMutated": false,
+    "onlyNewIgnoredDispositionWritten": true
+  }
+}

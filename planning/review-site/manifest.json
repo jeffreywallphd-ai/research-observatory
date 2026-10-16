@@ -6628,7 +6628,7 @@
       "task_count": 48,
       "exit_gate_id": "G3",
       "gate_status": "PENDING",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W4"
@@ -27959,7 +27959,7 @@
       "capability_alias": "CAP-search-screening",
       "title": "Local search, discovery, corpus diagnostics, and screening",
       "plan_path": "planning/capability-plans/CAP-06.md",
-      "plan_sha256": "d5deb2682bb0d0635a2d88fcc7248bf0786777376e45b75136a798cfdbf72326",
+      "plan_sha256": "dcbdde90f925d728b2f2c556b1f1ec38e13c0b641ba342e715c9f3de067587f8",
       "page": "CAP-06/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -27970,7 +27970,7 @@
           "wave": "W3",
           "title": "Fielded lexical search and local indexing",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
-          "plan_sha256": "fa17c850c3e6a2653e4497c1435e8eafd021774ca3ad1aa5473359be0defa88b",
+          "plan_sha256": "5ad63b878a7885e4e8b19c4c6836532a6ba6f9d37908ee3e076176d5398f3ed1",
           "page": "CAP-06/CAP-06.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -28061,7 +28061,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "3af73a98a1c5f11bb30c9f04034bef8112d575010d16c91749338dc8befd7065",
+              "plan_section_sha256": "181508fd3d3eed8f569d6edb40fbee1b963b39165badbbd37e60c521427af8ad",
               "worksheet": null
             }
           ]
@@ -28072,7 +28072,7 @@
           "wave": "W3",
           "title": "Semantic representations and vector retrieval",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
-          "plan_sha256": "bdd0647d0d9cb82705b1454694d6f6267682ad5c5d0f026f0b4934e3f3760e63",
+          "plan_sha256": "ecfe62b2d7ac7c6930350a05a9cccd1176b77a5a580aea937d176190dfccf539",
           "page": "CAP-06/CAP-06.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -28164,7 +28164,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "991a67144094f0db9e2c39115163e25a5082ea57f0fed5c4f15ebab7128eedc0",
+              "plan_section_sha256": "f0881611710c17baa9d4fb8c0e0e7f159a5b9b92d032bbe2f1f13d5491351c8d",
               "worksheet": null
             }
           ]
@@ -28175,7 +28175,7 @@
           "wave": "W3",
           "title": "Hybrid retrieval and reranking",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
-          "plan_sha256": "acfb91e2d990656e1d0ef9610124fd7475a5b6f49e9241dae14d1c182b0ee1c8",
+          "plan_sha256": "2a9c1ca0d801b84cc189aaa6c2ced7f2fef4fa0c847a752b390b1e2de524f8e2",
           "page": "CAP-06/CAP-06.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -28268,7 +28268,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "cd2a1045d5a40f954c6d4bc243234e85a34bd0be61c372b8f4f7d1e3932d14b9",
+              "plan_section_sha256": "59db0f9682975be13103730bdaec342502a47927e31d54ab4cb8afac34af4916",
               "worksheet": null
             }
           ]
@@ -28279,7 +28279,7 @@
           "wave": "W3",
           "title": "Search Studio and transparent expansion",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
-          "plan_sha256": "5fb4fa05b96c9edbb6ddf324eabf1fb2da3f41aad90a12fbf9117b89bf1680a3",
+          "plan_sha256": "8f5fd3ad269f337e1280427e615cbb0d48464c39e3275a069137b87868206dcd",
           "page": "CAP-06/CAP-06.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -28370,7 +28370,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "19b6fc23bf99e53ebfdd6afbddaef2221936116d1ff0a50c673adb5ea89ac8d9",
+              "plan_section_sha256": "34f1ba19826d437390e026bc825158da400804bd40712974f4f594a8aecce56b",
               "worksheet": null
             }
           ]
@@ -28381,7 +28381,7 @@
           "wave": "W3",
           "title": "Corpus canvas, coverage, and reflexivity diagnostics",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
-          "plan_sha256": "36944456ff86e10a408afbf43d4ad3cc156c185b623c16904d3594450c8a466d",
+          "plan_sha256": "8ea09f7533d1f405c32803f97067090747d32f16fe4dbbe6e0dceb347e186a46",
           "page": "CAP-06/CAP-06.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -28472,7 +28472,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "107b68005981a872d6fe3c87b1659c89f0c904247f880462d2ba5ec2abc3ec2a",
+              "plan_section_sha256": "d906658f9547eec78cb7bd8a34818b902c335b03b84b094d64fb5e45f6323da1",
               "worksheet": null
             }
           ]
@@ -28483,7 +28483,7 @@
           "wave": "W3",
           "title": "Transparent screening and active-learning governance",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
-          "plan_sha256": "cbad18e810ee18c904dbb81669f3b5a062c3a8a0d201ff0b4c8d9657dc1ca633",
+          "plan_sha256": "a72dd9ef0507554cd4be7366cbc8ffacfcf6ccdc6c13e8e84111cb4742896fe1",
           "page": "CAP-06/CAP-06.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -28575,7 +28575,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "f214962923c2078ec9da6ed3a297c1354d6b7c7de378ca9fe25eb93533deae09",
+              "plan_section_sha256": "af02ffdaabb6e371cb14119a62a28775c92942f07f3eb1c5d83946f62152a95f",
               "worksheet": null
             }
           ]
@@ -28587,7 +28587,7 @@
       "capability_alias": "CAP-model-gateway",
       "title": "Provider-neutral model gateway and governed AI execution",
       "plan_path": "planning/capability-plans/CAP-07.md",
-      "plan_sha256": "cb056cd94d33197d798ffea04d43f63acc5a2935b2948fb35f8c7c497cc9fa1c",
+      "plan_sha256": "649461e2e31be94feb71385cbc27f64be02178ec7c02e387ce7360e530ee1c2c",
       "page": "CAP-07/index.html",
       "decision_count": 20,
       "slice_count": 5,
@@ -30806,7 +30806,7 @@
           "wave": "W3",
           "title": "Prompt, schema, and structured-output registry",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
-          "plan_sha256": "6fd3f69733391a0ae3ea2c20f88f911c25000d63f2af1f0209ea4ffff7c50686",
+          "plan_sha256": "229644b166e8c420a6138dcdf46a096dc4d1f30c4df99df8405afed45ed14450",
           "page": "CAP-07/CAP-07.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -30897,7 +30897,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "ee67794c6ea4c1820dfb0edb1b6ac40c26775274aa80781904dbf00564c5fad5",
+              "plan_section_sha256": "6bd93ed3905d41bd250e7b0b7d2fd838c74fe6c6237193aea725257ee7787a00",
               "worksheet": null
             }
           ]
@@ -30908,7 +30908,7 @@
           "wave": "W3",
           "title": "Local model runtime and model management",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
-          "plan_sha256": "88939fc6640db165b3f7848f8f0073f8c399be6f16a8d6221492ad0dd24f7c5c",
+          "plan_sha256": "0598bb4a7b183ac6e7292ca6bf525d0cdc3aa99bbb6a81b2a517b2ca07c1a81a",
           "page": "CAP-07/CAP-07.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -31000,7 +31000,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "09bb55c9291547da40c6500e18531d5d4f16903a452a8e8e0c9a9a69c00c7a5f",
+              "plan_section_sha256": "2076b31e91666ceffda219a7e2bd17e08c8e6d4516fbaba722c1509ff95144ed",
               "worksheet": null
             }
           ]
@@ -31011,7 +31011,7 @@
           "wave": "W3",
           "title": "AI observability, budgets, and evaluation operations",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
-          "plan_sha256": "48cfb7633510dc835baa9e4b2e59e37944732ed83302cdc16a25b73b0a2eb3af",
+          "plan_sha256": "856adc8042445c734fba2fea074e952d315d157faae248a2f11180181a969ea0",
           "page": "CAP-07/CAP-07.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -31102,7 +31102,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "59cbc18d67f7281920816bdc8285787dbb1d42f74b53751e287701e1d5f0c33b",
+              "plan_section_sha256": "ea1d4f2653558d7ce146a8131938f1674f20843b0b983cbad364c385a63e2474",
               "worksheet": null
             }
           ]
@@ -31113,7 +31113,7 @@
           "wave": "W3",
           "title": "Approved remote model providers",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
-          "plan_sha256": "67287463020f7abc9efc4f50b89e674b48f00f003cb5ac58ba7605dd74fb532c",
+          "plan_sha256": "8a8919d29bb453ad04fdd02aea2c3a164a2ef458dd130397cc84028e50778cba",
           "page": "CAP-07/CAP-07.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -31206,7 +31206,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "eaa04cc8bd4b57c3a900709ae25b9c1bff6e9944a93045451773228d4567dedf",
+              "plan_section_sha256": "ff2dee9f1fc05cf00c988e1f68204b4e1dfcb47c55e37fb1657b38202ec78552",
               "worksheet": null
             }
           ]
@@ -31218,7 +31218,7 @@
       "capability_alias": "CAP-evidence-verification",
       "title": "Evidence schemas, extraction, verification, and adjudication",
       "plan_path": "planning/capability-plans/CAP-08.md",
-      "plan_sha256": "2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2",
+      "plan_sha256": "82ed1a08ff3877da25ed99fbe21f1557833869da0c01280775d628017c934d5b",
       "page": "CAP-08/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -31229,7 +31229,7 @@
           "wave": "W3",
           "title": "Core ontology and schema-pack registry",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
-          "plan_sha256": "9a242f8265dd7762d1bf7deddd226d372fbb6f82dc8bfb3ca3b611fe62fce8a1",
+          "plan_sha256": "ebb32fdd8cdd6d59983ed25329740d6a7cdd0468c1e0e93317cc46ce3c272d26",
           "page": "CAP-08/CAP-08.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -31320,7 +31320,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "9e38600a5ca4a794b531d48586bb11fff9df454175bd01687586ef96f35d1546",
+              "plan_section_sha256": "558053cc68a21a13446bde120832a92036ff20e4b1050ef68192e5998402f1b7",
               "worksheet": null
             }
           ]
@@ -31331,7 +31331,7 @@
           "wave": "W3",
           "title": "Evidence record, status, confidence, and uncertainty model",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
-          "plan_sha256": "e5f6960235da67d38103104f09ca1e08685e7e1eae8ca0482e583ddda85927bd",
+          "plan_sha256": "819ef24c13c324a89a83f4ffe3b211eb3de8576a4bb716af81b0d385cc7c9093",
           "page": "CAP-08/CAP-08.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -31422,7 +31422,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "e5e75cc061dd1823d2c4ed2ad3a2c938ebc069bea7ed97e1fed0fb2043e00dfb",
+              "plan_section_sha256": "e7a7453cf37f09453270f7999f97ddc7c2396f228dcc715571b35eede4d2bc56",
               "worksheet": null
             }
           ]
@@ -31433,7 +31433,7 @@
           "wave": "W3",
           "title": "Source-grounded extraction pipeline",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
-          "plan_sha256": "7134b75cc56d0c9f2d71a6f2ca16aa6f700ce602f6f993301a625916fd02c83a",
+          "plan_sha256": "6b8bba43801b319de2213eee5af1fe1969408a9308e813d7145563a00501e691",
           "page": "CAP-08/CAP-08.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -31529,7 +31529,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "40a5836d821650caa98f3a4d523295ff724f2150f28835f820e21a83c73ed12d",
+              "plan_section_sha256": "b94cbf459d298f310ac3feefe325295026743a8e58cf4e162d0e034fe218918c",
               "worksheet": null
             }
           ]
@@ -31540,7 +31540,7 @@
           "wave": "W3",
           "title": "Independent evidence verification",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
-          "plan_sha256": "2ee3cd9c1148f149d4c98208b04740acf9be79889709eb6f260351925afaf026",
+          "plan_sha256": "12189f463f6e163168b50e7b6709acaed624ee1278bd32624b78224e6f512715",
           "page": "CAP-08/CAP-08.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -31632,7 +31632,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "4b651ca6e3b501f1f5ee51d35dfeb318f9524fac4b4a903a290c894255eef497",
+              "plan_section_sha256": "496d55df8a18713c3359f1e4403ecd6e0cdc45d70d4ec152d91086a69ef650a4",
               "worksheet": null
             }
           ]
@@ -31643,7 +31643,7 @@
           "wave": "W3",
           "title": "Evidence matrix and source-first analysis UI",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
-          "plan_sha256": "b2ab9b0cf88b682aedac5e091609010f0a48964a209afdac4de6cd2ad77a80fd",
+          "plan_sha256": "610e4e49b13b4737bb5bbcda9a32c1fcb16d24a3a51fff22b69dd7be13723864",
           "page": "CAP-08/CAP-08.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -31735,7 +31735,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "8185d4787a526c0f9adf8c3ff08d9080422d45fac31ce694b180d25d0a2c19b6",
+              "plan_section_sha256": "d205bebb3eb7c7785e804a01b7c7aa3b8de4b1820f73254ba426c2a8c4afb0e0",
               "worksheet": null
             }
           ]
@@ -31746,7 +31746,7 @@
           "wave": "W3",
           "title": "Coder comparison, adjudication, and evidence export",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
-          "plan_sha256": "2adf6ad47370d57eed88a4adb974d50763a4ed1cab24b309568a6dba41049388",
+          "plan_sha256": "4ce7528ae61f739d9d9ee36bc1942216f58c397eadb3b8cc2c52065d393d621c",
           "page": "CAP-08/CAP-08.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -31837,7 +31837,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "665357d4933a34f183c0e5542c343d7d415be707fce19d6f08eec4c1eda3ba7b",
+              "plan_section_sha256": "dab1ecdadbde535df68f7db45b1464da1e925b8ef9cfab58100611d6affefb31",
               "worksheet": null
             }
           ]
@@ -42458,7 +42458,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "f48f11ed12c10d26acb1b80053e1a823c3ee5c16",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [
@@ -43035,7 +43035,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "43e317be1e644c77e653ff5f121425d6e2cde2ef",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [],
@@ -43606,7 +43606,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [],
@@ -48556,7 +48556,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [],
@@ -49295,7 +49295,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [],
@@ -50302,7 +50302,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [],
@@ -51054,7 +51054,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
         }
       },
       "scope_addenda": [
@@ -51688,34 +51688,45 @@
         "files": [
           {
             "path": "design/ui-reference/APPROVAL.yaml",
-            "sha256": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce"
+            "sha256": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce",
+            "sourceCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
           },
           {
             "path": "design/ui-reference/REFERENCE_MANIFEST.yaml",
-            "sha256": "19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b"
+            "sha256": "19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b",
+            "sourceCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
           },
           {
             "path": "design/ui-reference/STYLE_GUIDE.md",
-            "sha256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5"
+            "sha256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5",
+            "sourceCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
           },
           {
             "path": "design/ui-reference/WORKFLOW_CATALOG.json",
-            "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d"
+            "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d",
+            "sourceCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
           },
           {
             "path": "design/ui-reference/SITE_MANIFEST.json",
-            "sha256": "0ba1d5dd9beda4509ab21af7b57439cbc58c415c0d502851ac81f2691abb1488"
+            "sha256": "0ba1d5dd9beda4509ab21af7b57439cbc58c415c0d502851ac81f2691abb1488",
+            "sourceCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
           },
           {
             "path": "design/ui-reference/projects.html",
-            "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858"
+            "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858",
+            "sourceCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
           },
           {
             "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
             "sha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e"
           }
         ],
-        "referenceApprovalStatus": "approved"
+        "referenceApprovalStatus": "approved",
+        "sourceBinding": {
+          "mode": "historical-approved",
+          "packetCommit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce",
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.10"
+        }
       },
       "scope_addenda": [
         {

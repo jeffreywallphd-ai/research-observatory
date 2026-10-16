@@ -8963,14 +8963,97 @@ waves:
   activation_gate: G2
   track: local-baseline
   approval:
-    status: PENDING
-    approved_by: null
-    approved_at: null
-    approved_commit: null
-    capability_ids: []
-    decision_ids: []
-    slice_ids: []
-    notes: null
+    status: APPROVED
+    approved_by: human:repository-owner
+    approved_at: '2026-10-16T13:10:45.921360+00:00'
+    approved_commit: d91e6b3b280e082f824498cbd06cfa5fd09b8f1d
+    capability_ids:
+    - CAP-06
+    - CAP-07
+    - CAP-08
+    decision_ids:
+    - CAP-06-D01
+    - CAP-06-D02
+    - CAP-06-D03
+    - CAP-06-D04
+    - CAP-06-D05
+    - CAP-06-D06
+    - CAP-06-D07
+    - CAP-06-D08
+    - CAP-06-D09
+    - CAP-06-D10
+    - CAP-06-D11
+    - CAP-06-D12
+    - CAP-06-D13
+    - CAP-06-D14
+    - CAP-06-D15
+    - CAP-06-D16
+    - CAP-06-D17
+    - CAP-06-D18
+    - CAP-06-D19
+    - CAP-06-D20
+    - CAP-06-D21
+    - CAP-06-D22
+    - CAP-06-D23
+    - CAP-07-D02
+    - CAP-07-D03
+    - CAP-07-D04
+    - CAP-07-D05
+    - CAP-07-D09
+    - CAP-07-D10
+    - CAP-07-D11
+    - CAP-07-D12
+    - CAP-07-D13
+    - CAP-07-D14
+    - CAP-07-D15
+    - CAP-07-D16
+    - CAP-07-D17
+    - CAP-07-D18
+    - CAP-07-D19
+    - CAP-07-D20
+    - CAP-08-D01
+    - CAP-08-D02
+    - CAP-08-D03
+    - CAP-08-D04
+    - CAP-08-D05
+    - CAP-08-D06
+    - CAP-08-D07
+    - CAP-08-D08
+    - CAP-08-D09
+    - CAP-08-D10
+    - CAP-08-D11
+    - CAP-08-D12
+    - CAP-08-D13
+    - CAP-08-D14
+    - CAP-08-D15
+    - CAP-08-D16
+    - CAP-08-D17
+    - CAP-08-D18
+    - CAP-08-D19
+    - CAP-08-D20
+    - CAP-08-D21
+    - CAP-08-D22
+    - CAP-08-D23
+    slice_ids:
+    - CAP-06.S01
+    - CAP-06.S02
+    - CAP-06.S03
+    - CAP-06.S04
+    - CAP-06.S05
+    - CAP-06.S06
+    - CAP-07.S04
+    - CAP-07.S02
+    - CAP-07.S05
+    - CAP-07.S03
+    - CAP-08.S01
+    - CAP-08.S03
+    - CAP-08.S02
+    - CAP-08.S04
+    - CAP-08.S05
+    - CAP-08.S06
+    notes: Owner approved reviewed proposal 45216934b81c4a437b3707df0f9e7f79a825e271 in the current implementation chat; this
+      acceptance-only snapshot records ADR0056-58 and exact reference1.10 publication, independent activation review, and
+      material bindings. No scope or estimates changed; G3 remains separate.
   campaign: null
   checkpoints: []
   completion:

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-bounded-W3-approval-publication-privacy-retention-disposition",
+  "reviewer": "agent:/root/w3_authority_review",
+  "reviewedAtUtc": "2026-10-16T13:48:28.733230+00:00",
+  "result": "APPROVED_FOR_EXACT_PREDECESSOR_RETENTION",
+  "baseCommit": "d91e6b3b280e082f824498cbd06cfa5fd09b8f1d",
+  "reviewedStagedDiffSHA256": "c5e511b52b63c4b8d352f62c30478e652848de57976850ef9fc934706a15163b",
+  "reviewedStagedChangedPaths": 69,
+  "scope": "Read-only review of normal W3 approval metadata publication and the exact ECR0008 generated-page rejection. Approves preserving the identical already committed historical page instead of publishing its rejected navigation-only successor, with a truthful new append-only publication note. This is not final commit-bound integration disposition, current readiness, a full final-tree checker PASS, or product qualification.",
+  "findings": [],
+  "blockingFindings": [],
+  "judgment": "The existing owner W3 approval supports this metadata recording. The staged source changes preserve the approved scope and all task/campaign/completion state, and both copied independent reviews are verbatim canonical copies. The rejected ECR0008 page changes only one global Waves-navigation line; preserving its exact admitted predecessor changes no proposal or authority and introduces no new private content. The prior disclosed planning publication already uses this same exact historical-page retention route. This can proceed without a hook, baseline, admission, generator, test, authority or new framework change. The final note must state its stale sidebar labels and absent W12 link and must distinguish the successful generated-tree checker from the retained final publication. Normal privacy-hook success and final exact-delta review remain required before integration.",
+  "authenticatedFacts": {
+    "HEADAtBaseDuringReview": true,
+    "rejectedPagePath": "planning/review-site/enablers/ECR-0008.html",
+    "rejectedStagedCanonicalSHA256": "8c5c9a01e23f772861c562b53233b12c7afc1190e384ed9f57ea04b1ac5bb770",
+    "admittedPredecessorCanonicalSHA256": "f4937d84ef8735537dc1dc6c1df7a39a792eed34113d3f8ab93d5ec28b0ea9d9",
+    "savedRejectedAndAdmittedPagesEqualActualIndexAndHEAD": true,
+    "pageDelta": "One replacement line at one-based line33, entirely the global Waves navigation: new W10 cleanup/optimization, university/cloud relabeling and W12 link. Every other page line is equal.",
+    "priorRetainedPageAlreadyExactAtBase": true,
+    "canonicalLedgerOnlyW3ApprovalDiffers": true,
+    "W3ApprovalInventory": {
+      "capabilities": 3,
+      "bindingDecisions": 62,
+      "orderedSlices": 16
+    },
+    "approvalBindsActualCleanAcceptanceSnapshot": true,
+    "approvalReceiptMatchesStagedLedgerExactly": true,
+    "all16SliceChangesOnlyStatusApprovalAndBlankBoundarySerialization": true,
+    "all16SliceApprovalsMatchWave": true,
+    "bothIndependentReviewPublicCopiesCanonicalVerbatim": true,
+    "W3CampaignCompletionTasksOtherWavesAndHistoryUnchanged": true,
+    "noProductSharedToolHookAdmissionBaselineOrTestChangeInStaged69Paths": true
+  },
+  "allowedFinalDelta": {
+    "retainExactHistoricalPage": "Restore the exact committed ECR0008 bytes only, without editing/normalizing/reencoding private historical values or copying them into new output. Its staged diff should disappear.",
+    "appendTruthfulPublicationNote": "New note must preserve the actual concrete-workspace-path rejection and referenced local evidence; state the one retained historical navigation limitation; bind the exact predecessor hash; state that all remaining approved source and generated publication content is unchanged; do not claim a full-byte checker PASS for the post-retention final tree.",
+    "preserveRecordedApprovalAndProof": "Do not edit the approved packet, prior owner/review records, raw failures or command result; preserve the genuine generated checker PASS at its actual pre-retention scope.",
+    "finalVerification": "Normal unchanged commit privacy hook must accept the retained candidate. Bind subsequent final disposition to the actual committed candidate, not this staged review."
+  },
+  "evidence": {
+    "observedRejection": {
+      "path": "artifacts/tmp/W3.approval-publication-privacy-01/rejection.json",
+      "sha256": "6f76a3487c58e2415b4e6246129572011b654fb92947a1e7cf374af274d3947b"
+    },
+    "admittedPage": "artifacts/tmp/W3.approval-publication-privacy-01/admitted-predecessor-page.html",
+    "rejectedPage": "artifacts/tmp/W3.approval-publication-privacy-01/rejected-staged-page.html",
+    "earlierDisclosedRetention": "artifacts/evidence/W3.planning-publication-note-20261016-01.md",
+    "approvalReceipt": "artifacts/evidence/W3.planning-approval-recording-receipt-20261016-01.json",
+    "actualExecutionProvenance": "Parent reports ordinary wave-approve exit0 and original generated full-byte PASS. This reviewer freshly compared the staged source and captured rejection to immutable Git/index bytes, but did not run approval, privacy, checker, tests or generators."
+  },
+  "limits": [
+    "ECR0014 currently has a separate generated historical-reference clarification plus navigation update; this review does not request or approve retaining its predecessor because this observed rejection concerns only ECR0008.",
+    "API-focused implementation within accepted Core/OpenAPI architecture does not adopt a standalone headless mode. Receipt correctly keeps that new mode future planning.",
+    "Retaining the page does not make current full-byte readiness pass; any later generated output/publication must preserve accurate provenance and comply with unchanged controls.",
+    "No model, gold, human annotation, runtime, product completion, provider activation/spend or G3 release approval is supplied."
+  ],
+  "reviewerActions": {
+    "tests": false,
+    "validators": false,
+    "generators": false,
+    "HEADIndexOrCanonicalFilesMutated": false,
+    "onlyNewIgnoredDispositionWritten": true
+  }
+}
