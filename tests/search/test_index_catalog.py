@@ -3,6 +3,7 @@
 import hashlib
 import sys
 import unittest
+from contextlib import contextmanager
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -50,6 +51,26 @@ class IndexCatalogTests(unittest.TestCase):
             now=lambda: self.now.isoformat(timespec="milliseconds").replace("+00:00", "Z"),
         )
 
+    @contextmanager
+    def initialized_store(self, lease):
+        with ProtectedLexicalStore(
+            self.root,
+            self.scope,
+            self.keys,
+            create=True,
+            _bootstrap=lambda identities: self.catalog.bind_bootstrap(lease, identities),
+        ) as store:
+            self.catalog.acknowledge_initialization(lease, store.file_identities)
+            yield store
+
+    def test_source_progress_requires_durable_initialized_witness(self):
+        lease = self.catalog.create(self.scope)
+        self.addCleanup(lease.close)
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.record_progress(lease, cursor_item_id=new_uuid_v7())
+        self.assertIsNone(self.catalog.get(lease.generation_id).cursor_item_id)
+        self.assertFalse(self.catalog.initialized(lease.generation_id))
+
     def test_shadow_creation_and_cancel_reacquire_fences_old_owner(self):
         first = self.catalog.create(self.scope)
         self.addCleanup(first.close)
@@ -84,7 +105,7 @@ class IndexCatalogTests(unittest.TestCase):
         lease = self.catalog.create(self.scope)
         self.addCleanup(lease.close)
         checkpoint = self.catalog.watermark()
-        with ProtectedLexicalStore(self.root, self.scope, self.keys, create=True) as store:
+        with self.initialized_store(lease) as store:
             store.apply((), (), expected_checkpoint=0, checkpoint=checkpoint)
             projection = store.projection()
             validation = IndexValidation(
@@ -113,7 +134,7 @@ class IndexCatalogTests(unittest.TestCase):
         other = self.catalog.create(other_scope)
         self.addCleanup(other.close)
         checkpoint = self.catalog.watermark()
-        with ProtectedLexicalStore(self.root, self.scope, self.keys, create=True) as store:
+        with self.initialized_store(first) as store:
             store.finish_build(checkpoint)
             projection = store.projection()
         validation = IndexValidation(checkpoint, "c" * 64, actor_context_sha256(self.project, self.fixture.actor), None)
@@ -128,7 +149,7 @@ class IndexCatalogTests(unittest.TestCase):
         lease = self.catalog.create(self.scope)
         self.addCleanup(lease.close)
         checkpoint = self.catalog.watermark()
-        with ProtectedLexicalStore(self.root, self.scope, self.keys, create=True) as store:
+        with self.initialized_store(lease) as store:
             store.finish_build(checkpoint)
             projection = store.projection()
         validation = IndexValidation(checkpoint, "c" * 64, actor_context_sha256(self.project, self.fixture.actor), None)
@@ -149,7 +170,7 @@ class IndexCatalogTests(unittest.TestCase):
         lease = self.catalog.create(self.scope)
         self.addCleanup(lease.close)
         checkpoint = self.catalog.watermark()
-        with ProtectedLexicalStore(self.root, self.scope, self.keys, create=True) as store:
+        with self.initialized_store(lease) as store:
             store.finish_build(checkpoint)
             projection = store.projection()
         deadline = self.now + timedelta(seconds=10)
@@ -179,7 +200,7 @@ class IndexCatalogTests(unittest.TestCase):
         lease = self.catalog.create(self.scope)
         self.addCleanup(lease.close)
         checkpoint = self.catalog.watermark()
-        with ProtectedLexicalStore(self.root, self.scope, self.keys, create=True) as store:
+        with self.initialized_store(lease) as store:
             store.finish_build(checkpoint)
             projection = store.projection()
         validation = IndexValidation(checkpoint, "c" * 64, actor_context_sha256(self.project, self.fixture.actor), None)

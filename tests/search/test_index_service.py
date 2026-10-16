@@ -1,12 +1,15 @@
 """Core index commands without a UI; protected DB/FTS, synthetic Native fixture."""
 
+import json
 import os
 import shutil
+import subprocess
 import sys
 import threading
 import time
 import unittest
 from copy import deepcopy
+from dataclasses import asdict
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
@@ -27,6 +30,7 @@ from research_observatory_core.lexical_index_store import ProtectedLexicalStore 
 from research_observatory_core.parsing.contracts import TextProjection  # noqa: E402
 from research_observatory_core.search import parse_query  # noqa: E402
 
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
 from tests.search import test_index_sources as fixtures  # noqa: E402
 from tests.search.test_derivative_keys import MemoryVault  # noqa: E402
 
@@ -38,7 +42,8 @@ class IndexServiceTests(unittest.TestCase):
         self.addCleanup(self.f.doCleanups)
         self.canonical = storage._database_protection_configuration().provider
         assert self.canonical is not None
-        self.keys = VaultDerivativeKeyProvider(MemoryVault(), profile_id="fixture", database_keys=self.canonical)
+        self.vault = MemoryVault()
+        self.keys = VaultDerivativeKeyProvider(self.vault, profile_id="fixture", database_keys=self.canonical)
         self.service = CoreLexicalIndexService(self.f.sources, self.keys, self.canonical)
         self.addCleanup(self.service.close)
         self.subject = self.f.sources.metadata_subject(self.f.corpus.source)
@@ -262,7 +267,7 @@ class IndexServiceTests(unittest.TestCase):
         def change(value):
             template = value["nodes"][0]
             value["textProjections"], value["nodes"] = [], []
-            for number, raw in enumerate(("alpha", "beta")):
+            for number, raw in enumerate(("alpha", "beta alpha")):
                 projection = "synthetic-projection-" + str(number)
                 value["textProjections"].append(
                     TextProjection.from_raw(projection, raw).model_dump(mode="json", by_alias=True)
@@ -288,6 +293,11 @@ class IndexServiceTests(unittest.TestCase):
         self.assertEqual(2, len(text))
         self.assertEqual(2, len({row.projection_id for row in text}))
         self.service.rebuild()
+        self.assertEqual((self.f.item.item_id,), self.service.match(parse_query("full-text:alpha")))
+        self.assertEqual(
+            self.service.match(parse_query("full-text:alpha OR full-text:alpha")),
+            self.service.match(parse_query("full-text:alpha")),
+        )
         self.assertEqual((), self.service.match(parse_query('full-text:"alpha beta"')))
         self.assertEqual((self.f.item.item_id,), self.service.match(parse_query("full-text:alpha AND full-text:beta")))
 
@@ -314,6 +324,110 @@ class IndexServiceTests(unittest.TestCase):
             self.assertEqual(expected, self.service.match(parse_query("full-text:alpha AND full-text:beta")))
             self.assertEqual(expected, self.service.match(parse_query('NOT full-text:"alpha beta"')))
         self.assertEqual([(3, 1)] * 4, calls)
+
+    def test_failed_empty_initialization_can_retire_owned_partial_files_and_rebuild(self):
+        first = self.service.rebuild()
+        lease = self.service.begin_rebuild()
+        with (
+            patch.object(ProtectedLexicalStore, "_initialize", side_effect=RuntimeError("synthetic bootstrap fault")),
+            self.assertRaises(IndexServiceProblem),
+        ):
+            self.service.run_build(lease)
+        selected = self.service.catalog.selected()
+        assert selected is not None
+        self.assertEqual(first.generation_id, selected.generation_id)
+        self.assertEqual((self.f.item.item_id,), self.service.match(parse_query("identifiers:synthetic")))
+        replacement = self.service.rebuild()
+        self.assertNotEqual(first.generation_id, replacement.generation_id)
+        failed_path = self.service.root / "indexes" / ("lexical-" + lease.generation_id + ".sqlite3")
+        self.assertFalse(failed_path.exists())
+        self.assertFalse(any(failed_path.parent.glob(failed_path.name + "-*")))
+
+    def test_partial_bootstrap_preserves_unknown_mixed_case_names_before_revoke(self):
+        lease = self.service.begin_rebuild()
+        with (
+            patch.object(ProtectedLexicalStore, "_initialize", side_effect=RuntimeError("synthetic bootstrap fault")),
+            self.assertRaises(IndexServiceProblem),
+        ):
+            self.service.run_build(lease)
+        snapshot = self.service.catalog.get(lease.generation_id)
+        path = self.service.root / "indexes" / ("lexical-" + lease.generation_id + ".sqlite3")
+        unknown = path.with_name(path.name.upper() + "-Unowned")
+        unknown.write_bytes(b"synthetic unowned bytes")
+        before = {entry.name: entry.read_bytes() for entry in path.parent.iterdir()}
+        with self.assertRaises(IndexServiceProblem):
+            self.service.retire(lease.generation_id)
+        self.assertEqual(before, {entry.name: entry.read_bytes() for entry in path.parent.iterdir()})
+        with self.keys.lease(snapshot.scope, create=False) as key:
+            self.assertEqual(snapshot.derivative_key_version, key.version)
+
+    @unittest.skipUnless(os.name == "nt", "W3 actual Windows kernel bootstrap cleanup")
+    def test_owned_child_bootstrap_crash_phases_retire_without_losing_previous_selection(self):
+        assert isinstance(self.canonical, InMemoryDatabaseKeyProvider)
+        first = self.service.rebuild()
+        phases = (
+            "created-main",
+            "created--wal",
+            "created--shm",
+            "created--journal",
+            "witness-committed",
+            "retained-main",
+            "retained--wal",
+            "retained--shm",
+            "retained--journal",
+            "guards-acquired",
+            "schema-transaction-open",
+            "schema-before-commit",
+            "empty-schema-initialized",
+            "initialization-acknowledged",
+        )
+        for phase in phases:
+            with self.subTest(phase=phase):
+                lease = self.service.begin_rebuild()
+                scope = self.service.catalog.get(lease.generation_id).scope
+                self.service.catalog.cancel(lease)
+                payload = {
+                    "root": str(self.service.root),
+                    "scope": asdict(scope),
+                    "bootstrapPhase": phase,
+                    "actor": asdict(self.service.sources.documents.actor()),
+                    "canonicalMaterial": list(self.canonical.active_material_for_test(self.service.project)),
+                    "records": [
+                        {"reference": asdict(reference), "version": record.version, "material": list(material)}
+                        for reference, (record, material) in self.vault.values.items()
+                    ],
+                }
+                env = os.environ.copy()
+                env.update({name: str(self.service.root) for name in ("TEMP", "TMP", "TMPDIR", "SQLITE_TMPDIR")})
+                result = subprocess.run(
+                    [sys.executable, "-B", str(ROOT / "tests/search/lexical_crash_child.py")],
+                    input=json.dumps(payload).encode(),
+                    capture_output=True,
+                    timeout=45,
+                    env=env,
+                )
+                self.assertEqual(73, result.returncode, result.stderr.decode(errors="replace"))
+                selected = self.service.catalog.selected()
+                assert selected is not None
+                self.assertEqual(first.generation_id, selected.generation_id)
+                self.assertEqual(
+                    phase == "initialization-acknowledged", self.service.catalog.initialized(lease.generation_id)
+                )
+                path = self.service.root / "indexes" / ("lexical-" + lease.generation_id + ".sqlite3")
+                if phase.startswith("created-") or phase == "witness-committed":
+                    self.assertFalse(any(path.parent.glob(path.name + "*")))
+                original_clock = self.service.catalog.now
+                self.service.catalog.now = lambda: (
+                    (datetime.now(UTC) + timedelta(seconds=31))
+                    .isoformat(timespec="milliseconds")
+                    .replace("+00:00", "Z")
+                )
+                try:
+                    self.service.retire(lease.generation_id)
+                finally:
+                    self.service.catalog.now = original_clock
+                self.assertFalse(any(path.parent.glob(path.name + "*")))
+                self.assertEqual((self.f.item.item_id,), self.service.match(parse_query("identifiers:synthetic")))
 
     def test_failed_shadow_preserves_previous_selection_and_cancelled_build_resumes(self):
         first = self.service.rebuild()

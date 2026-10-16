@@ -74,7 +74,7 @@ def compile_query(document: QueryDocument) -> CompiledQuery:
 
     result = lower(document.ast)
     return CompiledQuery(
-        "WITH " + ",".join(clauses) + " SELECT item_id FROM " + result + " ORDER BY item_id", tuple(parameters)
+        "WITH " + ",".join(clauses) + " SELECT DISTINCT item_id FROM " + result + " ORDER BY item_id", tuple(parameters)
     )
 
 

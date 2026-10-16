@@ -20,7 +20,7 @@ from .lexical_catalog_repository import (
     SqliteIndexCatalog,
     actor_context_sha256,
 )
-from .lexical_index_io import IndexFileGuard, _identity, _present, assert_retired_absent
+from .lexical_index_io import IndexFileGuard, _identity, _present, assert_retired_absent, purge_bootstrap
 from .lexical_index_store import IndexRow, ProtectedLexicalStore, recover_retired_generation
 from .lexical_source_repository import CanonicalIndexSources, ItemIndexProjection
 from .ports.database_keys import DatabaseKeyProvider
@@ -132,6 +132,8 @@ class CoreLexicalIndexService:
         *,
         cancelled: Callable[[], bool],
     ) -> None:
+        if not self.catalog.initialized(lease.generation_id):
+            raise IndexServiceProblem("index source admission requires initialized storage")
         self.catalog.renew(lease)
         while old := store.entry_ids(captured.item_id, limit=256):
             self.catalog.assert_owner(lease)
@@ -220,9 +222,23 @@ class CoreLexicalIndexService:
             path = self.root / "indexes" / ("lexical-" + snapshot.generation_id + ".sqlite3")
             try:
                 self._check_cancel(cancelled)
+                create = not path.exists()
+                if not create and not self.catalog.initialized(snapshot.generation_id):
+                    raise IndexServiceProblem("interrupted bootstrap requires a fresh rebuild")
                 with ProtectedLexicalStore(
-                    self.root, snapshot.scope, self.keys, create=not path.exists(), cancelled=cancelled
+                    self.root,
+                    snapshot.scope,
+                    self.keys,
+                    create=create,
+                    cancelled=cancelled,
+                    _bootstrap=lambda identities: self.catalog.bind_bootstrap(lease, identities),
                 ) as store:
+                    if create:
+                        _index_step("empty-schema-initialized")
+                        if store.sealed or store.checkpoint != 0 or store.projection().entry_count != 0:
+                            raise IndexServiceProblem("bootstrap is not an empty protected index")
+                        self.catalog.acknowledge_initialization(lease, store.file_identities)
+                        _index_step("initialization-acknowledged")
                     self.catalog.bind_file(lease, store.file_identity)
                     if not store.sealed:
                         cursor = snapshot.cursor_item_id
@@ -302,6 +318,28 @@ class CoreLexicalIndexService:
                     self._leases[generation_id] = lease
                     self.catalog.retire(lease)
             path = self.root / "indexes" / ("lexical-" + generation_id + ".sqlite3")
+
+            if not self.catalog.initialized(generation_id):
+
+                def authorize_bootstrap(identities):
+                    current = self.catalog.get(generation_id)
+                    if (
+                        current.scope != snapshot.scope
+                        or current.derivative_key_version != snapshot.derivative_key_version
+                    ):
+                        raise IndexServiceProblem("bootstrap recovery authority changed")
+                    self.catalog.authorize_bootstrap_cleanup(generation_id, identities)
+
+                def revoke_bootstrap():
+                    # All present fixed roles are now exclusively held for
+                    # DELETE, and no source admission was ever acknowledged.
+                    self.keys.revoke(snapshot.scope, expected_version=snapshot.derivative_key_version)
+
+                purge_bootstrap(self.root, generation_id, authorize=authorize_bootstrap, revoke=revoke_bootstrap)
+                lease = self._leases.pop(generation_id, None)
+                if lease is not None:
+                    lease.close()
+                return
 
             def eligible(identity):
                 current = self.catalog.get(generation_id)

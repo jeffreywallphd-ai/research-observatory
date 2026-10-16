@@ -7,6 +7,7 @@ import stat
 import threading
 import weakref
 from collections.abc import Callable
+from contextlib import ExitStack
 from pathlib import Path
 
 from .object_store import _FileCandidate, _held_cleanup_candidate
@@ -16,6 +17,83 @@ from .storage import StorageProblem, _close_windows_handles, _native_io_path, _o
 _LOCK = threading.Lock()
 _GENERATIONS: weakref.WeakValueDictionary[str, threading.RLock] = weakref.WeakValueDictionary()
 _SIDECARS = ("-wal", "-shm", "-journal")
+_ROLES = ("", *_SIDECARS)
+
+
+def _bootstrap_step(_name: str) -> None:
+    """Deterministic owned-process interruption seam; no authority mutation."""
+
+
+def _create_bootstrap(
+    path: Path, witness: Callable[[dict[str, tuple[int, int]]], None] | None
+) -> dict[Path, tuple[int, int]]:
+    """Windows kernel owns unwitnessed CREATE_NEW files through process death.
+
+    Only a committed complete canonical witness permits making them persistent.
+    Release DELETE-access handles before normal deny-delete guards are acquired;
+    the caller must compare every reacquired identity before opening SQLCipher.
+    """
+    if os.name != "nt":
+        raise IndexPathProblem("protected bootstrap is unqualified on this platform")
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    create = kernel.CreateFileW
+    create.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create.restype = wintypes.HANDLE
+    disposition = kernel.SetFileInformationByHandle
+    disposition.argtypes = (wintypes.HANDLE, ctypes.c_int, wintypes.LPVOID, wintypes.DWORD)
+    disposition.restype = wintypes.BOOL
+    kernel.CloseHandle.argtypes = (wintypes.HANDLE,)
+    kernel.CloseHandle.restype = wintypes.BOOL
+    descriptors: dict[Path, int] = {}
+    identities: dict[Path, tuple[int, int]] = {}
+    try:
+        for role in _ROLES:
+            candidate = path.with_name(path.name + role)
+            # Noninheritable, CREATE_NEW, READ|WRITE|DELETE, OPEN_REPARSE_POINT,
+            # DELETE_ON_CLOSE. Share delete only during this private bootstrap.
+            handle = create(_native_io_path(candidate), 0xC0010000, 7, None, 1, 0x04200080, None)
+            if handle == wintypes.HANDLE(-1).value:
+                raise ctypes.WinError(ctypes.get_last_error())
+            try:
+                descriptor = msvcrt.open_osfhandle(int(handle), os.O_RDWR | os.O_NOINHERIT | getattr(os, "O_BINARY", 0))
+            except BaseException:
+                kernel.CloseHandle(handle)
+                raise
+            descriptors[candidate] = descriptor
+            os.set_inheritable(descriptor, False)
+            held = os.fstat(descriptor)
+            identity = _identity(candidate)
+            if (held.st_dev, held.st_ino) != identity or held.st_nlink != 1:
+                raise IndexPathProblem("bootstrap file authority changed")
+            identities[candidate] = identity
+            _bootstrap_step("created-" + (role or "main"))
+        if witness is not None:
+            witness({role: identities[path.with_name(path.name + role)] for role in _ROLES})
+        _bootstrap_step("witness-committed")
+        for role in _ROLES:
+            candidate = path.with_name(path.name + role)
+            flags = wintypes.DWORD(8)  # FileDispositionInfoEx: clear ON_CLOSE.
+            if not disposition(
+                msvcrt.get_osfhandle(descriptors[candidate]), 21, ctypes.byref(flags), ctypes.sizeof(flags)
+            ):
+                raise ctypes.WinError(ctypes.get_last_error())
+            _bootstrap_step("retained-" + (role or "main"))
+        return identities
+    finally:
+        for descriptor in reversed(tuple(descriptors.values())):
+            os.close(descriptor)
 
 
 class IndexPathProblem(RuntimeError):
@@ -58,7 +136,14 @@ class IndexFileGuard:
     """
 
     def __init__(
-        self, root: Path, generation_id: str, *, create: bool, retirement: bool = False, recovery_probe: bool = False
+        self,
+        root: Path,
+        generation_id: str,
+        *,
+        create: bool,
+        retirement: bool = False,
+        recovery_probe: bool = False,
+        bootstrap: Callable[[dict[str, tuple[int, int]]], None] | None = None,
     ) -> None:
         self.path = root / "indexes" / ("lexical-" + generation_id + ".sqlite3")
         self._main_handles: list[int] = []
@@ -66,6 +151,7 @@ class IndexFileGuard:
         self._files: dict[Path, tuple[int, int]] = {}
         self._descriptors: dict[Path, int] = {}
         self._directories: dict[Path, tuple[int, int]] = {}
+        self._ancestors = ExitStack()
         self._locked = False
         self._retirement = retirement
         self._recovery_probe = recovery_probe
@@ -90,15 +176,15 @@ class IndexFileGuard:
             if not self._lock.acquire(timeout=0.25):
                 raise IndexPathProblem("index readers have not drained")
             self._locked = True
+            self._ancestors.enter_context(_stable_directories(list(directories)))
             journal = self.path.with_name(self.path.name + "-journal")
             if create and (journal.exists() or _redirect(journal)):
                 raise IndexPathProblem("preexisting index journal is unavailable")
             if create:
-                descriptor = os.open(
-                    _native_io_path(self.path), os.O_CREAT | os.O_EXCL | os.O_RDWR | getattr(os, "O_BINARY", 0), 0o600
-                )
-                os.close(descriptor)
-            self._files[self.path] = _identity(self.path)
+                self._files = _create_bootstrap(self.path, bootstrap)
+                self.journal_created = True
+            else:
+                self._files[self.path] = _identity(self.path)
             self._hold_descriptor(self.path)
             for directory in directories:
                 self._main_handles.extend(_open_windows_guards(directory, self.path))
@@ -110,7 +196,7 @@ class IndexFileGuard:
                     if _present(path):
                         raise IndexPathProblem("retired sidecars need authenticated recovery")
                     continue
-                if not path.exists() and not _redirect(path):
+                if not create and not path.exists() and not _redirect(path):
                     descriptor = os.open(
                         _native_io_path(path), os.O_CREAT | os.O_EXCL | os.O_RDWR | getattr(os, "O_BINARY", 0), 0o600
                     )
@@ -118,13 +204,18 @@ class IndexFileGuard:
                     self._created_sidecars.add(path)
                     if suffix == "-journal":
                         self.journal_created = True
-                self._files[path] = _identity(path)
+                if not create:
+                    self._files[path] = _identity(path)
+                elif _identity(path) != self._files[path]:
+                    raise IndexPathProblem("bootstrap file authority changed")
                 self._hold_descriptor(path)
                 self._sidecar_handles.extend(_open_windows_guards(self.path.parent, path))
             self.check()
-        except OSError, StorageProblem, IndexPathProblem:
+            if create:
+                _bootstrap_step("guards-acquired")
+        except BaseException:
             self.close(clean_sidecars=False)
-            raise IndexPathProblem("index file authority is unavailable") from None
+            raise
 
     def _hold_descriptor(self, path: Path) -> None:
         descriptor = os.open(_native_io_path(path), os.O_RDONLY | getattr(os, "O_BINARY", 0))
@@ -167,6 +258,11 @@ class IndexFileGuard:
     def file_identity(self) -> tuple[int, int]:
         self.check()
         return self._files[self.path]
+
+    @property
+    def file_identities(self) -> dict[str, tuple[int, int]]:
+        self.check()
+        return {role: self._files[self.path.with_name(self.path.name + role)] for role in _ROLES}
 
     def close(self, *, clean_sidecars: bool) -> None:
         """SQLCipher must already be closed; purge only checkpointed owned names.
@@ -227,9 +323,12 @@ class IndexFileGuard:
             for descriptor in self._descriptors.values():
                 os.close(descriptor)
             self._descriptors = {}
-            if self._locked:
-                self._locked = False
-                self._lock.release()
+            try:
+                self._ancestors.close()
+            finally:
+                if self._locked:
+                    self._locked = False
+                    self._lock.release()
         if failure is not None:
             raise failure
 
@@ -279,6 +378,72 @@ class IndexFileGuard:
             raise IndexPathProblem("retired index cleanup is incomplete") from None
         finally:
             self.close(clean_sidecars=False)
+
+
+def purge_bootstrap(
+    root: Path,
+    generation_id: str,
+    *,
+    authorize: Callable[[dict[str, tuple[int, int]]], None],
+    revoke: Callable[[], None],
+) -> None:
+    """Retire only canonically witnessed, never-source-admitted file identities.
+
+    Missing roles are valid after partial kernel cleanup. Unknown or substituted
+    names are preserved. Acquire all DELETE handles before key revocation.
+    """
+    path = root / "indexes" / ("lexical-" + generation_id + ".sqlite3")
+    if (
+        not root.is_absolute()
+        or root.resolve(strict=True) != root
+        or len(generation_id) != 36
+        or any(c not in "0123456789abcdef-" for c in generation_id)
+    ):
+        raise IndexPathProblem("bootstrap location is invalid")
+    with _LOCK:
+        lock = _GENERATIONS.setdefault(os.path.normcase(str(path)), threading.RLock())
+    if not lock.acquire(timeout=0.25):
+        raise IndexPathProblem("index readers have not drained")
+    try:
+        with ExitStack() as holds:
+            directories = [*reversed(path.parent.parents), path.parent]
+            holds.enter_context(_stable_directories(directories))
+            for directory in directories:
+                _identity(directory, directory=True)
+            known = {path.with_name(path.name + role): role for role in _ROLES}
+
+            def inventory() -> set[Path]:
+                observed = {
+                    entry
+                    for entry in path.parent.iterdir()
+                    if os.path.normcase(entry.name).startswith(os.path.normcase(path.name))
+                }
+                if not observed <= known.keys():
+                    raise IndexPathProblem("unknown bootstrap names are preserved")
+                return observed
+
+            observed = inventory()
+            identities = {}
+            deletions = []
+            for candidate in sorted(observed):
+                identity = _identity(candidate)
+                value = candidate.stat(follow_symlinks=False)
+                bound = _FileCandidate(
+                    "indexes", Path(_native_io_path(candidate)), path.parent, identity, value.st_size, value.st_mtime_ns
+                )
+                _rename, delete, reader = holds.enter_context(_held_cleanup_candidate(bound))
+                held = os.fstat(reader.fileno())
+                identities[known[candidate]] = (held.st_dev, held.st_ino)
+                deletions.append(delete)
+            if inventory() != observed:
+                raise IndexPathProblem("bootstrap names changed during drain")
+            authorize(identities)
+            revoke()
+            for delete in deletions:
+                delete()
+        assert_retired_absent(root, generation_id)
+    finally:
+        lock.release()
 
 
 __all__ = ["IndexFileGuard", "IndexPathProblem"]

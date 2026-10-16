@@ -87,6 +87,18 @@ Native/actor/nonselection authority. It returns no content or reusable store.
 Reader drain and owned DELETE eligibility precede revocation; post-revocation
 interruption can retry owned cleanup without recreating a key.
 
+Fresh Windows files are created exclusively with kernel delete-on-close ownership.
+Before cancellation of that temporary ownership, one canonical transaction writes
+versioned per-role identity digests and a complete seal for main/WAL/SHM/journal,
+using existing immutable content-free control events. Normal deny-delete guards
+then reacquire and compare all exact identities before SQLCipher opens. A separate
+durable acknowledgement of the verified empty protected schema precedes source
+staging, progress and promotion. Interrupted bootstrap cleanup accepts missing
+witnessed roles, acquires every present role's DELETE eligibility before key
+revocation, and preserves all unknown, substituted or redirected names. Initialized
+generations retain ordinary authenticated protected recovery. This Windows handoff
+fails closed on unqualified platforms; later platform qualification remains W6.
+
 The protected mirror preserves complete accepted normalized projections, exact
 source/document/projection IDs and codepoint ranges. Current source-specific
 rights are checked before reading and again before promotion/delivery. Complete
@@ -123,6 +135,12 @@ fixture, exact preservation, verified backup, material fault rollback/retry and
 actual DPAPI key handling. Catalog/service/source tests challenge stale owners,
 substituted rows/files, denied text, regrant, cancelled promotion, incremental
 acknowledgement gaps, fresh/rebuilt equivalence and retirement retry.
+Bootstrap cases cover failure before empty initialization, per-file ownership
+handoff, abrupt owned-process termination through schema/acknowledgement phases,
+preexisting/substituted/mixed-case unknown names and cleanup lifetime errors.
+These process tests do not establish sudden power-loss or filesystem-driver crash
+behavior. Synthetic actor/key transfer in the owned crash child is declared;
+separate Native/DPAPI composition supplies its own principal-boundary proof.
 
 `tests/search/test_protected_lexical_store.py` and the owned crash child exercise
 actual SQLCipher FTS5, encrypted main/WAL, integrity, interruption replay and

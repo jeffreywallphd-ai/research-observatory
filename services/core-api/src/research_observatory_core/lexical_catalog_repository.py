@@ -439,6 +439,136 @@ class SqliteIndexCatalog:
 
         self._bounded(write)
 
+    def _bootstrap_identity(self, snapshot: IndexGeneration, role: str, identity: tuple[int, int]) -> str:
+        if role not in ("", "-wal", "-shm", "-journal"):
+            raise IndexCatalogProblem("bootstrap role is invalid")
+        return _sha(
+            (
+                "lexical-bootstrap-role-v1",
+                snapshot.configuration_sha256,
+                role,
+                self._file_binding(snapshot.generation_id, identity),
+            )
+        )
+
+    def _bootstrap_records(self, db: CanonicalConnection, snapshot: IndexGeneration) -> dict[str, str]:
+        prefix = "search-bootstrap-v1-" + snapshot.generation_id + ":"
+        records = dict(
+            db.execute(
+                "SELECT substr(o.idempotency_key,?),o.record_sha256 FROM outbox_events o WHERE "
+                "o.project_id=? AND o.idempotency_key LIKE ? AND o.event_type='search.index-generation-created' "
+                "AND o.revision_id IS NULL AND EXISTS(SELECT 1 FROM provenance_events p WHERE "
+                "p.project_id=o.project_id AND p.event_type=o.event_type AND p.revision_id IS NULL AND "
+                "p.record_sha256=o.record_sha256)",
+                (len(prefix) + 1, self.project, prefix + "%"),
+            ).fetchall()
+        )
+        if not records:
+            return records
+        roles = ("main", "-wal", "-shm", "-journal")
+        if set(records) not in (set(roles) | {"seal"}, set(roles) | {"seal", "initialized"}):
+            raise IndexCatalogProblem("bootstrap witness is incomplete")
+        seal = _sha(
+            ("lexical-bootstrap-seal-v1", snapshot.configuration_sha256, tuple((role, records[role]) for role in roles))
+        )
+        if records["seal"] != seal or ("initialized" in records and records["initialized"] != seal):
+            raise IndexCatalogProblem("bootstrap witness is invalid")
+        return records
+
+    def bind_bootstrap(self, lease: IndexGenerationLease, identities: dict[str, tuple[int, int]]) -> None:
+        def write() -> None:
+            with self._transaction(write=True) as (db, actor, now):
+                self._owner(db, lease, now)
+                snapshot = self._load(db, lease.generation_id)
+                if snapshot.stage != "Building" or set(identities) != {"", "-wal", "-shm", "-journal"}:
+                    raise IndexCatalogProblem("bootstrap binding is closed")
+                records = {
+                    (role or "main"): self._bootstrap_identity(snapshot, role, identity)
+                    for role, identity in identities.items()
+                }
+                records["seal"] = _sha(
+                    (
+                        "lexical-bootstrap-seal-v1",
+                        snapshot.configuration_sha256,
+                        tuple((role, records[role]) for role in ("main", "-wal", "-shm", "-journal")),
+                    )
+                )
+                prior = self._bootstrap_records(db, snapshot)
+                if prior:
+                    if prior != records:
+                        raise IndexCatalogProblem("bootstrap file identities changed")
+                    return
+                for role, digest in records.items():
+                    self._audit(
+                        db,
+                        actor,
+                        now,
+                        "search.index-generation-created",
+                        digest,
+                        idempotency="search-bootstrap-v1-" + lease.generation_id + ":" + role,
+                    )
+                self._audit(
+                    db,
+                    actor,
+                    now,
+                    "search.index-generation-created",
+                    self._file_binding(lease.generation_id, identities[""]),
+                    idempotency="search-file-" + lease.generation_id,
+                )
+
+        self._bounded(write)
+
+    def initialized(self, generation_id: str) -> bool:
+        def read() -> bool:
+            with self._transaction(write=False) as (db, _actor, _now):
+                return "initialized" in self._bootstrap_records(db, self._load(db, generation_id))
+
+        return self._bounded(read)
+
+    def acknowledge_initialization(self, lease: IndexGenerationLease, identities: dict[str, tuple[int, int]]) -> None:
+        def write() -> None:
+            with self._transaction(write=True) as (db, actor, now):
+                self._owner(db, lease, now)
+                snapshot = self._load(db, lease.generation_id)
+                records = self._bootstrap_records(db, snapshot)
+                if snapshot.stage != "Building" or not records or set(identities) != {"", "-wal", "-shm", "-journal"}:
+                    raise IndexCatalogProblem("empty bootstrap acknowledgement is unavailable")
+                for role, identity in identities.items():
+                    if records[role or "main"] != self._bootstrap_identity(snapshot, role, identity):
+                        raise IndexCatalogProblem("bootstrap file identity changed")
+                if "initialized" not in records:
+                    self._audit(
+                        db,
+                        actor,
+                        now,
+                        "search.index-generation-created",
+                        records["seal"],
+                        idempotency="search-bootstrap-v1-" + lease.generation_id + ":initialized",
+                    )
+
+        self._bounded(write)
+
+    def authorize_bootstrap_cleanup(self, generation_id: str, identities: dict[str, tuple[int, int]]) -> None:
+        def read() -> None:
+            with self._transaction(write=False) as (db, _actor, _now):
+                snapshot = self._load(db, generation_id)
+                records = self._bootstrap_records(db, snapshot)
+                selected = self._selection(db)
+                if (
+                    snapshot.stage != "Retired"
+                    or snapshot.cursor_item_id is not None
+                    or snapshot.entry_count is not None
+                    or snapshot.projection_sha256 is not None
+                    or "initialized" in records
+                    or (selected is not None and selected["generation_id"] == generation_id)
+                ):
+                    raise IndexCatalogProblem("bootstrap cleanup is unavailable")
+                for role, identity in identities.items():
+                    if not records or records.get(role or "main") != self._bootstrap_identity(snapshot, role, identity):
+                        raise IndexCatalogProblem("unknown bootstrap files are preserved")
+
+        self._bounded(read)
+
     def file_bound(self, generation_id: str, identity: tuple[int, int]) -> bool:
         def read() -> bool:
             with self._transaction(write=False) as (db, _actor, _now):
@@ -611,6 +741,7 @@ class SqliteIndexCatalog:
                 snapshot = self._load(db, lease.generation_id)
                 if (
                     snapshot.stage != "Building"
+                    or "initialized" not in self._bootstrap_records(db, snapshot)
                     or not is_uuid_v7(cursor_item_id)
                     or (snapshot.cursor_item_id is not None and cursor_item_id <= snapshot.cursor_item_id)
                 ):
@@ -694,6 +825,7 @@ class SqliteIndexCatalog:
                 selection = self._selection(db)
                 if (
                     snapshot.stage not in ("Building", "Ready")
+                    or "initialized" not in self._bootstrap_records(db, snapshot)
                     or validation.watermark != self._watermark(db)
                     or validation.watermark != projection.checkpoint
                     or validation.watermark < snapshot.initial_watermark

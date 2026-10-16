@@ -187,12 +187,23 @@ selected generation. A stale readable corpus requires synchronization before
 Boolean results; current rights denial remains effective before physical purge.
 All command failures are content-free and leave canonical research authoritative.
 
+Fresh Windows bootstrap files remain kernel-owned temporary files until exact
+per-role ownership and a complete seal commit canonically. Their persistent
+handoff reacquires normal lifetime guards and checks every identity before
+SQLCipher writes. Source operations require a separate durable acknowledgement
+of the empty protected schema. An interrupted, never-source-admitted bootstrap
+can retire only its exact witnessed present files; missing roles are allowed,
+and unknown or substituted names are preserved. Initialized generations use
+ordinary protected recovery. This process-crash boundary does not claim
+power-loss qualification; other platform handoffs require later qualification.
+
 Queries load bounded, ordered batches of complete authorized items into memory
 tables. All permitted metadata/text rows for an item stay in one batch, so
 Boolean evaluation can be united across disjoint item sets without changing
 negation or cross-row conjunction. Batch bounds limit the working set; the
 100k-metadata/100k-passage qualification frame is not a corpus-import limit.
 The internal candidate-ID helper is separate from T03's bounded result delivery.
+Each item appears once even when several permitted rows match a single leaf.
 
 Retirement recovery is a private Core operation returning no rows or reusable
 store. It authenticates the held main-file identity against canonical Retired

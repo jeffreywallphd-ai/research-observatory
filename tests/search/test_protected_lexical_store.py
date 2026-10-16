@@ -6,10 +6,12 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from collections.abc import Callable
 from dataclasses import asdict, replace
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "services/core-api/src"), str(ROOT)]
@@ -92,6 +94,90 @@ class ProtectedLexicalStoreTests(unittest.TestCase):
                 store.apply((row(text="replacement"),), (), expected_checkpoint=0, checkpoint=2)
             self.assertEqual(1, store.checkpoint)
             self.assertEqual((PROJECT,), store.match(parse_query("cafe"), (row().entry_id,), (PROJECT,)))
+
+    def test_single_leaf_returns_one_item_for_multiple_permitted_rows(self):
+        first = row(text="alpha")
+        second = replace(first, entry_id="b" * 64, source_revision_id=GENERATION)
+        entries = (first.entry_id, second.entry_id)
+        with self.store(create=True) as store:
+            store.apply((first, second), (), expected_checkpoint=0, checkpoint=1)
+            for query in ("alpha", "title:alpha", "year:2024"):
+                with self.subTest(query=query):
+                    self.assertEqual((PROJECT,), store.match(parse_query(query), entries, (PROJECT,)))
+                    self.assertEqual(
+                        store.match(parse_query(query + " OR " + query), entries, (PROJECT,)),
+                        store.match(parse_query(query), entries, (PROJECT,)),
+                    )
+
+    def test_ancestor_close_failure_releases_the_generation_mutex(self):
+        store = self.store(create=True)
+        guard = store._guard
+        assert guard is not None
+        ancestors = guard._ancestors
+        ancestors.close()
+
+        class FailedAncestors:
+            def close(self):
+                raise OSError("synthetic ancestor-close failure")
+
+        guard._ancestors = FailedAncestors()
+        try:
+            with self.assertRaises(LexicalStoreProblem):
+                store.close()
+            acquired = []
+
+            def another_reader():
+                ready = guard._lock.acquire(timeout=0.3)
+                acquired.append(ready)
+                if ready:
+                    guard._lock.release()
+
+            thread = threading.Thread(target=another_reader)
+            thread.start()
+            thread.join(timeout=2)
+            self.assertFalse(thread.is_alive())
+            self.assertEqual([True], acquired)
+        finally:
+            guard._ancestors = ancestors
+            guard.close(clean_sidecars=False)
+
+    def test_bootstrap_refuses_each_existing_role_without_adopting_or_removing_it(self):
+        path = self.root / "indexes" / ("lexical-" + GENERATION + ".sqlite3")
+        for role in ("", "-wal", "-shm", "-journal"):
+            with self.subTest(role=role):
+                unknown = path.with_name(path.name + role)
+                unknown.write_bytes(b"synthetic preexisting unowned bytes")
+                identity = unknown.stat().st_ino
+                try:
+                    with self.assertRaises(LexicalStoreProblem):
+                        self.store(create=True)
+                    self.assertEqual([unknown], list(path.parent.iterdir()))
+                    self.assertEqual(identity, unknown.stat().st_ino)
+                    self.assertEqual(b"synthetic preexisting unowned bytes", unknown.read_bytes())
+                finally:
+                    unknown.unlink()
+
+    def test_bootstrap_handoff_refuses_substitution_before_sqlcipher_open(self):
+        path = self.root / "indexes" / ("lexical-" + GENERATION + ".sqlite3")
+        moved = path.with_name(path.name + "-synthetic-moved")
+        observed = []
+
+        def substitute(name):
+            if name == "retained--journal":
+                path.rename(moved)
+                path.write_bytes(b"synthetic unowned replacement")
+                observed.append(path.stat().st_ino)
+
+        with (
+            patch("research_observatory_core.lexical_index_io._bootstrap_step", side_effect=substitute),
+            patch("research_observatory_core.lexical_index_store.sqlcipher.connect") as connect,
+            self.assertRaises(LexicalStoreProblem),
+        ):
+            self.store(create=True)
+        connect.assert_not_called()
+        self.assertEqual([path.stat().st_ino], observed)
+        self.assertEqual(b"synthetic unowned replacement", path.read_bytes())
+        self.assertEqual(b"", moved.read_bytes())
 
     def test_complete_projection_preserves_phrase_across_long_discarded_punctuation(self):
         text = "alpha " + "!" * 70000 + " beta"

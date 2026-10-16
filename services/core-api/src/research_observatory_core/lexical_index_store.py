@@ -12,7 +12,7 @@ from typing import Any
 
 import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
 
-from .lexical_index_io import IndexFileGuard, IndexPathProblem
+from .lexical_index_io import IndexFileGuard, IndexPathProblem, _bootstrap_step
 from .parsing.normalization import MAX_IR_BYTES
 from .ports.database_keys import validate_database_key_identity
 from .ports.derivative_keys import (
@@ -174,6 +174,7 @@ class ProtectedLexicalStore:
         *,
         create: bool = False,
         cancelled: Callable[[], bool] = lambda: False,
+        _bootstrap: Callable[[dict[str, tuple[int, int]]], None] | None = None,
         _retirement: tuple[str, Callable[[tuple[int, int]], None]] | None = None,
     ) -> None:
         self._db: Any = None
@@ -215,7 +216,7 @@ class ProtectedLexicalStore:
             if not isinstance(self._key, DerivativeKeyLease):
                 raise LexicalStoreProblem("index key purpose is invalid")
             if self._guard is None:
-                self._guard = IndexFileGuard(root, scope.generation_id, create=create)
+                self._guard = IndexFileGuard(root, scope.generation_id, create=create, bootstrap=_bootstrap)
             self._db = sqlcipher.connect(_database_uri(self._guard.path), uri=True, isolation_level=None)
             self._key.use(scope, lambda material: _key_sqlcipher_connection(self._db, material))
             self._db.set_progress_handler(self._progress, 1000)
@@ -239,10 +240,12 @@ class ProtectedLexicalStore:
             self._db.set_authorizer(_authorizer)
             self._current()
             self.integrity_check()
-        except (*_ERRORS, ValueError, LexicalStoreProblem):
+        except BaseException as error:
             self.close()
             if self._was_cancelled:
                 raise LexicalIndexCancelled("index operation cancelled") from None
+            if not isinstance(error, Exception):
+                raise
             raise LexicalStoreProblem("protected index is unavailable") from None
 
     def _check_cancel(self) -> None:
@@ -288,6 +291,7 @@ class ProtectedLexicalStore:
         assert self._guard is not None
         self._db.execute("BEGIN IMMEDIATE")
         try:
+            _bootstrap_step("schema-transaction-open")
             self._db.execute(
                 "CREATE TABLE index_state(singleton INTEGER PRIMARY KEY CHECK(singleton=1),scope_json TEXT NOT "
                 "NULL,key_version TEXT NOT NULL,analyzer TEXT NOT NULL,checkpoint INTEGER NOT NULL "
@@ -314,6 +318,7 @@ class ProtectedLexicalStore:
             )
             self._db.execute(f"PRAGMA application_id={_APPLICATION_ID}")
             self._db.execute("PRAGMA user_version=1")
+            _bootstrap_step("schema-before-commit")
             self._db.execute("COMMIT")
         except BaseException:
             self._rollback()
@@ -461,6 +466,12 @@ class ProtectedLexicalStore:
         self._current()
         assert self._guard is not None
         return self._guard.file_identity
+
+    @property
+    def file_identities(self) -> dict[str, tuple[int, int]]:
+        self._current()
+        assert self._guard is not None
+        return self._guard.file_identities
 
     def item_matches(self, item_id: str, rows: tuple[IndexRow, ...]) -> bool:
         self._require_search()
