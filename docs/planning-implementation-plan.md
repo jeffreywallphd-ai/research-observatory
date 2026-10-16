@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f50a75a12c79c1d96f8fc8ba50bc5b5729c8efa34824cf77464ba4a1fdc31e92
+source_sha256: 44c2e408c79abbecc418f7efaa4a03079deca89710bc6e203b5370f8a93d075e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5877,7 +5877,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C35.T01 — Create import preview, mapping, and conflict UI
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Current actual100k protected import at1c20b883a0adac7645913568d057a7c146feffcb failed its unchanged120.0s parser budget after20800/100001 rows, with no accepted protected sample/output; actual45a56d receipt and f43d64 diagnostic preserve the timeout and191070208byte partial peak. The separate1000-record diagnostic is nonqualifying and establishes no100k timing/cause. CAP-04.S01.T02 owns protected preview/review; C01/T03 is later commit compatibility context. Actual finite decision at artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json selects creation-only900s and an explicit finite initial evidence policy after genuine different scope review66f002 under prospective owner34e. This is a disclosed material configuration/criterion decision, not an unchanged120s restoration or hidden canonical benchmark PASS.
 
@@ -5915,9 +5915,11 @@ Original tasks and approvals remain unchanged.
 - tests/service/test_import_summary_workflow.py
 #### Review history — W2.C35.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8223099b5aecabbdba79646450f5eb5608b3cfba7b6194a423c556dee6043e25`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `8223099b5aecabbdba79646450f5eb5608b3cfba7b6194a423c556dee6043e25`
 
 - Candidate / base / branch: `3541a4b0e842727c0b54af1e4043af2989845134` / `3ed9b568c7981f938204eedebca16b731f8d6008` / `codex/w2-implementation`
 - Submitted by / at: agent:/root / `2026-10-16T02:21:52+00:00`
@@ -5931,9 +5933,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-16T03:02:10+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C35.T01.review-R01.json` / `6a895508d06f1e73a83c59a1e85aa57a57894ed3dde785238c38c70b4742ac5e`
+
+**Review notes:** Approve frozen W2.C35.T01/R01 only at3541 after exact source, actual affected-component and finite authority review. Creation-only900 preserves every missing/v1/default/Python-name legacy120 authority and the public/scientific contracts. Actual190 focused cases, selected quality/API, currentCore/five checks, bounded pure-parser continuity, selected100k review functional composition and one original1000 commit meet the expressly amended initial criteria. The original100k commit is UNQUALIFIED and old canonical/latency failures remain. This is not a full-profile, continuous100k benchmark, packaged GUI, Wave or release approval. Actual six-authority publication first occurs atddb9 after proof/freeze; no prior owner inspection or backdated introduction is claimed.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-16T03:02:10+00:00`
+
+**Latest notes:** Approve frozen W2.C35.T01/R01 only at3541 after exact source, actual affected-component and finite authority review. Creation-only900 preserves every missing/v1/default/Python-name legacy120 authority and the public/scientific contracts. Actual190 focused cases, selected quality/API, currentCore/five checks, bounded pure-parser continuity, selected100k review functional composition and one original1000 commit meet the expressly amended initial criteria. The original100k commit is UNQUALIFIED and old canonical/latency failures remain. This is not a full-profile, continuous100k benchmark, packaged GUI, Wave or release approval. Actual six-authority publication first occurs atddb9 after proof/freeze; no prior owner inspection or backdated introduction is claimed.
 
 **Currently open findings:** -
 

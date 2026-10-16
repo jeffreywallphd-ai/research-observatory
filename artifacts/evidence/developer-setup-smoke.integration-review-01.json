@@ -1,0 +1,92 @@
+{
+  "documentType": "bounded-independent-developer-setup-smoke-transfer-review",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "blockingFindings": [],
+  "reviewedAtUtc": "2026-10-16T03:02:56.901114+00:00",
+  "sourceReviewedCommit": "591a4e593e97676278ea12cc1d6d947f68eebb85",
+  "integrationCandidateCommit": "55d3aff2a27cb7bcf3e8c1d65afbe328e2181485",
+  "integrationParentCommit": "5c68647ca700dd01e3f1bbdc90babe20720c4386",
+  "sourceFiles": [
+    {
+      "path": "tools/bootstrap.py",
+      "sha256": "dd35f2e256f08806710a75c6013c58698984d1c170f04239cccc86122877ef9f"
+    },
+    {
+      "path": "tests/foundation/test_bootstrap.py",
+      "sha256": "595fb524c3281282ade5afcd5b1c192e64ed9ca50feac481fcc4218c93990f32"
+    },
+    {
+      "path": "docs/automation/developer-bootstrap.md",
+      "sha256": "9ced3245b6e340bed7e9e58566f4b9ae27405673e22ce5300dbad895256ca87d"
+    },
+    {
+      "path": "artifacts/evidence/developer-setup-smoke.maintenance-01.md",
+      "sha256": "4fe2560d4ee94a4b40cc0e1b5e5196a1760d2ab690e83c0dda873e267f13f8b3"
+    }
+  ],
+  "exactFourPathCommitBoundaryVerified": true,
+  "allFourSourceAndIntegrationGitAndCurrentRawBytesExact": true,
+  "priorIndependentDisposition": {
+    "path": "artifacts/tmp/setup-fast-smoke-01.independent-review-01.json",
+    "sha256": "f7048da018e466bbdbb1f90e6c9ebeab1e32ce6a97f4f684cfd711d6f4a6c798"
+  },
+  "preservedFocusedReport": {
+    "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/focused-proof/committed-focused-report-01.json",
+    "sha256": "ad67f634f33a6521f477c79dcbfc658e7a71ed9457eab060c7529a781e322061"
+  },
+  "scopeAssessment": "Exact cherry-pick of the already independently reviewed four-file setup maintenance. Default setup keeps frozen dependency installation/runtime validation and finite dependency/desktop/locked-source smokes with live progress, per-step elapsed/fail-fast handling and atomic configuration publication. Explicit full verification stays available and unchanged. No new product/security/release criterion or framework behavior is added by this transfer.",
+  "priorActualEvidenceRetained": {
+    "sourceCandidate": "591a4e593e97676278ea12cc1d6d947f68eebb85",
+    "focused": "Actual committed format/lint/two-file configured typing and10 bootstrap tests passed, with pre-change broad-profile/hidden-progress regressions and live fail-fast/progress observations retained.",
+    "pythonDependencySmoke": "Prior genuine Python dependency and in-memory SQLCipher smoke remains at its original actual source/environment identity; no installation or real-principal qualification inferred.",
+    "proofLocation": "Portable primary exact-byte copy of the prior source worktree report/raws; the old worktree path and runtime/account details remain ignored."
+  },
+  "additionalInstalledSmokeEvidence": {
+    "actualResult": {
+      "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/installed-smokes-01/result.json",
+      "sha256": "b9ad7dc95c476539f6d34c1b261736102837f62da731383860bc75abff5a1edc"
+    },
+    "actualSourceSelectionCandidate": "591a4e593e97676278ea12cc1d6d947f68eebb85",
+    "actualInstalledWorkspaceCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+    "commands": [
+      {
+        "kind": "Installed desktop dependency Vite version smoke",
+        "exitCode": 0,
+        "seconds": 3.056238500023028,
+        "raw": {
+          "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/installed-smokes-01/0.raw.log",
+          "sha256": "e04ed97d0d2c2197e1f473b3bc42e86278dc48cc440327600e76dca808c4ad96"
+        }
+      },
+      {
+        "kind": "Existing packaging smoke locked-source metadata check",
+        "exitCode": 0,
+        "seconds": 0.5227229000010993,
+        "raw": {
+          "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/installed-smokes-01/1.raw.log",
+          "sha256": "94939e1e44e5de37c047c4da58b8c400f457088ad6402587403f2d7bbaf7e37f"
+        }
+      }
+    ],
+    "meaning": "These exact direct smoke commands ran on the installed workspace at3541, before the55d3 transfer. They validate the selected installed dependencies/locked-source smoke at that actual identity; they are not an end-to-end invocation of new setup at55d3, not a Cargo build and not a retargeted full profile result."
+  },
+  "coverageLimits": {
+    "realInstallsExecuted": false,
+    "endToEndSetupPassClaimed": false,
+    "fullFoundationPassClaimed": false,
+    "CargoBuildOrRustQualificationClaimed": false,
+    "currentRuntimeOrPrincipalQualificationClaimed": false,
+    "performanceGuaranteeClaimed": false,
+    "userForkProcessTouchedOrTerminated": false,
+    "checksReplayedByReviewer": false
+  },
+  "integrationMeaning": "Bounded source/evidence transfer is independently approved for ordinary local integration, conditional on the separate normal C35 task closure and required repository integration procedure. Root owns state recording/commits/fast-forward. This ledger performs none of those actions and does not close W2 exit, Wave or release gates.",
+  "reviewerActions": {
+    "committedSourceAndExistingReportReadsOnly": true,
+    "productImportsExecutionOrRuntimeScans": false,
+    "trackedSourceHEADOrBacklogMutation": false
+  },
+  "waveApproved": false,
+  "releaseApproved": false
+}

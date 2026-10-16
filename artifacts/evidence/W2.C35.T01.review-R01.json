@@ -1,0 +1,279 @@
+{
+  "task_id": "W2.C35.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "base_commit": "3ed9b568c7981f938204eedebca16b731f8d6008",
+  "reviewed_state_commit": "ddb9e88493cb440883de0bacd48e115b5c1c890f",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "notes": "Approve frozen W2.C35.T01/R01 only at3541 after exact source, actual affected-component and finite authority review. Creation-only900 preserves every missing/v1/default/Python-name legacy120 authority and the public/scientific contracts. Actual190 focused cases, selected quality/API, currentCore/five checks, bounded pure-parser continuity, selected100k review functional composition and one original1000 commit meet the expressly amended initial criteria. The original100k commit is UNQUALIFIED and old canonical/latency failures remain. This is not a full-profile, continuous100k benchmark, packaged GUI, Wave or release approval. Actual six-authority publication first occurs atddb9 after proof/freeze; no prior owner inspection or backdated introduction is claimed.",
+  "reviewed_at": "2026-10-16T03:01:08.580334+00:00",
+  "packet_sha256": "8223099b5aecabbdba79646450f5eb5608b3cfba7b6194a423c556dee6043e25",
+  "evidence_sha256": "701e17d77628003063ac68433005d874415d13080c88d19ebbf2fdc24a1909ee",
+  "acceptance_criteria_sha256": "15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770",
+  "selection_sha256": "be0c24135f2c7575a39bb20e84bb971cb0999760a8c603a2e49fe55ac3971c31",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied-under-explicit-selected-initial-scope",
+      "check_ids": [
+        "tests.service.test_import_preview_workflow",
+        "tests.service.test_import_commit_workflow",
+        "tests.data.test_import_preview_repository",
+        "tests.data.test_import_summary_repository",
+        "tests.service.test_import_preview_activity",
+        "tests.service.test_import_intake_api",
+        "tests.service.test_import_preview_service",
+        "tests.service.test_import_summary_workflow",
+        "tests.service.test_import_commit_service",
+        "tests.data.test_import_commit_publication",
+        "tests.service.test_import_commit_identity",
+        "tests.service.test_import_commit_activity",
+        "tests.data.test_import_commit_hot_path",
+        "tests.data.test_import_preview_drafts",
+        "tests.data.test_import_summary_storage",
+        "tests.data.test_import_manifest_access",
+        "tests.data.test_import_commit_preparation",
+        "tests.service.test_import_commit_interruptions",
+        "tests.service.test_import_commit_api",
+        "tests.service.test_import_review_api",
+        "tests.service.test_import_summaries",
+        "protected100k-review",
+        "protected1000-commit"
+      ],
+      "assessment": "Current190 identities prove expected mapping/exclusion/error-report and material rights/authority/cancellation/atomicity paths at their actual real/synthetic boundaries. Genuine ed7d admits every original100k review assertion through closed prefix plus same-vault original remaining DOI/reopen tail; no continuous1800 PASS. Exact selected04ed materially changes initial commit proof to supported original1000, and genuine31db authenticates the complete actual case:1000 canonical records,1001 manifest rows/all11 pages, one accepted sealed manifest, request replay, fresh runtime reopen and final close. Every100k failure and missing large-commit assertion remains disclosed."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": [
+        "tests.service.test_import_preview_workflow",
+        "tests.service.test_import_commit_workflow",
+        "tests.data.test_import_preview_repository",
+        "tests.data.test_import_summary_repository",
+        "tests.service.test_import_preview_activity",
+        "tests.service.test_import_intake_api",
+        "tests.service.test_import_preview_service",
+        "tests.service.test_import_summary_workflow",
+        "tests.service.test_import_commit_service",
+        "tests.data.test_import_commit_publication",
+        "tests.service.test_import_commit_identity",
+        "tests.service.test_import_commit_activity",
+        "tests.data.test_import_commit_hot_path",
+        "tests.data.test_import_preview_drafts",
+        "tests.data.test_import_summary_storage",
+        "tests.data.test_import_manifest_access",
+        "tests.data.test_import_commit_preparation",
+        "tests.service.test_import_commit_interruptions",
+        "tests.service.test_import_commit_api",
+        "tests.service.test_import_review_api",
+        "tests.service.test_import_summaries",
+        "current-core-configuration",
+        "current-core-installed-worker",
+        "current-core-metadata",
+        "current-core-principals",
+        "current-core-frozen",
+        "protected100k-review",
+        "protected1000-commit"
+      ],
+      "assessment": "Exact149+41 disjoint current input-closed composition covers190 methods with no skips. Focused denial tests cover old/new profile/session/receipt substitution, unknown settings, queue and saved-request reconstruction, cancellation/lease/rights loss, rollback and deduplication. Fresh currentCore build/five checks provide actual frozen business import/reimport/cancel/restart and one real LPAC streaming boundary; unchanged signed worker/Native/frontend/dependency evidence is reused only through the recorded causal closures. Selected1000 case and samefixture100k review tail are real current-principal DPAPI+SQLCipher/Core/durable-worker observations. No product workload was replayed for review."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": [
+        "typing-remediation-format",
+        "typing-remediation-lint",
+        "affected-configured-types",
+        "core-api-contract",
+        "current-core-configuration",
+        "current-core-installed-worker",
+        "current-core-metadata",
+        "current-core-principals",
+        "current-core-frozen"
+      ],
+      "assessment": "All15 current committed payload hashes match the independently reviewed source08 map:8 product files,6 tests and the authority-only predecessor fixture. New immutable settings1.1 binds exact closed900 profile; missing/version1.0/default/Python-name settings and unscheduled, queued, accepted parse/summary/commit and stored-request lineage retain120 without backfill. Actual parser session/receipt and new summary fingerprint/version are bound; old schema/definition/scientific identity and public DTO bytes remain. No DDL/migration/rights/worker policy or generic framework edit.735 configured typing, selected format/lint and unchanged CoreAPI contract pass. The finite root decisions explicitly preserve and supersede only identified evidence requirements; frozen predecessors remain immutable."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "701e17d77628003063ac68433005d874415d13080c88d19ebbf2fdc24a1909ee",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Original CAP-04.S01.T02 authority/origin4951 and claimed3ed9/spec42fb remain preserved. Actual6affe under prospective34e governs creation-only900 and necessary proof; later974f/77c5/8dc openly permits functional review composition with unmet latency retained;08ccc/02794/04ed explicitly reduces initial commit evidence to1000, retaining unqualified100k completion/performance. These are finite recorded choices, not silently inherited approvals. Actual source Core, queued/accepted authority compatibility, principal, frozen business and selected1000 boundaries support the bounded integration. Six exact authority copies are introduced atddb9 after actual freeze, with historical null introduction fields unmodified. No task state mutation, integration or release is performed by this ledger."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "foundation:quality",
+      "service:unit",
+      "data:unit",
+      "contracts:unit",
+      "packaging:unit"
+    ],
+    "actual_qualifying_rows": 32,
+    "assessment": "Four quality/API rows plus21 focused modules, five currentCore consumers, one real original remaining review-tail command and one full supported1000 commit command; every listed actual command root0/natural EMPTY0. The historical six pure parser observations are separately admitted by exact causal input closure, not rerun or treated as a passing failed aggregate. Original17-case buffered trailer is independently admitted from actual complete outcomes;149 are not replayed. Broader Native/frontend/full-profile/security/Wave work is deferred as explicitly recorded, not falsely passed. The frozen rationale display still says30 historical rows; the exact32-row frozen command list and criterion mappings are authoritative and agree."
+  },
+  "evidence_authentication": {
+    "canonical_backlog_frozen_object_exact": true,
+    "canonical_task_state_at_intro": "REVIEW",
+    "completed_prior_rounds": 0,
+    "canonical_packet_and_criteria_selection_hashes_recomputed": true,
+    "frozen_packet_file": {
+      "path": "artifacts/tmp/W2.C35.T01.normal-submit-01/frozen-packet.json",
+      "sha256": "f32e0170a41b354ef1bd484f263860e5b043bf26dc98d26c724e8df060abfec5"
+    },
+    "criterion_manifest": {
+      "type": "criterion-manifest",
+      "path": "artifacts/evidence/W2.C35.T01.R01.json",
+      "sha256": "701e17d77628003063ac68433005d874415d13080c88d19ebbf2fdc24a1909ee",
+      "commit": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "recorded_at": "2026-10-16T02:21:52+00:00"
+    },
+    "all32_frozen_selected_commands_and26_changed_paths_match": true,
+    "all15_candidate_git_blobs_match_reviewed_source_map": true,
+    "actual_intro_direct_parent_is_candidate": true,
+    "actual_authority_introduction_commit": "ddb9e88493cb440883de0bacd48e115b5c1c890f",
+    "public_authority_copies": [
+      {
+        "path": "artifacts/evidence/W2.C35.T01.review-functional-method.proposal-01.json",
+        "sha256": "974f9a77973792da72eec06f6499dc37e9e61f5968fd81b7f6889d916279e165"
+      },
+      {
+        "path": "artifacts/evidence/W2.C35.T01.review-functional-method.scope-review-01.json",
+        "sha256": "77c5ba6e54540e2aca1641d5852792ec7223d212400918f965b0e9d325cb514c"
+      },
+      {
+        "path": "artifacts/evidence/W2.C35.T01.review-functional-method.decision-01.json",
+        "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+      },
+      {
+        "path": "artifacts/evidence/W2.C35.T01.initial-commit-scale.proposal-01.json",
+        "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+      },
+      {
+        "path": "artifacts/evidence/W2.C35.T01.initial-commit-scale.scope-review-01.json",
+        "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+      },
+      {
+        "path": "artifacts/evidence/W2.C35.T01.initial-commit-scale.decision-01.json",
+        "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+      }
+    ],
+    "all_six_private_raw_public_raw_intro_git_bytes_exact_LF": true,
+    "all_six_absent_at_implementation_candidate": true,
+    "scope_publication_record": {
+      "path": "artifacts/tmp/W2.C35.T01.normal-submit-01/scope-publication.json",
+      "sha256": "f37804346f7ed2b4ef1f8501beab8e4ff44bb587eb5e1efc0db3c0d1794dd526"
+    },
+    "historical_null_introduction_fields_preserved": true,
+    "later_shared_head_observed": "55d3aff2a27cb7bcf3e8c1d65afbe328e2181485",
+    "later_C35_source_and_backlog_unchanged": true,
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.C35.T01.proposals-01/independent-product-source-readiness-08.json",
+      "sha256": "abe28f35156b5b26d54ddbc8cc6d83948c93d1ea96f2b6a3a8b9b2039f170c57"
+    },
+    "focused190": {
+      "path": "artifacts/tmp/W2.C35.T01.focused-proof-07.compound190-component-disposition-01.json",
+      "sha256": "f84b1765fb2943ac07ddda08b3bf27d26264c01d7f6b61adb0197826e58bfa02"
+    },
+    "currentCore": {
+      "path": "artifacts/tmp/W2.C35.T01.current-Core-build-and-five-checks-independent-component-disposition-01.json",
+      "sha256": "970c3497819b7be5b556798a08629033ad3a2b3e0bf6157a969796efd6c7918d"
+    },
+    "review_functional_composition": {
+      "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+      "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+    },
+    "initial1000_commit": {
+      "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+      "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+    },
+    "ordinary_views": "Root reports all four ordinary views/site checks PASS after normal submit. No additional view/profile execution by reviewer."
+  },
+  "known_limits": [
+    {
+      "id": "initial-protected-review1800-latency",
+      "status": "DISCLOSED_NONBLOCKING_INITIAL_W2_LIMITATION_UNDER_SELECTED_8DC",
+      "authority": {
+        "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+        "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+      },
+      "actualFunctionalDisposition": {
+        "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+        "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+      },
+      "wholeReview1800TargetMet": false,
+      "completeContinuousReviewTimingAndPeakQualified": false,
+      "originalFailureRetained": {
+        "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+        "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+      },
+      "meaning": "All original review functional assertions are accounted for by the genuine completed-prefix plus same-fixture-tail disposition. The old full invocation remainsFAIL; times/peaks are not stitched. Optional W9 latency work is proposed only."
+    },
+    {
+      "id": "protected100k-commit-unqualified",
+      "status": "DISCLOSED_INITIAL_W2_DEFERRED_100K_QUALIFICATION_UNDER_SELECTED_04ED",
+      "authority": {
+        "proposal": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+          "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+        },
+        "independentScopeAndSourceReadiness": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+          "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+        },
+        "selectedDecision": {
+          "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+          "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+        }
+      },
+      "original100kCommitQualified": false,
+      "actual100kFailureDiagnosis": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+        "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+      },
+      "actual100kFailureReceipt": {
+        "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+        "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+      },
+      "earlierFailureReceipt": {
+        "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+        "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+      },
+      "earlierInitiatingCause": "UNKNOWN",
+      "notQualified": [
+        "Successful100k commit/manifest membership completeness",
+        "100k idempotent replay and fresh-runtime accepted manifest reopen",
+        "100k completion within1800worker/2400sample or absence of other scale defects"
+      ],
+      "actual1000Disposition": {
+        "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+        "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+      },
+      "meaning": "Initial functional commit acceptance is expressly amended to one supported original1000-record case.100k publication, full manifest/paging, replay/reopen, continuous performance and absence of other scale defects remain unqualified. Existing larger product input limits are unchanged; no enforced1000 product cap or guarantee is introduced. Larger commits may exceed observation time; the observed interrupted transaction rolled back. High-scale work is merely proposed for W9, not adopted scope."
+    },
+    {
+      "id": "canonical-import-benchmark-and-method-boundaries",
+      "status": "ORIGINAL_CANONICAL_FAIL_AND_NONQUALIFYING_REPORT_LABELS_PRESERVED",
+      "canonicalWholeBenchmarkPassClaimed": false,
+      "initial6affe100kPolicyQualified": false,
+      "meaning": "Actual190/pure6/currentCore, review composition and selected1000 functional proof retain distinct source candidates/methods/real-vs-synthetic boundaries. One completed1000 observation is descriptive; it does not pass the unchanged canonical baseline/tool or prove whole-app RAM, packaged NativeGUI or live-provider throughput."
+    }
+  ],
+  "independence": {
+    "task_owner": "agent:/root",
+    "reviewer_is_different_from_task_owner": true,
+    "product_source_author": "agent:/root/storage_profile_review",
+    "reviewer_is_not_product_author_or_submitter": true,
+    "private_control_contributions_disclosed": "Reviewer authored some earlier private proof controls; genuine different C21 control reviews and actual source bindings were retained. Current1000 controls are C21-authored and independently reviewed here. Prior genuine source/component judgments are reused, not represented as new executions or fresh-context review.",
+    "checks_builds_scans_fixture_or_runtime_access_by_reviewer": false,
+    "data_report_and_committed_source_reads_only": true
+  },
+  "full_profile_pass_claimed": false,
+  "original100k_commit_qualified": false,
+  "canonical_performance_pass_claimed": false,
+  "whole_review1800_target_met": false,
+  "wave_complete": false,
+  "release_approved": false
+}
