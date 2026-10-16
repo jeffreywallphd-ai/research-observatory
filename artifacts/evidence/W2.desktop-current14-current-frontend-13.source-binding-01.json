@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-current14-fresh-original-product-source-binding",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalDecisionIntroductionCommit": "db25c8c74e2432b6267d687edcfddae31dc070eb",
+  "scopeId": "W2-DESKTOP-CURRENT14-01",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-13.py",
+    "sha256": "b554fcd2ad3ec00219f548ae58233a87b2bb432632a139da12110787859fae13"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-13.json",
+    "sha256": "464673fadc4185a615edfac64c7ffc76f39bc0e5a7ff537e76a6c721aed117d7"
+  },
+  "manifest": null,
+  "originalProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py",
+    "sha256": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9"
+  },
+  "originalPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-05.json",
+    "sha256": "3ea4f05a87757e46856505c7e63fb65c37b65299e4a75880e2ee47773025a733"
+  },
+  "originalManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/source-proposal-manifest-05.json",
+    "sha256": "dd4218f44913fe2c56f3d57302f084d553f6661dafc0e7d8478b304667a88c9b"
+  },
+  "originalReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-05.json",
+    "sha256": "036b424806c36cbca9be78c2e97a49423ded4bc26f32ea4ffcbb537b683ea12a"
+  },
+  "diagnosis": {
+    "path": "artifacts/tmp/W2.C25.T01.runtime-alias-diagnostic-01.json",
+    "sha256": "beb53efe73e73fbbd808faf3a6db8b3f7a3d7730a584c792720c68b55a588b75"
+  },
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-13.py": "b554fcd2ad3ec00219f548ae58233a87b2bb432632a139da12110787859fae13",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-10.py": "d31e5d591666550ebb1a2e23267d2f11c679d5a7ea50716aa211843016e6bfc0",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-04.mjs": "1f0905e195a42e72dffe73daef6ae5af73471f90932d7bbc5087a6e860732271"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-13.json",
+    "sha256": "e7f189f69346bb723d64c7358f7cd8a3e4d26ee8daece67d63a66f33e8c9a29f"
+  },
+  "recordingReadiness": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.desktop-current14-current-frontend-13.source-binding-01.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Apply existing34e/738a scope only to exact actual205 component input after genuine different source/recording review. Original85138 aggregateFAIL retained; no newowner approval, renderer PASS or release claimed.",
+  "scope": "Only actual admitted205 input identity changes; source-map sourcesContent variance stays disclosed, no205-byte-equality or source-map-semantic equivalence claim. Original0a/e8ce are preserved historical records. Fresh current-runtime snapshot/holds unchanged; no six-pair runtime projection. Method10/builder04,26assertions/2186calls,180captures/90cases,exclusivef05,300s/3600s and original all denials/ownership/error cleanup unchanged. Earlier appendOnly entries are historical preparation facts, not active13 results.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "baselineChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "publicationConditions": "Fill only actual sourceReadiness, status/approvedBy under existing prospective authority and truthful external recording semantics after genuine different review; publish exact independently reviewed bytes before executing12.",
+  "predecessorProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-12.py",
+    "sha256": "baaa269d95430e6f3036b501b11083d7075267fc29ff27c0adf0fc333e452ee0"
+  },
+  "predecessorPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-12.json",
+    "sha256": "9173bd7cdff6f651e36a21944a8543117dc3ef086ea9ee7e4752a111283e5c4f"
+  },
+  "predecessorManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/canonical-path-transport-successor-12.manifest.json",
+    "sha256": "4c26005e332cbd722f3ac13609e5580504265d351c4fd7fbf8773f0686dc5168"
+  },
+  "preservedPriorBindingDraft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/normal-absent-workspace-alias-source-binding-07.draft.json",
+    "sha256": "af87dab026f93d21d0f087c671db73f90ea25ca502b5fd0f6c2d60feb5dfed56"
+  },
+  "actualPostInstallCapture": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-c34-01/receipt.json",
+    "sha256": "85138a54cc5792a9ed13c091d85cfdc7fe8bf3349918ee533f14cd2a7546beae"
+  },
+  "preservedImmediateBinding": {
+    "path": "artifacts/evidence/W2.desktop-current14-canonical-path-transport-12.source-binding-01.json",
+    "sha256": "9b74002b08deeae326399b246b3572a640e6942afac963570c42b4464847941f"
+  },
+  "preservedActualFailure": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f04/receipt.json",
+    "sha256": "45215f993b5787d097e92d4a3d5261015689f4a5ec1f0f709abd03fd4a4e3ed8"
+  },
+  "recordingSemantics": "Recorded under existing prospective owner completion authorization34e and finite738a Current14 scope, after genuine different source13 readinesse7f189. This records the actual85138 aggregateFAIL and independently admitted94cf current205 frontend input738ad; it grants no aggregate buildPASS or source-map semantic equivalence. Exact publication/recording review and actual introduction remain separate; current record does not claim owner inspection of a later packet, execution, coverage, task/Wave/release approval. Original12 binding,83b draft and all historical failures/source bytes remain preserved.",
+  "freshProductComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/independent-c34-actual-component-disposition-01.json",
+    "sha256": "94cfac10b8ed2a133eae6f144cb2a5dbd75e786a56b90fd359645e0871ec116f"
+  },
+  "frontendManifest": {
+    "path": "apps/desktop/product-dist/application-manifest.json",
+    "sha256": "738ad07bfa745d5636512029754fa99e662d204a305e71b4b88229afc6b25138"
+  },
+  "historicalPredecessorManifestBefore12": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/react-resolution-successor-11.manifest.json",
+    "sha256": "faa3ea83ad87578b64bde9eaf52399f80d25bcae19d743bba3ce0544d24d6e32"
+  },
+  "approvedBy": "human:repository-owner"
+}
