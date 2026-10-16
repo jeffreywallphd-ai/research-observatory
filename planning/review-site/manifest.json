@@ -6629,7 +6629,7 @@
       "exit_gate_id": "G3",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "PENDING",
+      "completion_status": "IN_PROGRESS",
       "unlocks_waves": [
         "W4"
       ],
@@ -27977,7 +27977,7 @@
             {
               "task_id": "CAP-06.S01.T01",
               "title": "Define searchable fields, analyzers, and query grammar",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -28018,16 +28018,16 @@
             {
               "task_id": "CAP-06.S01.T01",
               "title": "Define searchable fields, analyzers, and query grammar",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-06/CAP-06.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T03",
                 "CAP-05.S03.T03"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w3-implementation",
+                "branch": "codex/w3-implementation",
+                "base_sha": "f295e80e2ec8bfdd6711411759612f4bae23e80d"
               },
               "plan_section_sha256": "b87539cc70638fb023b1e232ce2ec1d069934722e93eacbcc5280040026ddc40",
               "worksheet": null

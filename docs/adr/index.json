@@ -593,6 +593,15 @@
         "CAP-08.S06.T02",
         "CAP-08.S06.T03"
       ]
+    },
+    {
+      "id": "ADR-0059",
+      "path": "docs/adr/ADR-0059-bounded-portable-local-query-snapshots.md",
+      "title": "Bounded portable local query snapshots",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-06.S01.T01"
+      ]
     }
   ]
 }

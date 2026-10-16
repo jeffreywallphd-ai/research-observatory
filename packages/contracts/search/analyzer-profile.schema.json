@@ -1,0 +1,38 @@
+{
+  "$id": "https://research-observatory.local/contracts/search/analyzer-profile.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "analyzerId": {
+      "const": "ro-unicode61-diacritics2-1"
+    },
+    "engine": {
+      "const": "sqlite-fts5"
+    },
+    "removeDiacritics": {
+      "const": 2
+    },
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "sourceNormalization": {
+      "const": "unchanged"
+    },
+    "stemming": {
+      "const": false
+    },
+    "tokenizer": {
+      "const": "unicode61"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "analyzerId",
+    "engine",
+    "tokenizer",
+    "removeDiacritics",
+    "stemming",
+    "sourceNormalization"
+  ],
+  "type": "object"
+}

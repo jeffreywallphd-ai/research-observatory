@@ -1,0 +1,35 @@
+{
+  "$id": "https://research-observatory.local/contracts/search/query-diagnostic.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "pattern": "^[a-z]+(?:-[a-z]+)*$",
+      "type": "string"
+    },
+    "column": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "end": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "line": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "start": {
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "code",
+    "start",
+    "end",
+    "line",
+    "column"
+  ],
+  "type": "object"
+}

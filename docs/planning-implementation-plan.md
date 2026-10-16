@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b45d20f157e0c99a78f706dad558a7b4e7d511e996872ecbf79ac5e882f77ac6
+source_sha256: 732aeabd2ea1216bfd67fdc736c2e4521ed62771e00bd49dcb52438d2416e3de
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -313,7 +313,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W3 - Windows local research workbench
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `NONE` / `PENDING`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-06`, `CAP-07`, `CAP-08`
 
@@ -13949,13 +13949,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-06.S01.T01 - Define searchable fields, analyzers, and query grammar
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-05.S03.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w3-implementation / - (`-`)
 
 **Objective:** Search contract covering title, abstract, full text, authors, venue, identifiers, year, tags, decisions, and exact/phrase/Boolean syntax.
 

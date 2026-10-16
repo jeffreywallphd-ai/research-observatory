@@ -1,0 +1,229 @@
+{
+  "$defs": {
+    "and": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "and"
+        },
+        "operands": {
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "maxItems": 32,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "operands"
+      ],
+      "type": "object"
+    },
+    "literal": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "enum": [
+            null,
+            "title",
+            "abstract",
+            "full-text",
+            "authors",
+            "venue",
+            "identifiers",
+            "tags",
+            "decisions"
+          ]
+        },
+        "kind": {
+          "const": "literal"
+        },
+        "value": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "field",
+        "value"
+      ],
+      "type": "object"
+    },
+    "node": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/literal"
+        },
+        {
+          "$ref": "#/$defs/phrase"
+        },
+        {
+          "$ref": "#/$defs/year"
+        },
+        {
+          "$ref": "#/$defs/and"
+        },
+        {
+          "$ref": "#/$defs/or"
+        },
+        {
+          "$ref": "#/$defs/not"
+        }
+      ]
+    },
+    "not": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "not"
+        },
+        "operands": {
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "operands"
+      ],
+      "type": "object"
+    },
+    "or": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "or"
+        },
+        "operands": {
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "maxItems": 32,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "operands"
+      ],
+      "type": "object"
+    },
+    "phrase": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "enum": [
+            null,
+            "title",
+            "abstract",
+            "full-text",
+            "authors",
+            "venue",
+            "identifiers",
+            "tags",
+            "decisions"
+          ]
+        },
+        "kind": {
+          "const": "phrase"
+        },
+        "value": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "field",
+        "value"
+      ],
+      "type": "object"
+    },
+    "year": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "const": "year"
+        },
+        "kind": {
+          "const": "year"
+        },
+        "operator": {
+          "enum": [
+            "=",
+            ">",
+            ">=",
+            "<",
+            "<="
+          ]
+        },
+        "value": {
+          "maximum": 9999,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "field",
+        "value",
+        "operator"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/search/query-document.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Private local search snapshot. Structural validation alone is insufficient: use Core load_query_document for strict decoding, original/normalized/AST binding, Unicode policy and expanded-tree budgets.",
+  "properties": {
+    "analyzerId": {
+      "const": "ro-unicode61-diacritics2-1"
+    },
+    "ast": {
+      "$ref": "#/$defs/node"
+    },
+    "grammarVersion": {
+      "const": "ro-search-query-1"
+    },
+    "normalizedQuery": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "type": "string"
+    },
+    "originalQuery": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "grammarVersion",
+    "analyzerId",
+    "originalQuery",
+    "normalizedQuery",
+    "ast"
+  ],
+  "type": "object",
+  "x-runtimeLimits": {
+    "astDepth": 16,
+    "expandedAstNodes": 256,
+    "operandsPerJunction": 32,
+    "queryCodepoints": 8192,
+    "wireBytes": 262144
+  }
+}

@@ -6,6 +6,12 @@ Boundary: Schemas, API definitions, events, and generated client sources shared 
 Contracts must not expose operating-system paths, database connection objects,
 framework components, provider SDK types, or other deployment-specific details.
 
+`search/` publishes the local query snapshot, content-free diagnostic and selected
+analyzer profile schemas. Core retains original and normalized queries plus a
+bounded typed AST, with semantic import validation beyond structural JSON Schema.
+See [local search queries](../../docs/architecture/search-queries.md). These
+additive contracts preserve existing Core APIs and the external connector DTO.
+
 `documents/` publishes exact open-access location, selection and receipt schemas,
 plus versioned staged DocumentIR, parser selection, request and result schemas.
 See [document parsing](../../docs/architecture/document-parsing.md) for exact

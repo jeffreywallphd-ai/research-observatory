@@ -744,6 +744,12 @@
     "tests/desktop/tools/__init__.py",
     "tests/documents/__init__.py",
     "tests/service/fixtures/__init__.py",
-    "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py"
+    "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py",
+    "services/core-api/src/research_observatory_core/search/__init__.py",
+    "services/core-api/src/research_observatory_core/search/contracts.py",
+    "services/core-api/src/research_observatory_core/search/grammar.py",
+    "services/core-api/src/research_observatory_core/search/schemas.py",
+    "tests/search/test_query_contracts.py",
+    "tests/search/test_query_grammar.py"
   ]
 }

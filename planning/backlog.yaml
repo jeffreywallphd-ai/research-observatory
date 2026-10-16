@@ -9054,10 +9054,26 @@ waves:
     notes: Owner approved reviewed proposal 45216934b81c4a437b3707df0f9e7f79a825e271 in the current implementation chat; this
       acceptance-only snapshot records ADR0056-58 and exact reference1.10 publication, independent activation review, and
       material bindings. No scope or estimates changed; G3 remains separate.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave
+    owner: codex-w3-implementation
+    branch: codex/w3-implementation
+    worktree: .
+    base_sha: f295e80e2ec8bfdd6711411759612f4bae23e80d
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-10-16T14:32:43+00:00'
+    updated_at: '2026-10-16T14:32:43+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w3-implementation
+      claimed_at: '2026-10-16T14:32:43+00:00'
+      expires_at: '2026-10-17T14:32:43+00:00'
   checkpoints: []
   completion:
-    status: PENDING
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -38123,11 +38139,11 @@ capabilities:
       - search
       verification_commands:
       - python tools/verify.py --profile search
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-10-16T10:36:17+00:00'
+      status: IN_PROGRESS
+      owner: codex-w3-implementation
+      branch: codex/w3-implementation
+      started_at: '2026-10-16T15:04:19+00:00'
+      updated_at: '2026-10-16T15:04:19+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -38137,10 +38153,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: f295e80e2ec8bfdd6711411759612f4bae23e80d
+      lease:
+        claimed_by: codex-w3-implementation
+        claimed_at: '2026-10-16T15:04:19+00:00'
+        expires_at: '2026-10-16T23:04:19+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
     - id: CAP-06.S01.T02

@@ -2856,8 +2856,15 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             WorkVersion,
         )
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
+        from research_observatory_core.search.schemas import query_schemas
 
         openapi = canonical_openapi_bytes()
+        search_schemas = {
+            repo / "packages/contracts/search" / filename: (json.dumps(schema, indent=2, sort_keys=True) + "\n").encode(
+                "utf-8"
+            )
+            for filename, schema in query_schemas().items()
+        }
         manifest_schema = (
             json.dumps(
                 ModelManifest.model_json_schema(by_alias=True)
@@ -2957,6 +2964,7 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     finally:
         sys.path.remove(str(source))
     return {
+        **search_schemas,
         **reconciliation_schemas,
         **connector_schemas,
         repo / "packages" / "contracts" / "model-gateway" / "model-manifest.schema.json": manifest_schema,

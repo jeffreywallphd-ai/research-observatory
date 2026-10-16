@@ -1,0 +1,555 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "observed-pre-w3-core-api-availability",
+  "baseCommit": "f295e80e2ec8bfdd6711411759612f4bae23e80d",
+  "artifactPaths": [
+    "packages/contracts/connectors/connector-capabilities.schema.json",
+    "packages/contracts/connectors/connector-page.schema.json",
+    "packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json",
+    "packages/contracts/connectors/connector-plugin-broker-call.schema.json",
+    "packages/contracts/connectors/connector-plugin-grant.schema.json",
+    "packages/contracts/connectors/connector-plugin-invocation-plan.schema.json",
+    "packages/contracts/connectors/connector-plugin-invocation-request.schema.json",
+    "packages/contracts/connectors/connector-plugin-manifest.schema.json",
+    "packages/contracts/connectors/connector-plugin-repository-metadata.schema.json",
+    "packages/contracts/connectors/connector-plugin-worker-page.schema.json",
+    "packages/contracts/connectors/connector-request.schema.json",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/model-gateway/model-manifest.schema.json",
+    "packages/contracts/model-gateway/routing-policy.schema.json",
+    "packages/contracts/scholarly-records/batch-input.schema.json",
+    "packages/contracts/scholarly-records/candidate-explanation.schema.json",
+    "packages/contracts/scholarly-records/candidate-page.schema.json",
+    "packages/contracts/scholarly-records/candidate-set.schema.json",
+    "packages/contracts/scholarly-records/normalized-identifier.schema.json",
+    "packages/contracts/scholarly-records/reconciliation-inspection.schema.json",
+    "packages/contracts/scholarly-records/reconciliation-result.schema.json",
+    "packages/contracts/scholarly-records/review-command.schema.json",
+    "packages/contracts/scholarly-records/review-context.schema.json",
+    "packages/contracts/scholarly-records/review-outcome.schema.json",
+    "packages/contracts/scholarly-records/review-plan.schema.json",
+    "packages/contracts/scholarly-records/review-preview.schema.json",
+    "packages/contracts/scholarly-records/source-assertion.schema.json",
+    "packages/contracts/scholarly-records/version-command.schema.json",
+    "packages/contracts/scholarly-records/version-context.schema.json",
+    "packages/contracts/scholarly-records/version-outcome.schema.json",
+    "packages/contracts/scholarly-records/version-plan.schema.json",
+    "packages/contracts/scholarly-records/version-preview.schema.json",
+    "packages/contracts/scholarly-records/version-work-page.schema.json",
+    "packages/contracts/scholarly-records/work-state.schema.json",
+    "packages/contracts/scholarly-records/work-version.schema.json"
+  ],
+  "operations": [
+    {
+      "path": "/healthz",
+      "method": "get",
+      "operationId": "health_healthz_get"
+    },
+    {
+      "path": "/projects",
+      "method": "post",
+      "operationId": "create_project_projects_post"
+    },
+    {
+      "path": "/projects/archive",
+      "method": "post",
+      "operationId": "archive_project_projects_archive_post"
+    },
+    {
+      "path": "/projects/close",
+      "method": "post",
+      "operationId": "close_project_projects_close_post"
+    },
+    {
+      "path": "/projects/connectors/capabilities",
+      "method": "get",
+      "operationId": "available_projects_connectors_capabilities_get"
+    },
+    {
+      "path": "/projects/connectors/confirmations",
+      "method": "post",
+      "operationId": "confirm_projects_connectors_confirmations_post"
+    },
+    {
+      "path": "/projects/connectors/diagnostics",
+      "method": "post",
+      "operationId": "diagnostics_projects_connectors_diagnostics_post"
+    },
+    {
+      "path": "/projects/connectors/inspect",
+      "method": "post",
+      "operationId": "inspect_projects_connectors_inspect_post"
+    },
+    {
+      "path": "/projects/connectors/jobs/cancel",
+      "method": "post",
+      "operationId": "cancel_projects_connectors_jobs_cancel_post"
+    },
+    {
+      "path": "/projects/connectors/jobs/status",
+      "method": "post",
+      "operationId": "status_projects_connectors_jobs_status_post"
+    },
+    {
+      "path": "/projects/connectors/previews",
+      "method": "post",
+      "operationId": "preview_projects_connectors_previews_post"
+    },
+    {
+      "path": "/projects/connectors/recent",
+      "method": "post",
+      "operationId": "recent_projects_connectors_recent_post"
+    },
+    {
+      "path": "/projects/corpus/create",
+      "method": "post",
+      "operationId": "createCorpusItem"
+    },
+    {
+      "path": "/projects/corpus/inspect",
+      "method": "post",
+      "operationId": "inspectCorpusItem"
+    },
+    {
+      "path": "/projects/corpus/reports/create",
+      "method": "post",
+      "operationId": "createCorpusReport"
+    },
+    {
+      "path": "/projects/corpus/reports/drill",
+      "method": "post",
+      "operationId": "drillCorpusReport"
+    },
+    {
+      "path": "/projects/corpus/reports/inspect",
+      "method": "post",
+      "operationId": "inspectCorpusReport"
+    },
+    {
+      "path": "/projects/corpus/rights/advance-rechecks",
+      "method": "post",
+      "operationId": "advanceCorpusRightsRechecks"
+    },
+    {
+      "path": "/projects/corpus/rights/current",
+      "method": "post",
+      "operationId": "getCorpusRightsPolicy"
+    },
+    {
+      "path": "/projects/corpus/rights/evaluate",
+      "method": "post",
+      "operationId": "evaluateCorpusRights"
+    },
+    {
+      "path": "/projects/corpus/rights/output-rechecks",
+      "method": "post",
+      "operationId": "getCorpusRightsOutputRechecks"
+    },
+    {
+      "path": "/projects/corpus/rights/publish",
+      "method": "post",
+      "operationId": "publishCorpusRightsPolicy"
+    },
+    {
+      "path": "/projects/corpus/rights/recheck-scope",
+      "method": "post",
+      "operationId": "getCorpusRightsRecheckScope"
+    },
+    {
+      "path": "/projects/delete",
+      "method": "post",
+      "operationId": "delete_project_projects_delete_post"
+    },
+    {
+      "path": "/projects/imports/begin-review",
+      "method": "post",
+      "operationId": "begin_review_projects_imports_begin_review_post"
+    },
+    {
+      "path": "/projects/imports/cancel",
+      "method": "post",
+      "operationId": "cancel_preview_projects_imports_cancel_post"
+    },
+    {
+      "path": "/projects/imports/commit/cancel",
+      "method": "post",
+      "operationId": "commit_cancel_projects_imports_commit_cancel_post"
+    },
+    {
+      "path": "/projects/imports/commit/latest",
+      "method": "post",
+      "operationId": "latest_commit_projects_imports_commit_latest_post"
+    },
+    {
+      "path": "/projects/imports/commit/prepare",
+      "method": "post",
+      "operationId": "prepare_commit_projects_imports_commit_prepare_post"
+    },
+    {
+      "path": "/projects/imports/commit/start",
+      "method": "post",
+      "operationId": "commit_start_projects_imports_commit_start_post"
+    },
+    {
+      "path": "/projects/imports/commit/status",
+      "method": "post",
+      "operationId": "commit_status_projects_imports_commit_status_post"
+    },
+    {
+      "path": "/projects/imports/detail",
+      "method": "post",
+      "operationId": "review_detail_projects_imports_detail_post"
+    },
+    {
+      "path": "/projects/imports/edit",
+      "method": "post",
+      "operationId": "review_edit_projects_imports_edit_post"
+    },
+    {
+      "path": "/projects/imports/list",
+      "method": "post",
+      "operationId": "previews_projects_imports_list_post"
+    },
+    {
+      "path": "/projects/imports/manifest",
+      "method": "post",
+      "operationId": "manifest_projects_imports_manifest_post"
+    },
+    {
+      "path": "/projects/imports/manifest/members",
+      "method": "post",
+      "operationId": "manifest_members_projects_imports_manifest_members_post"
+    },
+    {
+      "path": "/projects/imports/mapping",
+      "method": "post",
+      "operationId": "review_mapping_projects_imports_mapping_post"
+    },
+    {
+      "path": "/projects/imports/records",
+      "method": "post",
+      "operationId": "review_page_projects_imports_records_post"
+    },
+    {
+      "path": "/projects/imports/report",
+      "method": "post",
+      "operationId": "review_report_projects_imports_report_post"
+    },
+    {
+      "path": "/projects/imports/review",
+      "method": "post",
+      "operationId": "review_summary_projects_imports_review_post"
+    },
+    {
+      "path": "/projects/imports/status",
+      "method": "post",
+      "operationId": "preview_status_projects_imports_status_post"
+    },
+    {
+      "path": "/projects/imports/summary",
+      "method": "post",
+      "operationId": "summary_status_projects_imports_summary_post"
+    },
+    {
+      "path": "/projects/imports/summary/cancel",
+      "method": "post",
+      "operationId": "summary_cancel_projects_imports_summary_cancel_post"
+    },
+    {
+      "path": "/projects/imports/summary/groups",
+      "method": "post",
+      "operationId": "summary_groups_projects_imports_summary_groups_post"
+    },
+    {
+      "path": "/projects/imports/summary/members",
+      "method": "post",
+      "operationId": "summary_members_projects_imports_summary_members_post"
+    },
+    {
+      "path": "/projects/imports/summary/start",
+      "method": "post",
+      "operationId": "summary_start_projects_imports_summary_start_post"
+    },
+    {
+      "path": "/projects/imports/undo",
+      "method": "post",
+      "operationId": "review_undo_projects_imports_undo_post"
+    },
+    {
+      "path": "/projects/intent",
+      "method": "post",
+      "operationId": "project_intent_projects_intent_post"
+    },
+    {
+      "path": "/projects/intent/acceptances",
+      "method": "post",
+      "operationId": "accept_intent_projects_intent_acceptances_post"
+    },
+    {
+      "path": "/projects/intent/drafts",
+      "method": "post",
+      "operationId": "save_intent_draft_projects_intent_drafts_post"
+    },
+    {
+      "path": "/projects/intent/policy/evaluations",
+      "method": "post",
+      "operationId": "evaluate_intent_policy_projects_intent_policy_evaluations_post"
+    },
+    {
+      "path": "/projects/intent/preview",
+      "method": "post",
+      "operationId": "preview_intent_projects_intent_preview_post"
+    },
+    {
+      "path": "/projects/models",
+      "method": "post",
+      "operationId": "project_model_catalog_projects_models_post"
+    },
+    {
+      "path": "/projects/models/refresh",
+      "method": "post",
+      "operationId": "refresh_model_catalog_projects_models_refresh_post"
+    },
+    {
+      "path": "/projects/open",
+      "method": "post",
+      "operationId": "open_project_projects_open_post"
+    },
+    {
+      "path": "/projects/privacy",
+      "method": "post",
+      "operationId": "project_privacy_projects_privacy_post"
+    },
+    {
+      "path": "/projects/privacy/cache/clear",
+      "method": "post",
+      "operationId": "clear_project_cache_projects_privacy_cache_clear_post"
+    },
+    {
+      "path": "/projects/privacy/cache/preview",
+      "method": "post",
+      "operationId": "preview_project_cache_projects_privacy_cache_preview_post"
+    },
+    {
+      "path": "/projects/privacy/update",
+      "method": "post",
+      "operationId": "update_project_privacy_projects_privacy_update_post"
+    },
+    {
+      "path": "/projects/provenance/lineage",
+      "method": "post",
+      "operationId": "provenance_lineage_projects_provenance_lineage_post"
+    },
+    {
+      "path": "/projects/recalculation/comparisons",
+      "method": "post",
+      "operationId": "compare_recalculation_projects_recalculation_comparisons_post"
+    },
+    {
+      "path": "/projects/recalculation/preview",
+      "method": "post",
+      "operationId": "preview_recalculation_projects_recalculation_preview_post"
+    },
+    {
+      "path": "/projects/recalculation/restorations",
+      "method": "post",
+      "operationId": "restore_recalculation_revision_projects_recalculation_restorations_post"
+    },
+    {
+      "path": "/projects/recalculation/restore-reviews",
+      "method": "post",
+      "operationId": "request_recalculation_restore_review_projects_recalculation_restore_reviews_post"
+    },
+    {
+      "path": "/projects/recalculation/schedules",
+      "method": "post",
+      "operationId": "schedule_recalculation_projects_recalculation_schedules_post"
+    },
+    {
+      "path": "/projects/reconciliation/batches/cancel",
+      "method": "post",
+      "operationId": "cancelScholarlyReconciliationBatch"
+    },
+    {
+      "path": "/projects/reconciliation/batches/prepare",
+      "method": "post",
+      "operationId": "prepareScholarlyReconciliationBatch"
+    },
+    {
+      "path": "/projects/reconciliation/batches/schedule",
+      "method": "post",
+      "operationId": "scheduleScholarlyReconciliationBatch"
+    },
+    {
+      "path": "/projects/reconciliation/batches/status",
+      "method": "post",
+      "operationId": "inspectScholarlyReconciliationBatch"
+    },
+    {
+      "path": "/projects/reconciliation/candidates",
+      "method": "post",
+      "operationId": "inspectScholarlyDuplicateCandidates"
+    },
+    {
+      "path": "/projects/reconciliation/connector-address",
+      "method": "post",
+      "operationId": "resolveScholarlyConnectorAddress"
+    },
+    {
+      "path": "/projects/reconciliation/exact",
+      "method": "post",
+      "operationId": "reconcileScholarlySource"
+    },
+    {
+      "path": "/projects/reconciliation/inspect",
+      "method": "post",
+      "operationId": "inspectScholarlyReconciliation"
+    },
+    {
+      "path": "/projects/reconciliation/review/commit",
+      "method": "post",
+      "operationId": "commitScholarlyReview"
+    },
+    {
+      "path": "/projects/reconciliation/review/context",
+      "method": "post",
+      "operationId": "inspectScholarlyReviewContext"
+    },
+    {
+      "path": "/projects/reconciliation/review/preview",
+      "method": "post",
+      "operationId": "previewScholarlyReview"
+    },
+    {
+      "path": "/projects/reconciliation/versions/commit",
+      "method": "post",
+      "operationId": "commitScholarlyVersionDecision"
+    },
+    {
+      "path": "/projects/reconciliation/versions/context",
+      "method": "post",
+      "operationId": "inspectScholarlyVersionContext"
+    },
+    {
+      "path": "/projects/reconciliation/versions/inspect",
+      "method": "post",
+      "operationId": "inspectScholarlyVersion"
+    },
+    {
+      "path": "/projects/reconciliation/versions/preview",
+      "method": "post",
+      "operationId": "previewScholarlyVersionDecision"
+    },
+    {
+      "path": "/projects/reconciliation/versions/works",
+      "method": "post",
+      "operationId": "listScholarlyVersionWorks"
+    },
+    {
+      "path": "/projects/recovery/cancel",
+      "method": "post",
+      "operationId": "cancelProjectRecovery"
+    },
+    {
+      "path": "/projects/recovery/confirm",
+      "method": "post",
+      "operationId": "confirmProjectRecovery"
+    },
+    {
+      "path": "/projects/recovery/preview",
+      "method": "post",
+      "operationId": "previewProjectRecovery"
+    },
+    {
+      "path": "/projects/recovery/status",
+      "method": "post",
+      "operationId": "projectRecoveryStatus"
+    },
+    {
+      "path": "/projects/restore",
+      "method": "post",
+      "operationId": "restore_project_projects_restore_post"
+    },
+    {
+      "path": "/projects/workflow-progress",
+      "method": "post",
+      "operationId": "project_workflow_progress_projects_workflow_progress_post"
+    },
+    {
+      "path": "/projects/workflow-progress/commands",
+      "method": "post",
+      "operationId": "command_workflow_progress_projects_workflow_progress_commands_post"
+    },
+    {
+      "path": "/projects/workflows/human-tasks/{human_task_id}/decide",
+      "method": "post",
+      "operationId": "decide_workflow_human_task_projects_workflows_human_tasks__human_task_id__decide_post"
+    },
+    {
+      "path": "/projects/workflows/jobs/{job_id}/cancel",
+      "method": "post",
+      "operationId": "cancel_workflow_job_projects_workflows_jobs__job_id__cancel_post"
+    },
+    {
+      "path": "/projects/workflows/jobs/{job_id}/retry",
+      "method": "post",
+      "operationId": "retry_workflow_job_projects_workflows_jobs__job_id__retry_post"
+    },
+    {
+      "path": "/projects/workflows/task-center",
+      "method": "get",
+      "operationId": "workflow_task_center_projects_workflows_task_center_get"
+    },
+    {
+      "path": "/readyz",
+      "method": "get",
+      "operationId": "readiness_readyz_get"
+    },
+    {
+      "path": "/runtime/capabilities",
+      "method": "get",
+      "operationId": "capabilities_runtime_capabilities_get"
+    },
+    {
+      "path": "/runtime/configuration",
+      "method": "get",
+      "operationId": "configuration_runtime_configuration_get"
+    },
+    {
+      "path": "/runtime/modules",
+      "method": "get",
+      "operationId": "registered_modules_runtime_modules_get"
+    },
+    {
+      "path": "/runtime/operations",
+      "method": "get",
+      "operationId": "list_operations_runtime_operations_get"
+    },
+    {
+      "path": "/runtime/operations/{operation_id}",
+      "method": "get",
+      "operationId": "operation_status_runtime_operations__operation_id__get"
+    },
+    {
+      "path": "/runtime/operations/{operation_id}/cancel",
+      "method": "post",
+      "operationId": "cancel_operation_runtime_operations__operation_id__cancel_post"
+    },
+    {
+      "path": "/runtime/operations/{operation_id}/events",
+      "method": "get",
+      "operationId": "operation_events_runtime_operations__operation_id__events_get"
+    },
+    {
+      "path": "/runtime/version",
+      "method": "get",
+      "operationId": "version_runtime_version_get"
+    },
+    {
+      "path": "/workflow-profiles/catalog",
+      "method": "get",
+      "operationId": "workflow_profile_catalog_workflow_profiles_catalog_get"
+    }
+  ]
+}
