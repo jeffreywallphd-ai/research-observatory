@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 024ec9f8f784c77508eb406ede18df640394d608b54f0d76532b7e26d03eb8fc
+source_sha256: 59a61b6d5d096c68f253941553b59604a8b81926df670b6c9b343b6be4ceddd1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -100,7 +100,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### G2 - Inspectable Windows local corpus
 
-**After / unlocks / status:** `W2` / `W3` / `PENDING`
+**After / unlocks / status:** `W2` / `W3` / `APPROVED`
 
 **Criteria:**
 
@@ -292,7 +292,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W2 - Windows local evidence foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `COMPLETE` / `APPROVED` — artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json
 
 **Capability contributions:** `CAP-04`, `CAP-05`
 
@@ -13679,7 +13679,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Parsing errors can be diagnosed and corrected without obscuring machine output or provenance.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -13920,7 +13920,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5.
 
-**Wave / priority / status / review:** `W3` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W3` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -13928,7 +13928,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-06.S01.T01 - Define searchable fields, analyzers, and query grammar
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -14888,7 +14888,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server.
 
-**Wave / priority / status / review:** `W3` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W3` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -14896,7 +14896,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-07.S02.T01 - Integrate a supervised local inference runtime
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 

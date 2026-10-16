@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 024ec9f8f784c77508eb406ede18df640394d608b54f0d76532b7e26d03eb8fc
+source_sha256: 59a61b6d5d096c68f253941553b59604a8b81926df670b6c9b343b6be4ceddd1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -37,22 +37,22 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `COMPLETE` | 1 |
+| `COMPLETE` | 2 |
 | `NONE` | 10 |
-| `PAUSED` | 1 |
 
 ### Slice completion
 
 | Status | Count |
 |---|---:|
-| `APPROVED` | 31 |
-| `PENDING` | 86 |
+| `APPROVED` | 32 |
+| `PENDING` | 85 |
 
 ### Task state
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 220 |
+| `NOT_STARTED` | 218 |
+| `READY` | 2 |
 | `DONE` | 100 |
 | `DEFERRED` | 36 |
 
@@ -1004,7 +1004,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 10/11 | 69/69 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `COMPLETE` | `APPROVED` — artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json | 11/11 | 69/69 | `G2` / `APPROVED` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -1024,7 +1024,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 6/6 | 20/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 5/5 | 15/15 | - |
-| CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 5/6 | 18/18 | - |
+| CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 6/6 | 18/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 1/5 | 3/15 | - |
 | CAP-evidence-verification (`CAP-08`) — Evidence schemas, extraction, verification, and adjudication | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -1046,7 +1046,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|
 | `G0` — W0 exit / W1 activation — Executable engineering baseline | `W0` | `W1` | `APPROVED` |
 | `G1` — W1 exit / W2 activation — Durable Windows local application core | `W1` | `W2` | `APPROVED` |
-| `G2` — W2 exit / W3 activation — Inspectable Windows local corpus | `W2` | `W3` | `PENDING` |
+| `G2` — W2 exit / W3 activation — Inspectable Windows local corpus | `W2` | `W3` | `APPROVED` |
 | `G3` — W3 exit / W4 activation — Windows local evidence workbench | `W3` | `W4` | `PENDING` |
 | `G4` — W4 exit / W5 activation — Minimum compelling Windows scholarly-reasoning product | `W4` | `W5` | `PENDING` |
 | `G5` — W5 exit / W6 activation — Windows PC/lab version 1.0 | `W5` | `W6` | `PENDING` |

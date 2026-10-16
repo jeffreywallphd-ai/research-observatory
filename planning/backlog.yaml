@@ -1490,19 +1490,18 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: COMPLETE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 8de7a8c4e6dc6c6c02690377302b36d95c1ccfb3
+    base_sha: baa77610be6c223ece3f3774d3123fc0158a8fe6
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-16T06:06:19+00:00'
-    pause_reason: Pause at clean boundary solely to admit a linked corrective task restoring approved Reader thumbnail inline
-      padding; f09 adverse geometry retained; owner completion authority34e, no new governed design or release decision.
-    pause_category: approved-design-gate
+    updated_at: '2026-10-16T10:36:17+00:00'
+    pause_reason: null
+    pause_category: null
     lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
@@ -8827,6 +8826,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-16T04:03:06+00:00'
+    - id: W2.R20
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: baa77610be6c223ece3f3774d3123fc0158a8fe6
+      prior_campaign_sha256: 5b539820d273d8767fd5336e0579a77ee5ed798a64ad772e131af5a625a65397
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-16T10:36:17+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -8929,12 +8940,23 @@ waves:
       sha256: 66e31041bfe11d41c367818dfb0211237f8cd3d8d5562fc2fd9e9a3242f33c6c
       commit: 29241f6c8008ff0dd72fdbec862e25f5ed3122f2
     notes: Adopted W2.A06 control-plane amendment.
+  - id: W2.CP10
+    kind: risk-cluster
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-16T10:36:17+00:00'
+    evidence:
+    - artifacts/evidence/W2.initial-exit-qualification-20261016-01.json
+    - artifacts/evidence/W2.CAP-05.S06.CP10.independent-final-disposition-01.json
+    notes: Owner-accepted initial W2 closure; existing adverse evidence and unperformed proof remain explicit. No further
+      product/styling runs. Future Wave updates follow actual G2; W3 planning only.
   completion:
-    status: PAUSED
-    reviewer: null
-    reviewed_at: null
-    evidence: []
-    notes: null
+    status: APPROVED
+    reviewer: agent:/root/security_resolution_review
+    reviewed_at: '2026-10-16T10:36:17+00:00'
+    evidence:
+    - artifacts/evidence/W2.initial-exit-qualification-20261016-01.json
+    - artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json
+    notes: artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json
 - id: W3
   title: Windows local research workbench
   goal: Deliver search, screening, model execution, structured extraction, verification, and evidence matrices.
@@ -9187,14 +9209,18 @@ release_gates:
   - References and lawful documents can be ingested, reconciled, parsed, and inspected.
   - Every document-derived object resolves to an immutable document revision and source anchor.
   - Rights and discovery provenance travel with corpus records.
-  status: PENDING
+  status: APPROVED
   unlocks_waves:
   - W3
   approval:
-    approved_by: null
-    approved_at: null
-    evidence: []
-    notes: null
+    approved_by: human:repository-owner
+    approved_at: '2026-10-16T10:36:17+00:00'
+    evidence:
+    - artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md
+    - artifacts/evidence/W2.initial-exit-qualification-20261016-01.json
+    - artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json
+    notes: Owner-accepted initial W2 closure; existing adverse evidence and unperformed proof remain explicit. No further
+      product/styling runs. Future Wave updates follow actual G2; W3 planning only.
 - id: G3
   after_wave: W3
   name: Windows local evidence workbench
@@ -37168,7 +37194,7 @@ capabilities:
     depends_on:
     - CAP-05.S04.T02
     - CAP-03.S05.T02
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-05.S06.T01
       capability_id: CAP-05
@@ -37906,11 +37932,12 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: agent:/root/c21_closeout_review
+      reviewed_at: '2026-10-16T10:36:17+00:00'
+      evidence:
+      - artifacts/evidence/W2.initial-exit-qualification-20261016-01.json
+      notes: artifacts/evidence/W2.CAP-05.S06.CP10.independent-final-disposition-01.json
   execution_mode: wave_contribution
   campaign: null
   completion:
@@ -37941,7 +37968,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T03
     - CAP-05.S03.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-06.S01.T01
       capability_id: CAP-06
@@ -37970,11 +37997,11 @@ capabilities:
       - search
       verification_commands:
       - python tools/verify.py --profile search
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-16T10:36:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -41399,7 +41426,7 @@ capabilities:
     depends_on:
     - CAP-07.S01.T03
     - CAP-01.S03.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-07.S02.T01
       capability_id: CAP-07
@@ -41432,11 +41459,11 @@ capabilities:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-16T10:36:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

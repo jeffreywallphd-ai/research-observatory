@@ -1,0 +1,28 @@
+{
+  "documentType": "one-use-W2-exit-recording-batch-receipt",
+  "status": "COMMITTED",
+  "producerCommit": "baa77610be6c223ece3f3774d3123fc0158a8fe6",
+  "sourceSha256": "c1fba167f143bc2ccbfd6d1894659a84ded8c527f61e3978e2b03e6d5751b49f",
+  "inputSha256": "3a7938af16cd6b59757159b5abfdab89cea9875e77f1b2ea222222d758ddcb9d",
+  "readinessSha256": "fd01144689cfcfbf2dcc2511954c7b57b85ccc9ffa70f3a855b029c38356c7bc",
+  "predecessorSha256": "c61ead752b8f0c3a8a5beed64d6514d2b79c71907f473f153b5c67e041f09bf6",
+  "successorSha256": "f0ef16d517c8796615ae2a78c38b789d7be59e3d0b405b5c6c407cfd5daec334",
+  "operations": [
+    "command_wave_resume",
+    "command_slice_submit",
+    "command_slice_review",
+    "command_wave_checkpoint",
+    "command_wave_submit",
+    "command_wave_review",
+    "command_gate_approve"
+  ],
+  "resumeId": "W2.R20",
+  "checkpointId": "W2.CP10",
+  "C36": "DONE",
+  "S06": "APPROVED",
+  "W2": "APPROVED",
+  "G2": "APPROVED",
+  "W3ImplementationAuthorized": false,
+  "sharedSourceChanged": false,
+  "intermediateSnapshotsWereProposedOnly": true
+}
