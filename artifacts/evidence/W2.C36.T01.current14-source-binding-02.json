@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-C36-current14-specificity-source-input-successor-binding",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "scopeId": "W2-DESKTOP-CURRENT14-01",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-19.py",
+    "sha256": "b81d614f51474cc7c9fa270257d6f6421673d609d6da3a6995c4077fea6d0742"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-19.json",
+    "sha256": "ca0f89262ccc3f6a1bcb9611f1a20267436df2f7cb771018382ddb49a07e8def"
+  },
+  "manifest": null,
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-19.py": "b81d614f51474cc7c9fa270257d6f6421673d609d6da3a6995c4077fea6d0742",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-16.py": "ad373ac5cffc74063f9ae587404f14ab9164863488bb07f2e2c41f19ece57bc4",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-10.mjs": "05727682e2e3e5634236ed4e6bd69f20e1420df8cf7e32cca303ded53fc2c115"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-readiness-19.json",
+    "sha256": "cf940cb027b2446ccca0f5613246e34529d2c7acf29faa32859ec70df90aba4b"
+  },
+  "recordingReadiness": null,
+  "actualIntroductionCommit": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.C36.T01.current14-source-binding-02.json",
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/actual-build-c36-02/receipt.json",
+    "sha256": "9cc414021c0e18bfbf3d3f1ae74976030dad33c075dc7a7453c727c6618091bb"
+  },
+  "freshProductComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/independent-c36-actual-component-disposition-02.json",
+    "sha256": "3d6655c37c9726aad7df6bab6d603d2c05e35439eddc2960f374cb0bddb5db92"
+  },
+  "frontendManifest": {
+    "path": "apps/desktop/product-dist/application-manifest.json",
+    "sha256": "9c7170ccd7a58fd79e6b996502aea8cd459dcbe1f65994decfa9e6bc0c4007b7"
+  },
+  "sourceApplication": {
+    "path": "artifacts/evidence/W2.C36.T01.source-application-02.json",
+    "sha256": "e95bda281d4b3ba06dfe8192225fa4dd313b890cba88c1fa6ec1c4830414056d"
+  },
+  "sourceDelta": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-successor-19.delta.json",
+    "sha256": "210c939fd2e769617310649f93b655488464f98921ee4e4a26e5d899199c70b8"
+  },
+  "predecessorBinding": {
+    "path": "artifacts/evidence/W2.C36.T01.current14-source-binding-01.json",
+    "sha256": "4f310cc18780563a24b831826db69f576729a98ca053fb77bc82fc73b74f4b60"
+  },
+  "preservedActualF10": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f10/receipt.json",
+    "sha256": "101491147e8d11969efae974d87f2114996bdd2b91e95310548249dfa0a8c405"
+  },
+  "finiteUiMethod": {
+    "proposal": {
+      "path": "artifacts/evidence/W2.C36.T01.ui-authority-method-01.proposal.json",
+      "sha256": "d167edca143d2ef90ba9092d5c8e35cb69b1dfa47031e2e38f4b707200d25617"
+    },
+    "decision": {
+      "path": "artifacts/evidence/W2.C36.T01.ui-authority-method-01.decision.json",
+      "sha256": "d680eda1ae02526c8823f2ff0310fc33fde113dde231685c4a1aea5e84ee333c"
+    }
+  },
+  "scope": "Seven transport/output literals only plus exact current product/capture/application input metadata. Original div-root helper18, Reader section/book wire02 and all90cases180captures/assertions/timers/holds unchanged. No alternate driver, selector/predicate exemption, shared framework, reference or criterion edit.",
+  "preExecutionConditions": {
+    "actualReference05OriginalSnapshot19": "Required genuine actual before publication/execution",
+    "actualNative02Current206": "Required genuine actual before publication/execution",
+    "sourceAndRecordingReview": "Genuine different exact source readiness and final four-field recording review before publication",
+    "actualExternalPrerequisitesAtPreparation": null,
+    "candidate": "Actual later clean committed candidate containing this exact finalized binding; never guessed here"
+  },
+  "permittedFinalizationFields": [
+    "status",
+    "approvedBy",
+    "sourceReadiness",
+    "recordingSemantics"
+  ],
+  "recordingSemantics": "Root prospectively selects only the exact independently reviewed source19/current-input successor under actual owner34e and original738a, within the already selected C36 d167/d680 finite current-reference method. This is a present necessary completion selection, not an earlier exact owner inspection or a new predicate exemption. Actual application02/e95b/CSS9e685 and product02/9cc414/different3d665/manifest9c717 remain separately authenticated at1b377. The public sourceReadiness alias is a byte-identical copy of genuinecf940; the private original stays unchanged. Only status, approvedBy, sourceReadiness and this recordingSemantics field differ from the reviewed draft. Every other value/null/history remains unchanged. Private finalization supplies no Native02, Reference05 or Current14 PASS: genuine external prerequisite and different exact recording closure are required before publication and one original full90/180 execution. Actual introduction and outcomes are recorded separately after they exist, never guessed or self-referenced. No canonical UI gate/classifier PASS, framework/reference/criterion change or release approval is granted.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "baselineChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner"
+}
