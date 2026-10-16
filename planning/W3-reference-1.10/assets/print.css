@@ -1,0 +1,9 @@
+@media print {
+  .sidebar, .topbar-actions, .theme-toggle, .sidebar-toggle, .trust-footer, .no-print { display: none !important; }
+  .app-shell { display: block !important; }
+  .main-shell { margin: 0 !important; }
+  .topbar { position: static !important; border: 0 !important; }
+  .page-content { padding: 0 !important; }
+  .card, .panel { break-inside: avoid; box-shadow: none !important; }
+  body { background: #fff !important; color: #111 !important; }
+}

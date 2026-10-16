@@ -1,0 +1,237 @@
+{
+  "status": "PRIVATE_PROPOSED_SUCCESSOR_NO_CANONICAL_CHANGE",
+  "previousProposal": {
+    "path": "artifacts/tmp/W3.planning-draft-01/wave-proposal-01.json",
+    "sha256": "7790e02d89ca53f291045d6823427c173c7529ffdc45b48eb10ad8fefbf5d937"
+  },
+  "previousManifest": {
+    "path": "artifacts/tmp/W3.planning-draft-01/source-manifest-01.json",
+    "sha256": "28c56a6e32fc9803500a3f1486c7302ca65969d8e727a9bbf7f141a085c327d1"
+  },
+  "changes": [
+    {
+      "path": "architecture-decision-proposals-01.json",
+      "previousSHA256": "fbf9c7dce564ebf6fe917da32a786518f0f48cf1ecd93787d3790cf0ceeba914",
+      "newSHA256": "fbf9c7dce564ebf6fe917da32a786518f0f48cf1ecd93787d3790cf0ceeba914",
+      "changed": false
+    },
+    {
+      "path": "backlog-change-proposal-01.json",
+      "previousSHA256": "45fd434839140dbce34340e103e9fb518e885eb9af10e875190ce01354aba99d",
+      "newSHA256": "efd1628e10f93e06ecfccb601a39703c02ae2677ff6039018729c5a4a17b3826",
+      "changed": true
+    },
+    {
+      "path": "baseline-and-source-inventory-01.json",
+      "previousSHA256": "b9afcfd41235226e288dc502b011aafb12a117300ab8f542cd9bc07dbbd742d0",
+      "newSHA256": "b9afcfd41235226e288dc502b011aafb12a117300ab8f542cd9bc07dbbd742d0",
+      "changed": false
+    },
+    {
+      "path": "contracts-01.md",
+      "previousSHA256": "750ad48331690f8016582ecca30cc035dece20606f6af95f325d59507d6d11f0",
+      "newSHA256": "44bbcc00e3543ea9098d88bba50f95a169f429be991e72958e7ada616af578da",
+      "changed": true
+    },
+    {
+      "path": "decision-summary-01.md",
+      "previousSHA256": "19bad4c26682a32c1564a98c5291338ddd6c0a5f630fc3933f1b1cd580f5c0a3",
+      "newSHA256": "89b6fbcf4875938a5d981f866d88064e0a4933027562f097ea6dd7027687ba62",
+      "changed": true
+    },
+    {
+      "path": "initial-target-register-01.json",
+      "previousSHA256": "e1f5bcb0016c7384e38eb297368b74680105a5422a0b4e78e3996828fe338d6c",
+      "newSHA256": "d6a8e069ca9ff230f18141461e2f531691ca670f318750b875099c574ece598c",
+      "changed": true
+    },
+    {
+      "path": "interface-and-migration-proposal-01.json",
+      "previousSHA256": "2e68709be7ba609af22dc43ff130138a3fff9b5ae192a826268e91b59e3c5bce",
+      "newSHA256": "2b3a8a51d9e35d5167250de04b545c952ab2387f50498b23fd23790e2caba8b6",
+      "changed": true
+    },
+    {
+      "path": "original-plan-budget-register-01.json",
+      "previousSHA256": "4a93ff6313d7a6ad7cfbe4133c7ddc524d43a1a6e929c51fd79d58440442a8bc",
+      "newSHA256": "de9cc4df2c51f69b0eabc3db45a2860d7ab3f7f8a50966790a40baebca764087",
+      "changed": true
+    },
+    {
+      "path": "planning/capability-plans/CAP-06.md",
+      "previousSHA256": "2bad5fe425a5e45bfb0f947aef8d3eb15b4d30f6206bd8d873b17b7cfe5989fa",
+      "newSHA256": "2bad5fe425a5e45bfb0f947aef8d3eb15b4d30f6206bd8d873b17b7cfe5989fa",
+      "changed": false
+    },
+    {
+      "path": "planning/capability-plans/CAP-07.md",
+      "previousSHA256": "f4df5f03ddd0ae03ec241f52e90b9ba072beedc31bc84018f239e888af0634e0",
+      "newSHA256": "e9e9f47e2a6d6a225c084e4ddbb7f5b92b4100f3e7ddf036370acf9e3d150458",
+      "changed": true
+    },
+    {
+      "path": "planning/capability-plans/CAP-08.md",
+      "previousSHA256": "ceac8d6e090adf187bd413510387ad748a16210c94822be667817086fce1f3fe",
+      "newSHA256": "ceac8d6e090adf187bd413510387ad748a16210c94822be667817086fce1f3fe",
+      "changed": false
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+      "previousSHA256": "400eef63f467060f29e9df2383272b3412742a05d52fc20ded56a1c4901aaf1c",
+      "newSHA256": "c266c049bd5d12224612712aa934515a6aa0fa7a524b1090e0a75a97be3314a4",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+      "previousSHA256": "650df97a6b30f3dbf1a42ac7534986dc53625fa9d2f2f42884fc121b2d4f4823",
+      "newSHA256": "97892ac52cbe83227982c585da3b213bf9ded8cccc5f10a627f4b4f8da77d25c",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+      "previousSHA256": "26db94465ff6a31975f1e37f2460e09aef6eeca6f6688c6fea790457edb394cd",
+      "newSHA256": "fe95190bfd47f689520199ce0e2fd80f8dde4299a08882e4f7b6382708ec3d77",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+      "previousSHA256": "fcc882060d9f094e3a6dab5011b9353adefb560ee3f276e946ec882a6126275a",
+      "newSHA256": "1befc073cd675f4a05e0382d71c9a8cad155f7c0218042feb887800582610d5b",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+      "previousSHA256": "04545fc3079e918c745e52e1260dd5d782fc7e2599cbe31804167dd561c4380f",
+      "newSHA256": "c928f8f7e9434249254564c272c1585aa32a55e405942ff06188354a8ee05fd6",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+      "previousSHA256": "44b2be1cdae6f4cd61d3ec84d02befdb370cc774e45fd0bd49690616cdf5c860",
+      "newSHA256": "3615f4cb4a76896920736c576d8667694e422f4bcfa9827dd2a9c89ba6f3552c",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+      "previousSHA256": "e42456a8f935dfdd009f33b0ff9b3aa27facd3c69d23241b72ac8e9c5d01eed9",
+      "newSHA256": "8256ea92f6a3c3ca3208d2d1ced18a2dd481cc00bbb73d99fccb0816188d0cd1",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+      "previousSHA256": "efb62ec0ae3b452980b05cf543560d875926d64a9a93a753f258352eaa95b922",
+      "newSHA256": "034ec8b54df528c9252d5db4ea45a26dc72040c7c30540a8c15ba043b236548a",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+      "previousSHA256": "bccbbb273c668bcc3a8b1eb912a25fb1acd1e32db9923fc465db88514d6b39f3",
+      "newSHA256": "9708a87fdc3682a4915ad5c5b7f62fa61a81ef65bbc7efddef39ebab6c6e85d5",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+      "previousSHA256": "49dc51387512269f6f680b4da41c6048999103ce32d8a9da6b56b6c18824f53d",
+      "newSHA256": "8b330db7bbae9f5bef341b8ced81b4674c93b62695cbb0b38608e8b807a92692",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+      "previousSHA256": "4d82d2b3599e1b83691d6909a6e018d9496dc90ba80caf1786921050634706cb",
+      "newSHA256": "cb74445c3ac2267afe331c2c280c889a6c9d9dbf7263cacdd43ad814d8e82fad",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+      "previousSHA256": "549c89c3a83722a401ba0fc9b8b3ee2056ba79afa718edff86147d922e17df75",
+      "newSHA256": "a28cc1eba32cc67727301bc9defe66728702938501b59e49b1fc7560609defe4",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+      "previousSHA256": "08ba6fe6eb9ad40d84c84ff87e1241cd8c06ef4bfc43ff7d5d31ffa9c51998d0",
+      "newSHA256": "1fe62cf029183c145e84c41ce7a91cf9c4e65268865f8cb71c0602759c8e4aec",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+      "previousSHA256": "42859f46fe04193ed5694ce75c9e381fa241a60d8c7b9cab76f2493fb6a30343",
+      "newSHA256": "2a38c98318e9d8c966b05fd670e0cdac3d4f5df3c31828b57766374bedc164a5",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+      "previousSHA256": "0f485877214ccee7cf31251d6b2672a46ca46e5e983108e1695c1e9400662901",
+      "newSHA256": "2e371b8d0832aac6f765ceb5e0f0ef5f409ebdc13537918b5c13016448db29ed",
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+      "previousSHA256": "d3ed382d41a258709299b7baec509000409b7337b088815838af19f2d547e70a",
+      "newSHA256": "e838033cf5431be75625c61b201ae1c1f0c0f419ae3537d7159576c6f8270e89",
+      "changed": true
+    },
+    {
+      "path": "primary-evidence-01.json",
+      "previousSHA256": "5ce56e8e0814394489287186683c04ec2d3b388d1e621171839dfe4ceaba827f",
+      "newSHA256": "4010b3c0d7b98a675e50eee06a58ae1dea1d7c52cd2f47d80fedf74e20ceb007",
+      "changed": true
+    },
+    {
+      "path": "README.md",
+      "previousSHA256": "cddb879a4a2ac432774fe3827d9b3b52ba55491a0f6f1a9df8576b8090be7e14",
+      "newSHA256": "dcb37dd6ef2976a23a0a2fcfac4bcaeb19e2ae2e21bf662a93d5d51b23eab24f",
+      "changed": true
+    },
+    {
+      "path": "task-register-01.json",
+      "previousSHA256": "e181ecec1d80c14f095a9f7f24a59829ca6ed54169893c6950738bec478b1968",
+      "newSHA256": "3231ecec43f0daa96f374ea97168bbc22b43583da054b35335d84f8d84f91f3a",
+      "changed": true
+    },
+    {
+      "path": "unresolved-decision-list-01.json",
+      "previousSHA256": "82b3f821505f9f539407246c6092809b3ac455964fdda5bf3234a3969fdb0b42",
+      "newSHA256": "14e0c0d06d58b2f6eec647d8b7dde5ded66dfc7b3a93a4a55d913043f940e9e0",
+      "changed": true
+    },
+    {
+      "path": "ux-reference-proposal-01.md",
+      "previousSHA256": "2abee63a7ca71ba5d05457742b097d89c4ee36e1dd9c7fdc2179f34f9411feae",
+      "newSHA256": "bfb512e0f192361e4431c5951fe85e2bc284545ffd1e0a46ab00a5242da0b398",
+      "changed": true
+    },
+    {
+      "path": "wave-proposal-01.json",
+      "previousSHA256": "7790e02d89ca53f291045d6823427c173c7529ffdc45b48eb10ad8fefbf5d937",
+      "newSHA256": "0665d9a19e33b271d3bd1bddd0703308f4cc50920c9e4fa8e2ae20ede94297b6",
+      "changed": true
+    }
+  ],
+  "newFiles": [
+    "aggregate-resource-and-selection-policy-02.json",
+    "small-model-primary-candidates-02.json",
+    "gold-source-and-annotation-strategy-02.json"
+  ],
+  "exactScope": [
+    "Replace worker3GiB+4GiB host-floor with per-role tiny/small tiers inside application2GiB preferred/3GiB upper and honest Job/private-commit/mapped/physical distinction.",
+    "Replace generic new120-document/60-query/300-label requirement with concrete publisher SciFact/QASPER existing annotations and finite30-case human mapping bridge with exact rights/domain/split limits."
+  ],
+  "unchanged": [
+    "16 slice/48 task IDs",
+    "dependency DAG",
+    "924 engineering-effort-hours incl28 planned refactoring",
+    "accepted inherited ADR/approval authority",
+    "canonical before-model rights/classification/budget",
+    "median ALL comparable timing rule",
+    "source/rights/security/cleanup criteria",
+    "W2 exit/G2 and actual W3 approval remain pending"
+  ],
+  "provenance": "All parent draft bytes remain intact; successor is a planning recommendation, not accepted architecture/reference/model/dataset authority.",
+  "dataConsistency": {
+    "all48IDsAndDAGUnchanged": true,
+    "estimate924Unchanged": true,
+    "fourInheritedW1DecisionObjectsUnchanged": true,
+    "previousManifestStillExact": "28c56a6e32fc9803500a3f1486c7302ca65969d8e727a9bbf7f141a085c327d1"
+  }
+}

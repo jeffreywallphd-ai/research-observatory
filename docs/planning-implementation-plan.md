@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: feba51c6614a6217e8c55ac625a52c112d6c4594d062dc15d7a2685438831650
+source_sha256: 83ca1f1738b4dc6578ab8a56c0855837a01ae7cb5ac6c4dc7715c027f1aecf47
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -317,7 +317,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Capability contributions:** `CAP-06`, `CAP-07`, `CAP-08`
 
-**Ordered slices:** `CAP-06.S01`, `CAP-06.S02`, `CAP-06.S03`, `CAP-06.S04`, `CAP-06.S05`, `CAP-06.S06`, `CAP-07.S02`, `CAP-07.S03`, `CAP-07.S04`, `CAP-07.S05`, `CAP-08.S01`, `CAP-08.S02`, `CAP-08.S03`, `CAP-08.S04`, `CAP-08.S05`, `CAP-08.S06`
+**Ordered slices:** `CAP-06.S01`, `CAP-06.S02`, `CAP-06.S03`, `CAP-06.S04`, `CAP-06.S05`, `CAP-06.S06`, `CAP-07.S04`, `CAP-07.S02`, `CAP-07.S05`, `CAP-07.S03`, `CAP-08.S01`, `CAP-08.S03`, `CAP-08.S02`, `CAP-08.S04`, `CAP-08.S05`, `CAP-08.S06`
 
 **Goal:** Deliver search, screening, model execution, structured extraction, verification, and evidence matrices.
 
@@ -13968,6 +13968,7 @@ Original tasks and approvals remain unchanged.
 - Grammar is documented and round-trippable; invalid queries produce location-specific errors; original and normalized query are both retained.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Round-trip exact/phrase/Boolean/field/filter syntax; bounded depth/length and location errors; retain original and normalized query.
 
 **Verification:**
 
@@ -14002,6 +14003,7 @@ Original tasks and approvals remain unchanged.
 - Committed corpus changes appear incrementally; interrupted indexing resumes or rebuilds safely; restricted text is excluded according to policy.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Prove FTS5 in the actual protected build; no plaintext sidecar. Compare fresh/rebuilt results, removal, cancellation and crash replay; never index unpermitted text.
 
 **Verification:**
 
@@ -14037,6 +14039,7 @@ Original tasks and approvals remain unchanged.
 - Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish exact, field, and filter contributions.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights changes; expose ranks rather than probability.
 
 **Verification:**
 
@@ -14059,7 +14062,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S01.T02`, `CAP-07.S01.T03`
+**Dependencies:** `CAP-06.S01.T02`, `CAP-07.S01.T03`, `CAP-07.S02.T03`
 
 #### - [ ] CAP-06.S02.T01 - Define embedding, chunking, vector-index, and compatibility contracts
 
@@ -14082,6 +14085,7 @@ Original tasks and approvals remain unchanged.
 - Indexes reject incompatible vectors; every vector resolves to source text and model version; contract supports embedded and server engines.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Reject dimension/model/tokenizer/chunk/rights incompatibility; exact source selector resolution; engine-neutral contract remains.
 
 **Verification:**
 
@@ -14102,7 +14106,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S02.T01`
+**Dependencies:** `CAP-06.S02.T01`, `CAP-07.S02.T03`
 
 **Owner / review:** - / - (`-`)
 
@@ -14117,6 +14121,7 @@ Original tasks and approvals remain unchanged.
 - A supported CPU-only machine can index the fixture corpus offline; unavailable model produces guided setup rather than failing the project; output provenance is complete.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Qualify small MiniLM encoder first against scientific gold; compare SPECTER2 base plus correct proximity/query adapters only if the same small-PC cap admits it. No silent truncated scientific input or unsupported ONNX claim.
 
 **Verification:**
 
@@ -14153,6 +14158,7 @@ Original tasks and approvals remain unchanged.
 - Windows install, recovery, filtering, portability, corpus-size, latency, and rebuild benchmarks support the selected adapter and ADR; semantic known-neighbor tests meet baseline; deletion and rights changes remove or quarantine vectors; model upgrade marks the index stale and requires explicit rebuild.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Stream protected vector batches and retain stable tie order after prefiltering; prove exact known-neighbor parity, deletion, rebuild/relocation and no plaintext index/temp leak.
 
 **Verification:**
 
@@ -14175,7 +14181,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S01.T03`, `CAP-06.S02.T03`
+**Dependencies:** `CAP-06.S01.T03`, `CAP-06.S02.T03`, `CAP-07.S05.T01`, `CAP-07.S05.T02`
 
 #### - [ ] CAP-06.S03.T01 - Implement lexical-semantic result fusion
 
@@ -14198,6 +14204,7 @@ Original tasks and approvals remain unchanged.
 - Gold queries show no regression in known-item coverage versus individual retrievers; component ranks remain inspectable and logged.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Compare each retriever and fusion on identical held-out IDs; known-item recall cannot regress versus the better component. Report per-query failures and nDCG/MRR, not a single global confidence.
 
 **Verification:**
 
@@ -14217,7 +14224,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S03.T01`
+**Dependencies:** `CAP-06.S03.T01`, `CAP-07.S05.T02`
 
 **Owner / review:** - / - (`-`)
 
@@ -14232,6 +14239,7 @@ Original tasks and approvals remain unchanged.
 - Reranking can be disabled without changing corpus state; timeout falls back to fused order; model and candidate set are recorded.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Default rerank top20 on the small-PC profile (configurable <=50 only after admission); off switch and timeout preserve fused order and corpus state.
 
 **Verification:**
 
@@ -14252,7 +14260,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S03.T02`
+**Dependencies:** `CAP-06.S03.T02`, `CAP-07.S05.T01`
 
 **Owner / review:** - / - (`-`)
 
@@ -14267,6 +14275,7 @@ Original tasks and approvals remain unchanged.
 - A local run can be replayed against the same snapshot to reproduce results within documented tolerances; changed corpus/index is reported rather than hidden.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Manifest closes over exact corpus, query, actor/policy, component lists, model/profile, weights, errors and cancellation; exact replay versus drift is tested.
 
 **Verification:**
 
@@ -14290,7 +14299,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S03.T03`, `CAP-04.S02.T03`
+**Dependencies:** `CAP-04.S02.T03`, `CAP-06.S03.T03`
 
 #### - [ ] CAP-06.S04.T01 - Build query editor, source selection, preview, and saved-run UI
 
@@ -14313,6 +14322,7 @@ Original tasks and approvals remain unchanged.
 - Exact executed queries remain visible; unsaved edits are distinguishable from executed runs; source failures are shown per adapter.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Keyboard-accessible editor and per-source status, exact executed text and safe validation; preview alone issues no retrieval.
 
 **Verification:**
 
@@ -14348,6 +14358,7 @@ Original tasks and approvals remain unchanged.
 - Users can fork without overwriting history; translations show unsupported clauses and semantic change warnings; additions/removals trace to a branch.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Fork/compare uses stable parent identities and translation-loss reports; unsupported source clauses never silently vanish.
 
 **Verification:**
 
@@ -14383,6 +14394,7 @@ Original tasks and approvals remain unchanged.
 - Each discovered record identifies the seed and path; duplicate expansion is idempotent; depth limits and cancellation prevent runaway traversal.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Expansion default depth1/limit100, hard cap1000 per explicit run; human preview and idempotent commit; no arbitrary URL/shell/model-issued connector calls.
 
 **Verification:**
 
@@ -14406,7 +14418,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S04.T03`, `CAP-04.S04.T03`
+**Dependencies:** `CAP-04.S04.T03`, `CAP-06.S04.T03`
 
 #### - [ ] CAP-06.S05.T01 - Build corpus table/canvas with clusters and discovery overlays
 
@@ -14429,6 +14441,7 @@ Original tasks and approvals remain unchanged.
 - Views remain responsive on target local corpus sizes; visual grouping never changes canonical decisions; every aggregate supports record drill-down.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- 100k metadata-row navigation via cursors; optional projection <=5000 stratified points on this PC, every full-population count remains separately sourced. Original50k layout forecast is deferred to W5 resource qualification.
 
 **Verification:**
 
@@ -14465,6 +14478,7 @@ Original tasks and approvals remain unchanged.
 - Metrics state denominator and unknowns; source overlap reconciles to canonical records; no absent metadata is silently classified.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Reconcile counts to stable IDs; geography/method/language unknowns stay unknown. No demographic or method imputation from embeddings.
 
 **Verification:**
 
@@ -14501,6 +14515,7 @@ Original tasks and approvals remain unchanged.
 - Changing a boundary produces an auditable candidate snapshot; dependent analyses are previewed before recalculation; comparisons are exportable.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Compare exact boundary-rule deltas, affected records and downstream stale previews; export population/sampling limits.
 
 **Verification:**
 
@@ -14524,7 +14539,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S05.T02`, `CAP-03.S02.T03`
+**Dependencies:** `CAP-03.S02.T03`, `CAP-06.S05.T02`, `CAP-07.S05.T02`
 
 #### - [ ] CAP-06.S06.T01 - Implement screening protocol, queue, decisions, and conflicts
 
@@ -14547,6 +14562,7 @@ Original tasks and approvals remain unchanged.
 - No final decision lacks actor/reason/stage; criteria version is attached; conflicts remain unresolved until explicit adjudication.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Bind protocol/mode/stage and actor to immutable decisions; blind assignments enforce application query restrictions with explicit same-owner threat limit.
 
 **Verification:**
 
@@ -14568,7 +14584,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-06.S06.T01`
+**Dependencies:** `CAP-06.S06.T01`, `CAP-07.S05.T02`
 
 **Owner / review:** - / - (`-`)
 
@@ -14583,6 +14599,7 @@ Original tasks and approvals remain unchanged.
 - Prioritization never writes inclusion decisions; retraining is reproducible from labeled data; low-data behavior and class imbalance are tested.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Bound 100k metadata records/50000 feature vocabulary/batch scheduler; no arbitrary serialized estimators or neural training. Known classes/seed/labels and feature schema reproduce ranking.
 
 **Verification:**
 
@@ -14619,6 +14636,7 @@ Original tasks and approvals remain unchanged.
 - Stopping cannot be accepted without recorded audits and corpus diagnostics; deliberately hidden relevant fixtures are recoverable through at least one safety channel; limitations are explicit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Prespecified seeded random sample + rejected-neighbor audit; hiding a relevant fixture must surface through a safety channel. Report intervals/denominators and human stopping rationale; no automatic universal95% recall claim.
 
 **Verification:**
 
@@ -14905,23 +14923,143 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
+### SLICE-prompt-schema-and-structured-output-registry (`CAP-07.S04`) - Prompt, schema, and structured-output registry
+
+**Outcome:** AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings.
+
+**Wave / priority / status / review:** `W3` / `P0` / `READY` / `PENDING`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-00.S05.T02`, `CAP-07.S01.T01`
+
+#### - [ ] CAP-07.S04.T01 - Create versioned prompt and tool-template registry
+
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-07.S01.T01`, `CAP-00.S05.T02`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.
+
+**Deliverables:**
+
+- Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.
+
+**Acceptance criteria:**
+
+- Every production model call references an immutable prompt version; unregistered ad hoc prompts are rejected outside development mode.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Version authorship/purpose/variables and deny undeclared template inputs, ad-hoc production prompts and executable tools. Domain instructions and source content are structurally separated.
+
+**Verification:**
+
+- python tools/verify.py --profile ai
+
+##### Review history — CAP-07.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+#### - [ ] CAP-07.S04.T02 - Implement schema-constrained generation and deterministic validation
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-07.S04.T01`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response retention policy.
+
+**Deliverables:**
+
+- JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response retention policy.
+
+**Acceptance criteria:**
+
+- Invalid output never enters canonical records; repair attempts are limited and logged; fixture malformed responses produce typed failure or validated recovery.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Enforce size/depth/token bounds, no remote $ref/context resolution, semantic/anchor closure and typed refusal/absence; toolcall is a proposed command requiring independent Core authorization, never direct execution.
+
+**Verification:**
+
+- python tools/verify.py --profile ai
+- python tools/verify.py --profile service
+
+##### Review history — CAP-07.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+#### - [ ] CAP-07.S04.T03 - Implement prompt/schema regression tests and approval states
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-07.S04.T02`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.
+
+**Deliverables:**
+
+- Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.
+
+**Acceptance criteria:**
+
+- A model or prompt upgrade cannot become default if declared regressions exceed thresholds; approvals name benchmark, reviewer, and residual limitations.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Freeze rights-cleared development/heldout case definitions and exact approval/promotion interfaces; contract-test missing/forged/regressed attestation denial and benchmark/reviewer/residual binding. Real local inference/profile proof is owned by S02.T03 and actual comparative gold/promotion integration by S05.T03; no fixture result promotes a model. Evaluation support code is never a runtime dependency.
+- Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \w+\|[^\w\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.
+- Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality.
+
+**Verification:**
+
+- python tools/verify.py --profile ai
+- python tools/verify.py --profile foundation
+- python tools/taskctl.py validate
+
+##### Review history — CAP-07.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 ### SLICE-local-model-runtime-and-model-management (`CAP-07.S02`) - Local model runtime and model management
 
 **Outcome:** PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server.
 
-**Wave / priority / status / review:** `W3` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W3` / `P0` / `NOT_STARTED` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
-**Dependencies:** `CAP-07.S01.T03`, `CAP-01.S03.T03`
+**Dependencies:** `CAP-01.S03.T03`, `CAP-07.S01.T03`, `CAP-07.S04.T02`
 
 #### - [ ] CAP-07.S02.T01 - Integrate a supervised local inference runtime
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
-**Dependencies:** `CAP-07.S01.T03`, `CAP-01.S03.T03`
+**Dependencies:** `CAP-07.S01.T03`, `CAP-01.S03.T03`, `CAP-07.S04.T02`
 
 **Owner / review:** - / - (`-`)
 
@@ -14936,6 +15074,8 @@ Original tasks and approvals remain unchanged.
 - A supported quantized model completes fixture prompts on CPU; cancellation releases resources; runtime crash does not corrupt workflow or project data.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Implement canonical grant/classification/local-zero-money reservation first, then signed no-network worker with read-only pinned artifacts/private framed pipes; Job lifetime and memory limits are additional, not the security principal.
+- Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.
 
 **Verification:**
 
@@ -14972,6 +15112,7 @@ Original tasks and approvals remain unchanged.
 - Models cannot execute before integrity and license state are recorded; failed download resumes safely; removal is blocked while a job depends on the model.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Import/download has exact origin/revision/hash/tokenizer/license and user consent; staged resume verifies chunks/final hash; reject custom code, arbitrary native model extensions and redirect substitutions.
 
 **Verification:**
 
@@ -15008,6 +15149,9 @@ Original tasks and approvals remain unchanged.
 - Low-resource test profiles remain responsive; unsafe allocations are refused or confirmed; effective limits appear in task provenance.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending. User can lower caps; confirmation cannot override a hard safety cap.
+- Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.
+- After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.
 
 **Verification:**
 
@@ -15015,236 +15159,6 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile e2e-local
 
 ##### Review history — CAP-07.S02.T03
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-### SLICE-approved-remote-model-providers (`CAP-07.S03`) - Approved remote model providers
-
-**Outcome:** Remote inference is available through explicit opt-in adapters with redaction, data-class, and reproducibility controls.
-
-**Wave / priority / status / review:** `W3` / `P1` / `NOT_STARTED` / `PENDING`
-
-**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
-
-**Dependencies:** `CAP-07.S01.T03`, `CAP-02.S04.T01`
-
-#### - [ ] CAP-07.S03.T01 - Implement the first two external provider adapters behind the gateway
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `medium`
-
-**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
-
-**Dependencies:** `CAP-07.S01.T03`, `CAP-02.S04.T01`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and normalized errors.
-
-**Deliverables:**
-
-- Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and normalized errors.
-
-**Acceptance criteria:**
-
-- Provider-specific code does not leak into scholarly modules; contract tests replay recorded safe fixtures; missing credentials produce guided setup.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile ai
-
-##### Review history — CAP-07.S03.T01
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-#### - [ ] CAP-07.S03.T02 - Implement egress preview, minimization, and consent
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
-
-**Dependencies:** `CAP-07.S03.T01`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.
-
-**Deliverables:**
-
-- Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.
-
-**Acceptance criteria:**
-
-- Protected or rights-restricted text is blocked by policy; user consent is scoped and revocable; the exact transmitted payload hash is logged without storing unnecessary plaintext.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile ai
-- python tools/verify.py --profile security-local
-
-##### Review history — CAP-07.S03.T02
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-#### - [ ] CAP-07.S03.T03 - Implement offline/network-disabled enforcement and remote fallback behavior
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `M` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
-
-**Dependencies:** `CAP-07.S03.T02`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Application and service controls that disable remote providers, fail closed, and continue with supported local paths.
-
-**Deliverables:**
-
-- Application and service controls that disable remote providers, fail closed, and continue with supported local paths.
-
-**Acceptance criteria:**
-
-- Network-disabled tests prove no external DNS/HTTP attempts from AI modules; queued remote jobs become blocked with clear remediation rather than silently rerouted.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile ai
-- python tools/verify.py --profile security-local
-- python tools/verify.py --profile e2e-local
-
-##### Review history — CAP-07.S03.T03
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-### SLICE-prompt-schema-and-structured-output-registry (`CAP-07.S04`) - Prompt, schema, and structured-output registry
-
-**Outcome:** AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings.
-
-**Wave / priority / status / review:** `W3` / `P0` / `NOT_STARTED` / `PENDING`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-07.S01.T01`, `CAP-00.S05.T02`
-
-#### - [ ] CAP-07.S04.T01 - Create versioned prompt and tool-template registry
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-07.S01.T01`, `CAP-00.S05.T02`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.
-
-**Deliverables:**
-
-- Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.
-
-**Acceptance criteria:**
-
-- Every production model call references an immutable prompt version; unregistered ad hoc prompts are rejected outside development mode.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile ai
-
-##### Review history — CAP-07.S04.T01
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-#### - [ ] CAP-07.S04.T02 - Implement schema-constrained generation and deterministic validation
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-07.S04.T01`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response retention policy.
-
-**Deliverables:**
-
-- JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response retention policy.
-
-**Acceptance criteria:**
-
-- Invalid output never enters canonical records; repair attempts are limited and logged; fixture malformed responses produce typed failure or validated recovery.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile ai
-- python tools/verify.py --profile service
-
-##### Review history — CAP-07.S04.T02
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-#### - [ ] CAP-07.S04.T03 - Implement prompt/schema regression tests and approval states
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-07.S04.T02`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.
-
-**Deliverables:**
-
-- Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.
-
-**Acceptance criteria:**
-
-- A model or prompt upgrade cannot become default if declared regressions exceed thresholds; approvals name benchmark, reviewer, and residual limitations.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile ai
-- python tools/verify.py --profile foundation
-- python tools/taskctl.py validate
-
-##### Review history — CAP-07.S04.T03
 
 **Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
 
@@ -15260,7 +15174,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-07.S04.T03`, `CAP-03.S03.T03`
+**Dependencies:** `CAP-03.S03.T03`, `CAP-07.S04.T03`
 
 #### - [ ] CAP-07.S05.T01 - Instrument model calls with redacted traces and usage accounting
 
@@ -15283,6 +15197,7 @@ Original tasks and approvals remain unchanged.
 - Metrics aggregate without raw sensitive prompts; a generated output links to its exact call records; local calls report resource use rather than fabricated monetary cost.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Record task/model/profile/version, timing, resource and reported/unknown use; no raw text/paths/secrets in default spans. Local money is not-applicable, measured time/resource is reported.
 
 **Verification:**
 
@@ -15318,6 +15233,7 @@ Original tasks and approvals remain unchanged.
 - Budget exhaustion stops before provider charge where possible; cache reuse honors model/prompt/schema/data-right versions; user can cancel queued and active work.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Extend the minimum authority established in S02T01 with persistent quotas, reserve-before-dispatch and reconcile; initial remote budget0 until explicit amount, no hidden retry spend.
 
 **Verification:**
 
@@ -15354,6 +15270,9 @@ Original tasks and approvals remain unchanged.
 - Users/admins can compare current and candidate models on the same registry cases; default change records rationale and marks dependent results according to reproducibility policy.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Product evaluation-attestation records contain signed/approved report digests and role/domain limits; dashboard compares the same cases and immutable models. No product dependency on evaluation/ files; default switch is explicit with rollback and dependent-stale preview.
+- Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \w+\|[^\w\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.
+- After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs.
 
 **Verification:**
 
@@ -15361,6 +15280,124 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile desktop
 
 ##### Review history — CAP-07.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### SLICE-approved-remote-model-providers (`CAP-07.S03`) - Approved remote model providers
+
+**Outcome:** Remote inference is available through explicit opt-in adapters with redaction, data-class, and reproducibility controls.
+
+**Wave / priority / status / review:** `W3` / `P1` / `NOT_STARTED` / `PENDING`
+
+**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
+
+**Dependencies:** `CAP-02.S04.T01`, `CAP-07.S01.T03`, `CAP-07.S04.T02`, `CAP-07.S05.T02`
+
+#### - [ ] CAP-07.S03.T01 - Implement the first two external provider adapters behind the gateway
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `medium`
+
+**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
+
+**Dependencies:** `CAP-07.S01.T03`, `CAP-02.S04.T01`, `CAP-07.S04.T02`, `CAP-07.S05.T02`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and normalized errors.
+
+**Deliverables:**
+
+- Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and normalized errors.
+
+**Acceptance criteria:**
+
+- Provider-specific code does not leak into scholarly modules; contract tests replay recorded safe fixtures; missing credentials produce guided setup.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Safe recorded/synthetic protocol fixtures prove both translations, streaming cancellation, normalized usage/errors and no SDK leakage. Clearly label transport conformance separately from a live qualified commercial provider.
+
+**Verification:**
+
+- python tools/verify.py --profile ai
+
+##### Review history — CAP-07.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+#### - [ ] CAP-07.S03.T02 - Implement egress preview, minimization, and consent
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
+
+**Dependencies:** `CAP-07.S03.T01`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.
+
+**Deliverables:**
+
+- Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.
+
+**Acceptance criteria:**
+
+- Protected or rights-restricted text is blocked by policy; user consent is scoped and revocable; the exact transmitted payload hash is logged without storing unnecessary plaintext.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Hash exact assembled/minimized packet, destination, terms/retention observation, data-class/rights, scope/expiry and budget; any material change invalidates consent; never consent on behalf of another source rights holder.
+
+**Verification:**
+
+- python tools/verify.py --profile ai
+- python tools/verify.py --profile security-local
+
+##### Review history — CAP-07.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+#### - [ ] CAP-07.S03.T03 - Implement offline/network-disabled enforcement and remote fallback behavior
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `M` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
+
+**Dependencies:** `CAP-07.S03.T02`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Application and service controls that disable remote providers, fail closed, and continue with supported local paths.
+
+**Deliverables:**
+
+- Application and service controls that disable remote providers, fail closed, and continue with supported local paths.
+
+**Acceptance criteria:**
+
+- Network-disabled tests prove no external DNS/HTTP attempts from AI modules; queued remote jobs become blocked with clear remediation rather than silently rerouted.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Deny before DNS/HTTP in offline mode; active revocation cancels/denies late results. Only explicitly permitted public/open source classes may activate remote routes under the initial W3 policy.
+
+**Verification:**
+
+- python tools/verify.py --profile ai
+- python tools/verify.py --profile security-local
+- python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-07.S03.T03
 
 **Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
 
@@ -15411,6 +15448,7 @@ Original tasks and approvals remain unchanged.
 - Terms have stable IDs, labels, definitions, provenance, allowed relations, and deprecation rules; competing definitions are representable rather than overwritten.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Stable IDs/deprecation/relations and competing definitions, with no automatic global ontology merge.
 
 **Verification:**
 
@@ -15446,6 +15484,7 @@ Original tasks and approvals remain unchanged.
 - Invalid or cyclic schema dependencies fail before use; required evidence rules are explicit; schema drafts cannot silently change completed extractions.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Bounded acyclic dependencies, field cardinality/evidence/missingness rules and versioned allowed semantics; no eval/Python/plugin expressions or remote schema resolution.
 
 **Verification:**
 
@@ -15481,6 +15520,7 @@ Original tasks and approvals remain unchanged.
 - Imported packs are validated in isolation; project forks receive new identity; upgrades preview affected evidence and require explicit adoption.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Manifest/license/hash and fork lineage required; unsafe archive names/reparse/zip bombs denied; preview affected evidence before explicit adoption.
 
 **Verification:**
 
@@ -15488,123 +15528,6 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile service
 
 ##### Review history — CAP-08.S01.T03
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-### SLICE-source-grounded-extraction-pipeline (`CAP-08.S02`) - Source-grounded extraction pipeline
-
-**Outcome:** Schema-constrained extraction selects relevant source context and emits candidate evidence without fabricating absent fields.
-
-**Wave / priority / status / review:** `W3` / `P0` / `NOT_STARTED` / `PENDING`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-08.S01.T03`, `CAP-05.S03.T03`, `CAP-07.S04.T02`
-
-#### - [ ] CAP-08.S02.T01 - Implement section/passages selection for extraction
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-08.S01.T03`, `CAP-05.S03.T03`, `CAP-07.S04.T02`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and coverage metadata.
-
-**Deliverables:**
-
-- Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and coverage metadata.
-
-**Acceptance criteria:**
-
-- Selectors are reproducible; excluded sections remain queryable; context packets never exceed configured rights/model limits; selection provenance is retained.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile evidence
-- python tools/verify.py --profile search
-- python tools/verify.py --profile documents
-
-##### Review history — CAP-08.S02.T01
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-#### - [ ] CAP-08.S02.T02 - Implement field and relation extraction workflows
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-08.S02.T01`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states, and checkpoints.
-
-**Deliverables:**
-
-- Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states, and checkpoints.
-
-**Acceptance criteria:**
-
-- Every nonempty value includes supporting anchors; absent values remain absent states; failed records retry independently; cancellation preserves completed candidates.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile evidence
-- python tools/verify.py --profile ai
-- python tools/verify.py --profile service
-
-##### Review history — CAP-08.S02.T02
-
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
-
-**Current latest-review projection:** `-` by - at `-`
-
-**Latest notes:** -
-
-#### - [ ] CAP-08.S02.T03 - Implement normalization and entity-link candidate generation
-
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
-
-**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
-
-**Dependencies:** `CAP-08.S02.T02`
-
-**Owner / review:** - / - (`-`)
-
-**Objective:** Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology entities while retaining raw text.
-
-**Deliverables:**
-
-- Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology entities while retaining raw text.
-
-**Acceptance criteria:**
-
-- Normalized values never replace source wording; ambiguous links remain ranked candidates; unit conversions record formula and source unit.
-- Automated tests cover the expected path and at least one material failure or boundary condition.
-- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-
-**Verification:**
-
-- python tools/verify.py --profile evidence
-- python tools/verify.py --profile service
-
-##### Review history — CAP-08.S02.T03
 
 **Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
 
@@ -15620,7 +15543,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S02.T03`, `CAP-03.S03.T02`
+**Dependencies:** `CAP-03.S03.T02`, `CAP-08.S01.T03`
 
 #### - [ ] CAP-08.S03.T01 - Implement evidence-record persistence and lineage
 
@@ -15628,7 +15551,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S02.T03`, `CAP-03.S03.T02`
+**Dependencies:** `CAP-08.S01.T03`, `CAP-03.S03.T02`
 
 **Owner / review:** - / - (`-`)
 
@@ -15643,6 +15566,7 @@ Original tasks and approvals remain unchanged.
 - Evidence cannot commit without valid source revision and schema version; duplicate retries are idempotent; record history is immutable and queryable.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Place persistence before extraction writes in the DAG; define exact revision/schema/model/policy/anchor/call lineage, idempotence and commit/provenance atomicity.
 
 **Verification:**
 
@@ -15678,6 +15602,7 @@ Original tasks and approvals remain unchanged.
 - Inferred content cannot be presented as direct source evidence; disputed alternatives coexist; only approved states are eligible for configured synthesis outputs.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Transition table and role/policy checks; machine cannot self-adjudicate or upgrade inferred to observed. Rights loss marks restricted/stale without erasing lawful history.
 
 **Verification:**
 
@@ -15714,6 +15639,7 @@ Original tasks and approvals remain unchanged.
 - UI and exports do not collapse dimensions into one probability; missingness is filterable; each dimension states how it was generated and calibrated.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Unknown/not-assessed is first-class; do not combine anchor/extraction/comparability/interpretation into one probability. Export and UI retain each dimension, population and calibration limits.
 
 **Verification:**
 
@@ -15721,6 +15647,128 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile desktop
 
 ##### Review history — CAP-08.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### SLICE-source-grounded-extraction-pipeline (`CAP-08.S02`) - Source-grounded extraction pipeline
+
+**Outcome:** Schema-constrained extraction selects relevant source context and emits candidate evidence without fabricating absent fields.
+
+**Wave / priority / status / review:** `W3` / `P0` / `NOT_STARTED` / `PENDING`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-05.S03.T03`, `CAP-06.S03.T03`, `CAP-07.S02.T03`, `CAP-07.S04.T02`, `CAP-07.S05.T02`, `CAP-08.S01.T03`, `CAP-08.S03.T03`
+
+#### - [ ] CAP-08.S02.T01 - Implement section/passages selection for extraction
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-08.S01.T03`, `CAP-05.S03.T03`, `CAP-07.S04.T02`, `CAP-06.S03.T03`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and coverage metadata.
+
+**Deliverables:**
+
+- Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and coverage metadata.
+
+**Acceptance criteria:**
+
+- Selectors are reproducible; excluded sections remain queryable; context packets never exceed configured rights/model limits; selection provenance is retained.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Structural/lexical selectors first, optional semantic when eligible; packet bounds include excluded/coverage rationale, source revision/selector and purpose-specific model-use permission.
+
+**Verification:**
+
+- python tools/verify.py --profile evidence
+- python tools/verify.py --profile search
+- python tools/verify.py --profile documents
+
+##### Review history — CAP-08.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+#### - [ ] CAP-08.S02.T02 - Implement field and relation extraction workflows
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-08.S02.T01`, `CAP-07.S02.T03`, `CAP-07.S05.T02`, `CAP-08.S03.T03`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states, and checkpoints.
+
+**Deliverables:**
+
+- Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states, and checkpoints.
+
+**Acceptance criteria:**
+
+- Every nonempty value includes supporting anchors; absent values remain absent states; failed records retry independently; cancellation preserves completed candidates.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- All nonempty observed values close over exact anchors; unreported/unclear/inapplicable/inferred remain distinct. Refusal or invalid JSON/anchor cannot become extracted evidence; paired hallucination/adversarial tests required.
+- For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \w+\|[^\w\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence.
+
+**Verification:**
+
+- python tools/verify.py --profile evidence
+- python tools/verify.py --profile ai
+- python tools/verify.py --profile service
+
+##### Review history — CAP-08.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+#### - [ ] CAP-08.S02.T03 - Implement normalization and entity-link candidate generation
+
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+
+**Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
+
+**Dependencies:** `CAP-08.S02.T02`
+
+**Owner / review:** - / - (`-`)
+
+**Objective:** Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology entities while retaining raw text.
+
+**Deliverables:**
+
+- Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology entities while retaining raw text.
+
+**Acceptance criteria:**
+
+- Normalized values never replace source wording; ambiguous links remain ranked candidates; unit conversions record formula and source unit.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Keep raw units/text, record conversion formula/version, evidence and ambiguity. Entity candidates do not replace canonical observations until authorized acceptance.
+- For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \w+\|[^\w\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence.
+
+**Verification:**
+
+- python tools/verify.py --profile evidence
+- python tools/verify.py --profile service
+
+##### Review history — CAP-08.S02.T03
 
 **Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
 
@@ -15736,7 +15784,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S03.T03`, `CAP-07.S05.T03`
+**Dependencies:** `CAP-07.S05.T03`, `CAP-08.S02.T03`, `CAP-08.S03.T03`
 
 #### - [ ] CAP-08.S04.T01 - Implement verifier workflow and decision contract
 
@@ -15744,7 +15792,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S03.T03`, `CAP-07.S05.T03`
+**Dependencies:** `CAP-08.S03.T03`, `CAP-07.S05.T03`, `CAP-08.S02.T03`
 
 **Owner / review:** - / - (`-`)
 
@@ -15759,6 +15807,8 @@ Original tasks and approvals remain unchanged.
 - Verifier cannot inherit hidden extractor output beyond the candidate and evidence packet; verdict references exact anchors; unavailable verification is explicit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Separate prompt/context and immutable verifier identity/limits. Use distinct eligible model if available; never load two simultaneously merely to claim independence.
+- For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
 
 **Verification:**
 
@@ -15794,6 +15844,8 @@ Original tasks and approvals remain unchanged.
 - Curated positive/negative fixtures meet declared thresholds; invalid anchors always fail; a fluent but unsupported candidate is rejected.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Return anchor-valid/schema-fit/entailed/contradicted/insufficient/inference-supported separately; deterministic anchor checks100% adversarial denial. Unsupported fluent claims fail.
+- For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
 
 **Verification:**
 
@@ -15830,6 +15882,8 @@ Original tasks and approvals remain unchanged.
 - High-consequence/low-confidence fields route to humans; audit sample is reproducible; project cannot claim validated extraction without recorded sample results.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Stratified seeded audit frame/probabilities and sample outcomes; review100% high-consequence, inferred, disputed or low-confidence candidates. Error intervals state population/design; no calibrated label from missing annotations.
+- For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
 
 **Verification:**
 
@@ -15852,7 +15906,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S04.T02`, `CAP-01.S02.T01`
+**Dependencies:** `CAP-01.S02.T01`, `CAP-08.S04.T02`, `CAP-08.S04.T03`
 
 #### - [ ] CAP-08.S05.T01 - Build scalable evidence matrix with saved views
 
@@ -15875,6 +15929,7 @@ Original tasks and approvals remain unchanged.
 - Target local matrix sizes remain interactive; every cell shows status/missingness; saved views reference stable schema fields and survive compatible upgrades.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- 100k evidence rows/200 fields tested through bounded pages, not all loaded in renderer; status/missingness and saved schema IDs survive compatible upgrades.
 
 **Verification:**
 
@@ -15910,6 +15965,7 @@ Original tasks and approvals remain unchanged.
 - User can inspect evidence without losing matrix position; selecting an alternative creates an adjudication rather than overwriting machine history.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Open exact protected source revision with preserved row/cell/filter/scroll/focus return; alternatives and corrections create new history.
 
 **Verification:**
 
@@ -15931,7 +15987,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S05.T02`
+**Dependencies:** `CAP-08.S05.T02`, `CAP-08.S04.T03`
 
 **Owner / review:** - / - (`-`)
 
@@ -15946,6 +16002,7 @@ Original tasks and approvals remain unchanged.
 - Bulk actions report affected records before commit, operate atomically or provide itemized failures, and create per-record audit events.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Preview impacted IDs/counts and rights; itemized commit/results with reauthorization. Human queues from S04T03 are required before bulk verify actions become eligible.
 
 **Verification:**
 
@@ -15969,7 +16026,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-08.S05.T03`, `CAP-04.S04.T02`
+**Dependencies:** `CAP-04.S04.T02`, `CAP-08.S05.T03`
 
 #### - [ ] CAP-08.S06.T01 - Implement independent coder assignments and agreement metrics
 
@@ -15992,6 +16049,7 @@ Original tasks and approvals remain unchanged.
 - Metrics use appropriate denominators, distinguish exact from semantic agreement, and do not treat unresolved differences as error by default.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Authenticated Windows actor plus human-declared coder identity; assignment authorization/query filters and no peer visibility before submission. No real-person identity proof, hosted multiuser IAM or foreign-host witness claimed.
 
 **Verification:**
 
@@ -16027,6 +16085,7 @@ Original tasks and approvals remain unchanged.
 - Adjudication never deletes alternatives; unresolved plurality is a valid state; accepted decision records the exact evidence and schema version.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Retain all coder/machine alternatives and unresolved outcomes; adjudicator identity/reason/current evidence exact. Agreement is not truth.
 
 **Verification:**
 
@@ -16062,6 +16121,7 @@ Original tasks and approvals remain unchanged.
 - Exports reproduce current filters and status rules, include data dictionary and provenance IDs, and omit restricted text unless explicitly permitted.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Formula-safe CSV/JSON/JSONLD, no remote contexts; explicit text-export right and data-class filtering, checksums/codebook/anchors/logs, cancelled/stale-source tests; omitted text remains visibly omitted.
 
 **Verification:**
 

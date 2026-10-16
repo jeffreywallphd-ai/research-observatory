@@ -1,0 +1,21 @@
+{
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.10",
+  "version": "1.10",
+  "status": "proposed",
+  "approval_kind": null,
+  "approved_by": null,
+  "approved_at": null,
+  "supersedes": "RO-UI-ACADEMIC-MINIMAL-1.9",
+  "scope": {
+    "normative": [
+      "Inherit approved1.9 except the complete reviewed W3 Style Guide1.6, seven authored affected HTML pages and their bound page/workflow contracts.",
+      "Per-role local model selection/resource/unknown/denial/remote-off, source-first evidence/missingness/adjudication/bulk preview and precise return/focus/cancel/lock recovery. Preserve all14 semantic1.5 workflows and existing tokens."
+    ],
+    "illustrative": [
+      "Model/data/resource/people/terms/license values remain unobserved illustrative examples; no runtime/model/quality or real-person readiness claim."
+    ]
+  },
+  "implementation_rule": "Inert proposed experience only. Actual independent review, explicit design decision, truthful reference publication and separate complete W3 authority must precede implementation.",
+  "approval_basis": null,
+  "authority": null
+}

@@ -1,0 +1,52 @@
+{
+  "documentType": "private-independent-incremental-W3-policy-review",
+  "result": "SELECTED_POLICY_CONFORMS_PENDING_COHERENT_PACKET_INCORPORATION",
+  "reviewer": "agent:/root/security_resolution_review",
+  "reviewedAt": "2026-10-15T23:45:29.753989+00:00",
+  "selectedPolicy": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "priorFindings": {
+    "path": "artifacts/tmp/W3.planning-draft-01/independent-planning-readiness-refinement-02-02.json",
+    "sha256": "f02fc6bc4f38afc77173a3b4aaa3e3ff01c61bc96148a4f07ea6facdfe739ad8"
+  },
+  "originalPacketManifest": {
+    "path": "artifacts/tmp/W3.planning-draft-01/refinement-02/source-manifest-02.json",
+    "sha256": "a39d4a7c4faadc9502e1158a2fff48615dceda92c1b814ecfe00206512524731"
+  },
+  "scope": "Only the new selected policy against the two existing findings; no repeated48-task review, implementation audit or current runtime/workload proof.",
+  "newBlockingFindings": [],
+  "findingDispositions": [
+    {
+      "id": "W3-PLANNING-METRIC-01",
+      "status": "CONFORMING_PROPOSED_RESOLUTION_NOT_YET_INCORPORATED",
+      "assessment": "The selected custom extraction metric fixes the eligible question/field unit, Unicode/token/multiset matching, whole human-reference alternatives and deterministic tie rule. It fixes empty answerable outputs at P=R=0 and equal-field macro aggregation at .90/.80. Micro/token-F1 and exact spans remain diagnostics; source anchors/hard denials and consequential-field/human requirements remain separate. It expressly makes no official leaderboard-equivalence claim.",
+      "verifier": "Exact two-actionable-label macro precision >=.90, separate SUPPORTS and REFUTES recalls >=.80 with abstentions counted missed, and valid answered coverage >=.80 over all frozen eligible units remove precision-only vacuity. NEI remains distinct from refutation, abstention and infrastructure failure. Undefined prediction or missing required gold-class denominator cannot pass; no unjudged negative is invented.",
+      "limit": "These are selected unapproved initial policy choices, not measured performance, universal scholarly validity or role eligibility."
+    },
+    {
+      "id": "W3-PLANNING-RESOURCE-02",
+      "status": "CONFORMING_PROPOSED_RESOLUTION_NOT_YET_INCORPORATED",
+      "assessment": "The selected initial parser/inference exclusion shares existing LocalWorkerAdmission/LocalAdmissionController registration/reservation before claim, retains live reservations until drain/unload, then reobserves pressure and reauthorizes. Whole-app 2048/3072MiB and max(A,B) limits remain inclusive of other owned work; unknown/insufficient capacity queues or denies.",
+      "preservation": "The existing parser principal/quality/cancellation/recovery/mutex and 4096MiB private-commit ceiling remain intact. Ceiling, measured footprint and resource demand are expressly distinct. The cooperative in-process ledger is not claimed to control unrelated Core processes or the whole machine; actual claimed composition remains future proof.",
+      "limit": "No new scheduler/controller framework, concurrent parser/model fit, present memory measurement or authorization to reduce parser quality/security is inferred."
+    }
+  ],
+  "closureRemainsPending": {
+    "reason": "The policy honestly remains proposed, not accepted, executed or incorporated. This file is an adequate selected correction direction and does not alone close either original finding.",
+    "ordinaryNextStep": "Copy the same chosen semantics coherently into successor shared contracts, gold/resource policy, affected task/backlog/slice acceptance and the existing runtime-policy checkpoint; independently inspect that finite incorporation delta once.",
+    "knownAcceptancePrerequisite": "The existing consolidated accepted-architecture/complete-UX-payload prerequisite and actual W2G2 remain pending. No additional campaign, per-file approval, current model/data download or current workload is requested."
+  },
+  "preservation": {
+    "selectedPolicyChanged": false,
+    "priorFindingChanged": false,
+    "originalPacketManifestChanged": false,
+    "canonicalOrTrackedWrites": false,
+    "HEADOrTaskctlMutation": false,
+    "productOrProducerImports": false,
+    "testsBuildsModelsScansOrRuntimeHashing": false,
+    "W3ApprovalClaimed": false,
+    "newFileOnly": "artifacts/tmp/W3.planning-draft-01/independent-selected-policy-review-03-01.json"
+  }
+}

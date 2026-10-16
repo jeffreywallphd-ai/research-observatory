@@ -1,0 +1,138 @@
+{
+  "sources": [
+    {
+      "url": "https://www.sqlite.org/fts5.html#external_content_and_contentless_tables",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "External-content indexes require explicit maintenance and rebuild/consistency checks. Protect the derivative within the selected encrypted store; do not assume triggers backfill old rows."
+    },
+    {
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "Official runtime exposes context/batch/thread/KV and offline controls. These motivate pinned effective limits; the server alone is not an isolation boundary or model quality/memory guarantee."
+    },
+    {
+      "url": "https://onnxruntime.ai/docs/get-started/with-c.html",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "Official C API supports Windows CPU builds, explicit sessions/thread options and in-memory model loading. Candidate driver avoids assuming Python3.14 ML wheels. Disable runtime telemetry/custom ops and pin packaged DLL loading; actual integration remains unmeasured."
+    },
+    {
+      "url": "https://onnxruntime.ai/docs/performance/tune-performance/memory.html",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "Session allocators affect whole-process use; artifact weight size is not a RAM requirement."
+    },
+    {
+      "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "Publisher lists Apache2 and GGUF llama.cpp use; initial small generation qualification candidate only. No exact revision/quantization bytes downloaded, consent, role qualification or memory observation is established."
+    },
+    {
+      "url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "Publisher lists Apache2,384-dimensional sentence/short-paragraph encoder with default256-wordpiece truncation. Candidate initial CPU encoder; adapter must preserve exact tokenizer/pooling and report truncation rather than assume whole-document equivalence."
+    },
+    {
+      "url": "https://huggingface.co/allenai/specter2",
+      "checkedAt": "2026-10-15T21:24:29.166422+00:00",
+      "limitedObservation": "Publisher distinguishes scientific proximity and adhoc-query adapters paired with the base. Retain this scientific comparator; loading the base alone is not the planned retrieval baseline."
+    }
+  ],
+  "inferenceLimits": "Current primary documentation informs proposed choices; it proves no installed runtime, task accuracy, license clearance for user sources or real hardware footprint.",
+  "additionalPrimaryMetadata02": {
+    "modelFileMetadata": [
+      {
+        "candidateId": "tiny-generation-135m",
+        "publisher": "HuggingFaceTB",
+        "repository": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "role": "Bounded English candidate generation/extraction/verifier only after each role actually qualifies; not general scientific reasoning.",
+        "artifact": "onnx/model_q4.onnx",
+        "publishedArtifactSHA256": "933577110303a2964096d19b6f15d3b4639bef7f99481ac0b61d9f3ad72f392a",
+        "observedFileCommit": "a91318be21aeaf0879874faa161dcb40c68847e9",
+        "publisherReportedFileSize": "182 MB",
+        "licenseReported": "Apache-2.0",
+        "source": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/a91318be21aeaf0879874faa161dcb40c68847e9/onnx/model_q4.onnx",
+        "modelCard": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
+        "runtimeCaveat": "Official ONNX export uses GQA; native ONNX autoregressive/KV input/output driver and its packaged built-in operator support must qualify. This does not assume an official SmolLM2 GGUF repository or Python ML wheel."
+      },
+      {
+        "candidateId": "small-generation-05b-q4",
+        "publisher": "Qwen",
+        "repository": "Qwen/Qwen2.5-0.5B-Instruct-GGUF",
+        "role": "Bounded candidate generation/extraction/verifier only after actual role evaluation.",
+        "artifact": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "publishedArtifactSHA256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "observedRepositoryCommit": "9217f5db79a29953eb74d5343926648285ec7e67",
+        "publisherReportedFileSize": "491 MB",
+        "licenseReported": "Apache-2.0",
+        "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/blob/9217f5db79a29953eb74d5343926648285ec7e67/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "modelCard": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF"
+      },
+      {
+        "candidateId": "optional-generation-06b-q8",
+        "publisher": "Qwen",
+        "repository": "Qwen/Qwen3-0.6B-GGUF",
+        "role": "Optional already-qualified larger local choice within user-selected aggregate budget; not a mandatory first download/default.",
+        "artifact": "Qwen3-0.6B-Q8_0.gguf",
+        "publishedArtifactSHA256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+        "observedRepositoryCommit": "23749fefcc72300e3a2ad315e1317431b06b590a",
+        "publisherReportedFileSize": "639 MB",
+        "licenseReported": "Apache-2.0",
+        "source": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/blob/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+        "modelCard": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF"
+      },
+      {
+        "candidateId": "tiny-embedding-minilm-int8",
+        "publisher": "sentence-transformers",
+        "repository": "sentence-transformers/all-MiniLM-L6-v2",
+        "role": "English short-passage encoder, exact tokenizer/mean-pooling/normalization and truncation qualification required.",
+        "artifact": "onnx/model_quint8_avx2.onnx",
+        "publishedArtifactSHA256": "b941bf19f1f1283680f449fa6a7336bb5600bdcd5f84d10ddc5cd72218a0fd21",
+        "observedFileCommit": "5641a7880f40ebf4035d05e60c5f9b7a9c272c84",
+        "publisherReportedFileSize": "23 MB",
+        "licenseReported": "Apache-2.0",
+        "source": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/5641a7880f40ebf4035d05e60c5f9b7a9c272c84/onnx/model_quint8_avx2.onnx",
+        "runtimeCaveat": "Requires actual AVX2/selected operator compatibility. It is a quantized variant, not assumed numerically equivalent to the FP32 model."
+      },
+      {
+        "candidateId": "small-embedding-minilm-fp32",
+        "publisher": "sentence-transformers",
+        "repository": "sentence-transformers/all-MiniLM-L6-v2",
+        "role": "Same short-passage semantic role with separate actual quality/resource qualification.",
+        "artifact": "onnx/model.onnx",
+        "publishedArtifactSHA256": "6fd5d72fe4589f189f8ebc006442dbb529bb7ce38f8082112682524616046452",
+        "publisherReportedFileSize": "90.4 MB",
+        "licenseReported": "Apache-2.0",
+        "source": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/main/onnx/model.onnx",
+        "immutableRepositoryRevision": null,
+        "missingMetadata": "Pin exact immutable repository revision and all companion/tokenizer/license files during later authorized acquisition; the observed content digest is not a complete runnable bundle."
+      }
+    ],
+    "WindowsMemoryMeaning": [
+      "https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information",
+      "https://learn.microsoft.com/en-us/windows/win32/api/psapi/ns-psapi-process_memory_counters_ex",
+      "https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-memorystatusex"
+    ],
+    "goldSources": [
+      {
+        "source": "https://github.com/allenai/scifact",
+        "license": "https://github.com/allenai/scifact/blob/master/LICENSE.md",
+        "limits": "Exact release/source/rights and annotation adapter still need actual authentication."
+      },
+      {
+        "source": "https://allenai.org/data/qasper",
+        "license": "https://huggingface.co/datasets/allenai/qasper/blob/main/README.md",
+        "limits": "Exact release/source/rights and annotation adapter still need actual authentication."
+      }
+    ],
+    "rejectedAsMandatory": [
+      {
+        "source": "https://github.com/bepnye/EBM-NLP",
+        "reason": "Real P/I/O labels and professional test labels are relevant, but the read primary README does not establish dataset redistribution/model-use license. Do not infer rights from availability; only use after actual terms are resolved."
+      },
+      {
+        "source": "https://www.cl.uni-heidelberg.de/statnlpgroup/nfcorpus/",
+        "reason": "Primary terms limit stated free use to academic purposes; qrels are harvested from links rather than human scholarly relevance judgments. Avoid as universal mandatory/commercial gold."
+      }
+    ],
+    "metadataOnly": "Read official model file/commit pages and dataset/license docs only; no model/dataset payloads downloaded, no performance inference from file sizes."
+  }
+}

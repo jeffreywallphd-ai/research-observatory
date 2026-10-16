@@ -1,0 +1,1372 @@
+{
+  "status": "DATA_ONLY_NOT_APPLIED",
+  "sourceBacklog": {
+    "path": "planning/backlog.yaml",
+    "sha256": "5063e559d51d6fd1a3c08530e2e16ff2631b36ce0de933b2033355d3d66c2554"
+  },
+  "immutableIDsPreserved": [
+    "CAP-06.S01.T01",
+    "CAP-06.S01.T02",
+    "CAP-06.S01.T03",
+    "CAP-06.S02.T01",
+    "CAP-06.S02.T02",
+    "CAP-06.S02.T03",
+    "CAP-06.S03.T01",
+    "CAP-06.S03.T02",
+    "CAP-06.S03.T03",
+    "CAP-06.S04.T01",
+    "CAP-06.S04.T02",
+    "CAP-06.S04.T03",
+    "CAP-06.S05.T01",
+    "CAP-06.S05.T02",
+    "CAP-06.S05.T03",
+    "CAP-06.S06.T01",
+    "CAP-06.S06.T02",
+    "CAP-06.S06.T03",
+    "CAP-07.S02.T01",
+    "CAP-07.S02.T02",
+    "CAP-07.S02.T03",
+    "CAP-07.S03.T01",
+    "CAP-07.S03.T02",
+    "CAP-07.S03.T03",
+    "CAP-07.S04.T01",
+    "CAP-07.S04.T02",
+    "CAP-07.S04.T03",
+    "CAP-07.S05.T01",
+    "CAP-07.S05.T02",
+    "CAP-07.S05.T03",
+    "CAP-08.S01.T01",
+    "CAP-08.S01.T02",
+    "CAP-08.S01.T03",
+    "CAP-08.S02.T01",
+    "CAP-08.S02.T02",
+    "CAP-08.S02.T03",
+    "CAP-08.S03.T01",
+    "CAP-08.S03.T02",
+    "CAP-08.S03.T03",
+    "CAP-08.S04.T01",
+    "CAP-08.S04.T02",
+    "CAP-08.S04.T03",
+    "CAP-08.S05.T01",
+    "CAP-08.S05.T02",
+    "CAP-08.S05.T03",
+    "CAP-08.S06.T01",
+    "CAP-08.S06.T02",
+    "CAP-08.S06.T03"
+  ],
+  "canonicalStateFieldsToPreserve": [
+    "status",
+    "review",
+    "evidence",
+    "owner",
+    "lease",
+    "base_sha",
+    "timestamps",
+    "completion"
+  ],
+  "taskChanges": [
+    {
+      "id": "CAP-06.S01.T01",
+      "dependenciesBefore": [
+        "CAP-04.S04.T03",
+        "CAP-05.S03.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-04.S04.T03",
+        "CAP-05.S03.T03"
+      ],
+      "originalObjective": "Search contract covering title, abstract, full text, authors, venue, identifiers, year, tags, decisions, and exact/phrase/Boolean syntax.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Round-trip exact/phrase/Boolean/field/filter syntax; bounded depth/length and location errors; retain original and normalized query."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 12,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S04.T01",
+      "dependenciesBefore": [
+        "CAP-07.S01.T01",
+        "CAP-00.S05.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S01.T01",
+        "CAP-00.S05.T02"
+      ],
+      "originalObjective": "Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Version authorship/purpose/variables and deny undeclared template inputs, ad-hoc production prompts and executable tools. Domain instructions and source content are structurally separated."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 12,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S01.T02",
+      "dependenciesBefore": [
+        "CAP-06.S01.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S01.T01"
+      ],
+      "originalObjective": "Index writers for canonical metadata and permitted document text with version markers, checkpoints, and full rebuild command.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Prove FTS5 in the actual protected build; no plaintext sidecar. Compare fresh/rebuilt results, removal, cancellation and crash replay; never index unpermitted text."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 4
+      }
+    },
+    {
+      "id": "CAP-07.S04.T02",
+      "dependenciesBefore": [
+        "CAP-07.S04.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S04.T01"
+      ],
+      "originalObjective": "JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response retention policy.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Enforce size/depth/token bounds, no remote $ref/context resolution, semantic/anchor closure and typed refusal/absence; toolcall is a proposed command requiring independent Core authorization, never direct execution."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S01.T03",
+      "dependenciesBefore": [
+        "CAP-06.S01.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S01.T02"
+      ],
+      "originalObjective": "Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights changes; expose ranks rather than probability."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S04.T03",
+      "dependenciesBefore": [
+        "CAP-07.S04.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S04.T02"
+      ],
+      "originalObjective": "Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Freeze rights-cleared development/heldout case definitions and exact approval/promotion interfaces; contract-test missing/forged/regressed attestation denial and benchmark/reviewer/residual binding. Real local inference/profile proof is owned by S02.T03 and actual comparative gold/promotion integration by S05.T03; no fixture result promotes a model. Evaluation support code is never a runtime dependency.",
+        "Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.",
+        "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints."
+      ],
+      "proofPhaseOwnership05": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality."
+    },
+    {
+      "id": "CAP-08.S01.T01",
+      "dependenciesBefore": [
+        "CAP-03.S01.T03",
+        "CAP-07.S04.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-03.S01.T03",
+        "CAP-07.S04.T02"
+      ],
+      "originalObjective": "Versioned entities and relations for works, passages, theories, constructs, definitions, methods, measures, contexts, claims, findings, assumptions, stakeholders, and opportunities.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Stable IDs/deprecation/relations and competing definitions, with no automatic global ontology merge."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S01.T02",
+      "dependenciesBefore": [
+        "CAP-08.S01.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S01.T01"
+      ],
+      "originalObjective": "Schema editor and API for fields, types, cardinality, controlled vocabularies, evidence requirements, prompts, verification, and mode applicability.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Bounded acyclic dependencies, field cardinality/evidence/missingness rules and versioned allowed semantics; no eval/Python/plugin expressions or remote schema resolution."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S02.T01",
+      "dependenciesBefore": [
+        "CAP-07.S01.T03",
+        "CAP-01.S03.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S01.T03",
+        "CAP-01.S03.T03",
+        "CAP-07.S04.T02"
+      ],
+      "originalObjective": "Sidecar-managed llama.cpp-compatible runtime with health, cancellation, streaming, batching limits, hardware detection, and safe shutdown.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Implement canonical grant/classification/local-zero-money reservation first, then signed no-network worker with read-only pinned artifacts/private framed pipes; Job lifetime and memory limits are additional, not the security principal.",
+        "Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 32,
+        "plannedRefactoringIncluded": 8
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise."
+      ]
+    },
+    {
+      "id": "CAP-08.S01.T03",
+      "dependenciesBefore": [
+        "CAP-08.S01.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S01.T02"
+      ],
+      "originalObjective": "Portable pack format with manifest, dependencies, mappings, license, signatures/checksums, and structured diff.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Manifest/license/hash and fork lineage required; unsafe archive names/reparse/zip bombs denied; preview affected evidence before explicit adoption."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S02.T02",
+      "dependenciesBefore": [
+        "CAP-07.S02.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S02.T01"
+      ],
+      "originalObjective": "Model manifest catalog, resumable download or local import, checksums/signatures, disk estimates, license display, and removal.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Import/download has exact origin/revision/hash/tokenizer/license and user consent; staged resume verifies chunks/final hash; reject custom code, arbitrary native model extensions and redirect substitutions."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S02.T03",
+      "dependenciesBefore": [
+        "CAP-07.S02.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S02.T02"
+      ],
+      "originalObjective": "CPU/GPU/RAM/VRAM detection, recommended models, context/batch caps, concurrency, thermal-friendly modes, and user overrides.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending. User can lower caps; confirmation cannot override a hard safety cap.",
+        "Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.",
+        "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 22,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise."
+      ],
+      "proofPhaseOwnership05": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof."
+    },
+    {
+      "id": "CAP-08.S03.T01",
+      "dependenciesBefore": [
+        "CAP-08.S02.T03",
+        "CAP-03.S03.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S01.T03",
+        "CAP-03.S03.T02"
+      ],
+      "originalObjective": "Canonical record for field/relation, raw and normalized value, source anchors, extraction activity, schema, model, confidence dimensions, and dependencies.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Place persistence before extraction writes in the DAG; define exact revision/schema/model/policy/anchor/call lineage, idempotence and commit/provenance atomicity."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 8
+      }
+    },
+    {
+      "id": "CAP-06.S02.T01",
+      "dependenciesBefore": [
+        "CAP-06.S01.T02",
+        "CAP-07.S01.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S01.T02",
+        "CAP-07.S01.T03"
+      ],
+      "originalObjective": "Interfaces for document/passage representations, model manifests, dimensions, normalization, chunk provenance, filters, and rebuild state.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Reject dimension/model/tokenizer/chunk/rights incompatibility; exact source selector resolution; engine-neutral contract remains."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S03.T02",
+      "dependenciesBefore": [
+        "CAP-08.S03.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S03.T01"
+      ],
+      "originalObjective": "State machine, transition rules, labels, downstream-use policy, and UI badges for evidence status.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Transition table and role/policy checks; machine cannot self-adjudicate or upgrade inferred to observed. Rights loss marks restricted/stale without erasing lawful history."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S02.T02",
+      "dependenciesBefore": [
+        "CAP-06.S02.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S02.T01",
+        "CAP-07.S02.T03"
+      ],
+      "originalObjective": "Packaged or user-installed local embedding option with model-license metadata, resource profile, batching, cancellation, and deterministic fixture behavior.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Qualify small MiniLM encoder first against scientific gold; compare SPECTER2 base plus correct proximity/query adapters only if the same small-PC cap admits it. No silent truncated scientific input or unsupported ONNX claim."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S05.T01",
+      "dependenciesBefore": [
+        "CAP-07.S04.T03",
+        "CAP-03.S03.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S04.T03",
+        "CAP-03.S03.T03"
+      ],
+      "originalObjective": "Trace IDs, task type, model/config, token counts, duration, retries, validation, cache, failure, and optional cost.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Record task/model/profile/version, timing, resource and reported/unknown use; no raw text/paths/secrets in default spans. Local money is not-applicable, measured time/resource is reported."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 12,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S03.T03",
+      "dependenciesBefore": [
+        "CAP-08.S03.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S03.T02"
+      ],
+      "originalObjective": "Separate extraction, entailment, entity-link, comparability, source-quality, and corpus-coverage fields plus not-reported/unclear/not-applicable states.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Unknown/not-assessed is first-class; do not combine anchor/extraction/comparability/interpretation into one probability. Export and UI retain each dimension, population and calibration limits."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S02.T03",
+      "dependenciesBefore": [
+        "CAP-06.S02.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S02.T02"
+      ],
+      "originalObjective": "Benchmark, select through ADR, and implement a replaceable local vector adapter with incremental updates, metadata filtering, nearest-neighbor query, health checks, exact-search fallback, and model-change migration.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Stream protected vector batches and retain stable tie order after prefiltering; prove exact known-neighbor parity, deletion, rebuild/relocation and no plaintext index/temp leak."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S05.T02",
+      "dependenciesBefore": [
+        "CAP-07.S05.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S05.T01"
+      ],
+      "originalObjective": "Configurable limits for remote spend, tokens, concurrent local jobs, storage, repeated calls, and cache reuse.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Extend the minimum authority established in S02T01 with persistent quotas, reserve-before-dispatch and reconcile; initial remote budget0 until explicit amount, no hidden retry spend."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 4
+      }
+    },
+    {
+      "id": "CAP-07.S05.T03",
+      "dependenciesBefore": [
+        "CAP-07.S05.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S05.T02"
+      ],
+      "originalObjective": "Benchmark results by task/domain/model, calibration/error summaries, cost/latency, approval status, and controlled default switch.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Product evaluation-attestation records contain signed/approved report digests and role/domain limits; dashboard compares the same cases and immutable models. No product dependency on evaluation/ files; default switch is explicit with rollback and dependent-stale preview.",
+        "Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.",
+        "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 22,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints."
+      ],
+      "proofPhaseOwnership05": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+    },
+    {
+      "id": "CAP-06.S03.T01",
+      "dependenciesBefore": [
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T03"
+      ],
+      "originalObjective": "Configurable reciprocal-rank or calibrated fusion with deduplication, filters, component scores, and deterministic tie handling.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Compare each retriever and fusion on identical held-out IDs; known-item recall cannot regress versus the better component. Report per-query failures and nDCG/MRR, not a single global confidence."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 12,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S03.T02",
+      "dependenciesBefore": [
+        "CAP-06.S03.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S03.T01",
+        "CAP-07.S05.T02"
+      ],
+      "originalObjective": "Reranker adapter for query-record/passage pairs with batching, resource limits, policy checks, and score provenance.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Default rerank top20 on the small-PC profile (configurable <=50 only after admission); off switch and timeout preserve fused order and corpus state."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S03.T01",
+      "dependenciesBefore": [
+        "CAP-07.S01.T03",
+        "CAP-02.S04.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S01.T03",
+        "CAP-02.S04.T01",
+        "CAP-07.S04.T02",
+        "CAP-07.S05.T02"
+      ],
+      "originalObjective": "Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and normalized errors.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Safe recorded/synthetic protocol fixtures prove both translations, streaming cancellation, normalized usage/errors and no SDK leakage. Clearly label transport conformance separately from a live qualified commercial provider."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S03.T03",
+      "dependenciesBefore": [
+        "CAP-06.S03.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S03.T02",
+        "CAP-07.S05.T01"
+      ],
+      "originalObjective": "SearchRun record containing exact query, expansion, sources, indexes/models, weights, filters, timestamps, result set, and errors.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Manifest closes over exact corpus, query, actor/policy, component lists, model/profile, weights, errors and cancellation; exact replay versus drift is tested."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S03.T02",
+      "dependenciesBefore": [
+        "CAP-07.S03.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S03.T01"
+      ],
+      "originalObjective": "Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Hash exact assembled/minimized packet, destination, terms/retention observation, data-class/rights, scope/expiry and budget; any material change invalidates consent; never consent on behalf of another source rights holder."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-07.S03.T03",
+      "dependenciesBefore": [
+        "CAP-07.S03.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-07.S03.T02"
+      ],
+      "originalObjective": "Application and service controls that disable remote providers, fail closed, and continue with supported local paths.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Deny before DNS/HTTP in offline mode; active revocation cancels/denies late results. Only explicitly permitted public/open source classes may activate remote routes under the initial W3 policy."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S02.T01",
+      "dependenciesBefore": [
+        "CAP-08.S01.T03",
+        "CAP-05.S03.T03",
+        "CAP-07.S04.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S01.T03",
+        "CAP-05.S03.T03",
+        "CAP-07.S04.T02",
+        "CAP-06.S03.T03"
+      ],
+      "originalObjective": "Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and coverage metadata.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Structural/lexical selectors first, optional semantic when eligible; packet bounds include excluded/coverage rationale, source revision/selector and purpose-specific model-use permission."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S04.T01",
+      "dependenciesBefore": [
+        "CAP-06.S03.T03",
+        "CAP-04.S02.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S03.T03",
+        "CAP-04.S02.T03"
+      ],
+      "originalObjective": "Search Studio with fielded editor, source/index selectors, filters, counts, warnings, save/run/cancel, and result comparison.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Keyboard-accessible editor and per-source status, exact executed text and safe validation; preview alone issues no retrieval."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S02.T02",
+      "dependenciesBefore": [
+        "CAP-08.S02.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S02.T01",
+        "CAP-07.S02.T03",
+        "CAP-07.S05.T02",
+        "CAP-08.S03.T03"
+      ],
+      "originalObjective": "Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states, and checkpoints.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "All nonempty observed values close over exact anchors; unreported/unclear/inapplicable/inferred remain distinct. Refusal or invalid JSON/anchor cannot become extracted evidence; paired hallucination/adversarial tests required.",
+        "For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \\w+|[^\\w\\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \\w+|[^\\w\\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence."
+      ]
+    },
+    {
+      "id": "CAP-06.S04.T02",
+      "dependenciesBefore": [
+        "CAP-06.S04.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S04.T01"
+      ],
+      "originalObjective": "Parent/child SearchRun relationships, annotations, database-specific translations, and side-by-side result-set differences.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Fork/compare uses stable parent identities and translation-loss reports; unsupported source clauses never silently vanish."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S02.T03",
+      "dependenciesBefore": [
+        "CAP-08.S02.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S02.T02"
+      ],
+      "originalObjective": "Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology entities while retaining raw text.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Keep raw units/text, record conversion formula/version, evidence and ambiguity. Entity candidates do not replace canonical observations until authorized acceptance.",
+        "For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \\w+|[^\\w\\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \\w+|[^\\w\\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence."
+      ]
+    },
+    {
+      "id": "CAP-06.S04.T03",
+      "dependenciesBefore": [
+        "CAP-06.S04.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S04.T02"
+      ],
+      "originalObjective": "Explicit expansion operations from selected seeds or clusters, with depth/limits, expected rationale, preview, and provenance.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Expansion default depth1/limit100, hard cap1000 per explicit run; human preview and idempotent commit; no arbitrary URL/shell/model-issued connector calls."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S04.T01",
+      "dependenciesBefore": [
+        "CAP-08.S03.T03",
+        "CAP-07.S05.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S03.T03",
+        "CAP-07.S05.T03",
+        "CAP-08.S02.T03"
+      ],
+      "originalObjective": "Independent model/rule/human verifier inputs, verdicts, reasons, confidence, corrected candidates, and escalation rules.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Separate prompt/context and immutable verifier identity/limits. Use distinct eligible model if available; never load two simultaneously merely to claim independence.",
+        "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains."
+      ]
+    },
+    {
+      "id": "CAP-06.S05.T01",
+      "dependenciesBefore": [
+        "CAP-06.S04.T03",
+        "CAP-04.S04.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S04.T03",
+        "CAP-04.S04.T03"
+      ],
+      "originalObjective": "Scalable corpus view with inclusion state, clusters, citation/semantic neighborhoods, source, full-text, and discovery-path overlays.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "100k metadata-row navigation via cursors; optional projection <=5000 stratified points on this PC, every full-population count remains separately sourced. Original50k layout forecast is deferred to W5 resource qualification."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S04.T02",
+      "dependenciesBefore": [
+        "CAP-08.S04.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S04.T01"
+      ],
+      "originalObjective": "NLI/LLM/rule ensemble checks for support, contradiction, insufficient evidence, location validity, type/cardinality, and unsupported extrapolation.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Return anchor-valid/schema-fit/entailed/contradicted/insufficient/inference-supported separately; deterministic anchor checks100% adversarial denial. Unsupported fluent claims fail.",
+        "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains."
+      ]
+    },
+    {
+      "id": "CAP-06.S05.T02",
+      "dependenciesBefore": [
+        "CAP-06.S05.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S05.T01"
+      ],
+      "originalObjective": "Dashboards by source, date, venue, discipline, language, geography, method where known, OA/full text, citation concentration, and missing fields.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Reconcile counts to stable IDs; geography/method/language unknowns stay unknown. No demographic or method imputation from embeddings."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S04.T03",
+      "dependenciesBefore": [
+        "CAP-08.S04.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S04.T02"
+      ],
+      "originalObjective": "Risk-based and random audit samples, reviewer assignments, agreement tracking, escalation, and threshold reporting.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Stratified seeded audit frame/probabilities and sample outcomes; review100% high-consequence, inferred, disputed or low-confidence candidates. Error intervals state population/design; no calibrated label from missing annotations.",
+        "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      },
+      "selectedPolicy03Reference": {
+        "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "selectedPolicy03Acceptance": [
+        "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains."
+      ]
+    },
+    {
+      "id": "CAP-06.S05.T03",
+      "dependenciesBefore": [
+        "CAP-06.S05.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S05.T02"
+      ],
+      "originalObjective": "Compare saved corpus snapshots or filters and show affected records, evidence availability, clusters, and downstream conclusions.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Compare exact boundary-rule deltas, affected records and downstream stale previews; export population/sampling limits."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S05.T01",
+      "dependenciesBefore": [
+        "CAP-08.S04.T02",
+        "CAP-01.S02.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S04.T02",
+        "CAP-01.S02.T01"
+      ],
+      "originalObjective": "Virtualized rows/columns, filters, sorting, grouping, frozen identifiers, saved views, and schema-specific layouts.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "100k evidence rows/200 fields tested through bounded pages, not all loaded in renderer; status/missingness and saved schema IDs survive compatible upgrades."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 24,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S06.T01",
+      "dependenciesBefore": [
+        "CAP-06.S05.T02",
+        "CAP-03.S02.T03"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S05.T02",
+        "CAP-03.S02.T03"
+      ],
+      "originalObjective": "Inclusion/exclusion criteria, title/abstract/full-text stages, reasons, reviewer assignment, blinded option, decisions, and adjudication state.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Bind protocol/mode/stage and actor to immutable decisions; blind assignments enforce application query restrictions with explicit same-owner threat limit."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S05.T02",
+      "dependenciesBefore": [
+        "CAP-08.S05.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S05.T01"
+      ],
+      "originalObjective": "Cell detail with exact passages/pages, extraction/verifier provenance, raw/normalized values, alternative candidates, comments, and related records.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Open exact protected source revision with preserved row/cell/filter/scroll/focus return; alternatives and corrections create new history."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 4
+      }
+    },
+    {
+      "id": "CAP-06.S06.T02",
+      "dependenciesBefore": [
+        "CAP-06.S06.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S06.T01",
+        "CAP-07.S05.T02"
+      ],
+      "originalObjective": "Pluggable screening ranker trained on project decisions, uncertainty sampling, predictions, model snapshots, and explanation features.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Bound 100k metadata records/50000 feature vocabulary/batch scheduler; no arbitrary serialized estimators or neural training. Known classes/seed/labels and feature schema reproduce ranking."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S05.T03",
+      "dependenciesBefore": [
+        "CAP-08.S05.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S05.T02",
+        "CAP-08.S04.T03"
+      ],
+      "originalObjective": "Selection-based verify, reject, normalize, tag, assign, re-extract, and stale-impact preview with permission and confirmation rules.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Preview impacted IDs/counts and rights; itemized commit/results with reauthorization. Human queues from S04T03 are required before bulk verify actions become eligible."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-06.S06.T03",
+      "dependenciesBefore": [
+        "CAP-06.S06.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-06.S06.T02"
+      ],
+      "originalObjective": "Audit sampler, rejected-neighbor queue, discovery curves, residual-risk indicators, stopping proposal, and human approval.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Prespecified seeded random sample + rejected-neighbor audit; hiding a relevant fixture must surface through a safety channel. Report intervals/denominators and human stopping rationale; no automatic universal95% recall claim."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S06.T01",
+      "dependenciesBefore": [
+        "CAP-08.S05.T03",
+        "CAP-04.S04.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S05.T03",
+        "CAP-04.S04.T02"
+      ],
+      "originalObjective": "Coder-specific views, blinded option, overlap samples, field/relation agreement, missingness agreement, and uncertainty intervals.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Authenticated Windows actor plus human-declared coder identity; assignment authorization/query filters and no peer visibility before submission. No real-person identity proof, hosted multiuser IAM or foreign-host witness claimed."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 20,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S06.T02",
+      "dependenciesBefore": [
+        "CAP-08.S06.T01"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S06.T01"
+      ],
+      "originalObjective": "Side-by-side machine/coder alternatives, source context, discussion, decision, rationale, reviewer, and downstream impact.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Retain all coder/machine alternatives and unresolved outcomes; adjudicator identity/reason/current evidence exact. Agreement is not truth."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    },
+    {
+      "id": "CAP-08.S06.T03",
+      "dependenciesBefore": [
+        "CAP-08.S06.T02"
+      ],
+      "dependenciesProposed": [
+        "CAP-08.S06.T02"
+      ],
+      "originalObjective": "CSV/XLSX-compatible CSV, JSON, JSON-LD, codebook, decision log, source-anchor manifest, and rights-aware package export.",
+      "proposedAcceptanceAdditionsOrExplicitForecastAdaptations": [
+        "Formula-safe CSV/JSON/JSONLD, no remote contexts; explicit text-export right and data-class filtering, checksums/codebook/anchors/logs, cancelled/stale-source tests; omitted text remains visibly omitted."
+      ],
+      "estimate": {
+        "unit": "engineering-effort-hours",
+        "effort": 16,
+        "plannedRefactoringIncluded": 0
+      }
+    }
+  ],
+  "sliceDependencyRule": "Derive each slice external dependency union from proposed task edges; do not retain obsolete extraction-before-canonical-persistence cycle.",
+  "waveBindingInventory": {
+    "wave": "W3",
+    "capabilityIds": [
+      "CAP-06",
+      "CAP-07",
+      "CAP-08"
+    ],
+    "sliceIds": [
+      "CAP-06.S01",
+      "CAP-06.S02",
+      "CAP-06.S03",
+      "CAP-06.S04",
+      "CAP-06.S05",
+      "CAP-06.S06",
+      "CAP-07.S04",
+      "CAP-07.S02",
+      "CAP-07.S05",
+      "CAP-07.S03",
+      "CAP-08.S01",
+      "CAP-08.S03",
+      "CAP-08.S02",
+      "CAP-08.S04",
+      "CAP-08.S05",
+      "CAP-08.S06"
+    ],
+    "decisionIds": [
+      "CAP-06-D01",
+      "CAP-06-D02",
+      "CAP-06-D03",
+      "CAP-06-D04",
+      "CAP-06-D05",
+      "CAP-06-D06",
+      "CAP-06-D07",
+      "CAP-06-D08",
+      "CAP-06-D09",
+      "CAP-06-D10",
+      "CAP-06-D11",
+      "CAP-06-D12",
+      "CAP-06-D13",
+      "CAP-06-D14",
+      "CAP-06-D15",
+      "CAP-06-D16",
+      "CAP-06-D17",
+      "CAP-06-D18",
+      "CAP-06-D19",
+      "CAP-06-D20",
+      "CAP-06-D21",
+      "CAP-06-D22",
+      "CAP-06-D23",
+      "CAP-07-D02",
+      "CAP-07-D03",
+      "CAP-07-D04",
+      "CAP-07-D05",
+      "CAP-07-D09",
+      "CAP-07-D10",
+      "CAP-07-D11",
+      "CAP-07-D12",
+      "CAP-07-D13",
+      "CAP-07-D14",
+      "CAP-07-D15",
+      "CAP-07-D16",
+      "CAP-07-D17",
+      "CAP-07-D18",
+      "CAP-07-D19",
+      "CAP-07-D20",
+      "CAP-08-D01",
+      "CAP-08-D02",
+      "CAP-08-D03",
+      "CAP-08-D04",
+      "CAP-08-D05",
+      "CAP-08-D06",
+      "CAP-08-D07",
+      "CAP-08-D08",
+      "CAP-08-D09",
+      "CAP-08-D10",
+      "CAP-08-D11",
+      "CAP-08-D12",
+      "CAP-08-D13",
+      "CAP-08-D14",
+      "CAP-08-D15",
+      "CAP-08-D16",
+      "CAP-08-D17",
+      "CAP-08-D18",
+      "CAP-08-D19",
+      "CAP-08-D20",
+      "CAP-08-D21",
+      "CAP-08-D22",
+      "CAP-08-D23"
+    ]
+  },
+  "checkpointsProposedTopics": [
+    {
+      "topic": "runtime-policy-schema foundation",
+      "slices": [
+        "CAP-07.S04",
+        "CAP-07.S02",
+        "CAP-08.S01"
+      ],
+      "proof": "ADR21 real CPU local call through canonical permissions/resource/structured output; no-network/no-vault real principal; lock/cancel/OOM/crash; schema/rights denial and backup-first migration. Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise. S04 supplies registry/contract refusal only; the genuine actual runtime/principal/prompt/profile proof at S02.T03 remains mandatory. Later S05.T03 supplies comparative gold/promotion proof; no fixture PASS substitutes."
+    },
+    {
+      "topic": "retrieval-and-observability handoff",
+      "slices": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-07.S05"
+      ],
+      "proof": "Protected lexical/vector/hybrid stable query gold, rights removal, exact replay/drift, rebuild/recovery and resource/telemetry/cache accounting. S05.T03 includes actual local comparative gold/default-upgrade/rollback proof under unchanged metricPolicy03, after actual S02 runtime and full ordered-slice approvals."
+    },
+    {
+      "topic": "discovery-screening optional-remote boundary",
+      "slices": [
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06",
+        "CAP-07.S03"
+      ],
+      "proof": "Visible branch/translation/expansion, denominator/sampling diagnostics, human screening/random audit/stopping, no-account offline complete journey; optional remote contract vs live limits explicit."
+    },
+    {
+      "topic": "evidence production and human plurality",
+      "slices": [
+        "CAP-08.S03",
+        "CAP-08.S02",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ],
+      "proof": "Exact source->candidate->separate verification/human sample->matrix->adjudication/export, preserved alternatives/missingness, rights denial/cancel/restart/migration/recovery and keyboard/focus. Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints."
+    }
+  ],
+  "checkpointIDAssignment": "Use actual next canonical IDs during ordinary Wave planning transition; none reserved here.",
+  "noStateMutation": "No approval/READY/claim/campaign/gate/completion transition represented as executed.",
+  "selectedPolicy03": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "selectedPolicyReview": {
+    "path": "artifacts/tmp/W3.planning-draft-01/independent-selected-policy-review-03-01.json",
+    "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+  },
+  "sourceBacklogStatus": "Historical source observation retained; actual finalW2/G2 backlog refresh pending, never mutation authority.",
+  "capabilitySliceOrderChanges05": {
+    "CAP-06": {
+      "W3Before": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06"
+      ],
+      "W3Proposed": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06"
+      ],
+      "inheritedPrefixPreserved": [],
+      "nonW3FutureSliceRule": "Permute only the existing W3 slice positions. Preserve inherited/non-W3 objects, ordering and every identity/history/approval; re-read actual canonical list before publication."
+    },
+    "CAP-07": {
+      "W3Before": [
+        "CAP-07.S02",
+        "CAP-07.S03",
+        "CAP-07.S04",
+        "CAP-07.S05"
+      ],
+      "W3Proposed": [
+        "CAP-07.S04",
+        "CAP-07.S02",
+        "CAP-07.S05",
+        "CAP-07.S03"
+      ],
+      "inheritedPrefixPreserved": [
+        "CAP-07.S01"
+      ],
+      "nonW3FutureSliceRule": "Permute only the existing W3 slice positions. Preserve inherited/non-W3 objects, ordering and every identity/history/approval; re-read actual canonical list before publication."
+    },
+    "CAP-08": {
+      "W3Before": [
+        "CAP-08.S01",
+        "CAP-08.S02",
+        "CAP-08.S03",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ],
+      "W3Proposed": [
+        "CAP-08.S01",
+        "CAP-08.S03",
+        "CAP-08.S02",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ],
+      "inheritedPrefixPreserved": [],
+      "nonW3FutureSliceRule": "Permute only the existing W3 slice positions. Preserve inherited/non-W3 objects, ordering and every identity/history/approval; re-read actual canonical list before publication."
+    }
+  },
+  "proposedSliceExternalDependencies05": {
+    "CAP-06.S01": [
+      "CAP-04.S04.T03",
+      "CAP-05.S03.T03"
+    ],
+    "CAP-06.S02": [
+      "CAP-06.S01.T02",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T03"
+    ],
+    "CAP-06.S03": [
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T03",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-06.S04": [
+      "CAP-04.S02.T03",
+      "CAP-06.S03.T03"
+    ],
+    "CAP-06.S05": [
+      "CAP-04.S04.T03",
+      "CAP-06.S04.T03"
+    ],
+    "CAP-06.S06": [
+      "CAP-03.S02.T03",
+      "CAP-06.S05.T02",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-07.S04": [
+      "CAP-00.S05.T02",
+      "CAP-07.S01.T01"
+    ],
+    "CAP-07.S02": [
+      "CAP-01.S03.T03",
+      "CAP-07.S01.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-07.S05": [
+      "CAP-03.S03.T03",
+      "CAP-07.S04.T03"
+    ],
+    "CAP-07.S03": [
+      "CAP-02.S04.T01",
+      "CAP-07.S01.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-08.S01": [
+      "CAP-03.S01.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-08.S03": [
+      "CAP-03.S03.T02",
+      "CAP-08.S01.T03"
+    ],
+    "CAP-08.S02": [
+      "CAP-05.S03.T03",
+      "CAP-06.S03.T03",
+      "CAP-07.S02.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S03.T03"
+    ],
+    "CAP-08.S04": [
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T03",
+      "CAP-08.S03.T03"
+    ],
+    "CAP-08.S05": [
+      "CAP-01.S02.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "CAP-08.S06": [
+      "CAP-04.S04.T02",
+      "CAP-08.S05.T03"
+    ]
+  },
+  "ordinaryUnclaimedReadinessProjection05": {
+    "basis": "Existing taskctl.py index_backlog480/previous_slices_approved1485/task_can_be_ready1533/refresh_derived_states1560, not a new policy or invocation.",
+    "when": "Only after actual G2 and materialization of actual order/dependencies; unfinished corrective tasks currently suppress derived refresh. No current state is changed here.",
+    "eligibleObjects": "Only otherwise never-claimed W3 tasks whose actual post-G2 predecessor status is NOT_STARTED or READY. Only task.status/task.updated_at and derived slice.status may change under the ordinary projection; preserve every owner/lease/review/evidence/base/completion/history and all non-W3 records. Stop if any actual W3 task is already started, owned, reviewed or completed.",
+    "formula": "READY iff every explicit task dependency DONE, every parent-slice depends_on task DONE, actual wave activation gate open, and every preceding capability.slices entry completion.APPROVED. Otherwise NOT_STARTED. READY is a derived availability projection, never Wave/implementation approval.",
+    "sliceStatusRule": "Existing refresh preserves DEFERRED/CANCELLED/BLOCKED/REVIEW/DONE slices and otherwise derives aggregate status. Under the required never-claimed W3 precondition the only projected states are NOT_STARTED or READY; deny unexpected IN_PROGRESS rather than manufacture history. updated_at changes only when a permitted task status actually changes, using actual current time.",
+    "conditionalInitialExample": {
+      "assumptions": [
+        "G2 actually open",
+        "all named external W0/W1/W2 tasks DONE",
+        "CAP-07.S01 completion actually APPROVED",
+        "all48 W3 tasks unclaimed NOT_STARTED",
+        "no W3 slice completion already approved"
+      ],
+      "READY": [
+        "CAP-06.S01.T01",
+        "CAP-07.S04.T01"
+      ],
+      "allOther46": "NOT_STARTED",
+      "actualStateObservedOrWritten": false
+    },
+    "executionBoundary": "Normal complete W3 approval/campaign/ownership and ordinary taskctl claim still required before implementation. Do not call internal helpers as a new bypass or invent a refresh controller.",
+    "differentSourceBasedProjectionNote": {
+      "path": "artifacts/tmp/W3.ordered-planning-data-projection-01.json",
+      "sha256": "98094b94c98ff4666b332e5aead851ab2cd34de68cf3658f301be37e1b9bca61"
+    },
+    "materializationRoute": "After actual G2, explicitly author the independently reviewed unapproved definition/order delta against the actual post-G2 backlog copy, then existing index_backlog -> refresh_derived_states -> serializable_backlog. _position is internal only. Publish through existing save_validated/save_atomic schema/semantic validation, predecessor-SHA CAS and applicable frozen/history guards, with exact independently reviewed target identity/order. No dedicated refresh CLI exists; do not fabricate a task transition or weaken order-sensitive identity_snapshot.",
+    "projectionDiffBoundary": "Separate exact reviewed planning definitions/permutation from derived readiness. Permit projection only task.status between NOT_STARTED/READY, task.updated_at only on real status change, and derived slice.status; compare every excluded field and non-W3 object for equality. Actual G2 is never reopened/repeated/forged; DEFERRED conversion belongs to its normal completed transition, not refresh.",
+    "actualMaterialization": null
+  }
+}

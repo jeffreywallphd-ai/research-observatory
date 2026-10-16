@@ -1,0 +1,194 @@
+[
+  {
+    "sliceId": "CAP-06.S01",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Parser/validation | p95 < 25 ms for a 4,000-character query on reference Windows hardware. |\n| Local metadata search | p95 < 250 ms over 100,000 works after warm-up; first page of 50 results. |\n| Incremental indexing | 1,000 metadata changes < 5 s excluding document-text extraction. |\n| Rebuild | 100,000 works plus 1 million short passages < 30 min on the declared reference laptop; old index remains usable. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-06.S02",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Query embedding | p95 < 2 s CPU and < 500 ms supported GPU after warm-up for baseline query size. |\n| Vector search | p95 < 500 ms for top-100 filtered search at 100,000 work vectors on reference adapter. |\n| Fixture indexing | 1,000 title/abstract records complete offline within 10 min on reference CPU-only machine. |\n| Recovery | Health failure detected < 10 s; exact fallback or guided recovery available without project corruption. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-06.S03",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Fusion overhead | p95 < 100 ms for 2,000 candidates excluding retrievers. |\n| Hybrid first page | p95 < 1 s excluding optional reranking on reference 100,000-work corpus. |\n| Reranking | Default top-50 p95 < 5 s CPU or configured remote timeout; cancellation acknowledged < 1 s. |\n| Replay comparison | 100,000 result IDs compared < 5 s with bounded memory. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-06.S04",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Editor feedback | Parsing/validation response < 100 ms after debounce. |\n| Branch tree | Interactive at 1,000 saved runs with virtualized history. |\n| Expansion preview | First bounded estimate/results < 3 s for local graph; remote progress streamed. |\n| Cancellation | UI acknowledgement < 200 ms; workers stop at next safe checkpoint < 2 s where provider supports it. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-06.S05",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Table | Initial 100-row query < 500 ms; smooth virtualization for 100,000 records. |\n| Diagnostics | Core deterministic metrics for 100,000 works < 60 s on reference machine. |\n| Projection | 50,000 work projection completes < 15 min with progress/cancel; larger sets require sampling/hosted profile. |\n| Scenario comparison | Set/metric difference < 10 s for 100,000 works. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-06.S06",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Decision save/next record | p95 < 200 ms local. |\n| Model retrain | 100,000 title/abstract records < 60 s for baseline on reference machine. |\n| Queue refresh | p95 < 2 s after retrain for 100,000 records. |\n| Audit generation | Deterministic sample generation < 5 s with stored seed/frame. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-07.S02",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Runtime start | Health-ready < 15 s for a small approved local model on reference Windows hardware after cached files. |\n| Idle containment | Unloaded models release GPU memory and worker process when policy timeout expires. |\n| Model verification | Stream hash at disk speed without loading whole artifact in memory. |\n| Cancellation | Queued work cancels immediately; active generation stops within two token batches or 1 s where runtime supports it. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-07.S03",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Egress planning | Payload classification/preview p95 < 250 ms excluding tokenization of very large attachments. |\n| Adapter overhead | p95 < 100 ms excluding provider network. |\n| Secret exposure | Zero credentials or raw sensitive payloads in logs/support bundles by automated tests. |\n| Cost accounting | Estimated and actual provider units reconciled for 100% of completed attempts. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-07.S04",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Registry resolve | p95 < 20 ms from local cache. |\n| Schema/post-validation | p95 < 50 ms for typical extraction payloads; streaming validation for large exports. |\n| Regression suite | Core prompt/schema fixtures < 10 min without live providers; scheduled provider qualification separate. |\n| Repair | Bounded by one configured attempt and overall task deadline. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-07.S05",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Telemetry overhead | < 5% latency and CPU overhead for ordinary calls. |\n| Accounting completeness | 100% of completed/failed attempts have reconciled usage or explicit unknown status. |\n| Core evaluation | Deterministic/stub suite < 15 min; live qualification scheduled/manual with fixed budget. |\n| Cancellation | Budget or user cancel prevents new calls immediately and propagates active cancellation. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-08.S01",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Record validation | p95 < 20 ms for ordinary evidence records. |\n| Pack load | < 500 ms for 2,000 terms/200 fields after cache. |\n| Version comparison | < 2 s for representative packs. |\n| Migration preview | 100,000 evidence records impact-scanned < 60 s using indexed bindings. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-08.S02",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Passage selection | p95 < 2 s per ordinary document with local indexes. |\n| Batch checkpoint | Persist after each document or <= 30 s of work. |\n| Cancellation | Stop scheduling immediately and active model work within gateway limits. |\n| Gold extraction | Field-level precision/recall and missingness targets declared per schema before production use. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-08.S03",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Record write | p95 < 100 ms local for ordinary transition transaction. |\n| History query | p95 < 250 ms for 100 revisions/transitions. |\n| Stale propagation | 10,000 directly/indirectly affected objects identified < 10 s with checkpointed follow-up. |\n| Matrix filter | Indexed status/schema/project queries p95 < 500 ms for 100,000 records. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-08.S04",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Rule checks | Anchor/schema deterministic checks p95 < 100 ms. |\n| Model verification | Bounded by CAP-07 task deadline; batch where compatible. |\n| Human queue | First item/filter p95 < 500 ms for 100,000 candidates. |\n| Calibration | Report 100,000 decisions < 30 s using aggregate queries. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-08.S05",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Initial grid | Usable first page < 1.5 s local for 100,000 evidence records. |\n| Scroll/filter | p95 query < 500 ms; no DOM growth beyond virtualization window. |\n| Source drawer | Open cached page/passages < 300 ms; uncached parse/render progressive. |\n| Bulk preview | 100,000-record selection impact < 10 s with progress. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  },
+  {
+    "sliceId": "CAP-08.S06",
+    "originalForecastBudgetSection": "## 11. Performance and resource budgets\n\n| Measure | Initial production budget / qualification target |\n|---|---|\n| Agreement | 100,000 coding pairs/fields < 10 s for supported metrics. |\n| Adjudication load | p95 < 500 ms with source/codings cached. |\n| Export | 100,000 rows to CSV/JSON < 2 min, streaming memory bounded. |\n| Integrity | 100% exported files recorded with SHA-256 and manifest. |\n\nBudgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.\n",
+    "authority": "Original unapproved forecast preserved only as comparison; no old p95/per-sample-max timing criterion is adopted. The proposed initial-target-register-01.json controls new targets and median of ALL comparable completed trials.",
+    "sharedExplicitAdaptations": [
+      "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+      "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+      "Rerank default top20; >20<=50 only evaluated profile. Visualization <=5000 sampled points instead of unmeasured50k layout.",
+      "This-PC fulltext rebuild benchmark <=100k passages; old1m-passage forecast remains W5 candidate.100k metadata target retained.",
+      "No target asserted satisfied; approved packet must bind these explicit proposed forecast adaptations."
+    ]
+  }
+]

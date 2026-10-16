@@ -1,0 +1,1161 @@
+{
+  "documentType": "source-only-proposed-W3-task-and-ordered-slice-approval-feasibility-witness",
+  "author": "agent:/root/storage_profile_review",
+  "status": "ACYCLIC_PROPOSED_DATA_ONLY_PENDING_DIFFERENT_PLAN_REVIEW",
+  "taskctlSource": {
+    "path": "tools/taskctl.py",
+    "sha256": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3"
+  },
+  "governingFunctions": {
+    "index_backlog": 480,
+    "previous_slices_approved": 1485,
+    "task_can_be_ready": 1533,
+    "refresh_derived_states": 1560
+  },
+  "method": "Finite proposed-data Kahn topological calculation only; no taskctl module import/invocation, validators, tests or runtime execution. Gates are explicit graph nodes, not fabricated approval outcomes.",
+  "capabilityW3SliceOrders": {
+    "CAP-06": [
+      "CAP-06.S01",
+      "CAP-06.S02",
+      "CAP-06.S03",
+      "CAP-06.S04",
+      "CAP-06.S05",
+      "CAP-06.S06"
+    ],
+    "CAP-07": [
+      "CAP-07.S04",
+      "CAP-07.S02",
+      "CAP-07.S05",
+      "CAP-07.S03"
+    ],
+    "CAP-08": [
+      "CAP-08.S01",
+      "CAP-08.S03",
+      "CAP-08.S02",
+      "CAP-08.S04",
+      "CAP-08.S05",
+      "CAP-08.S06"
+    ]
+  },
+  "inheritedCAP07Prefix": [
+    "CAP-07.S01"
+  ],
+  "taskNodes": 48,
+  "sliceApprovalGateNodes": 16,
+  "internalNodes": 64,
+  "explicitTaskDependencies": {
+    "CAP-06.S01.T01": [
+      "CAP-04.S04.T03",
+      "CAP-05.S03.T03"
+    ],
+    "CAP-06.S01.T02": [
+      "CAP-06.S01.T01"
+    ],
+    "CAP-06.S01.T03": [
+      "CAP-06.S01.T02"
+    ],
+    "CAP-06.S02.T01": [
+      "CAP-06.S01.T02",
+      "CAP-07.S01.T03"
+    ],
+    "CAP-06.S02.T02": [
+      "CAP-06.S02.T01",
+      "CAP-07.S02.T03"
+    ],
+    "CAP-06.S02.T03": [
+      "CAP-06.S02.T02"
+    ],
+    "CAP-06.S03.T01": [
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T03"
+    ],
+    "CAP-06.S03.T02": [
+      "CAP-06.S03.T01",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-06.S03.T03": [
+      "CAP-06.S03.T02",
+      "CAP-07.S05.T01"
+    ],
+    "CAP-06.S04.T01": [
+      "CAP-06.S03.T03",
+      "CAP-04.S02.T03"
+    ],
+    "CAP-06.S04.T02": [
+      "CAP-06.S04.T01"
+    ],
+    "CAP-06.S04.T03": [
+      "CAP-06.S04.T02"
+    ],
+    "CAP-06.S05.T01": [
+      "CAP-06.S04.T03",
+      "CAP-04.S04.T03"
+    ],
+    "CAP-06.S05.T02": [
+      "CAP-06.S05.T01"
+    ],
+    "CAP-06.S05.T03": [
+      "CAP-06.S05.T02"
+    ],
+    "CAP-06.S06.T01": [
+      "CAP-06.S05.T02",
+      "CAP-03.S02.T03"
+    ],
+    "CAP-06.S06.T02": [
+      "CAP-06.S06.T01",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-06.S06.T03": [
+      "CAP-06.S06.T02"
+    ],
+    "CAP-07.S04.T01": [
+      "CAP-07.S01.T01",
+      "CAP-00.S05.T02"
+    ],
+    "CAP-07.S04.T02": [
+      "CAP-07.S04.T01"
+    ],
+    "CAP-07.S04.T03": [
+      "CAP-07.S04.T02"
+    ],
+    "CAP-07.S02.T01": [
+      "CAP-07.S01.T03",
+      "CAP-01.S03.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-07.S02.T02": [
+      "CAP-07.S02.T01"
+    ],
+    "CAP-07.S02.T03": [
+      "CAP-07.S02.T02"
+    ],
+    "CAP-07.S05.T01": [
+      "CAP-07.S04.T03",
+      "CAP-03.S03.T03"
+    ],
+    "CAP-07.S05.T02": [
+      "CAP-07.S05.T01"
+    ],
+    "CAP-07.S05.T03": [
+      "CAP-07.S05.T02"
+    ],
+    "CAP-07.S03.T01": [
+      "CAP-07.S01.T03",
+      "CAP-02.S04.T01",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-07.S03.T02": [
+      "CAP-07.S03.T01"
+    ],
+    "CAP-07.S03.T03": [
+      "CAP-07.S03.T02"
+    ],
+    "CAP-08.S01.T01": [
+      "CAP-03.S01.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-08.S01.T02": [
+      "CAP-08.S01.T01"
+    ],
+    "CAP-08.S01.T03": [
+      "CAP-08.S01.T02"
+    ],
+    "CAP-08.S03.T01": [
+      "CAP-08.S01.T03",
+      "CAP-03.S03.T02"
+    ],
+    "CAP-08.S03.T02": [
+      "CAP-08.S03.T01"
+    ],
+    "CAP-08.S03.T03": [
+      "CAP-08.S03.T02"
+    ],
+    "CAP-08.S02.T01": [
+      "CAP-08.S01.T03",
+      "CAP-05.S03.T03",
+      "CAP-07.S04.T02",
+      "CAP-06.S03.T03"
+    ],
+    "CAP-08.S02.T02": [
+      "CAP-08.S02.T01",
+      "CAP-07.S02.T03",
+      "CAP-07.S05.T02",
+      "CAP-08.S03.T03"
+    ],
+    "CAP-08.S02.T03": [
+      "CAP-08.S02.T02"
+    ],
+    "CAP-08.S04.T01": [
+      "CAP-08.S03.T03",
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T03"
+    ],
+    "CAP-08.S04.T02": [
+      "CAP-08.S04.T01"
+    ],
+    "CAP-08.S04.T03": [
+      "CAP-08.S04.T02"
+    ],
+    "CAP-08.S05.T01": [
+      "CAP-08.S04.T02",
+      "CAP-01.S02.T01"
+    ],
+    "CAP-08.S05.T02": [
+      "CAP-08.S05.T01"
+    ],
+    "CAP-08.S05.T03": [
+      "CAP-08.S05.T02",
+      "CAP-08.S04.T03"
+    ],
+    "CAP-08.S06.T01": [
+      "CAP-08.S05.T03",
+      "CAP-04.S04.T02"
+    ],
+    "CAP-08.S06.T02": [
+      "CAP-08.S06.T01"
+    ],
+    "CAP-08.S06.T03": [
+      "CAP-08.S06.T02"
+    ]
+  },
+  "sliceExternalDependencyUnionForEveryTask": {
+    "CAP-06.S01": [
+      "CAP-04.S04.T03",
+      "CAP-05.S03.T03"
+    ],
+    "CAP-06.S02": [
+      "CAP-06.S01.T02",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T03"
+    ],
+    "CAP-06.S03": [
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T03",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-06.S04": [
+      "CAP-04.S02.T03",
+      "CAP-06.S03.T03"
+    ],
+    "CAP-06.S05": [
+      "CAP-04.S04.T03",
+      "CAP-06.S04.T03"
+    ],
+    "CAP-06.S06": [
+      "CAP-03.S02.T03",
+      "CAP-06.S05.T02",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-07.S04": [
+      "CAP-00.S05.T02",
+      "CAP-07.S01.T01"
+    ],
+    "CAP-07.S02": [
+      "CAP-01.S03.T03",
+      "CAP-07.S01.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-07.S05": [
+      "CAP-03.S03.T03",
+      "CAP-07.S04.T03"
+    ],
+    "CAP-07.S03": [
+      "CAP-02.S04.T01",
+      "CAP-07.S01.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02"
+    ],
+    "CAP-08.S01": [
+      "CAP-03.S01.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-08.S03": [
+      "CAP-03.S03.T02",
+      "CAP-08.S01.T03"
+    ],
+    "CAP-08.S02": [
+      "CAP-05.S03.T03",
+      "CAP-06.S03.T03",
+      "CAP-07.S02.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S03.T03"
+    ],
+    "CAP-08.S04": [
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T03",
+      "CAP-08.S03.T03"
+    ],
+    "CAP-08.S05": [
+      "CAP-01.S02.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "CAP-08.S06": [
+      "CAP-04.S04.T02",
+      "CAP-08.S05.T03"
+    ]
+  },
+  "nodePrerequisites": {
+    "CAP-06.S01.T01": [
+      "CAP-04.S04.T03",
+      "CAP-05.S03.T03"
+    ],
+    "CAP-06.S01.T02": [
+      "CAP-04.S04.T03",
+      "CAP-05.S03.T03",
+      "CAP-06.S01.T01"
+    ],
+    "CAP-06.S01.T03": [
+      "CAP-04.S04.T03",
+      "CAP-05.S03.T03",
+      "CAP-06.S01.T02"
+    ],
+    "CAP-06.S02.T01": [
+      "CAP-06.S01.T02",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T03",
+      "SLICE_APPROVED:CAP-06.S01"
+    ],
+    "CAP-06.S02.T02": [
+      "CAP-06.S01.T02",
+      "CAP-06.S02.T01",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T03",
+      "SLICE_APPROVED:CAP-06.S01"
+    ],
+    "CAP-06.S02.T03": [
+      "CAP-06.S01.T02",
+      "CAP-06.S02.T02",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T03",
+      "SLICE_APPROVED:CAP-06.S01"
+    ],
+    "CAP-06.S03.T01": [
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T03",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02"
+    ],
+    "CAP-06.S03.T02": [
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T03",
+      "CAP-06.S03.T01",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02"
+    ],
+    "CAP-06.S03.T03": [
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T03",
+      "CAP-06.S03.T02",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02"
+    ],
+    "CAP-06.S04.T01": [
+      "CAP-04.S02.T03",
+      "CAP-06.S03.T03",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03"
+    ],
+    "CAP-06.S04.T02": [
+      "CAP-04.S02.T03",
+      "CAP-06.S03.T03",
+      "CAP-06.S04.T01",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03"
+    ],
+    "CAP-06.S04.T03": [
+      "CAP-04.S02.T03",
+      "CAP-06.S03.T03",
+      "CAP-06.S04.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03"
+    ],
+    "CAP-06.S05.T01": [
+      "CAP-04.S04.T03",
+      "CAP-06.S04.T03",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03",
+      "SLICE_APPROVED:CAP-06.S04"
+    ],
+    "CAP-06.S05.T02": [
+      "CAP-04.S04.T03",
+      "CAP-06.S04.T03",
+      "CAP-06.S05.T01",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03",
+      "SLICE_APPROVED:CAP-06.S04"
+    ],
+    "CAP-06.S05.T03": [
+      "CAP-04.S04.T03",
+      "CAP-06.S04.T03",
+      "CAP-06.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03",
+      "SLICE_APPROVED:CAP-06.S04"
+    ],
+    "CAP-06.S06.T01": [
+      "CAP-03.S02.T03",
+      "CAP-06.S05.T02",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03",
+      "SLICE_APPROVED:CAP-06.S04",
+      "SLICE_APPROVED:CAP-06.S05"
+    ],
+    "CAP-06.S06.T02": [
+      "CAP-03.S02.T03",
+      "CAP-06.S05.T02",
+      "CAP-06.S06.T01",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03",
+      "SLICE_APPROVED:CAP-06.S04",
+      "SLICE_APPROVED:CAP-06.S05"
+    ],
+    "CAP-06.S06.T03": [
+      "CAP-03.S02.T03",
+      "CAP-06.S05.T02",
+      "CAP-06.S06.T02",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-06.S02",
+      "SLICE_APPROVED:CAP-06.S03",
+      "SLICE_APPROVED:CAP-06.S04",
+      "SLICE_APPROVED:CAP-06.S05"
+    ],
+    "CAP-07.S02.T01": [
+      "CAP-01.S03.T03",
+      "CAP-07.S01.T03",
+      "CAP-07.S04.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    "CAP-07.S02.T02": [
+      "CAP-01.S03.T03",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T01",
+      "CAP-07.S04.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    "CAP-07.S02.T03": [
+      "CAP-01.S03.T03",
+      "CAP-07.S01.T03",
+      "CAP-07.S02.T02",
+      "CAP-07.S04.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    "CAP-07.S03.T01": [
+      "CAP-02.S04.T01",
+      "CAP-07.S01.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S02",
+      "SLICE_APPROVED:CAP-07.S04",
+      "SLICE_APPROVED:CAP-07.S05"
+    ],
+    "CAP-07.S03.T02": [
+      "CAP-02.S04.T01",
+      "CAP-07.S01.T03",
+      "CAP-07.S03.T01",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S02",
+      "SLICE_APPROVED:CAP-07.S04",
+      "SLICE_APPROVED:CAP-07.S05"
+    ],
+    "CAP-07.S03.T03": [
+      "CAP-02.S04.T01",
+      "CAP-07.S01.T03",
+      "CAP-07.S03.T02",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S02",
+      "SLICE_APPROVED:CAP-07.S04",
+      "SLICE_APPROVED:CAP-07.S05"
+    ],
+    "CAP-07.S04.T01": [
+      "CAP-00.S05.T02",
+      "CAP-07.S01.T01",
+      "SLICE_APPROVED:CAP-07.S01"
+    ],
+    "CAP-07.S04.T02": [
+      "CAP-00.S05.T02",
+      "CAP-07.S01.T01",
+      "CAP-07.S04.T01",
+      "SLICE_APPROVED:CAP-07.S01"
+    ],
+    "CAP-07.S04.T03": [
+      "CAP-00.S05.T02",
+      "CAP-07.S01.T01",
+      "CAP-07.S04.T02",
+      "SLICE_APPROVED:CAP-07.S01"
+    ],
+    "CAP-07.S05.T01": [
+      "CAP-03.S03.T03",
+      "CAP-07.S04.T03",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S02",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    "CAP-07.S05.T02": [
+      "CAP-03.S03.T03",
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T01",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S02",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    "CAP-07.S05.T03": [
+      "CAP-03.S03.T03",
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-07.S01",
+      "SLICE_APPROVED:CAP-07.S02",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    "CAP-08.S01.T01": [
+      "CAP-03.S01.T03",
+      "CAP-07.S04.T02"
+    ],
+    "CAP-08.S01.T02": [
+      "CAP-03.S01.T03",
+      "CAP-07.S04.T02",
+      "CAP-08.S01.T01"
+    ],
+    "CAP-08.S01.T03": [
+      "CAP-03.S01.T03",
+      "CAP-07.S04.T02",
+      "CAP-08.S01.T02"
+    ],
+    "CAP-08.S02.T01": [
+      "CAP-05.S03.T03",
+      "CAP-06.S03.T03",
+      "CAP-07.S02.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S03.T03",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    "CAP-08.S02.T02": [
+      "CAP-05.S03.T03",
+      "CAP-06.S03.T03",
+      "CAP-07.S02.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S02.T01",
+      "CAP-08.S03.T03",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    "CAP-08.S02.T03": [
+      "CAP-05.S03.T03",
+      "CAP-06.S03.T03",
+      "CAP-07.S02.T03",
+      "CAP-07.S04.T02",
+      "CAP-07.S05.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S02.T02",
+      "CAP-08.S03.T03",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    "CAP-08.S03.T01": [
+      "CAP-03.S03.T02",
+      "CAP-08.S01.T03",
+      "SLICE_APPROVED:CAP-08.S01"
+    ],
+    "CAP-08.S03.T02": [
+      "CAP-03.S03.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S03.T01",
+      "SLICE_APPROVED:CAP-08.S01"
+    ],
+    "CAP-08.S03.T03": [
+      "CAP-03.S03.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S03.T02",
+      "SLICE_APPROVED:CAP-08.S01"
+    ],
+    "CAP-08.S04.T01": [
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T03",
+      "CAP-08.S03.T03",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    "CAP-08.S04.T02": [
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T03",
+      "CAP-08.S03.T03",
+      "CAP-08.S04.T01",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    "CAP-08.S04.T03": [
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T03",
+      "CAP-08.S03.T03",
+      "CAP-08.S04.T02",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    "CAP-08.S05.T01": [
+      "CAP-01.S02.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03",
+      "SLICE_APPROVED:CAP-08.S04"
+    ],
+    "CAP-08.S05.T02": [
+      "CAP-01.S02.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03",
+      "CAP-08.S05.T01",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03",
+      "SLICE_APPROVED:CAP-08.S04"
+    ],
+    "CAP-08.S05.T03": [
+      "CAP-01.S02.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03",
+      "CAP-08.S05.T02",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03",
+      "SLICE_APPROVED:CAP-08.S04"
+    ],
+    "CAP-08.S06.T01": [
+      "CAP-04.S04.T02",
+      "CAP-08.S05.T03",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03",
+      "SLICE_APPROVED:CAP-08.S04",
+      "SLICE_APPROVED:CAP-08.S05"
+    ],
+    "CAP-08.S06.T02": [
+      "CAP-04.S04.T02",
+      "CAP-08.S05.T03",
+      "CAP-08.S06.T01",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03",
+      "SLICE_APPROVED:CAP-08.S04",
+      "SLICE_APPROVED:CAP-08.S05"
+    ],
+    "CAP-08.S06.T03": [
+      "CAP-04.S04.T02",
+      "CAP-08.S05.T03",
+      "CAP-08.S06.T02",
+      "SLICE_APPROVED:CAP-08.S01",
+      "SLICE_APPROVED:CAP-08.S02",
+      "SLICE_APPROVED:CAP-08.S03",
+      "SLICE_APPROVED:CAP-08.S04",
+      "SLICE_APPROVED:CAP-08.S05"
+    ],
+    "SLICE_APPROVED:CAP-06.S01": [
+      "CAP-06.S01.T01",
+      "CAP-06.S01.T02",
+      "CAP-06.S01.T03"
+    ],
+    "SLICE_APPROVED:CAP-06.S02": [
+      "CAP-06.S02.T01",
+      "CAP-06.S02.T02",
+      "CAP-06.S02.T03"
+    ],
+    "SLICE_APPROVED:CAP-06.S03": [
+      "CAP-06.S03.T01",
+      "CAP-06.S03.T02",
+      "CAP-06.S03.T03"
+    ],
+    "SLICE_APPROVED:CAP-06.S04": [
+      "CAP-06.S04.T01",
+      "CAP-06.S04.T02",
+      "CAP-06.S04.T03"
+    ],
+    "SLICE_APPROVED:CAP-06.S05": [
+      "CAP-06.S05.T01",
+      "CAP-06.S05.T02",
+      "CAP-06.S05.T03"
+    ],
+    "SLICE_APPROVED:CAP-06.S06": [
+      "CAP-06.S06.T01",
+      "CAP-06.S06.T02",
+      "CAP-06.S06.T03"
+    ],
+    "SLICE_APPROVED:CAP-07.S04": [
+      "CAP-07.S04.T01",
+      "CAP-07.S04.T02",
+      "CAP-07.S04.T03"
+    ],
+    "SLICE_APPROVED:CAP-07.S02": [
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T02",
+      "CAP-07.S02.T03"
+    ],
+    "SLICE_APPROVED:CAP-07.S05": [
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02",
+      "CAP-07.S05.T03"
+    ],
+    "SLICE_APPROVED:CAP-07.S03": [
+      "CAP-07.S03.T01",
+      "CAP-07.S03.T02",
+      "CAP-07.S03.T03"
+    ],
+    "SLICE_APPROVED:CAP-08.S01": [
+      "CAP-08.S01.T01",
+      "CAP-08.S01.T02",
+      "CAP-08.S01.T03"
+    ],
+    "SLICE_APPROVED:CAP-08.S03": [
+      "CAP-08.S03.T01",
+      "CAP-08.S03.T02",
+      "CAP-08.S03.T03"
+    ],
+    "SLICE_APPROVED:CAP-08.S02": [
+      "CAP-08.S02.T01",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03"
+    ],
+    "SLICE_APPROVED:CAP-08.S04": [
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "SLICE_APPROVED:CAP-08.S05": [
+      "CAP-08.S05.T01",
+      "CAP-08.S05.T02",
+      "CAP-08.S05.T03"
+    ],
+    "SLICE_APPROVED:CAP-08.S06": [
+      "CAP-08.S06.T01",
+      "CAP-08.S06.T02",
+      "CAP-08.S06.T03"
+    ]
+  },
+  "externalPrerequisitesMustActuallyHoldLater": [
+    "CAP-00.S05.T02",
+    "CAP-01.S02.T01",
+    "CAP-01.S03.T03",
+    "CAP-02.S04.T01",
+    "CAP-03.S01.T03",
+    "CAP-03.S02.T03",
+    "CAP-03.S03.T02",
+    "CAP-03.S03.T03",
+    "CAP-04.S02.T03",
+    "CAP-04.S04.T02",
+    "CAP-04.S04.T03",
+    "CAP-05.S03.T03",
+    "CAP-07.S01.T01",
+    "CAP-07.S01.T03",
+    "SLICE_APPROVED:CAP-07.S01"
+  ],
+  "all64TopologicalOrder": [
+    "CAP-06.S01.T01",
+    "CAP-07.S04.T01",
+    "CAP-06.S01.T02",
+    "CAP-07.S04.T02",
+    "CAP-06.S01.T03",
+    "CAP-07.S04.T03",
+    "CAP-08.S01.T01",
+    "CAP-08.S01.T02",
+    "SLICE_APPROVED:CAP-06.S01",
+    "SLICE_APPROVED:CAP-07.S04",
+    "CAP-07.S02.T01",
+    "CAP-08.S01.T03",
+    "CAP-07.S02.T02",
+    "SLICE_APPROVED:CAP-08.S01",
+    "CAP-07.S02.T03",
+    "CAP-08.S03.T01",
+    "CAP-06.S02.T01",
+    "CAP-08.S03.T02",
+    "SLICE_APPROVED:CAP-07.S02",
+    "CAP-06.S02.T02",
+    "CAP-07.S05.T01",
+    "CAP-08.S03.T03",
+    "CAP-06.S02.T03",
+    "CAP-07.S05.T02",
+    "SLICE_APPROVED:CAP-08.S03",
+    "CAP-07.S05.T03",
+    "SLICE_APPROVED:CAP-06.S02",
+    "CAP-06.S03.T01",
+    "SLICE_APPROVED:CAP-07.S05",
+    "CAP-06.S03.T02",
+    "CAP-07.S03.T01",
+    "CAP-06.S03.T03",
+    "CAP-07.S03.T02",
+    "CAP-07.S03.T03",
+    "CAP-08.S02.T01",
+    "SLICE_APPROVED:CAP-06.S03",
+    "CAP-06.S04.T01",
+    "CAP-08.S02.T02",
+    "SLICE_APPROVED:CAP-07.S03",
+    "CAP-06.S04.T02",
+    "CAP-08.S02.T03",
+    "CAP-06.S04.T03",
+    "SLICE_APPROVED:CAP-08.S02",
+    "CAP-08.S04.T01",
+    "SLICE_APPROVED:CAP-06.S04",
+    "CAP-06.S05.T01",
+    "CAP-08.S04.T02",
+    "CAP-06.S05.T02",
+    "CAP-08.S04.T03",
+    "CAP-06.S05.T03",
+    "SLICE_APPROVED:CAP-08.S04",
+    "CAP-08.S05.T01",
+    "SLICE_APPROVED:CAP-06.S05",
+    "CAP-06.S06.T01",
+    "CAP-08.S05.T02",
+    "CAP-06.S06.T02",
+    "CAP-08.S05.T03",
+    "CAP-06.S06.T03",
+    "SLICE_APPROVED:CAP-08.S05",
+    "CAP-08.S06.T01",
+    "SLICE_APPROVED:CAP-06.S06",
+    "CAP-08.S06.T02",
+    "CAP-08.S06.T03",
+    "SLICE_APPROVED:CAP-08.S06"
+  ],
+  "all48TaskTopologicalOrder": [
+    "CAP-06.S01.T01",
+    "CAP-07.S04.T01",
+    "CAP-06.S01.T02",
+    "CAP-07.S04.T02",
+    "CAP-06.S01.T03",
+    "CAP-07.S04.T03",
+    "CAP-08.S01.T01",
+    "CAP-08.S01.T02",
+    "CAP-07.S02.T01",
+    "CAP-08.S01.T03",
+    "CAP-07.S02.T02",
+    "CAP-07.S02.T03",
+    "CAP-08.S03.T01",
+    "CAP-06.S02.T01",
+    "CAP-08.S03.T02",
+    "CAP-06.S02.T02",
+    "CAP-07.S05.T01",
+    "CAP-08.S03.T03",
+    "CAP-06.S02.T03",
+    "CAP-07.S05.T02",
+    "CAP-07.S05.T03",
+    "CAP-06.S03.T01",
+    "CAP-06.S03.T02",
+    "CAP-07.S03.T01",
+    "CAP-06.S03.T03",
+    "CAP-07.S03.T02",
+    "CAP-07.S03.T03",
+    "CAP-08.S02.T01",
+    "CAP-06.S04.T01",
+    "CAP-08.S02.T02",
+    "CAP-06.S04.T02",
+    "CAP-08.S02.T03",
+    "CAP-06.S04.T03",
+    "CAP-08.S04.T01",
+    "CAP-06.S05.T01",
+    "CAP-08.S04.T02",
+    "CAP-06.S05.T02",
+    "CAP-08.S04.T03",
+    "CAP-06.S05.T03",
+    "CAP-08.S05.T01",
+    "CAP-06.S06.T01",
+    "CAP-08.S05.T02",
+    "CAP-06.S06.T02",
+    "CAP-08.S05.T03",
+    "CAP-06.S06.T03",
+    "CAP-08.S06.T01",
+    "CAP-08.S06.T02",
+    "CAP-08.S06.T03"
+  ],
+  "topologicalLayers": [
+    [
+      "CAP-06.S01.T01",
+      "CAP-07.S04.T01"
+    ],
+    [
+      "CAP-06.S01.T02",
+      "CAP-07.S04.T02"
+    ],
+    [
+      "CAP-06.S01.T03",
+      "CAP-07.S04.T03",
+      "CAP-08.S01.T01"
+    ],
+    [
+      "CAP-08.S01.T02",
+      "SLICE_APPROVED:CAP-06.S01",
+      "SLICE_APPROVED:CAP-07.S04"
+    ],
+    [
+      "CAP-07.S02.T01",
+      "CAP-08.S01.T03"
+    ],
+    [
+      "CAP-07.S02.T02",
+      "SLICE_APPROVED:CAP-08.S01"
+    ],
+    [
+      "CAP-07.S02.T03",
+      "CAP-08.S03.T01"
+    ],
+    [
+      "CAP-06.S02.T01",
+      "CAP-08.S03.T02",
+      "SLICE_APPROVED:CAP-07.S02"
+    ],
+    [
+      "CAP-06.S02.T02",
+      "CAP-07.S05.T01",
+      "CAP-08.S03.T03"
+    ],
+    [
+      "CAP-06.S02.T03",
+      "CAP-07.S05.T02",
+      "SLICE_APPROVED:CAP-08.S03"
+    ],
+    [
+      "CAP-07.S05.T03",
+      "SLICE_APPROVED:CAP-06.S02"
+    ],
+    [
+      "CAP-06.S03.T01",
+      "SLICE_APPROVED:CAP-07.S05"
+    ],
+    [
+      "CAP-06.S03.T02",
+      "CAP-07.S03.T01"
+    ],
+    [
+      "CAP-06.S03.T03",
+      "CAP-07.S03.T02"
+    ],
+    [
+      "CAP-07.S03.T03",
+      "CAP-08.S02.T01",
+      "SLICE_APPROVED:CAP-06.S03"
+    ],
+    [
+      "CAP-06.S04.T01",
+      "CAP-08.S02.T02",
+      "SLICE_APPROVED:CAP-07.S03"
+    ],
+    [
+      "CAP-06.S04.T02",
+      "CAP-08.S02.T03"
+    ],
+    [
+      "CAP-06.S04.T03",
+      "SLICE_APPROVED:CAP-08.S02"
+    ],
+    [
+      "CAP-08.S04.T01",
+      "SLICE_APPROVED:CAP-06.S04"
+    ],
+    [
+      "CAP-06.S05.T01",
+      "CAP-08.S04.T02"
+    ],
+    [
+      "CAP-06.S05.T02",
+      "CAP-08.S04.T03"
+    ],
+    [
+      "CAP-06.S05.T03",
+      "SLICE_APPROVED:CAP-08.S04"
+    ],
+    [
+      "CAP-08.S05.T01",
+      "SLICE_APPROVED:CAP-06.S05"
+    ],
+    [
+      "CAP-06.S06.T01",
+      "CAP-08.S05.T02"
+    ],
+    [
+      "CAP-06.S06.T02",
+      "CAP-08.S05.T03"
+    ],
+    [
+      "CAP-06.S06.T03",
+      "SLICE_APPROVED:CAP-08.S05"
+    ],
+    [
+      "CAP-08.S06.T01",
+      "SLICE_APPROVED:CAP-06.S06"
+    ],
+    [
+      "CAP-08.S06.T02"
+    ],
+    [
+      "CAP-08.S06.T03"
+    ],
+    [
+      "SLICE_APPROVED:CAP-08.S06"
+    ]
+  ],
+  "internalEdgeCount": 272,
+  "rankWitness": {
+    "CAP-06.S01.T01": 0,
+    "CAP-07.S04.T01": 1,
+    "CAP-06.S01.T02": 2,
+    "CAP-07.S04.T02": 3,
+    "CAP-06.S01.T03": 4,
+    "CAP-07.S04.T03": 5,
+    "CAP-08.S01.T01": 6,
+    "CAP-08.S01.T02": 7,
+    "SLICE_APPROVED:CAP-06.S01": 8,
+    "SLICE_APPROVED:CAP-07.S04": 9,
+    "CAP-07.S02.T01": 10,
+    "CAP-08.S01.T03": 11,
+    "CAP-07.S02.T02": 12,
+    "SLICE_APPROVED:CAP-08.S01": 13,
+    "CAP-07.S02.T03": 14,
+    "CAP-08.S03.T01": 15,
+    "CAP-06.S02.T01": 16,
+    "CAP-08.S03.T02": 17,
+    "SLICE_APPROVED:CAP-07.S02": 18,
+    "CAP-06.S02.T02": 19,
+    "CAP-07.S05.T01": 20,
+    "CAP-08.S03.T03": 21,
+    "CAP-06.S02.T03": 22,
+    "CAP-07.S05.T02": 23,
+    "SLICE_APPROVED:CAP-08.S03": 24,
+    "CAP-07.S05.T03": 25,
+    "SLICE_APPROVED:CAP-06.S02": 26,
+    "CAP-06.S03.T01": 27,
+    "SLICE_APPROVED:CAP-07.S05": 28,
+    "CAP-06.S03.T02": 29,
+    "CAP-07.S03.T01": 30,
+    "CAP-06.S03.T03": 31,
+    "CAP-07.S03.T02": 32,
+    "CAP-07.S03.T03": 33,
+    "CAP-08.S02.T01": 34,
+    "SLICE_APPROVED:CAP-06.S03": 35,
+    "CAP-06.S04.T01": 36,
+    "CAP-08.S02.T02": 37,
+    "SLICE_APPROVED:CAP-07.S03": 38,
+    "CAP-06.S04.T02": 39,
+    "CAP-08.S02.T03": 40,
+    "CAP-06.S04.T03": 41,
+    "SLICE_APPROVED:CAP-08.S02": 42,
+    "CAP-08.S04.T01": 43,
+    "SLICE_APPROVED:CAP-06.S04": 44,
+    "CAP-06.S05.T01": 45,
+    "CAP-08.S04.T02": 46,
+    "CAP-06.S05.T02": 47,
+    "CAP-08.S04.T03": 48,
+    "CAP-06.S05.T03": 49,
+    "SLICE_APPROVED:CAP-08.S04": 50,
+    "CAP-08.S05.T01": 51,
+    "SLICE_APPROVED:CAP-06.S05": 52,
+    "CAP-06.S06.T01": 53,
+    "CAP-08.S05.T02": 54,
+    "CAP-06.S06.T02": 55,
+    "CAP-08.S05.T03": 56,
+    "CAP-06.S06.T03": 57,
+    "SLICE_APPROVED:CAP-08.S05": 58,
+    "CAP-08.S06.T01": 59,
+    "SLICE_APPROVED:CAP-06.S06": 60,
+    "CAP-08.S06.T02": 61,
+    "CAP-08.S06.T03": 62,
+    "SLICE_APPROVED:CAP-08.S06": 63
+  },
+  "allInternalEdgesEarlierThanDependent": true,
+  "everySliceGateWaitsForItsThreeTasks": true,
+  "gateMeaning": "Three DONE tasks do not automatically prove APPROVED. The existing independent integrated slice review/recording must actually occur; planned-data acyclicity does not create its result.",
+  "predecessor04Finding": {
+    "oldNumericOrderBlockedNodeCount": 60,
+    "reorderingWithoutDecouplingStillBlockedNodeCount": 60,
+    "examples": [
+      "Numeric CAP07 S02 waits for S04.T02, while all S04 tasks wait for earlier S02 APPROVED.",
+      "After reordering S04 first, old S04.T03→S02.T03 still cycles through S04 APPROVED; successor removes that single task edge and moves actual inference proof, never its requirement.",
+      "Numeric CAP08 S02.T02 waits for S03.T03, while all S03 tasks wait for earlier S02 APPROVED."
+    ],
+    "old04BytesAndFindingPreserved": true
+  },
+  "proofMovement": {
+    "CAP-07.S04.T03": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality.",
+    "CAP-07.S02.T03": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.",
+    "CAP-07.S05.T03": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+  },
+  "effortMovement": {
+    "CAP-07.S04.T03": {
+      "before": 20,
+      "after": 16
+    },
+    "CAP-07.S02.T03": {
+      "before": 20,
+      "after": 22
+    },
+    "CAP-07.S05.T03": {
+      "before": 20,
+      "after": 22
+    }
+  },
+  "totalEffort": 924,
+  "refactoringIncludedOnce": 28,
+  "conditionalInitialReadinessProjection": {
+    "basis": "Existing taskctl.py index_backlog480/previous_slices_approved1485/task_can_be_ready1533/refresh_derived_states1560, not a new policy or invocation.",
+    "when": "Only after actual G2 and materialization of actual order/dependencies; unfinished corrective tasks currently suppress derived refresh. No current state is changed here.",
+    "eligibleObjects": "Only ordinary unclaimed tasks whose actual status is NOT_STARTED or READY. Preserve owner/lease/review/evidence/base/history; never reset IN_PROGRESS/REVIEW/DONE/BLOCKED/DEFERRED/CANCELLED or frozen parents.",
+    "formula": "READY iff every explicit task dependency DONE, every parent-slice depends_on task DONE, actual wave activation gate open, and every preceding capability.slices entry completion.APPROVED. Otherwise NOT_STARTED. READY is a derived availability projection, never Wave/implementation approval.",
+    "sliceStatusRule": "Existing refresh aggregate: preserve terminal/held states; otherwise IN_PROGRESS if any child IN_PROGRESS/REVIEW/DONE, else READY if any READY, else NOT_STARTED. Actual updated_at only if an actual permitted task projection changes.",
+    "conditionalInitialExample": {
+      "assumptions": [
+        "G2 actually open",
+        "all named external W0/W1/W2 tasks DONE",
+        "CAP-07.S01 completion actually APPROVED",
+        "all48 W3 tasks unclaimed NOT_STARTED",
+        "no W3 slice completion already approved"
+      ],
+      "READY": [
+        "CAP-06.S01.T01",
+        "CAP-07.S04.T01"
+      ],
+      "allOther46": "NOT_STARTED",
+      "actualStateObservedOrWritten": false
+    },
+    "executionBoundary": "Normal complete W3 approval/campaign/ownership and ordinary taskctl claim still required before implementation. Do not call internal helpers as a new bypass or invent a refresh controller."
+  },
+  "actualReadinessOrApprovalsObserved": false,
+  "frameworkChanged": false,
+  "futureExecutionAuthorized": false,
+  "ordinaryProjectionSourceAssessment": {
+    "path": "artifacts/tmp/W3.ordered-planning-data-projection-01.json",
+    "sha256": "98094b94c98ff4666b332e5aead851ab2cd34de68cf3658f301be37e1b9bca61"
+  },
+  "projectionBoundary": "The exact authored CAP07/CAP08 permutations are a reviewed unapproved planning-data change, never disguised as a task transition. Only after actual G2 may the existing index_backlog/refresh_derived_states/serializable_backlog derive never-claimed NOT_STARTED/READY task state and slice aggregates; preserve all execution/approval/history and non-W3 records. No projection ran."
+}

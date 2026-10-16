@@ -1,0 +1,1367 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "single-complete-private-W3-planning-successor-manifest",
+  "author": "agent:/root/storage_profile_review",
+  "preparedAtUtc": "2026-10-16T03:53:09.149095+00:00",
+  "status": "PRIVATE_COMPLETE_SUCCESSOR05_ORDERED_EXECUTION_FEASIBLE_PENDING_DIFFERENT_REVIEW_AND_ACTUAL_AUTHORITY",
+  "currentInitialW2ProductCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "currentCandidateProvenance": "Root-supplied, not a fresh Git/runtime observation or finalW2 qualification.",
+  "actualFinalW2Baseline": null,
+  "actualG2Decision": null,
+  "W3ExecutionCandidate": null,
+  "W3Approval": null,
+  "acceptedADRIdentities": null,
+  "approvedUXReferenceIdentity": null,
+  "actualValidationResults": null,
+  "sources": {
+    "planningRefinement02": {
+      "path": "artifacts/tmp/W3.planning-draft-01/refinement-02/source-manifest-02.json",
+      "sha256": "a39d4a7c4faadc9502e1158a2fff48615dceda92c1b814ecfe00206512524731"
+    },
+    "completeArchitectureUX03": {
+      "path": "artifacts/tmp/W3.architecture-ux-proposals-03/source-manifest-03.json",
+      "sha256": "28d7fabae638d819233290cc3e418e0c197a4c3fd86da103fe51a78f68c4ac39"
+    },
+    "selectedPolicy03": {
+      "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+      "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+    },
+    "genuineSelectedChoiceOnlyReview03": {
+      "path": "artifacts/tmp/W3.planning-draft-01/independent-selected-policy-review-03-01.json",
+      "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+    },
+    "completeSuccessor04": {
+      "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/source-manifest-04.json",
+      "sha256": "82e4bfe41bd5032dece94e1cbe034ab4a759552f4687546b0c1b9c0f4ea00449"
+    }
+  },
+  "completePayload": {
+    "planningFilesFromRefinement02": 37,
+    "all54ArchitectureUXSourceEntriesIncluded": true,
+    "architectureUXEntryCount": 54,
+    "architectureTexts": 3,
+    "affectedHTMLPages": 7,
+    "fullStyleWorkflowPageContractsIncluded": true,
+    "unchangedSupportingDesignFilesIncluded": true,
+    "oneSuccessorOnly": true,
+    "oldSourcePacketsUntouched": true,
+    "historicalAuthoringScriptsNotMadeOperative": [
+      {
+        "path": "artifacts/tmp/W3.planning-draft-01/refinement-02/finalize-consistency-02.py",
+        "sha256": "e478c3f3ae2767e8a48c3dec9d0ef577d287c597ca49c7b6b1f70ad45c72d493"
+      },
+      {
+        "path": "artifacts/tmp/W3.planning-draft-01/refinement-02/prepare-refinement-02.py",
+        "sha256": "d8d73b513f2889effb7cd809cc268dc131e1303fd30af324ff843b263c5ccc1f"
+      }
+    ]
+  },
+  "exactPolicyIncorporation": {
+    "goldMetricPolicyEqualsSelectedObject": true,
+    "resourceParserModelAdmissionEqualsSelectedObject": true,
+    "metricTaskIds": [
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03",
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "resourceTaskIds": [
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T03"
+    ],
+    "taskBacklogSliceCapabilityCheckpointADRUXConsistentProposedChoices": true,
+    "noFindingSelfApproval": true,
+    "independentPacketIncorporationReview": null,
+    "originalSharedHardDenialAndHumanG3ClausesRetained": true
+  },
+  "unchangedPlanFacts": {
+    "taskIDs": [
+      "CAP-06.S01.T01",
+      "CAP-06.S01.T02",
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T01",
+      "CAP-06.S02.T02",
+      "CAP-06.S02.T03",
+      "CAP-06.S03.T01",
+      "CAP-06.S03.T02",
+      "CAP-06.S03.T03",
+      "CAP-06.S04.T01",
+      "CAP-06.S04.T02",
+      "CAP-06.S04.T03",
+      "CAP-06.S05.T01",
+      "CAP-06.S05.T02",
+      "CAP-06.S05.T03",
+      "CAP-06.S06.T01",
+      "CAP-06.S06.T02",
+      "CAP-06.S06.T03",
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T02",
+      "CAP-07.S02.T03",
+      "CAP-07.S03.T01",
+      "CAP-07.S03.T02",
+      "CAP-07.S03.T03",
+      "CAP-07.S04.T01",
+      "CAP-07.S04.T02",
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02",
+      "CAP-07.S05.T03",
+      "CAP-08.S01.T01",
+      "CAP-08.S01.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S02.T01",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03",
+      "CAP-08.S03.T01",
+      "CAP-08.S03.T02",
+      "CAP-08.S03.T03",
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03",
+      "CAP-08.S05.T01",
+      "CAP-08.S05.T02",
+      "CAP-08.S05.T03",
+      "CAP-08.S06.T01",
+      "CAP-08.S06.T02",
+      "CAP-08.S06.T03"
+    ],
+    "sliceIDs": [
+      "CAP-06.S01",
+      "CAP-06.S02",
+      "CAP-06.S03",
+      "CAP-06.S04",
+      "CAP-06.S05",
+      "CAP-06.S06",
+      "CAP-07.S02",
+      "CAP-07.S03",
+      "CAP-07.S04",
+      "CAP-07.S05",
+      "CAP-08.S01",
+      "CAP-08.S02",
+      "CAP-08.S03",
+      "CAP-08.S04",
+      "CAP-08.S05",
+      "CAP-08.S06"
+    ],
+    "taskCount": 48,
+    "sliceCount": 16,
+    "engineeringEffortHours": 924,
+    "plannedRefactoringIncludedOnceHours": 28,
+    "fourInheritedCAP07W1DecisionsPreserved": true,
+    "microtimingTargetRegisterExact": {
+      "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/initial-target-register-01.json",
+      "sha256": "d6a8e069ca9ff230f18141461e2f531691ca670f318750b875099c574ece598c"
+    },
+    "originalPlanBudgetRegisterExact": {
+      "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/original-plan-budget-register-01.json",
+      "sha256": "de9cc4df2c51f69b0eabc3db45a2860d7ab3f7f8a50966790a40baebca764087"
+    },
+    "noOtherProposedTimingGoalLoosened": true,
+    "taskAndSliceIdentitiesPreservedNotExecutionOrder": true,
+    "effortTotalPreservedButFourProofHoursReassigned": {
+      "CAP-07.S04.T03": {
+        "before": 20,
+        "after": 16
+      },
+      "CAP-07.S02.T03": {
+        "before": 20,
+        "after": 22
+      },
+      "CAP-07.S05.T03": {
+        "before": 20,
+        "after": 22
+      }
+    }
+  },
+  "changeMap": {
+    "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/change-map-05.json",
+    "sha256": "afd0691e8ea1c7b3edd46efd78ed2d16001322ea22eb49ddcd6f60650f93ea37"
+  },
+  "architectureUX54EntryBindings": [
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+        "sha256": "caa8c5f505940e6a4f39e7374d1c92e58923e93b92dc3fb65bce4a369db6267c"
+      },
+      "successorPath": "architecture-ux/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+      "sha256": "a0f0ee371b45ac8b54ec40c0faf5e50b49daba59611de832e5b7965210fa1330",
+      "changed": true,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/architecture/model-purpose-isolation.PROPOSED.md",
+        "sha256": "ec6dcda1d08e45cf1b024be9a244edc28204be955b3d33c62325e2cc8a55f653"
+      },
+      "successorPath": "architecture-ux/architecture/model-purpose-isolation.PROPOSED.md",
+      "sha256": "ccbb198c8dac020763950dad5801d39210a3b4534b53415b0d5b4adfdfc786f2",
+      "changed": true,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/architecture/protected-search-projections.PROPOSED.md",
+        "sha256": "401a32b7eedb1c85e0ca71cf3b0b253896d75110aaa6c5d66e10cb962eb06f84"
+      },
+      "successorPath": "architecture-ux/architecture/protected-search-projections.PROPOSED.md",
+      "sha256": "56f42c3d4bde74d08c8f851f321ef2056c6ace765cad7256b113db2c610e36a7",
+      "changed": true,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/README.md",
+        "sha256": "dbd7363e0a59116b627c2731b8b8316d40be0691d7010fc2ebd0b87860c6489b"
+      },
+      "successorPath": "architecture-ux/README.md",
+      "sha256": "a329eb1d77000a76c96b996793e2e71f024ecb9d83db4d645e2cf036a9edbddf",
+      "changed": true,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/application-settings.html",
+        "sha256": "f2d77ca4d95db9b9bb8f268ba3e3637805652a90525adf941cdf2712ab68e146"
+      },
+      "successorPath": "architecture-ux/ui-reference/application-settings.html",
+      "sha256": "f2d77ca4d95db9b9bb8f268ba3e3637805652a90525adf941cdf2712ab68e146",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/assets/app.css",
+        "sha256": "db5b4ec869b0fa9beaecd293d814256773366fda17b3c83297bb8e09fc79fcbd"
+      },
+      "successorPath": "architecture-ux/ui-reference/assets/app.css",
+      "sha256": "db5b4ec869b0fa9beaecd293d814256773366fda17b3c83297bb8e09fc79fcbd",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/assets/app.js",
+        "sha256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b"
+      },
+      "successorPath": "architecture-ux/ui-reference/assets/app.js",
+      "sha256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/assets/print.css",
+        "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c"
+      },
+      "successorPath": "architecture-ux/ui-reference/assets/print.css",
+      "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/assets/tokens.css",
+        "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
+      },
+      "successorPath": "architecture-ux/ui-reference/assets/tokens.css",
+      "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/audit-lineage.html",
+        "sha256": "5b9c3b3c0298dcfeb5bc618c81dff2d8ce39c503bd54e50e272983f685439e43"
+      },
+      "successorPath": "architecture-ux/ui-reference/audit-lineage.html",
+      "sha256": "5b9c3b3c0298dcfeb5bc618c81dff2d8ce39c503bd54e50e272983f685439e43",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/CAPABILITY_COVERAGE.md",
+        "sha256": "6057e2da7580835b5aa4987ec2d482bf6f8e729b366c9c2916da4f99c2e3ee88"
+      },
+      "successorPath": "architecture-ux/ui-reference/CAPABILITY_COVERAGE.md",
+      "sha256": "6057e2da7580835b5aa4987ec2d482bf6f8e729b366c9c2916da4f99c2e3ee88",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+        "sha256": "2cfbc278b91da3de662d9595fd0943dbb4ba4a1b292c265a4f8cbe15202ece7c"
+      },
+      "successorPath": "architecture-ux/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+      "sha256": "2cfbc278b91da3de662d9595fd0943dbb4ba4a1b292c265a4f8cbe15202ece7c",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/claim-graph.html",
+        "sha256": "bc16105c4c0747b1024e849110aa92f0e44986f3831a65024a67868025529482"
+      },
+      "successorPath": "architecture-ux/ui-reference/claim-graph.html",
+      "sha256": "bc16105c4c0747b1024e849110aa92f0e44986f3831a65024a67868025529482",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/corpus-canvas.html",
+        "sha256": "0c8bcc307b557899c5b573a81e80548ccb2799cd4a4f0fcec2c2939ed8a7937e"
+      },
+      "successorPath": "architecture-ux/ui-reference/corpus-canvas.html",
+      "sha256": "0c8bcc307b557899c5b573a81e80548ccb2799cd4a4f0fcec2c2939ed8a7937e",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/critical-lens.html",
+        "sha256": "19d1d06d21c087cf7e7bce1c642660cccc78dfe16c241a898343dcb044c0b859"
+      },
+      "successorPath": "architecture-ux/ui-reference/critical-lens.html",
+      "sha256": "19d1d06d21c087cf7e7bce1c642660cccc78dfe16c241a898343dcb044c0b859",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/document-reader.html",
+        "sha256": "c3cbb89c58aec3769e924efbc49046d40505d7a4052b0ba5458623cf15edb302"
+      },
+      "successorPath": "architecture-ux/ui-reference/document-reader.html",
+      "sha256": "c3cbb89c58aec3769e924efbc49046d40505d7a4052b0ba5458623cf15edb302",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/evidence-matrix.html",
+        "sha256": "eb951f59b4787caa2b207c6eb41ca1859d0c87e9acadaeb16bc68e81b0b8a2ad"
+      },
+      "successorPath": "architecture-ux/ui-reference/evidence-matrix.html",
+      "sha256": "eb951f59b4787caa2b207c6eb41ca1859d0c87e9acadaeb16bc68e81b0b8a2ad",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/help-onboarding.html",
+        "sha256": "bcd6564be23dfdc8c760fa70b30ec0d734fd87d4ed67afa6bd7d0003e884a822"
+      },
+      "successorPath": "architecture-ux/ui-reference/help-onboarding.html",
+      "sha256": "bcd6564be23dfdc8c760fa70b30ec0d734fd87d4ed67afa6bd7d0003e884a822",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/index.html",
+        "sha256": "f8f7b0bff7b1061d1c3bfecc9a7b17fdd8534cab2e9fcd76c5f7a15059072488"
+      },
+      "successorPath": "architecture-ux/ui-reference/index.html",
+      "sha256": "f8f7b0bff7b1061d1c3bfecc9a7b17fdd8534cab2e9fcd76c5f7a15059072488",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/ingestion-reconciliation.html",
+        "sha256": "7057618a63d37e9b66268f06701b769b6ee0b833c63dec0b27d6120ef376137d"
+      },
+      "successorPath": "architecture-ux/ui-reference/ingestion-reconciliation.html",
+      "sha256": "7057618a63d37e9b66268f06701b769b6ee0b833c63dec0b27d6120ef376137d",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/intent-contract.html",
+        "sha256": "d4dd07791a725122963b145c061d118ea80e10fa9d9d01b3154adfba926b8be7"
+      },
+      "successorPath": "architecture-ux/ui-reference/intent-contract.html",
+      "sha256": "d4dd07791a725122963b145c061d118ea80e10fa9d9d01b3154adfba926b8be7",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/living-monitor.html",
+        "sha256": "55eb32e73698a1273365b13fb072bb9b7d3cb5e0c7b4bd96e844c3e66ec5f4ef"
+      },
+      "successorPath": "architecture-ux/ui-reference/living-monitor.html",
+      "sha256": "55eb32e73698a1273365b13fb072bb9b7d3cb5e0c7b4bd96e844c3e66ec5f4ef",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/manuscript-blueprint.html",
+        "sha256": "fbc8d44df99911247baa8647fd152a4d7e83c2ed02b0ca080ebd654f77206e28"
+      },
+      "successorPath": "architecture-ux/ui-reference/manuscript-blueprint.html",
+      "sha256": "fbc8d44df99911247baa8647fd152a4d7e83c2ed02b0ca080ebd654f77206e28",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/manuscript-studio.html",
+        "sha256": "6f996f1f53783024dcc6bdd24053488ef46c4102e48791016c4976dbb4d37a3b"
+      },
+      "successorPath": "architecture-ux/ui-reference/manuscript-studio.html",
+      "sha256": "6f996f1f53783024dcc6bdd24053488ef46c4102e48791016c4976dbb4d37a3b",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/model-center.html",
+        "sha256": "f797042b705012d18f43425dc81f7ffc01fd348532aad0fd0d69eccd29c9bd49"
+      },
+      "successorPath": "architecture-ux/ui-reference/model-center.html",
+      "sha256": "f797042b705012d18f43425dc81f7ffc01fd348532aad0fd0d69eccd29c9bd49",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/new-project.html",
+        "sha256": "f035e56d6529be7eba61af2719c0b8d70676cbe056e6730973d945407b046ea4"
+      },
+      "successorPath": "architecture-ux/ui-reference/new-project.html",
+      "sha256": "f035e56d6529be7eba61af2719c0b8d70676cbe056e6730973d945407b046ea4",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/novelty-audit.html",
+        "sha256": "3331af9bad0c091fa5176c7320ae9e521990c6a6b24cb4de1cde3096d7fbbc03"
+      },
+      "successorPath": "architecture-ux/ui-reference/novelty-audit.html",
+      "sha256": "3331af9bad0c091fa5176c7320ae9e521990c6a6b24cb4de1cde3096d7fbbc03",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/opportunity-radar.html",
+        "sha256": "97e6a93b19642962481e9b97798939665fcb0930a5757bde5d2ded76fbe7ea5b"
+      },
+      "successorPath": "architecture-ux/ui-reference/opportunity-radar.html",
+      "sha256": "97e6a93b19642962481e9b97798939665fcb0930a5757bde5d2ded76fbe7ea5b",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/PAGE_INVENTORY.md",
+        "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b"
+      },
+      "successorPath": "architecture-ux/ui-reference/PAGE_INVENTORY.md",
+      "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/PAGE_INVENTORY_SOURCE.md",
+        "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b"
+      },
+      "successorPath": "architecture-ux/ui-reference/PAGE_INVENTORY_SOURCE.md",
+      "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/parsing-quality.html",
+        "sha256": "46dda260be4fca5124b47ee0a93000d84d2c1a1ed9465c3e861538553153d471"
+      },
+      "successorPath": "architecture-ux/ui-reference/parsing-quality.html",
+      "sha256": "46dda260be4fca5124b47ee0a93000d84d2c1a1ed9465c3e861538553153d471",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+        "sha256": "acbe24d31cd59d540b9fa70d63f786c5874792b8a6fa85cdfd210ddac6c8ca19"
+      },
+      "successorPath": "architecture-ux/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+      "sha256": "acbe24d31cd59d540b9fa70d63f786c5874792b8a6fa85cdfd210ddac6c8ca19",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/project-settings.html",
+        "sha256": "71f5c09c3f8ed78e46cff214ab7a5aacc4637b765efa0f31926f7cf3bc27dfd1"
+      },
+      "successorPath": "architecture-ux/ui-reference/project-settings.html",
+      "sha256": "71f5c09c3f8ed78e46cff214ab7a5aacc4637b765efa0f31926f7cf3bc27dfd1",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/projects.html",
+        "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858"
+      },
+      "successorPath": "architecture-ux/ui-reference/projects.html",
+      "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/prototype-index.html",
+        "sha256": "a4becae52275dcb596cfc370e6dc02193c14bb8af6e41cc6e5d8eacc83aeccb3"
+      },
+      "successorPath": "architecture-ux/ui-reference/prototype-index.html",
+      "sha256": "a4becae52275dcb596cfc370e6dc02193c14bb8af6e41cc6e5d8eacc83aeccb3",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/research-notebook.html",
+        "sha256": "b4a00f3f665f5168ccb68a2e366d4ece2d305d2b2e5cdcaf1c35fafd87fdf37a"
+      },
+      "successorPath": "architecture-ux/ui-reference/research-notebook.html",
+      "sha256": "b4a00f3f665f5168ccb68a2e366d4ece2d305d2b2e5cdcaf1c35fafd87fdf37a",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/reviewer-simulation.html",
+        "sha256": "a5089d240744627270393eb66882c8ff8ff606a1b02f3b227010847737a750d6"
+      },
+      "successorPath": "architecture-ux/ui-reference/reviewer-simulation.html",
+      "sha256": "a5089d240744627270393eb66882c8ff8ff606a1b02f3b227010847737a750d6",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/revision-response.html",
+        "sha256": "955e1a71177c3b4e6517244a29e02d66fcacf4461847ff99d30e02097c8e830a"
+      },
+      "successorPath": "architecture-ux/ui-reference/revision-response.html",
+      "sha256": "955e1a71177c3b4e6517244a29e02d66fcacf4461847ff99d30e02097c8e830a",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/schema-manager.html",
+        "sha256": "e14d3f35a2c8a6b648d615c5fdf61195da36948ad962cabf6ad06861951ab3b4"
+      },
+      "successorPath": "architecture-ux/ui-reference/schema-manager.html",
+      "sha256": "e14d3f35a2c8a6b648d615c5fdf61195da36948ad962cabf6ad06861951ab3b4",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/screening.html",
+        "sha256": "ffba9762c7a0a873f7cb01224a85171c049926edf94ce9109d8a545b1b0e40d5"
+      },
+      "successorPath": "architecture-ux/ui-reference/screening.html",
+      "sha256": "ffba9762c7a0a873f7cb01224a85171c049926edf94ce9109d8a545b1b0e40d5",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/search-studio.html",
+        "sha256": "4f8bbd936863779e4439cf9fc83c5ea17f030d1c4b310733c51e53e16f98c7f4"
+      },
+      "successorPath": "architecture-ux/ui-reference/search-studio.html",
+      "sha256": "4f8bbd936863779e4439cf9fc83c5ea17f030d1c4b310733c51e53e16f98c7f4",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/SITE_MANIFEST.proposed.json",
+        "sha256": "4dbd067619d78b1093cf7f4e0b7ac953ba512723d24729ffe53dfe164a664016"
+      },
+      "successorPath": "architecture-ux/ui-reference/SITE_MANIFEST.proposed.json",
+      "sha256": "4dbd067619d78b1093cf7f4e0b7ac953ba512723d24729ffe53dfe164a664016",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/source-manager.html",
+        "sha256": "084b9a9ae60d702b47310c6f7e9344de310f692272dd644d587f0075602618d1"
+      },
+      "successorPath": "architecture-ux/ui-reference/source-manager.html",
+      "sha256": "084b9a9ae60d702b47310c6f7e9344de310f692272dd644d587f0075602618d1",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/study-design.html",
+        "sha256": "a7c4ccc2ac6cc5801cabb42f6cb11335a57be64443f053c1483ad0bb0f803c1b"
+      },
+      "successorPath": "architecture-ux/ui-reference/study-design.html",
+      "sha256": "a7c4ccc2ac6cc5801cabb42f6cb11335a57be64443f053c1483ad0bb0f803c1b",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/style-guide.html",
+        "sha256": "b5e52549581b62dd186109ea8cb5bb8feca1a86dd6c5882667d890bebc05607e"
+      },
+      "successorPath": "architecture-ux/ui-reference/style-guide.html",
+      "sha256": "b5e52549581b62dd186109ea8cb5bb8feca1a86dd6c5882667d890bebc05607e",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/STYLE_GUIDE.md",
+        "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9"
+      },
+      "successorPath": "architecture-ux/ui-reference/STYLE_GUIDE.md",
+      "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/STYLE_GUIDE_SOURCE.md",
+        "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9"
+      },
+      "successorPath": "architecture-ux/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/synthesis-studio.html",
+        "sha256": "12471b245c4eade5784fad6dfe09e1220bffe97aa012dc5b4df48b3447c8d694"
+      },
+      "successorPath": "architecture-ux/ui-reference/synthesis-studio.html",
+      "sha256": "12471b245c4eade5784fad6dfe09e1220bffe97aa012dc5b4df48b3447c8d694",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/task-center.html",
+        "sha256": "9599ba3e547699937287af79d7d150cf6481321d51ffd9b60e975ef9f4ad91f4"
+      },
+      "successorPath": "architecture-ux/ui-reference/task-center.html",
+      "sha256": "9599ba3e547699937287af79d7d150cf6481321d51ffd9b60e975ef9f4ad91f4",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/technical-reports.html",
+        "sha256": "115eb33473bcdbc96d2f4ff0b2349dd4729096591a77adbfb79eecbbbbf6eedb"
+      },
+      "successorPath": "architecture-ux/ui-reference/technical-reports.html",
+      "sha256": "115eb33473bcdbc96d2f4ff0b2349dd4729096591a77adbfb79eecbbbbf6eedb",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/theory-map.html",
+        "sha256": "4de46364b5fead10c423de0054adf0cea53b921c32b26126cfc3aeb82efd792b"
+      },
+      "successorPath": "architecture-ux/ui-reference/theory-map.html",
+      "sha256": "4de46364b5fead10c423de0054adf0cea53b921c32b26126cfc3aeb82efd792b",
+      "changed": false,
+      "sourceRole": "exact-inherited-design-copy-not-new-implementation"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/WORKFLOW_CATALOG.json",
+        "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d"
+      },
+      "successorPath": "architecture-ux/ui-reference/WORKFLOW_CATALOG.json",
+      "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d",
+      "changed": false,
+      "sourceRole": "exact-inherited19-catalog-preserving-semantic15"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/ui-reference/WORKFLOW_CATALOG.md",
+        "sha256": "bb74eb7b6e764aa49277acf5d1b1cdf6668f38dfb70c62878f9f411a1371e75c"
+      },
+      "successorPath": "architecture-ux/ui-reference/WORKFLOW_CATALOG.md",
+      "sha256": "bb74eb7b6e764aa49277acf5d1b1cdf6668f38dfb70c62878f9f411a1371e75c",
+      "changed": false,
+      "sourceRole": "new-proposed-document"
+    },
+    {
+      "source": {
+        "path": "artifacts/tmp/W3.architecture-ux-proposals-03/validation-plan.NOT-RUN.json",
+        "sha256": "c28dec8289817d222a1ea42740d2fcaa5dbec7541749c4f8e82e0261860decd6"
+      },
+      "successorPath": "architecture-ux/validation-plan.NOT-RUN.json",
+      "sha256": "911cb7aa60a43fed95c84c8bd651a5a254a8d01cedc674e8d7fcaa706e528537",
+      "changed": true,
+      "sourceRole": "new-proposed-document"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/README.md",
+      "sha256": "ec210e03a089d207312e1c3b904a75a635d55739d0f34ab35e2859c7e311872e",
+      "bytes": 4890
+    },
+    {
+      "path": "aggregate-resource-and-selection-policy-02.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/aggregate-resource-and-selection-policy-02.json",
+      "sha256": "1e0c1f90180e8857c8d99745ada74b47171458f8f4ea74cc8b89cf9cd5165314",
+      "bytes": 14355
+    },
+    {
+      "path": "architecture-decision-proposals-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-decision-proposals-01.json",
+      "sha256": "b3c538cc8fb5ec1d96c55db13dcd1c2cfe5929250abdf01bec571e9b2a85c8eb",
+      "bytes": 5692
+    },
+    {
+      "path": "architecture-ux/README.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/README.md",
+      "sha256": "a329eb1d77000a76c96b996793e2e71f024ecb9d83db4d645e2cf036a9edbddf",
+      "bytes": 4869
+    },
+    {
+      "path": "architecture-ux/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+      "sha256": "a0f0ee371b45ac8b54ec40c0faf5e50b49daba59611de832e5b7965210fa1330",
+      "bytes": 11376
+    },
+    {
+      "path": "architecture-ux/architecture/model-purpose-isolation.PROPOSED.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/architecture/model-purpose-isolation.PROPOSED.md",
+      "sha256": "ccbb198c8dac020763950dad5801d39210a3b4534b53415b0d5b4adfdfc786f2",
+      "bytes": 11189
+    },
+    {
+      "path": "architecture-ux/architecture/protected-search-projections.PROPOSED.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/architecture/protected-search-projections.PROPOSED.md",
+      "sha256": "56f42c3d4bde74d08c8f851f321ef2056c6ace765cad7256b113db2c610e36a7",
+      "bytes": 9240
+    },
+    {
+      "path": "architecture-ux/ui-reference/CAPABILITY_COVERAGE.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/CAPABILITY_COVERAGE.md",
+      "sha256": "6057e2da7580835b5aa4987ec2d482bf6f8e729b366c9c2916da4f99c2e3ee88",
+      "bytes": 22243
+    },
+    {
+      "path": "architecture-ux/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+      "sha256": "2cfbc278b91da3de662d9595fd0943dbb4ba4a1b292c265a4f8cbe15202ece7c",
+      "bytes": 66244
+    },
+    {
+      "path": "architecture-ux/ui-reference/PAGE_INVENTORY.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/PAGE_INVENTORY.md",
+      "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b",
+      "bytes": 5020
+    },
+    {
+      "path": "architecture-ux/ui-reference/PAGE_INVENTORY_SOURCE.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/PAGE_INVENTORY_SOURCE.md",
+      "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b",
+      "bytes": 5020
+    },
+    {
+      "path": "architecture-ux/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+      "sha256": "acbe24d31cd59d540b9fa70d63f786c5874792b8a6fa85cdfd210ddac6c8ca19",
+      "bytes": 1345
+    },
+    {
+      "path": "architecture-ux/ui-reference/SITE_MANIFEST.proposed.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/SITE_MANIFEST.proposed.json",
+      "sha256": "4dbd067619d78b1093cf7f4e0b7ac953ba512723d24729ffe53dfe164a664016",
+      "bytes": 12599
+    },
+    {
+      "path": "architecture-ux/ui-reference/STYLE_GUIDE.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/STYLE_GUIDE.md",
+      "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9",
+      "bytes": 33383
+    },
+    {
+      "path": "architecture-ux/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9",
+      "bytes": 33383
+    },
+    {
+      "path": "architecture-ux/ui-reference/WORKFLOW_CATALOG.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/WORKFLOW_CATALOG.json",
+      "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d",
+      "bytes": 10381
+    },
+    {
+      "path": "architecture-ux/ui-reference/WORKFLOW_CATALOG.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/WORKFLOW_CATALOG.md",
+      "sha256": "bb74eb7b6e764aa49277acf5d1b1cdf6668f38dfb70c62878f9f411a1371e75c",
+      "bytes": 25860
+    },
+    {
+      "path": "architecture-ux/ui-reference/application-settings.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/application-settings.html",
+      "sha256": "f2d77ca4d95db9b9bb8f268ba3e3637805652a90525adf941cdf2712ab68e146",
+      "bytes": 28139
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/app.css",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/app.css",
+      "sha256": "db5b4ec869b0fa9beaecd293d814256773366fda17b3c83297bb8e09fc79fcbd",
+      "bytes": 51018
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/app.js",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/app.js",
+      "sha256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b",
+      "bytes": 45621
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/print.css",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/print.css",
+      "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c",
+      "bytes": 459
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/tokens.css",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/tokens.css",
+      "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+      "bytes": 5344
+    },
+    {
+      "path": "architecture-ux/ui-reference/audit-lineage.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/audit-lineage.html",
+      "sha256": "5b9c3b3c0298dcfeb5bc618c81dff2d8ce39c503bd54e50e272983f685439e43",
+      "bytes": 29123
+    },
+    {
+      "path": "architecture-ux/ui-reference/claim-graph.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/claim-graph.html",
+      "sha256": "bc16105c4c0747b1024e849110aa92f0e44986f3831a65024a67868025529482",
+      "bytes": 26127
+    },
+    {
+      "path": "architecture-ux/ui-reference/corpus-canvas.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/corpus-canvas.html",
+      "sha256": "0c8bcc307b557899c5b573a81e80548ccb2799cd4a4f0fcec2c2939ed8a7937e",
+      "bytes": 23989
+    },
+    {
+      "path": "architecture-ux/ui-reference/critical-lens.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/critical-lens.html",
+      "sha256": "19d1d06d21c087cf7e7bce1c642660cccc78dfe16c241a898343dcb044c0b859",
+      "bytes": 26979
+    },
+    {
+      "path": "architecture-ux/ui-reference/document-reader.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/document-reader.html",
+      "sha256": "c3cbb89c58aec3769e924efbc49046d40505d7a4052b0ba5458623cf15edb302",
+      "bytes": 25985
+    },
+    {
+      "path": "architecture-ux/ui-reference/evidence-matrix.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/evidence-matrix.html",
+      "sha256": "eb951f59b4787caa2b207c6eb41ca1859d0c87e9acadaeb16bc68e81b0b8a2ad",
+      "bytes": 28085
+    },
+    {
+      "path": "architecture-ux/ui-reference/help-onboarding.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/help-onboarding.html",
+      "sha256": "bcd6564be23dfdc8c760fa70b30ec0d734fd87d4ed67afa6bd7d0003e884a822",
+      "bytes": 30600
+    },
+    {
+      "path": "architecture-ux/ui-reference/index.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/index.html",
+      "sha256": "f8f7b0bff7b1061d1c3bfecc9a7b17fdd8534cab2e9fcd76c5f7a15059072488",
+      "bytes": 31353
+    },
+    {
+      "path": "architecture-ux/ui-reference/ingestion-reconciliation.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/ingestion-reconciliation.html",
+      "sha256": "7057618a63d37e9b66268f06701b769b6ee0b833c63dec0b27d6120ef376137d",
+      "bytes": 38398
+    },
+    {
+      "path": "architecture-ux/ui-reference/intent-contract.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/intent-contract.html",
+      "sha256": "d4dd07791a725122963b145c061d118ea80e10fa9d9d01b3154adfba926b8be7",
+      "bytes": 29142
+    },
+    {
+      "path": "architecture-ux/ui-reference/living-monitor.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/living-monitor.html",
+      "sha256": "55eb32e73698a1273365b13fb072bb9b7d3cb5e0c7b4bd96e844c3e66ec5f4ef",
+      "bytes": 26543
+    },
+    {
+      "path": "architecture-ux/ui-reference/manuscript-blueprint.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/manuscript-blueprint.html",
+      "sha256": "fbc8d44df99911247baa8647fd152a4d7e83c2ed02b0ca080ebd654f77206e28",
+      "bytes": 27245
+    },
+    {
+      "path": "architecture-ux/ui-reference/manuscript-studio.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/manuscript-studio.html",
+      "sha256": "6f996f1f53783024dcc6bdd24053488ef46c4102e48791016c4976dbb4d37a3b",
+      "bytes": 25872
+    },
+    {
+      "path": "architecture-ux/ui-reference/model-center.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/model-center.html",
+      "sha256": "f797042b705012d18f43425dc81f7ffc01fd348532aad0fd0d69eccd29c9bd49",
+      "bytes": 34733
+    },
+    {
+      "path": "architecture-ux/ui-reference/new-project.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/new-project.html",
+      "sha256": "f035e56d6529be7eba61af2719c0b8d70676cbe056e6730973d945407b046ea4",
+      "bytes": 33279
+    },
+    {
+      "path": "architecture-ux/ui-reference/novelty-audit.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/novelty-audit.html",
+      "sha256": "3331af9bad0c091fa5176c7320ae9e521990c6a6b24cb4de1cde3096d7fbbc03",
+      "bytes": 28482
+    },
+    {
+      "path": "architecture-ux/ui-reference/opportunity-radar.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/opportunity-radar.html",
+      "sha256": "97e6a93b19642962481e9b97798939665fcb0930a5757bde5d2ded76fbe7ea5b",
+      "bytes": 26271
+    },
+    {
+      "path": "architecture-ux/ui-reference/parsing-quality.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/parsing-quality.html",
+      "sha256": "46dda260be4fca5124b47ee0a93000d84d2c1a1ed9465c3e861538553153d471",
+      "bytes": 26091
+    },
+    {
+      "path": "architecture-ux/ui-reference/project-settings.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/project-settings.html",
+      "sha256": "71f5c09c3f8ed78e46cff214ab7a5aacc4637b765efa0f31926f7cf3bc27dfd1",
+      "bytes": 28249
+    },
+    {
+      "path": "architecture-ux/ui-reference/projects.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/projects.html",
+      "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858",
+      "bytes": 30508
+    },
+    {
+      "path": "architecture-ux/ui-reference/prototype-index.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/prototype-index.html",
+      "sha256": "a4becae52275dcb596cfc370e6dc02193c14bb8af6e41cc6e5d8eacc83aeccb3",
+      "bytes": 32531
+    },
+    {
+      "path": "architecture-ux/ui-reference/research-notebook.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/research-notebook.html",
+      "sha256": "b4a00f3f665f5168ccb68a2e366d4ece2d305d2b2e5cdcaf1c35fafd87fdf37a",
+      "bytes": 25179
+    },
+    {
+      "path": "architecture-ux/ui-reference/reviewer-simulation.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/reviewer-simulation.html",
+      "sha256": "a5089d240744627270393eb66882c8ff8ff606a1b02f3b227010847737a750d6",
+      "bytes": 27015
+    },
+    {
+      "path": "architecture-ux/ui-reference/revision-response.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/revision-response.html",
+      "sha256": "955e1a71177c3b4e6517244a29e02d66fcacf4461847ff99d30e02097c8e830a",
+      "bytes": 26660
+    },
+    {
+      "path": "architecture-ux/ui-reference/schema-manager.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/schema-manager.html",
+      "sha256": "e14d3f35a2c8a6b648d615c5fdf61195da36948ad962cabf6ad06861951ab3b4",
+      "bytes": 25815
+    },
+    {
+      "path": "architecture-ux/ui-reference/screening.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/screening.html",
+      "sha256": "ffba9762c7a0a873f7cb01224a85171c049926edf94ce9109d8a545b1b0e40d5",
+      "bytes": 25405
+    },
+    {
+      "path": "architecture-ux/ui-reference/search-studio.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/search-studio.html",
+      "sha256": "4f8bbd936863779e4439cf9fc83c5ea17f030d1c4b310733c51e53e16f98c7f4",
+      "bytes": 25588
+    },
+    {
+      "path": "architecture-ux/ui-reference/source-manager.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/source-manager.html",
+      "sha256": "084b9a9ae60d702b47310c6f7e9344de310f692272dd644d587f0075602618d1",
+      "bytes": 31142
+    },
+    {
+      "path": "architecture-ux/ui-reference/study-design.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/study-design.html",
+      "sha256": "a7c4ccc2ac6cc5801cabb42f6cb11335a57be64443f053c1483ad0bb0f803c1b",
+      "bytes": 28668
+    },
+    {
+      "path": "architecture-ux/ui-reference/style-guide.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/style-guide.html",
+      "sha256": "b5e52549581b62dd186109ea8cb5bb8feca1a86dd6c5882667d890bebc05607e",
+      "bytes": 59793
+    },
+    {
+      "path": "architecture-ux/ui-reference/synthesis-studio.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/synthesis-studio.html",
+      "sha256": "12471b245c4eade5784fad6dfe09e1220bffe97aa012dc5b4df48b3447c8d694",
+      "bytes": 27480
+    },
+    {
+      "path": "architecture-ux/ui-reference/task-center.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/task-center.html",
+      "sha256": "9599ba3e547699937287af79d7d150cf6481321d51ffd9b60e975ef9f4ad91f4",
+      "bytes": 25409
+    },
+    {
+      "path": "architecture-ux/ui-reference/technical-reports.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/technical-reports.html",
+      "sha256": "115eb33473bcdbc96d2f4ff0b2349dd4729096591a77adbfb79eecbbbbf6eedb",
+      "bytes": 27218
+    },
+    {
+      "path": "architecture-ux/ui-reference/theory-map.html",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/theory-map.html",
+      "sha256": "4de46364b5fead10c423de0054adf0cea53b921c32b26126cfc3aeb82efd792b",
+      "bytes": 25788
+    },
+    {
+      "path": "architecture-ux/validation-plan.NOT-RUN.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/validation-plan.NOT-RUN.json",
+      "sha256": "911cb7aa60a43fed95c84c8bd651a5a254a8d01cedc674e8d7fcaa706e528537",
+      "bytes": 4309
+    },
+    {
+      "path": "backlog-change-proposal-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/backlog-change-proposal-01.json",
+      "sha256": "d9f75305830de2d8672e76a53045820365daa8043bb271eeadc51958ca764c21",
+      "bytes": 71405
+    },
+    {
+      "path": "baseline-and-source-inventory-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/baseline-and-source-inventory-01.json",
+      "sha256": "7342d401dc0fe01048032879a3cdc50e61bdf9c98055e05c391bfb1fdef666e3",
+      "bytes": 28259
+    },
+    {
+      "path": "change-map-04.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/change-map-04.json",
+      "sha256": "4a53cbae70c94ceb2310bd96cb211c7188e9d53d23bc9dc1d1606f2625486f97",
+      "bytes": 63164
+    },
+    {
+      "path": "change-map-05.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/change-map-05.json",
+      "sha256": "afd0691e8ea1c7b3edd46efd78ed2d16001322ea22eb49ddcd6f60650f93ea37",
+      "bytes": 64228
+    },
+    {
+      "path": "contracts-01.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/contracts-01.md",
+      "sha256": "968b3b4915e3dd4bcdc1359d99b3a65583489bae0dbe7bbc74a43fd4bd40a905",
+      "bytes": 32383
+    },
+    {
+      "path": "decision-summary-01.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/decision-summary-01.md",
+      "sha256": "566ca2841faea3e56f03e46d85cd095965c0ade65f98b95fe3e9eb878de21049",
+      "bytes": 14806
+    },
+    {
+      "path": "gold-source-and-annotation-strategy-02.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/gold-source-and-annotation-strategy-02.json",
+      "sha256": "5bd38c4e62c940c114dfeb317bbf740e1272bf2337f0fe8f4542dfc357b1707c",
+      "bytes": 22056
+    },
+    {
+      "path": "initial-target-register-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/initial-target-register-01.json",
+      "sha256": "d6a8e069ca9ff230f18141461e2f531691ca670f318750b875099c574ece598c",
+      "bytes": 14178
+    },
+    {
+      "path": "interface-and-migration-proposal-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/interface-and-migration-proposal-01.json",
+      "sha256": "65852e99b2cadb539be2e38f7acee69c5c735e1ad8dbaf2d937256c08a20c157",
+      "bytes": 18561
+    },
+    {
+      "path": "ordered-slice-feasibility-witness-05.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/ordered-slice-feasibility-witness-05.json",
+      "sha256": "8c22cb3b22415ef846acdafcf1d163c8c1a657f63834cbda63a9d7b9f63d4866",
+      "bytes": 30354
+    },
+    {
+      "path": "original-plan-budget-register-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/original-plan-budget-register-01.json",
+      "sha256": "de9cc4df2c51f69b0eabc3db45a2860d7ab3f7f8a50966790a40baebca764087",
+      "bytes": 38191
+    },
+    {
+      "path": "planning/capability-plans/CAP-06.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/capability-plans/CAP-06.md",
+      "sha256": "3d40d884b4376b4778db490be262a16ceee9b15648efbf3b4e58a41053160618",
+      "bytes": 34901
+    },
+    {
+      "path": "planning/capability-plans/CAP-07.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/capability-plans/CAP-07.md",
+      "sha256": "7ec380791ced63248942d3e34fb5ab11173906aa23b55e7ed5f9d4a08f1df66c",
+      "bytes": 48629
+    },
+    {
+      "path": "planning/capability-plans/CAP-08.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/capability-plans/CAP-08.md",
+      "sha256": "b24bf3c517d8c919cab39778029aabbfde86ed9b4882a6c355349447fad881e5",
+      "bytes": 38664
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+      "sha256": "710fd7714ec55ca5df2b17a034ecf08aa5325805d37675b914fb3458d4bf2cf9",
+      "bytes": 16757
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+      "sha256": "3b3da420909dc3f0d42bb5c2251b51d2ea994eb9f4ee0d36082af5bf12fd21b8",
+      "bytes": 17453
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+      "sha256": "ea65489f5fcd9bec05ba2d5faec5792798ffa4d14399403fa60af3f0afb3a1bd",
+      "bytes": 16933
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+      "sha256": "3f49d52fbe90e18475199e90263352cf09b92874331a7e337ae4ad5ef7966a01",
+      "bytes": 16684
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+      "sha256": "c490645c4affd119923895952f664a8ed9783916ec96bde1cacf60275c757847",
+      "bytes": 16973
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+      "sha256": "2311319c98f17d79ec0e0799ec7fe1c8c43460e91d2d08469eb9aae795a6b5c3",
+      "bytes": 17261
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+      "sha256": "902e1a89026edc016d26aa36039ae7415f0b74d6554016cfb4f1e05f8e2e39d6",
+      "bytes": 24455
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+      "sha256": "195241eecef76e46a6cf6697d0340796625c83e4ca1c2bc713db414149ddf6bd",
+      "bytes": 17370
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+      "sha256": "7bb7616a6bd8a287db1ebf18fe45190a01078ce86ba42632c2a84151b6e874e7",
+      "bytes": 22246
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+      "sha256": "0977ff497af85a4c24c3c9c65101064c70e06738fbf37902cad55f779a9ecb38",
+      "bytes": 22019
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+      "sha256": "0db33680b96808677bf0167565f2ff5b1effef4215068d069d62d85a07a8c170",
+      "bytes": 16715
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+      "sha256": "8925bb1eb37e092aed24b21b744a4971e30d120ead448c9e9a9c9effcbe2501e",
+      "bytes": 20935
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+      "sha256": "c8b64cf2c8672e572f5da6069dd53edef8c95446862dad82c1b62dd4b82b5920",
+      "bytes": 17128
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+      "sha256": "db0fa927704fc8c923a1fb1c658c0309ac22c293c7c3a5bf5710603b1a04534c",
+      "bytes": 22591
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+      "sha256": "14da849067a30ba635d56728b0737e5f8b2b5fdc10cb19e0d90fc36e4a348e4a",
+      "bytes": 16933
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+      "sha256": "d889974fc3d11ca760818ced0fd1ddef0cc5eb1d70f87306b0b29ca73946205d",
+      "bytes": 17101
+    },
+    {
+      "path": "primary-evidence-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/primary-evidence-01.json",
+      "sha256": "4010b3c0d7b98a675e50eee06a58ae1dea1d7c52cd2f47d80fedf74e20ceb007",
+      "bytes": 9169
+    },
+    {
+      "path": "refinement-change-map-02.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/refinement-change-map-02.json",
+      "sha256": "a2dff7eca4bf50373e8eefcd593d0cc2330137b74695ee5b4e139386de4c9f00",
+      "bytes": 11324
+    },
+    {
+      "path": "root-selected-policy-refinement-03.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/root-selected-policy-refinement-03.json",
+      "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81",
+      "bytes": 9971
+    },
+    {
+      "path": "selected-policy-independent-review-03.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/selected-policy-independent-review-03.json",
+      "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68",
+      "bytes": 4533
+    },
+    {
+      "path": "small-model-primary-candidates-02.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/small-model-primary-candidates-02.json",
+      "sha256": "eff515a57c798a2f280166237e22265372abd66db970db818fe3b813e4e5c251",
+      "bytes": 5403
+    },
+    {
+      "path": "task-register-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/task-register-01.json",
+      "sha256": "79a9b14fb2bd340b243136bf71ba6b4a1051074fac9801ea2df308404f10ba9d",
+      "bytes": 189989
+    },
+    {
+      "path": "unresolved-decision-list-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/unresolved-decision-list-01.json",
+      "sha256": "472f712c07b64160892d006730d01e6c31a4f1e94dfc7d8c19670e88dd151ae5",
+      "bytes": 4730
+    },
+    {
+      "path": "ux-reference-proposal-01.md",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/ux-reference-proposal-01.md",
+      "sha256": "eee4a5cee378e37674cc9fa2a96edab59600b062c3ae5904b589406e1b0ef91e",
+      "bytes": 6201
+    },
+    {
+      "path": "wave-proposal-01.json",
+      "repositoryPath": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/wave-proposal-01.json",
+      "sha256": "583f81f580a4052764353fd87c5fc10da9a528a7783c3a4b0200341b86616044",
+      "bytes": 27291
+    }
+  ],
+  "entryCount": 96,
+  "totalBytes": 2490668,
+  "pendingActuals": [
+    {
+      "id": "actual-final-W2-G2",
+      "status": "PENDING",
+      "required": "Actual final integratedW2 baseline and G2;3541 current/initial only. Historical source/evidence including later failures cannot be relabelled.",
+      "actualReference": null
+    },
+    {
+      "id": "independent-incorporation-review",
+      "status": "PENDING",
+      "required": "One genuine incremental review of this exact coherent incorporation, preserving the original metric/resource findings and their actual disposition; old5ced choice-only review is not new packet approval.",
+      "actualReference": null
+    },
+    {
+      "id": "architecture-acceptance",
+      "status": "PENDING",
+      "required": "Ordinary actual numbered/indexed architecture record identities, checks and accepted decision authority; all three current texts remain unnumberedProposed.",
+      "actualReference": null
+    },
+    {
+      "id": "experience-acceptance",
+      "status": "PENDING",
+      "required": "Ordinary proposed full reference metadata/compatibility binding and existing validation, independent review and actual human approved successor identity. Current base1.9/catalog1.5 preserved, no new reference ID invented.",
+      "actualReference": null
+    },
+    {
+      "id": "complete-W3-packet-approval",
+      "status": "PENDING",
+      "required": "Normal coherent canonical planning publication/review and one immutable full48-task/16-slice Wave approval after genuine prerequisites. No W3 execution from this draft.",
+      "actualReference": null
+    }
+  ],
+  "preservation": {
+    "canonicalOrHEADOrTaskctlMutation": false,
+    "W2EvidenceDraftsRelabelledOrChanged": false,
+    "modelsDatasetsRuntimeGUIBrowserValidatorsExecuted": false,
+    "newFrameworkControlAutomationSourceImplementation": false,
+    "modelResourceQualityPeopleLicenseOrApprovalInvented": false,
+    "noNewAgent": true,
+    "onlyIgnoredPrivateDocumentFilesWritten": true
+  },
+  "orderedExecutionGraph05": {
+    "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/ordered-slice-feasibility-witness-05.json",
+    "sha256": "8c22cb3b22415ef846acdafcf1d163c8c1a657f63834cbda63a9d7b9f63d4866"
+  },
+  "reviewedProposedReference": {
+    "sourceManifest": {
+      "path": "artifacts/tmp/W3.proposed-reference-preparation-01/source-manifest-01.json",
+      "sha256": "98e411517d756c96ee44b8e520ed45055543f96ad9c43ee44c0b2662b901acc6"
+    },
+    "differentDisposition": {
+      "path": "artifacts/tmp/W3.proposed-reference-preparation-01.independent-disposition-01.json",
+      "sha256": "6f68d79a3f76ec39f2a57556f6e89f1381e63ef3a7bb5a15ef4269f97655e1e6"
+    },
+    "all63FilesUnchanged": true,
+    "referenceAccepted": false
+  },
+  "genuineSuccessor05PlanReview": null,
+  "ordinaryPlanningDataProjectionAssessment": {
+    "path": "artifacts/tmp/W3.ordered-planning-data-projection-01.json",
+    "sha256": "98094b94c98ff4666b332e5aead851ab2cd34de68cf3658f301be37e1b9bca61"
+  }
+}

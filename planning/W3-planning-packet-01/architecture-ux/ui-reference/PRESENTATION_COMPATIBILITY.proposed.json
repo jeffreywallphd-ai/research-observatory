@@ -1,0 +1,29 @@
+{
+  "documentType": "private-proposed-presentation-compatibility-not-an-accepted-witness",
+  "status": "PROPOSED_ORDINARY_COMPATIBILITY_RECORD_STILL_REQUIRED",
+  "semanticCatalog": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "basePresentation": "RO-UI-ACADEMIC-MINIMAL-1.9",
+  "futurePresentationReference": null,
+  "futureApproval": null,
+  "futureIntroductionCommit": null,
+  "workflowKeys": [
+    "rapid-orientation",
+    "systematic-review",
+    "living-review",
+    "theory-synthesis",
+    "hermeneutic-inquiry",
+    "critical-problematization",
+    "technical-landscape",
+    "novelty-audit",
+    "empirical-study-design",
+    "empirical-study-to-article",
+    "empirical-results-to-article",
+    "theory-article-development",
+    "critical-article-development",
+    "manuscript-review-revision"
+  ],
+  "allFourteenWorkflowObjectsMatchSemantic15": true,
+  "payloadCatalogJSONByteIdenticalToBase19": true,
+  "pageRegions": "Retain every existing required region and append only the six declared affected-page additions; exact JSON deltas bound by the source manifest.",
+  "limit": "This metadata comparison does not create a valid or approved runtime compatibility witness. Future ordinary publication must bind actual new reference/approval and existing witness/schema route without changing semantic source1.5, generated IDs or stored selections."
+}

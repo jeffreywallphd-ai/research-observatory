@@ -38025,6 +38025,8 @@ capabilities:
         query are both retained.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Round-trip exact/phrase/Boolean/field/filter syntax; bounded depth/length and location errors; retain original and
+        normalized query.
       dependencies:
       - CAP-04.S04.T03
       - CAP-05.S03.T03
@@ -38072,6 +38074,8 @@ capabilities:
         excluded according to policy.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Prove FTS5 in the actual protected build; no plaintext sidecar. Compare fresh/rebuilt results, removal, cancellation
+        and crash replay; never index unpermitted text.
       dependencies:
       - CAP-06.S01.T01
       priority: P0
@@ -38118,6 +38122,8 @@ capabilities:
         exact, field, and filter contributions.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights
+        changes; expose ranks rather than probability.
       dependencies:
       - CAP-06.S01.T02
       priority: P0
@@ -38172,6 +38178,7 @@ capabilities:
     depends_on:
     - CAP-06.S01.T02
     - CAP-07.S01.T03
+    - CAP-07.S02.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-06.S02.T01
@@ -38188,6 +38195,8 @@ capabilities:
         and server engines.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Reject dimension/model/tokenizer/chunk/rights incompatibility; exact source selector resolution; engine-neutral contract
+        remains.
       dependencies:
       - CAP-06.S01.T02
       - CAP-07.S01.T03
@@ -38237,8 +38246,11 @@ capabilities:
         than failing the project; output provenance is complete.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Qualify small MiniLM encoder first against scientific gold; compare SPECTER2 base plus correct proximity/query adapters
+        only if the same small-PC cap admits it. No silent truncated scientific input or unsupported ONNX claim.
       dependencies:
       - CAP-06.S02.T01
+      - CAP-07.S02.T03
       priority: P0
       wave: W3
       deployment_profiles: *id129
@@ -38288,6 +38300,8 @@ capabilities:
         model upgrade marks the index stale and requires explicit rebuild.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Stream protected vector batches and retain stable tie order after prefiltering; prove exact known-neighbor parity,
+        deletion, rebuild/relocation and no plaintext index/temp leak.
       dependencies:
       - CAP-06.S02.T02
       priority: P0
@@ -38342,6 +38356,8 @@ capabilities:
     depends_on:
     - CAP-06.S01.T03
     - CAP-06.S02.T03
+    - CAP-07.S05.T01
+    - CAP-07.S05.T02
     status: NOT_STARTED
     tasks:
     - id: CAP-06.S03.T01
@@ -38358,6 +38374,8 @@ capabilities:
         and logged.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Compare each retriever and fusion on identical held-out IDs; known-item recall cannot regress versus the better component.
+        Report per-query failures and nDCG/MRR, not a single global confidence.
       dependencies:
       - CAP-06.S01.T03
       - CAP-06.S02.T03
@@ -38404,8 +38422,11 @@ capabilities:
         are recorded.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Default rerank top20 on the small-PC profile (configurable <=50 only after admission); off switch and timeout preserve
+        fused order and corpus state.
       dependencies:
       - CAP-06.S03.T01
+      - CAP-07.S05.T02
       priority: P0
       wave: W3
       deployment_profiles: *id130
@@ -38452,8 +38473,11 @@ capabilities:
         is reported rather than hidden.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Manifest closes over exact corpus, query, actor/policy, component lists, model/profile, weights, errors and cancellation;
+        exact replay versus drift is tested.
       dependencies:
       - CAP-06.S03.T02
+      - CAP-07.S05.T01
       priority: P0
       wave: W3
       deployment_profiles: *id130
@@ -38506,8 +38530,8 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-06.S03.T03
     - CAP-04.S02.T03
+    - CAP-06.S03.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-06.S04.T01
@@ -38524,6 +38548,8 @@ capabilities:
         per adapter.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Keyboard-accessible editor and per-source status, exact executed text and safe validation; preview alone issues no
+        retrieval.
       dependencies:
       - CAP-06.S03.T03
       - CAP-04.S02.T03
@@ -38572,6 +38598,8 @@ capabilities:
         trace to a branch.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Fork/compare uses stable parent identities and translation-loss reports; unsupported source clauses never silently
+        vanish.
       dependencies:
       - CAP-06.S04.T01
       priority: P0
@@ -38620,6 +38648,8 @@ capabilities:
         prevent runaway traversal.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Expansion default depth1/limit100, hard cap1000 per explicit run; human preview and idempotent commit; no arbitrary
+        URL/shell/model-issued connector calls.
       dependencies:
       - CAP-06.S04.T02
       priority: P0
@@ -38674,8 +38704,8 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-06.S04.T03
     - CAP-04.S04.T03
+    - CAP-06.S04.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-06.S05.T01
@@ -38692,6 +38722,8 @@ capabilities:
         supports record drill-down.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - 100k metadata-row navigation via cursors; optional projection <=5000 stratified points on this PC, every full-population
+        count remains separately sourced. Original50k layout forecast is deferred to W5 resource qualification.
       dependencies:
       - CAP-06.S04.T03
       - CAP-04.S04.T03
@@ -38743,6 +38775,8 @@ capabilities:
         classified.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Reconcile counts to stable IDs; geography/method/language unknowns stay unknown. No demographic or method imputation
+        from embeddings.
       dependencies:
       - CAP-06.S05.T01
       priority: P0
@@ -38793,6 +38827,7 @@ capabilities:
         comparisons are exportable.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Compare exact boundary-rule deltas, affected records and downstream stale previews; export population/sampling limits.
       dependencies:
       - CAP-06.S05.T02
       priority: P0
@@ -38848,8 +38883,9 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-06.S05.T02
     - CAP-03.S02.T03
+    - CAP-06.S05.T02
+    - CAP-07.S05.T02
     status: NOT_STARTED
     tasks:
     - id: CAP-06.S06.T01
@@ -38866,6 +38902,8 @@ capabilities:
         adjudication.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Bind protocol/mode/stage and actor to immutable decisions; blind assignments enforce application query restrictions
+        with explicit same-owner threat limit.
       dependencies:
       - CAP-06.S05.T02
       - CAP-03.S02.T03
@@ -38917,8 +38955,11 @@ capabilities:
         class imbalance are tested.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Bound 100k metadata records/50000 feature vocabulary/batch scheduler; no arbitrary serialized estimators or neural
+        training. Known classes/seed/labels and feature schema reproduce ranking.
       dependencies:
       - CAP-06.S06.T01
+      - CAP-07.S05.T02
       priority: P0
       wave: W3
       deployment_profiles: *id133
@@ -38966,6 +39007,8 @@ capabilities:
         are recoverable through at least one safety channel; limitations are explicit.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Prespecified seeded random sample + rejected-neighbor audit; hiding a relevant fixture must surface through a safety
+        channel. Report intervals/denominators and human stopping rationale; no automatic universal95% recall claim.
       dependencies:
       - CAP-06.S06.T02
       priority: P0
@@ -41455,19 +41498,204 @@ capabilities:
         SHA256 da176c208acf0c8fbb94c42ea56582dc95a7905628559ea0318d4d2f6a84381d. Original findings explicitly closed; adverse
         results and limits preserved. Slice only: fresh full W1 qualification, independent Wave review and human G1 remain
         required.'
+  - id: CAP-07.S04
+    title: Prompt, schema, and structured-output registry
+    outcome: AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings.
+    wave: W3
+    priority: P0
+    deployment_profiles: &id138
+    - LOC
+    - LAB
+    - ALL
+    depends_on:
+    - CAP-00.S05.T02
+    - CAP-07.S01.T01
+    status: READY
+    tasks:
+    - id: CAP-07.S04.T01
+      capability_id: CAP-07
+      slice_id: CAP-07.S04
+      title: Create versioned prompt and tool-template registry
+      objective: Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change
+        history.
+      deliverables:
+      - Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.
+      acceptance_criteria:
+      - Every production model call references an immutable prompt version; unregistered ad hoc prompts are rejected outside
+        development mode.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Version authorship/purpose/variables and deny undeclared template inputs, ad-hoc production prompts and executable
+        tools. Domain instructions and source content are structurally separated.
+      dependencies:
+      - CAP-07.S01.T01
+      - CAP-00.S05.T02
+      priority: P0
+      wave: W3
+      deployment_profiles: *id138
+      estimate: M
+      risk: high
+      review_gate: agent-review
+      verification_profiles:
+      - ai
+      verification_commands:
+      - python tools/verify.py --profile ai
+      status: READY
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-10-16T11:23:13+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    - id: CAP-07.S04.T02
+      capability_id: CAP-07
+      slice_id: CAP-07.S04
+      title: Implement schema-constrained generation and deterministic validation
+      objective: JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response
+        retention policy.
+      deliverables:
+      - JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response
+        retention policy.
+      acceptance_criteria:
+      - Invalid output never enters canonical records; repair attempts are limited and logged; fixture malformed responses
+        produce typed failure or validated recovery.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Enforce size/depth/token bounds, no remote $ref/context resolution, semantic/anchor closure and typed refusal/absence;
+        toolcall is a proposed command requiring independent Core authorization, never direct execution.
+      dependencies:
+      - CAP-07.S04.T01
+      priority: P0
+      wave: W3
+      deployment_profiles: *id138
+      estimate: L
+      risk: high
+      review_gate: agent-review
+      verification_profiles:
+      - ai
+      - service
+      verification_commands:
+      - python tools/verify.py --profile ai
+      - python tools/verify.py --profile service
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    - id: CAP-07.S04.T03
+      capability_id: CAP-07
+      slice_id: CAP-07.S04
+      title: Implement prompt/schema regression tests and approval states
+      objective: Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and
+        upgrade comparison.
+      deliverables:
+      - Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.
+      acceptance_criteria:
+      - A model or prompt upgrade cannot become default if declared regressions exceed thresholds; approvals name benchmark,
+        reviewer, and residual limitations.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Freeze rights-cleared development/heldout case definitions and exact approval/promotion interfaces; contract-test
+        missing/forged/regressed attestation denial and benchmark/reviewer/residual binding. Real local inference/profile
+        proof is owned by S02.T03 and actual comparative gold/promotion integration by S05.T03; no fixture result promotes
+        a model. Evaluation support code is never a runtime dependency.
+      - 'Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable
+        human references; NFC/newline/casefold tokenization \w+|[^\w\s], retained punctuation/multiplicity, multiset overlap,
+        best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90
+        and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90
+        plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined
+        prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct;
+        publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.'
+      - 'Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact
+        scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic
+        reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual
+        bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim
+        actual local inference or measured model quality.'
+      dependencies:
+      - CAP-07.S04.T02
+      priority: P0
+      wave: W3
+      deployment_profiles: *id138
+      estimate: L
+      risk: high
+      review_gate: model-review
+      verification_profiles:
+      - ai
+      - foundation
+      verification_commands:
+      - python tools/verify.py --profile ai
+      - python tools/verify.py --profile foundation
+      - python tools/taskctl.py validate
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    platform_targets:
+    - windows-x64
+    completion:
+      status: PENDING
+      reviewer: null
+      reviewed_at: null
+      evidence: []
+      notes: null
   - id: CAP-07.S02
     title: Local model runtime and model management
     outcome: PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model
       server.
     wave: W3
     priority: P0
-    deployment_profiles: &id138
+    deployment_profiles: &id139
     - LOC
     - LAB
     depends_on:
-    - CAP-07.S01.T03
     - CAP-01.S03.T03
-    status: READY
+    - CAP-07.S01.T03
+    - CAP-07.S04.T02
+    status: NOT_STARTED
     tasks:
     - id: CAP-07.S02.T01
       capability_id: CAP-07
@@ -41483,12 +41711,23 @@ capabilities:
         not corrupt workflow or project data.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Implement canonical grant/classification/local-zero-money reservation first, then signed no-network worker with read-only
+        pinned artifacts/private framed pipes; Job lifetime and memory limits are additional, not the security principal.
+      - 'Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project
+        supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing
+        and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain
+        and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB
+        preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser
+        principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that
+        ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative
+        ledger is not machine-wide enforcement; no new scheduler or concurrency promise.'
       dependencies:
       - CAP-07.S01.T03
       - CAP-01.S03.T03
+      - CAP-07.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id138
+      deployment_profiles: *id139
       estimate: L
       risk: high
       review_gate: agent-review
@@ -41500,11 +41739,11 @@ capabilities:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: READY
+      status: NOT_STARTED
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-10-16T10:36:17+00:00'
+      updated_at: '2026-10-16T11:23:13+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -41534,11 +41773,13 @@ capabilities:
         blocked while a job depends on the model.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Import/download has exact origin/revision/hash/tokenizer/license and user consent; staged resume verifies chunks/final
+        hash; reject custom code, arbitrary native model extensions and redirect substitutions.
       dependencies:
       - CAP-07.S02.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id138
+      deployment_profiles: *id139
       estimate: L
       risk: high
       review_gate: agent-review
@@ -41584,11 +41825,28 @@ capabilities:
         in task provenance.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental
+        availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and
+        permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending. User can lower
+        caps; confirmation cannot override a hard safety cap.
+      - 'Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project
+        supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing
+        and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain
+        and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB
+        preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser
+        principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that
+        ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative
+        ledger is not machine-wide enforcement; no new scheduler or concurrency promise.'
+      - 'After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema
+        through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure
+        admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal
+        handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative
+        gold scoring/default-upgrade proof.'
       dependencies:
       - CAP-07.S02.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id138
+      deployment_profiles: *id139
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -41598,337 +41856,6 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    platform_targets:
-    - windows-x64
-    completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
-  - id: CAP-07.S03
-    title: Approved remote model providers
-    outcome: Remote inference is available through explicit opt-in adapters with redaction, data-class, and reproducibility
-      controls.
-    wave: W3
-    priority: P1
-    deployment_profiles: &id139
-    - LOC
-    - LAB
-    - UNI
-    - CLD
-    depends_on:
-    - CAP-07.S01.T03
-    - CAP-02.S04.T01
-    status: NOT_STARTED
-    tasks:
-    - id: CAP-07.S03.T01
-      capability_id: CAP-07
-      slice_id: CAP-07.S03
-      title: Implement the first two external provider adapters behind the gateway
-      objective: Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling,
-        and normalized errors.
-      deliverables:
-      - Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and
-        normalized errors.
-      acceptance_criteria:
-      - Provider-specific code does not leak into scholarly modules; contract tests replay recorded safe fixtures; missing
-        credentials produce guided setup.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-07.S01.T03
-      - CAP-02.S04.T01
-      priority: P1
-      wave: W3
-      deployment_profiles: *id139
-      estimate: L
-      risk: medium
-      review_gate: agent-review
-      verification_profiles:
-      - ai
-      verification_commands:
-      - python tools/verify.py --profile ai
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    - id: CAP-07.S03.T02
-      capability_id: CAP-07
-      slice_id: CAP-07.S03
-      title: Implement egress preview, minimization, and consent
-      objective: Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and
-        local alternative.
-      deliverables:
-      - Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.
-      acceptance_criteria:
-      - Protected or rights-restricted text is blocked by policy; user consent is scoped and revocable; the exact transmitted
-        payload hash is logged without storing unnecessary plaintext.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-07.S03.T01
-      priority: P1
-      wave: W3
-      deployment_profiles: *id139
-      estimate: L
-      risk: high
-      review_gate: privacy-review
-      verification_profiles:
-      - ai
-      - security-local
-      verification_commands:
-      - python tools/verify.py --profile ai
-      - python tools/verify.py --profile security-local
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    - id: CAP-07.S03.T03
-      capability_id: CAP-07
-      slice_id: CAP-07.S03
-      title: Implement offline/network-disabled enforcement and remote fallback behavior
-      objective: Application and service controls that disable remote providers, fail closed, and continue with supported
-        local paths.
-      deliverables:
-      - Application and service controls that disable remote providers, fail closed, and continue with supported local paths.
-      acceptance_criteria:
-      - Network-disabled tests prove no external DNS/HTTP attempts from AI modules; queued remote jobs become blocked with
-        clear remediation rather than silently rerouted.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-07.S03.T02
-      priority: P1
-      wave: W3
-      deployment_profiles: *id139
-      estimate: M
-      risk: high
-      review_gate: agent-review
-      verification_profiles:
-      - ai
-      - security-local
-      - e2e-local
-      verification_commands:
-      - python tools/verify.py --profile ai
-      - python tools/verify.py --profile security-local
-      - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    platform_targets:
-    - windows-x64
-    completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
-  - id: CAP-07.S04
-    title: Prompt, schema, and structured-output registry
-    outcome: AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings.
-    wave: W3
-    priority: P0
-    deployment_profiles: &id140
-    - LOC
-    - LAB
-    - ALL
-    depends_on:
-    - CAP-07.S01.T01
-    - CAP-00.S05.T02
-    status: NOT_STARTED
-    tasks:
-    - id: CAP-07.S04.T01
-      capability_id: CAP-07
-      slice_id: CAP-07.S04
-      title: Create versioned prompt and tool-template registry
-      objective: Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change
-        history.
-      deliverables:
-      - Named templates with purpose, mode, variables, provider constraints, authorship, evaluation state, and change history.
-      acceptance_criteria:
-      - Every production model call references an immutable prompt version; unregistered ad hoc prompts are rejected outside
-        development mode.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-07.S01.T01
-      - CAP-00.S05.T02
-      priority: P0
-      wave: W3
-      deployment_profiles: *id140
-      estimate: M
-      risk: high
-      review_gate: agent-review
-      verification_profiles:
-      - ai
-      verification_commands:
-      - python tools/verify.py --profile ai
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    - id: CAP-07.S04.T02
-      capability_id: CAP-07
-      slice_id: CAP-07.S04
-      title: Implement schema-constrained generation and deterministic validation
-      objective: JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response
-        retention policy.
-      deliverables:
-      - JSON-schema/Pydantic output requests, parsing, validation, bounded repair, missing/unclear states, and raw-response
-        retention policy.
-      acceptance_criteria:
-      - Invalid output never enters canonical records; repair attempts are limited and logged; fixture malformed responses
-        produce typed failure or validated recovery.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-07.S04.T01
-      priority: P0
-      wave: W3
-      deployment_profiles: *id140
-      estimate: L
-      risk: high
-      review_gate: agent-review
-      verification_profiles:
-      - ai
-      - service
-      verification_commands:
-      - python tools/verify.py --profile ai
-      - python tools/verify.py --profile service
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    - id: CAP-07.S04.T03
-      capability_id: CAP-07
-      slice_id: CAP-07.S04
-      title: Implement prompt/schema regression tests and approval states
-      objective: Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and
-        upgrade comparison.
-      deliverables:
-      - Golden cases, semantic checks, safety/rights tests, model matrix, draft/validated/deprecated states, and upgrade comparison.
-      acceptance_criteria:
-      - A model or prompt upgrade cannot become default if declared regressions exceed thresholds; approvals name benchmark,
-        reviewer, and residual limitations.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-07.S04.T02
-      priority: P0
-      wave: W3
-      deployment_profiles: *id140
-      estimate: L
-      risk: high
-      review_gate: model-review
-      verification_profiles:
-      - ai
-      - foundation
-      verification_commands:
-      - python tools/verify.py --profile ai
-      - python tools/verify.py --profile foundation
-      - python tools/taskctl.py validate
       status: NOT_STARTED
       owner: null
       branch: null
@@ -41963,13 +41890,13 @@ capabilities:
       content.
     wave: W3
     priority: P0
-    deployment_profiles: &id141
+    deployment_profiles: &id140
     - LOC
     - LAB
     - ALL
     depends_on:
-    - CAP-07.S04.T03
     - CAP-03.S03.T03
+    - CAP-07.S04.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-07.S05.T01
@@ -41985,12 +41912,14 @@ capabilities:
         resource use rather than fabricated monetary cost.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Record task/model/profile/version, timing, resource and reported/unknown use; no raw text/paths/secrets in default
+        spans. Local money is not-applicable, measured time/resource is reported.
       dependencies:
       - CAP-07.S04.T03
       - CAP-03.S03.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id141
+      deployment_profiles: *id140
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -42032,11 +41961,13 @@ capabilities:
         user can cancel queued and active work.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Extend the minimum authority established in S02T01 with persistent quotas, reserve-before-dispatch and reconcile;
+        initial remote budget0 until explicit amount, no hidden retry spend.
       dependencies:
       - CAP-07.S05.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id141
+      deployment_profiles: *id140
       estimate: M
       risk: high
       review_gate: agent-review
@@ -42082,11 +42013,26 @@ capabilities:
         and marks dependent results according to reproducibility policy.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Product evaluation-attestation records contain signed/approved report digests and role/domain limits; dashboard compares
+        the same cases and immutable models. No product dependency on evaluation/ files; default switch is explicit with rollback
+        and dependent-stale preview.
+      - 'Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable
+        human references; NFC/newline/casefold tokenization \w+|[^\w\s], retained punctuation/multiplicity, multiset overlap,
+        best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90
+        and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90
+        plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined
+        prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct;
+        publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.'
+      - After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt
+        evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03,
+        bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled
+        promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute
+        for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs.
       dependencies:
       - CAP-07.S05.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id141
+      deployment_profiles: *id140
       estimate: L
       risk: high
       review_gate: model-review
@@ -42096,6 +42042,183 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile desktop
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    platform_targets:
+    - windows-x64
+    completion:
+      status: PENDING
+      reviewer: null
+      reviewed_at: null
+      evidence: []
+      notes: null
+  - id: CAP-07.S03
+    title: Approved remote model providers
+    outcome: Remote inference is available through explicit opt-in adapters with redaction, data-class, and reproducibility
+      controls.
+    wave: W3
+    priority: P1
+    deployment_profiles: &id141
+    - LOC
+    - LAB
+    - UNI
+    - CLD
+    depends_on:
+    - CAP-02.S04.T01
+    - CAP-07.S01.T03
+    - CAP-07.S04.T02
+    - CAP-07.S05.T02
+    status: NOT_STARTED
+    tasks:
+    - id: CAP-07.S03.T01
+      capability_id: CAP-07
+      slice_id: CAP-07.S03
+      title: Implement the first two external provider adapters behind the gateway
+      objective: Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling,
+        and normalized errors.
+      deliverables:
+      - Typed adapters for approved commercial/open endpoints with streaming, structured output, retries, rate handling, and
+        normalized errors.
+      acceptance_criteria:
+      - Provider-specific code does not leak into scholarly modules; contract tests replay recorded safe fixtures; missing
+        credentials produce guided setup.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Safe recorded/synthetic protocol fixtures prove both translations, streaming cancellation, normalized usage/errors
+        and no SDK leakage. Clearly label transport conformance separately from a live qualified commercial provider.
+      dependencies:
+      - CAP-07.S01.T03
+      - CAP-02.S04.T01
+      - CAP-07.S04.T02
+      - CAP-07.S05.T02
+      priority: P1
+      wave: W3
+      deployment_profiles: *id141
+      estimate: L
+      risk: medium
+      review_gate: agent-review
+      verification_profiles:
+      - ai
+      verification_commands:
+      - python tools/verify.py --profile ai
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    - id: CAP-07.S03.T02
+      capability_id: CAP-07
+      slice_id: CAP-07.S03
+      title: Implement egress preview, minimization, and consent
+      objective: Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and
+        local alternative.
+      deliverables:
+      - Preflight showing provider, data class, text amount, rights status, redactions, retention policy link, and local alternative.
+      acceptance_criteria:
+      - Protected or rights-restricted text is blocked by policy; user consent is scoped and revocable; the exact transmitted
+        payload hash is logged without storing unnecessary plaintext.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Hash exact assembled/minimized packet, destination, terms/retention observation, data-class/rights, scope/expiry and
+        budget; any material change invalidates consent; never consent on behalf of another source rights holder.
+      dependencies:
+      - CAP-07.S03.T01
+      priority: P1
+      wave: W3
+      deployment_profiles: *id141
+      estimate: L
+      risk: high
+      review_gate: privacy-review
+      verification_profiles:
+      - ai
+      - security-local
+      verification_commands:
+      - python tools/verify.py --profile ai
+      - python tools/verify.py --profile security-local
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    - id: CAP-07.S03.T03
+      capability_id: CAP-07
+      slice_id: CAP-07.S03
+      title: Implement offline/network-disabled enforcement and remote fallback behavior
+      objective: Application and service controls that disable remote providers, fail closed, and continue with supported
+        local paths.
+      deliverables:
+      - Application and service controls that disable remote providers, fail closed, and continue with supported local paths.
+      acceptance_criteria:
+      - Network-disabled tests prove no external DNS/HTTP attempts from AI modules; queued remote jobs become blocked with
+        clear remediation rather than silently rerouted.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Deny before DNS/HTTP in offline mode; active revocation cancels/denies late results. Only explicitly permitted public/open
+        source classes may activate remote routes under the initial W3 policy.
+      dependencies:
+      - CAP-07.S03.T02
+      priority: P1
+      wave: W3
+      deployment_profiles: *id141
+      estimate: M
+      risk: high
+      review_gate: agent-review
+      verification_profiles:
+      - ai
+      - security-local
+      - e2e-local
+      verification_commands:
+      - python tools/verify.py --profile ai
+      - python tools/verify.py --profile security-local
+      - python tools/verify.py --profile e2e-local
       status: NOT_STARTED
       owner: null
       branch: null
@@ -42172,6 +42295,7 @@ capabilities:
         are representable rather than overwritten.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Stable IDs/deprecation/relations and competing definitions, with no automatic global ontology merge.
       dependencies:
       - CAP-03.S01.T03
       - CAP-07.S04.T02
@@ -42221,6 +42345,8 @@ capabilities:
         silently change completed extractions.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Bounded acyclic dependencies, field cardinality/evidence/missingness rules and versioned allowed semantics; no eval/Python/plugin
+        expressions or remote schema resolution.
       dependencies:
       - CAP-08.S01.T01
       priority: P0
@@ -42268,6 +42394,8 @@ capabilities:
         and require explicit adoption.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Manifest/license/hash and fork lineage required; unsafe archive names/reparse/zip bombs denied; preview affected evidence
+        before explicit adoption.
       dependencies:
       - CAP-08.S01.T02
       priority: P0
@@ -42310,10 +42438,9 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  - id: CAP-08.S02
-    title: Source-grounded extraction pipeline
-    outcome: Schema-constrained extraction selects relevant source context and emits candidate evidence without fabricating
-      absent fields.
+  - id: CAP-08.S03
+    title: Evidence record, status, confidence, and uncertainty model
+    outcome: Extracted content is stored with decomposed certainty and explicit epistemic status.
     wave: W3
     priority: P0
     deployment_profiles: &id143
@@ -42321,181 +42448,8 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-08.S01.T03
-    - CAP-05.S03.T03
-    - CAP-07.S04.T02
-    status: NOT_STARTED
-    tasks:
-    - id: CAP-08.S02.T01
-      capability_id: CAP-08
-      slice_id: CAP-08.S02
-      title: Implement section/passages selection for extraction
-      objective: Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors
-        and coverage metadata.
-      deliverables:
-      - Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and
-        coverage metadata.
-      acceptance_criteria:
-      - Selectors are reproducible; excluded sections remain queryable; context packets never exceed configured rights/model
-        limits; selection provenance is retained.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-08.S01.T03
-      - CAP-05.S03.T03
-      - CAP-07.S04.T02
-      priority: P0
-      wave: W3
-      deployment_profiles: *id143
-      estimate: L
-      risk: high
-      review_gate: agent-review
-      verification_profiles:
-      - evidence
-      - search
-      - documents
-      verification_commands:
-      - python tools/verify.py --profile evidence
-      - python tools/verify.py --profile search
-      - python tools/verify.py --profile documents
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    - id: CAP-08.S02.T02
-      capability_id: CAP-08
-      slice_id: CAP-08.S02
-      title: Implement field and relation extraction workflows
-      objective: Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred
-        states, and checkpoints.
-      deliverables:
-      - Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states,
-        and checkpoints.
-      acceptance_criteria:
-      - Every nonempty value includes supporting anchors; absent values remain absent states; failed records retry independently;
-        cancellation preserves completed candidates.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-08.S02.T01
-      priority: P0
-      wave: W3
-      deployment_profiles: *id143
-      estimate: L
-      risk: high
-      review_gate: agent-review
-      verification_profiles:
-      - evidence
-      - ai
-      - service
-      verification_commands:
-      - python tools/verify.py --profile evidence
-      - python tools/verify.py --profile ai
-      - python tools/verify.py --profile service
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    - id: CAP-08.S02.T03
-      capability_id: CAP-08
-      slice_id: CAP-08.S02
-      title: Implement normalization and entity-link candidate generation
-      objective: Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to
-        ontology entities while retaining raw text.
-      deliverables:
-      - Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology
-        entities while retaining raw text.
-      acceptance_criteria:
-      - Normalized values never replace source wording; ambiguous links remain ranked candidates; unit conversions record
-        formula and source unit.
-      - Automated tests cover the expected path and at least one material failure or boundary condition.
-      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
-      dependencies:
-      - CAP-08.S02.T02
-      priority: P0
-      wave: W3
-      deployment_profiles: *id143
-      estimate: L
-      risk: high
-      review_gate: agent-review
-      verification_profiles:
-      - evidence
-      - service
-      verification_commands:
-      - python tools/verify.py --profile evidence
-      - python tools/verify.py --profile service
-      status: NOT_STARTED
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
-      completed_at: null
-      blocker: null
-      implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
-      verification_state: null
-      worktree: null
-      platform_targets:
-      - windows-x64
-    platform_targets:
-    - windows-x64
-    completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
-  - id: CAP-08.S03
-    title: Evidence record, status, confidence, and uncertainty model
-    outcome: Extracted content is stored with decomposed certainty and explicit epistemic status.
-    wave: W3
-    priority: P0
-    deployment_profiles: &id144
-    - LOC
-    - LAB
-    - ALL
-    depends_on:
-    - CAP-08.S02.T03
     - CAP-03.S03.T02
+    - CAP-08.S01.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-08.S03.T01
@@ -42512,12 +42466,14 @@ capabilities:
         history is immutable and queryable.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Place persistence before extraction writes in the DAG; define exact revision/schema/model/policy/anchor/call lineage,
+        idempotence and commit/provenance atomicity.
       dependencies:
-      - CAP-08.S02.T03
+      - CAP-08.S01.T03
       - CAP-03.S03.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id144
+      deployment_profiles: *id143
       estimate: L
       risk: high
       review_gate: agent-review
@@ -42559,11 +42515,13 @@ capabilities:
         are eligible for configured synthesis outputs.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Transition table and role/policy checks; machine cannot self-adjudicate or upgrade inferred to observed. Rights loss
+        marks restricted/stale without erasing lawful history.
       dependencies:
       - CAP-08.S03.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id144
+      deployment_profiles: *id143
       estimate: L
       risk: high
       review_gate: agent-review
@@ -42609,11 +42567,13 @@ capabilities:
         it was generated and calibrated.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Unknown/not-assessed is first-class; do not combine anchor/extraction/comparability/interpretation into one probability.
+        Export and UI retain each dimension, population and calibration limits.
       dependencies:
       - CAP-08.S03.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id144
+      deployment_profiles: *id143
       estimate: M
       risk: high
       review_gate: agent-review
@@ -42623,6 +42583,206 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile evidence
       - python tools/verify.py --profile desktop
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    platform_targets:
+    - windows-x64
+    completion:
+      status: PENDING
+      reviewer: null
+      reviewed_at: null
+      evidence: []
+      notes: null
+  - id: CAP-08.S02
+    title: Source-grounded extraction pipeline
+    outcome: Schema-constrained extraction selects relevant source context and emits candidate evidence without fabricating
+      absent fields.
+    wave: W3
+    priority: P0
+    deployment_profiles: &id144
+    - LOC
+    - LAB
+    - ALL
+    depends_on:
+    - CAP-05.S03.T03
+    - CAP-06.S03.T03
+    - CAP-07.S02.T03
+    - CAP-07.S04.T02
+    - CAP-07.S05.T02
+    - CAP-08.S01.T03
+    - CAP-08.S03.T03
+    status: NOT_STARTED
+    tasks:
+    - id: CAP-08.S02.T01
+      capability_id: CAP-08
+      slice_id: CAP-08.S02
+      title: Implement section/passages selection for extraction
+      objective: Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors
+        and coverage metadata.
+      deliverables:
+      - Rule, search, embedding, and citation-aware selectors that produce bounded context packets with exact anchors and
+        coverage metadata.
+      acceptance_criteria:
+      - Selectors are reproducible; excluded sections remain queryable; context packets never exceed configured rights/model
+        limits; selection provenance is retained.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Structural/lexical selectors first, optional semantic when eligible; packet bounds include excluded/coverage rationale,
+        source revision/selector and purpose-specific model-use permission.
+      dependencies:
+      - CAP-08.S01.T03
+      - CAP-05.S03.T03
+      - CAP-07.S04.T02
+      - CAP-06.S03.T03
+      priority: P0
+      wave: W3
+      deployment_profiles: *id144
+      estimate: L
+      risk: high
+      review_gate: agent-review
+      verification_profiles:
+      - evidence
+      - search
+      - documents
+      verification_commands:
+      - python tools/verify.py --profile evidence
+      - python tools/verify.py --profile search
+      - python tools/verify.py --profile documents
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    - id: CAP-08.S02.T02
+      capability_id: CAP-08
+      slice_id: CAP-08.S02
+      title: Implement field and relation extraction workflows
+      objective: Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred
+        states, and checkpoints.
+      deliverables:
+      - Batch and on-demand extractors using registered schemas, typed outputs, explicit not-reported/unclear/inferred states,
+        and checkpoints.
+      acceptance_criteria:
+      - Every nonempty value includes supporting anchors; absent values remain absent states; failed records retry independently;
+        cancellation preserves completed candidates.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - All nonempty observed values close over exact anchors; unreported/unclear/inapplicable/inferred remain distinct. Refusal
+        or invalid JSON/anchor cannot become extracted evidence; paired hallucination/adversarial tests required.
+      - 'For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable
+        human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \w+|[^\w\s] retaining punctuation and duplicate counts,
+        multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0;
+        equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported
+        strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no
+        official leaderboard equivalence.'
+      dependencies:
+      - CAP-08.S02.T01
+      - CAP-07.S02.T03
+      - CAP-07.S05.T02
+      - CAP-08.S03.T03
+      priority: P0
+      wave: W3
+      deployment_profiles: *id144
+      estimate: L
+      risk: high
+      review_gate: agent-review
+      verification_profiles:
+      - evidence
+      - ai
+      - service
+      verification_commands:
+      - python tools/verify.py --profile evidence
+      - python tools/verify.py --profile ai
+      - python tools/verify.py --profile service
+      status: NOT_STARTED
+      owner: null
+      branch: null
+      started_at: null
+      updated_at: '2026-08-07T00:00:00+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      base_sha: null
+      lease: null
+      verification_state: null
+      worktree: null
+      platform_targets:
+      - windows-x64
+    - id: CAP-08.S02.T03
+      capability_id: CAP-08
+      slice_id: CAP-08.S02
+      title: Implement normalization and entity-link candidate generation
+      objective: Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to
+        ontology entities while retaining raw text.
+      deliverables:
+      - Normalization for dates, samples, methods, measures, model/dataset names, construct synonyms, and links to ontology
+        entities while retaining raw text.
+      acceptance_criteria:
+      - Normalized values never replace source wording; ambiguous links remain ranked candidates; unit conversions record
+        formula and source unit.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Keep raw units/text, record conversion formula/version, evidence and ambiguity. Entity candidates do not replace canonical
+        observations until authorized acceptance.
+      - 'For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable
+        human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \w+|[^\w\s] retaining punctuation and duplicate counts,
+        multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0;
+        equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported
+        strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no
+        official leaderboard equivalence.'
+      dependencies:
+      - CAP-08.S02.T02
+      priority: P0
+      wave: W3
+      deployment_profiles: *id144
+      estimate: L
+      risk: high
+      review_gate: agent-review
+      verification_profiles:
+      - evidence
+      - service
+      verification_commands:
+      - python tools/verify.py --profile evidence
+      - python tools/verify.py --profile service
       status: NOT_STARTED
       owner: null
       branch: null
@@ -42661,8 +42821,9 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-08.S03.T03
     - CAP-07.S05.T03
+    - CAP-08.S02.T03
+    - CAP-08.S03.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-08.S04.T01
@@ -42679,9 +42840,19 @@ capabilities:
         anchors; unavailable verification is explicit.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Separate prompt/context and immutable verifier identity/limits. Use distinct eligible model if available; never load
+        two simultaneously merely to claim independence.
+      - 'For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame:
+        SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90,
+        SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80.
+        Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions
+        are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns,
+        all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human
+        review remains.'
       dependencies:
       - CAP-08.S03.T03
       - CAP-07.S05.T03
+      - CAP-08.S02.T03
       priority: P0
       wave: W3
       deployment_profiles: *id145
@@ -42728,6 +42899,15 @@ capabilities:
         candidate is rejected.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Return anchor-valid/schema-fit/entailed/contradicted/insufficient/inference-supported separately; deterministic anchor
+        checks100% adversarial denial. Unsupported fluent claims fail.
+      - 'For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame:
+        SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90,
+        SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80.
+        Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions
+        are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns,
+        all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human
+        review remains.'
       dependencies:
       - CAP-08.S04.T01
       priority: P0
@@ -42777,6 +42957,15 @@ capabilities:
         extraction without recorded sample results.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Stratified seeded audit frame/probabilities and sample outcomes; review100% high-consequence, inferred, disputed or
+        low-confidence candidates. Error intervals state population/design; no calibrated label from missing annotations.
+      - 'For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame:
+        SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90,
+        SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80.
+        Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions
+        are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns,
+        all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human
+        review remains.'
       dependencies:
       - CAP-08.S04.T02
       priority: P0
@@ -42829,8 +43018,9 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-08.S04.T02
     - CAP-01.S02.T01
+    - CAP-08.S04.T02
+    - CAP-08.S04.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-08.S05.T01
@@ -42846,6 +43036,8 @@ capabilities:
         fields and survive compatible upgrades.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - 100k evidence rows/200 fields tested through bounded pages, not all loaded in renderer; status/missingness and saved
+        schema IDs survive compatible upgrades.
       dependencies:
       - CAP-08.S04.T02
       - CAP-01.S02.T01
@@ -42895,6 +43087,8 @@ capabilities:
         than overwriting machine history.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Open exact protected source revision with preserved row/cell/filter/scroll/focus return; alternatives and corrections
+        create new history.
       dependencies:
       - CAP-08.S05.T01
       priority: P0
@@ -42945,8 +43139,11 @@ capabilities:
         audit events.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Preview impacted IDs/counts and rights; itemized commit/results with reauthorization. Human queues from S04T03 are
+        required before bulk verify actions become eligible.
       dependencies:
       - CAP-08.S05.T02
+      - CAP-08.S04.T03
       priority: P0
       wave: W3
       deployment_profiles: *id146
@@ -42999,8 +43196,8 @@ capabilities:
     - LAB
     - ALL
     depends_on:
-    - CAP-08.S05.T03
     - CAP-04.S04.T02
+    - CAP-08.S05.T03
     status: NOT_STARTED
     tasks:
     - id: CAP-08.S06.T01
@@ -43017,6 +43214,8 @@ capabilities:
         as error by default.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Authenticated Windows actor plus human-declared coder identity; assignment authorization/query filters and no peer
+        visibility before submission. No real-person identity proof, hosted multiuser IAM or foreign-host witness claimed.
       dependencies:
       - CAP-08.S05.T03
       - CAP-04.S04.T02
@@ -43066,6 +43265,8 @@ capabilities:
         evidence and schema version.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Retain all coder/machine alternatives and unresolved outcomes; adjudicator identity/reason/current evidence exact.
+        Agreement is not truth.
       dependencies:
       - CAP-08.S06.T01
       priority: P0
@@ -43113,6 +43314,8 @@ capabilities:
         text unless explicitly permitted.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Formula-safe CSV/JSON/JSONLD, no remote contexts; explicit text-export right and data-class filtering, checksums/codebook/anchors/logs,
+        cancelled/stale-source tests; omitted text remains visibly omitted.
       dependencies:
       - CAP-08.S06.T02
       priority: P0

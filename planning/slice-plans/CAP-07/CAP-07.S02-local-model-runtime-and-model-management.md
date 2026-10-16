@@ -20,476 +20,204 @@ task_ids:
 - CAP-07.S02.T01
 - CAP-07.S02.T02
 - CAP-07.S02.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.10
 approval:
   status: pending
   approved_by: null
   approved_at: null
   approved_commit: null
 ---
+
 # CAP-07.S02 — Local model runtime and model management
 
-> **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-07.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and both plan validators pass in approval mode. Once the capability campaign starts, the agent should execute continuously through its slices and pause only for an allowed infeasibility, external dependency, unavailable required hardware, explicit human decision, or approved design gate.
-
-<div class="visual-flow"><span>Capability decisions approved</span><b>→</b><span>Slice plan approved</span><b>→</b><span>Tasks executed</span><b>→</b><span>Slice integration</span><b>→</b><span>Independent review</span></div>
+PRIVATE PROPOSAL; NO IMPLEMENTATION AUTHORITY.
 
 ## 0. Plan control
 
-| Field | Value |
-|---|---|
-| Capability | `CAP-07` — Provider-neutral model gateway and governed AI execution |
-| Capability objective | Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers. |
-| Slice | `CAP-07.S02` — Local model runtime and model management |
-| Slice outcome | PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server. |
-| Wave / priority | `W3` / `P0` |
-| Deployment profiles | `LOC`, `LAB` |
-| Platform targets | `windows-x64` |
-| Backlog tasks | `CAP-07.S02.T01`, `CAP-07.S02.T02`, `CAP-07.S02.T03` |
-| Slice dependencies | `CAP-07.S01.T03`, `CAP-01.S03.T03` |
-| Capability decision packet | `planning/capability-plans/CAP-07.md` — must be approved and decision-complete |
-| Approved experience | `RO-UI-ACADEMIC-MINIMAL-1.3`; relevant pages: model-center.html, audit-lineage.html, project-settings.html |
-| Approval state | `PROPOSED` / human approval pending |
+Private W3 replacement draft of `planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md`. Original hash `553b03713d2d570d4acdc3d281c6253ac9199738a3f502469a9396ca2dfe53a5`. Current canonical status NOT_STARTED is unchanged. Wave-scoped execution; the schema's legacy planning_gate spelling does not recreate capability-campaign approval. All peers bind the single Wave packet.
 
 ## 1. Purpose and contribution to the larger vision
 
-PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server.
-
-This slice advances the capability objective: **Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers.** It is designed as one production vertical inside a long-running capability campaign, not as an isolated technical experiment. The implementation must preserve the platform’s evidence-before-prose rule, source and decision provenance, bounded uncertainty, researcher authority, local-first privacy, cross-platform ports, and the distinction between canonical scholarly state and rebuildable analytical derivatives.
-
-**Implementation thesis.** Provide a supervised, verifiable and resource-aware local inference substrate that keeps ordinary research work offline while treating model artifacts, licenses and hardware profiles as governed dependencies.
-
-The containing capability is complete only when all of its slices satisfy these exit conditions:
-
-- All model calls pass through typed task contracts and produce versioned, observable result envelopes.
-- Local inference supports the complete basic PC/lab workflow; remote egress is optional and explicitly authorized.
-- Prompts, schemas, repair, evaluation, costs, and model upgrades are controlled as durable system assets.
+PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server. A supervised signed native model worker hosts pinned llama.cpp generation or ONNX CPU encoders behind ADR21. Canonical purpose-specific rights, classification and budget authority precede any allow; model selection is explicit and per role.
 
 ## 2. Scope
 
-### 2.1 In scope
+A supervised signed native model worker hosts pinned llama.cpp generation or ONNX CPU encoders behind ADR21. Canonical purpose-specific rights, classification and budget authority precede any allow; model selection is explicit and per role.
 
-- Supervised llama.cpp and ONNX-class local runtimes behind gateway adapters.
-- Model catalog, consent, import/download, checksums, licenses, cache and removal.
-- Hardware discovery, profiles, concurrency, memory and acceleration limits.
-
-### 2.2 Explicit non-goals
-
-- Training or fine-tuning foundation models.
-- Remote provider implementation (S03).
-- Assuming NVIDIA acceleration exists on every desktop.
-- Do not implement downstream capability behavior beyond narrow ports, fixtures and handoffs explicitly named here.
-- Do not introduce university-hosted or managed-cloud infrastructure during the local Windows waves; preserve deployment-neutral contracts only.
-- Do not bypass the Core API, canonical repositories, provenance ledger, durable workflow fabric, rights policy, model gateway or approved experience reference.
-- Do not declare completion from happy-path task tests alone; slice-wide failure, cancellation, restart, migration, security, accessibility and handoff evidence is required.
-
-### 2.3 Slice boundary
-
-- **Consumes:** `CAP-07.S01.T03`, `CAP-01.S03.T03` and the handoffs in Section 13.
-- **Produces:** PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server.
-- **Owns:** The portable domain contracts, adapter boundaries, workflows, fixtures, decisions and evidence explicitly listed in this plan.
-- **Does not own:** Product purpose, unrelated capabilities, user-authoritative scholarly judgments, source rights, or provider/database/UI framework internals.
+Non-goals: hosted infrastructure, neural training,8/16GiB model workloads, optional W9 optimization, unapproved larger-compute W5 or new physical foreign-host proof. Do not implement future synthesis/writing/publication authority.
 
 ## 3. Authority, dependencies, and campaign stop conditions
 
-### 3.1 Governing authority
+Proposed dependencies: CAP-01.S03.T03, CAP-07.S01.T03, CAP-07.S04.T02. Inherit accepted ADR21/25/26/28/29 within remit, current Windows protected lifecycle and actual W2 exit/G2 prerequisite. New proposed architecture/reference must be accepted through normal planning before W3 approval. Unknown facts stay unknown; ordinary failures/debugging are not new owner gates.
 
-1. Vision and non-goals in `docs/product/vision.md`.
-2. Accepted ADRs, then `docs/architecture/source/systems-design.md`.
-3. `planning/backlog.yaml` for IDs, dependencies, waves, status and evidence.
-4. Approved capability decision packet `planning/capability-plans/CAP-07.md`.
-5. This approved slice plan.
-6. Approved UI reference, workflow/page contracts and style guide for user-facing work.
-7. Automation and task-control rules.
+## 3A. Exact selected policy03 incorporation
 
-### 3.2 Required upstream state
+The exact selected policy03 is incorporated in this private successor, not adopted or measured: root-selected-policy-refinement-03.json SHA2561c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81. The genuine prior review5ced assesses the selected choices only. This complete packet still requires independent incremental review and ordinary actual authority before one immutableW3 approval.
 
-- All slice dependencies are approved or an explicitly approved integration stub exists: `CAP-07.S01.T03`, `CAP-01.S03.T03`.
-- The capability decision packet contains all material cross-slice choices, candidate options, recommendation, accepted selection, migration boundary and approval.
-- Every slice plan in the capability exists and is structurally valid before capability approval; all plans are approved before campaign start.
-- Required fixtures, benchmark corpora, credentials, model/source licenses, platform resources and human authority are available or represented by approved deterministic stubs.
-
-### 3.3 Decision-complete capability rule
-
-Planning by capability is the default. Before `capability start`, the planning agent inspects all slices and adjacent contracts, researches credible options, and records the strongest best-in-class recommendation as the selected and accepted option for every material decision in the capability packet. Those selections count as completed decisions. The static review site is a confirmation-and-override surface plus the one-time capability approval gate; implementation agents must not repeatedly ask for choices already settled by the packet. After approval, execution proceeds continuously slice by slice through a production-ready end-to-end capability.
-
-### 3.4 Allowed pauses after execution begins
-
-The long-running campaign should continue task-by-task and slice-by-slice. It may pause only when classified as one of the following and recorded by `taskctl`:
-
-- **Infeasible:** validated evidence disproves the selected design and no compatible fallback exists within the approved boundary.
-- **External dependency:** a required source/provider/license/credential/approval controlled outside the repository is unavailable.
-- **Hardware unavailable:** a required qualification target cannot be simulated and is not accessible.
-- **Human decision:** a newly discovered consequential product, architecture, security, rights, ethics or scholarly-authority choice was not reasonably knowable during planning.
-- **Approved design gate:** the implementation requires an intentional change to the governed style guide/workflow/page reference.
-
-Ordinary implementation uncertainty, test failure, debugging, refactoring, model fallback, recoverable performance work, or a choice already covered by the packet is not a pause condition.
+Task additions below preserve original forecasts as history, other proposed timing goals and hard source/rights/security/resource/cleanup requirements. They create no new task or execution authority.
 
 ## 4. Selected implementation decisions
 
-The capability packet's researched best-in-class recommendations are already selected, accepted, and decision-complete. This section projects the applicable decisions into the slice implementation contract. Capability approval authorizes those defaults; a reviewer may override a selection before approval only with explicit rationale. During execution, no implementation agent may silently choose a different candidate.
-
-
-These selections are recommendations until the capability packet and ADRs are approved. Approval turns them into the execution contract for the campaign.
-
-| Decision | Recommended selection | Alternative not selected | Rationale and replaceability | Basis |
-|---|---|---|---|---|
-| **Runtime split** | llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers. | One monolithic Python transformers service for every workload. | The split improves cross-platform packaging and resource efficiency while the gateway hides runtime details. | [llama.cpp](https://github.com/ggml-org/llama.cpp) |
-| **Artifact acceptance** | Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation. | Download latest by mutable model name. | Reproducibility, security and legal use require immutable artifacts and explicit consent. | [Safetensors Documentation](https://huggingface.co/docs/safetensors/index) |
-| **Hardware profiles** | Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback. | Optimistically allocate all GPU/RAM. | Research desktops and DGX-class lab machines vary widely; adaptive limits prevent instability. | [ONNX Runtime Execution Providers](https://onnxruntime.ai/docs/execution-providers/) |
+Use the concrete proposed choices in this capability front matter and contracts-01.md. Relevant W3 decision register: CAP-07-D02, CAP-07-D03, CAP-07-D04, CAP-07-D05, CAP-07-D09, CAP-07-D10, CAP-07-D11, CAP-07-D12, CAP-07-D13, CAP-07-D14, CAP-07-D15, CAP-07-D16, CAP-07-D17, CAP-07-D18, CAP-07-D19, CAP-07-D20. Recommended != accepted. Preserve four inherited CAP07 W1 decisions exactly.
 
 ## 5. Architecture and implementation design
 
-### 5.1 Components and recommended repository locations
+- Existing Core model routing policy/ports and generated gateway contracts
+- New model-specific native worker broker boundary under workers/
+- Model & Privacy Center and protected catalog/configuration
 
-| Component / location | Responsibility |
-|---|---|
-| `services/workers/models/llama_cpp` | Supervised local LLM server lifecycle and health. |
-| `services/workers/models/onnx` | Embedding/reranking/NLI execution sessions. |
-| `services/core/research_observatory/adapters/models/local` | Gateway adapters and request normalization. |
-| `services/core/research_observatory/modules/model_gateway/model_store.py` | Catalog, artifact state, license consent and cache policy. |
-| `packages/ui/model-center` | Install/import/remove, profiles, diagnostics and consent. |
-| `packages/test-support/model-stubs` | Deterministic valid/invalid/timeout/adversarial responses. |
-
-The paths are recommendations within the approved modular-monolith/package structure. Exact filenames may change without a new decision if module ownership, portable contracts and dependency directions remain intact.
-
-### 5.2 Data model and durable state
-
-| Entity / value object | Required semantics |
-|---|---|
-| `ModelArtifact` | content hash, source/revision, file format, size, license, consent, scan and compatibility |
-| `LocalRuntimeProfile` | platform, execution provider, threads, batch/context, memory/VRAM limits and concurrency |
-| `ModelInstallation` | artifact set, runtime, health, status, cache path and last verified |
-| `LocalModelSession` | model/profile, worker PID/endpoint, load state, resource usage and trace |
-
-**Cross-cutting invariants**
-
-- Canonical records, accepted evidence, rights decisions, human adjudications and provenance are authoritative; indexes, graph projections, rankings, generated drafts and detector signals are versioned derivatives.
-- Unknown, not reported, not applicable, denied, unavailable, ambiguous, inferred, disputed, stale and failed remain distinct where relevant.
-- Every long-running operation has stable identity, status, inputs/manifests, progress, cancellation, checkpoint, restart and evidence records.
-- State transitions are authorized in core services and committed atomically with outbox/dependency facts or through an idempotent staged protocol.
-
-### 5.3 Interfaces and contracts
-
-- `LocalRuntimeSupervisor.ensure(model, profile)` starts or reuses bounded runtime.
-- `ModelStore.install/import/verify/remove` is transactional and resumable.
-- `HardwareProbe.snapshot()` feeds policy without leaking platform calls into domain modules.
-- Runtime health includes model hash, capabilities, loaded state and resource usage.
-
-All contracts use stable canonical IDs, explicit revisions/status, typed errors and version metadata. Provider SDK objects, SQLite rows, model tensors, graph library objects and UI component state may not cross the owning adapter boundary.
-
-### 5.4 Cross-capability and platform compatibility
-
-- Windows x64 is the current implementation target, but paths, process control, credential storage, accelerators and packaging stay behind adapters required by CAP-14 macOS/Linux qualification.
-- Local and hosted deployments use the same domain/API/workflow semantics; storage, process, authentication and scaling adapters differ later.
-- Downstream CAP-11–19 consume immutable IDs, evidence/provenance, manifests and ports rather than internal tables or framework classes.
-- Model, embedding, reranker, parser, graph and vector choices are pinned and replaceable; changing one marks exact dependents stale and requires evaluation rather than silent regeneration.
+Current paths only. Stable generated contracts/ports, canonical transaction+provenance/outbox and narrow worker authority; no second state store or runtime evaluation dependency. Exact new filenames remain task-selected, not asserted existing.
 
 ## 6. User experience and approved reference
 
-- Model Center clearly separates bundled, installed, available and incompatible models.
-- Install flow shows source, license, size, disk requirement, hardware fit and expected task coverage before consent.
-- Resource profiles explain CPU/GPU choice and provide safe unload/cancel controls.
-- Offline state never appears as an error when a local route is configured.
+The complete proposed reference is architecture-ux/ui-reference/ at this packet root. Actual1.9 is the inherited base, not approval of new W3 interactions; future reference ID/approval remain null. Preserve all14 semantic1.5 workflows. MetricPolicy03 applies only to its declared roles/tasks; shared existing parser/model reservation governs relevant runtime work without imposing a new metric on unrelated retrieval/screening.
 
-- Workflow navigation must show the project’s selected use case, current numbered stage, completed/upcoming states, expected output and next/previous actions.
-- Supporting tools remain accessible, but opening one explains its relationship to the primary path and offers return to the current stage.
-- All semantic states use text/icon in addition to color, meet WCAG 2.2 AA targets, support keyboard operation, and have light/dark parity.
-- Loading, empty, offline, partial, denied, stale, cancellation, failure, retry and recovery states are designed—not left as generic alerts.
-
-**Reference-first rule.** If the planned experience materially differs from `RO-UI-ACADEMIC-MINIMAL-1.3`, update the style guide, workflow catalog, page contract and HTML prototype; run reference validators; obtain explicit approval and a new reference ID; only then implement application code. Restoring a defect to the approved reference does not require a new reference.
+Base RO-UI-ACADEMIC-MINIMAL-1.9, exact inherited semantic catalog1.5/14keys and source-first supporting-return behavior. Apply the material proposed W3 interaction delta only after ordinary reference adoption; do not implement mock7B/GPU32k/prices as defaults. See ux-reference-proposal-01.md for keyboard/focus/status/late result contracts.
 
 ## 7. Security, privacy, rights and research integrity
 
-- Prefer GGUF/safetensors or otherwise inspected non-executable formats; never execute arbitrary model-repository code.
-- Downloads use allowlisted hosts, TLS, resumable temporary files and hash verification.
-- Runtime process is sandboxed to model/cache/project-approved paths and no network unless explicitly required.
-
-Additional mandatory controls:
-
-- Treat source content, metadata, model files, provider responses, reports, URLs, archives and rich text as untrusted.
-- Apply least privilege, schema/input validation, destination/path controls, bounded resources, output encoding and redacted diagnostics at trusted boundaries.
-- Private projects and unpublished ideas remain local by default; egress requires project policy, rights decision and visible payload/provider preview.
-- Never fabricate evidence, citations, availability, permissions, method details, model certainty, benchmark success or completion evidence.
-- AI output is candidate state until the domain-specific verifier/human gate promotes it.
+Before reads/dispatch/commit/replay: exact project/session/Intent/source rights+model-use/classification/budget. Source/model output untrusted; encrypted projections/cache, no implicit network/spend, human inclusion/ethics/interpretation/final claim. Prove the material real principal boundary, not mocks alone.
 
 ## 8. Failure, cancellation, restart and recovery
 
-| Material scenario | Required durable and user-visible behavior |
-|---|---|
-| Interrupted download | Resume verified ranges or discard temp file; never activate partial artifact. |
-| Hash/license mismatch | Quarantine and require explicit resolution; no execution. |
-| Runtime crash/OOM | Supervisor captures bounded diagnostics, unloads, selects safer profile only with declared fallback policy. |
-| Incompatible platform artifact | Show compatible alternatives and retain project usability through other routes/manual workflow. |
-
-Every scenario receives a deterministic fixture where feasible, expected canonical state, expected derivative state, user message/action, retry/cancel rule, cleanup/repair rule, provenance event and automated test. A restart test must execute from persisted state rather than from an in-memory mock alone.
+Default deny survives missing catalog, expiry, OOM, crash, rights revocation, close/lock and late output. Serial unload/reload is explicit; no automatic remote/provider/model substitution. Model downloads are explicit and outside this planning task. Preserve prior accepted work, failed raw outputs and immutable actor/attempt identity. Normal owned cleanup is required for lifetime claims.
 
 ## 9. Task-by-task implementation plan
 
 ### CAP-07.S02.T01 — Integrate a supervised local inference runtime
 
-**Objective.** Sidecar-managed llama.cpp-compatible runtime with health, cancellation, streaming, batching limits, hardware detection, and safe shutdown.
+Objective: Sidecar-managed llama.cpp-compatible runtime with health, cancellation, streaming, batching limits, hardware detection, and safe shutdown.
 
-| Control | Value |
-|---|---|
-| Dependencies | `CAP-07.S01.T03`, `CAP-01.S03.T03` |
-| Estimate / risk | `L` / `high` |
-| Review gate | `agent-review` |
-| Verification profiles | `ai`, `service`, `e2e-local` |
+Dependencies: CAP-07.S01.T03, CAP-01.S03.T03, CAP-07.S04.T02. Estimate: 32 engineering-effort-hours including 8 planned refactoring hours.
 
-**Expected deliverables**
-
-- Sidecar-managed llama.cpp-compatible runtime with health, cancellation, streaming, batching limits, hardware detection, and safe shutdown.
-
-**Ordered implementation sequence**
-
-1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-07.S02.T01`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
-2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
-3. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
-4. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
-5. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
-
-**Acceptance criteria from the authoritative backlog**
+Original forecast acceptance retained:
 
 - A supported quantized model completes fixture prompts on CPU; cancellation releases resources; runtime crash does not corrupt workflow or project data.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
 
-**Criterion-linked evidence required**
+Explicit W3 adaptation/additional closure:
 
-- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
-- Named automated tests and report paths mapped to every acceptance criterion.
-- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
-- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
-- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
-- Independent reviewer result. The implementation agent may not self-approve.
+- Implement canonical grant/classification/local-zero-money reservation first, then signed no-network worker with read-only pinned artifacts/private framed pipes; Job lifetime and memory limits are additional, not the security principal.
+- Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.
 
-**Backlog verification commands**
+Ordered implementation:
 
-```text
-python tools/verify.py --profile ai
-python tools/verify.py --profile service
-python tools/verify.py --profile e2e-local
-```
+1. Risk-selected task-start acceptance-closure; inspect current predecessor and material adverse findings; characterize the material boundary before production changes where practical.
+2. Implement the bounded contract through existing Core/worker/generated ports; preserve immutable history and update compatibility/migration as needed.
+3. Implement canonical grant/classification/local-zero-money reservation first, then signed no-network worker with read-only pinned artifacts/private framed pipes; Job lifetime and memory limits are additional, not the security principal. Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.
+4. Commit then collect criterion-linked exact-candidate evidence with stable selected inputs/normal owned cleanup; independent task disposition and integration.
+
+Evidence/review: Independent commit-bound task disposition; deeper review for policy, model/worker isolation, rights/egress, migrations, cross-process contracts and research-integrity changes. Machine-readable criterion/outcome map with actual candidate/source/runtime/fixtures and raw receipts; failures/skips/limits retained. Happy path plus the material denial/cancel/restart/recovery/rights/staleness cases selected by this task and contracts-01.md. Actual resource/timing/quality evidence for claims made; fixtures do not prove a real security or model boundary. Exact selected policy03 method/denominator/reservation evidence as applicable; no inferred fit/quality/people/license and no suppression of failed execution.
 
 
 ### CAP-07.S02.T02 — Implement model catalog, download/import, integrity, and license consent
 
-**Objective.** Model manifest catalog, resumable download or local import, checksums/signatures, disk estimates, license display, and removal.
+Objective: Model manifest catalog, resumable download or local import, checksums/signatures, disk estimates, license display, and removal.
 
-| Control | Value |
-|---|---|
-| Dependencies | `CAP-07.S02.T01` |
-| Estimate / risk | `L` / `high` |
-| Review gate | `agent-review` |
-| Verification profiles | `ai`, `desktop`, `security-local` |
+Dependencies: CAP-07.S02.T01. Estimate: 24 engineering-effort-hours including 0 planned refactoring hours.
 
-**Expected deliverables**
-
-- Model manifest catalog, resumable download or local import, checksums/signatures, disk estimates, license display, and removal.
-
-**Ordered implementation sequence**
-
-1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-07.S02.T02`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
-2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
-3. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
-4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
-5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
-6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
-7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
-
-**Acceptance criteria from the authoritative backlog**
+Original forecast acceptance retained:
 
 - Models cannot execute before integrity and license state are recorded; failed download resumes safely; removal is blocked while a job depends on the model.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
 
-**Criterion-linked evidence required**
+Explicit W3 adaptation/additional closure:
 
-- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
-- Named automated tests and report paths mapped to every acceptance criterion.
-- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
-- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
-- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
-- Independent reviewer result. The implementation agent may not self-approve.
+- Import/download has exact origin/revision/hash/tokenizer/license and user consent; staged resume verifies chunks/final hash; reject custom code, arbitrary native model extensions and redirect substitutions.
 
-**Backlog verification commands**
+Ordered implementation:
 
-```text
-python tools/verify.py --profile ai
-python tools/verify.py --profile desktop
-python tools/verify.py --profile security-local
-```
+1. Risk-selected task-start acceptance-closure; inspect current predecessor and material adverse findings; characterize the material boundary before production changes where practical.
+2. Implement the bounded contract through existing Core/worker/generated ports; preserve immutable history and update compatibility/migration as needed.
+3. Import/download has exact origin/revision/hash/tokenizer/license and user consent; staged resume verifies chunks/final hash; reject custom code, arbitrary native model extensions and redirect substitutions.
+4. Commit then collect criterion-linked exact-candidate evidence with stable selected inputs/normal owned cleanup; independent task disposition and integration.
+
+Evidence/review: Independent commit-bound task disposition; deeper review for policy, model/worker isolation, rights/egress, migrations, cross-process contracts and research-integrity changes. Machine-readable criterion/outcome map with actual candidate/source/runtime/fixtures and raw receipts; failures/skips/limits retained. Happy path plus the material denial/cancel/restart/recovery/rights/staleness cases selected by this task and contracts-01.md. Actual resource/timing/quality evidence for claims made; fixtures do not prove a real security or model boundary.
 
 
 ### CAP-07.S02.T03 — Implement hardware profiles and adaptive resource limits
 
-**Objective.** CPU/GPU/RAM/VRAM detection, recommended models, context/batch caps, concurrency, thermal-friendly modes, and user overrides.
+Objective: CPU/GPU/RAM/VRAM detection, recommended models, context/batch caps, concurrency, thermal-friendly modes, and user overrides.
 
-| Control | Value |
-|---|---|
-| Dependencies | `CAP-07.S02.T02` |
-| Estimate / risk | `M` / `medium` |
-| Review gate | `agent-review` |
-| Verification profiles | `ai`, `e2e-local` |
+Dependencies: CAP-07.S02.T02. Estimate: 22 engineering-effort-hours including 0 planned refactoring hours.
 
-**Expected deliverables**
-
-- CPU/GPU/RAM/VRAM detection, recommended models, context/batch caps, concurrency, thermal-friendly modes, and user overrides.
-
-**Ordered implementation sequence**
-
-1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-07.S02.T03`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
-2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
-3. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
-4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
-5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
-6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
-7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
-
-**Acceptance criteria from the authoritative backlog**
+Original forecast acceptance retained:
 
 - Low-resource test profiles remain responsive; unsafe allocations are refused or confirmed; effective limits appear in task provenance.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
 
-**Criterion-linked evidence required**
+Explicit W3 adaptation/additional closure:
 
-- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
-- Named automated tests and report paths mapped to every acceptance criterion.
-- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
-- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
-- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
-- Independent reviewer result. The implementation agent may not self-approve.
+- Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending. User can lower caps; confirmation cannot override a hard safety cap.
+- Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.
+- After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.
 
-**Backlog verification commands**
+Ordered implementation:
 
-```text
-python tools/verify.py --profile ai
-python tools/verify.py --profile e2e-local
-```
+1. Risk-selected task-start acceptance-closure; inspect current predecessor and material adverse findings; characterize the material boundary before production changes where practical.
+2. Implement the bounded contract through existing Core/worker/generated ports; preserve immutable history and update compatibility/migration as needed.
+3. Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending. User can lower caps; confirmation cannot override a hard safety cap. Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise. After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.
+4. Commit then collect criterion-linked exact-candidate evidence with stable selected inputs/normal owned cleanup; independent task disposition and integration.
 
+Evidence/review: Independent commit-bound task disposition; deeper review for policy, model/worker isolation, rights/egress, migrations, cross-process contracts and research-integrity changes. Machine-readable criterion/outcome map with actual candidate/source/runtime/fixtures and raw receipts; failures/skips/limits retained. Happy path plus the material denial/cancel/restart/recovery/rights/staleness cases selected by this task and contracts-01.md. Actual resource/timing/quality evidence for claims made; fixtures do not prove a real security or model boundary. Exact selected policy03 method/denominator/reservation evidence as applicable; no inferred fit/quality/people/license and no suppression of failed execution. After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.
 
 ## 10. Slice-wide verification matrix
 
-| Verification family | Required slice evidence |
-|---|---|
-| Domain and schema | Contract examples/negative cases; invariants and state transitions; stable IDs/revisions; property tests where valuable. |
-| Adapter and integration | Real local adapters with deterministic fixtures; idempotency; concurrency; transaction/outbox/dependency behavior; replaceability test double. |
-| End-to-end | Approved workflow from entry point through durable result, source inspection, user decision and restart. |
-| Failure and recovery | At least the Section 8 cases, cancellation acknowledgement, process restart, corrupted/partial derivative repair and no canonical loss. |
-| Security, privacy and rights | Authorization denial, prompt/source injection, malformed files/payloads, secret/content redaction, egress and export policy. |
-| Accessibility and UI reference | Route/page contract, shared tokens, light/dark, keyboard, focus, screen reader, zoom/reflow and visual-baseline checks. |
-| Performance and capacity | Declared fixtures, warm/cold measurements, p50/p95, memory/disk/model footprint, cancellation and regression threshold. |
-| Cross-capability | Upstream fixture compatibility, downstream contract fixture, staleness propagation and no forbidden module dependency. |
-| Independent review | Reviewer maps every criterion to evidence, challenges tests and confirms no concealed production blocker. |
-
-Task verification commands are authoritative minimums. The slice review must also run a clean-state combined profile and any benchmark/security/reference checks described here.
+Complete this slice outcome through actual predecessor ports and real Windows local UI/Core/worker boundaries. Selected evidence: exact/happy, denial/rights revoke, invalid schema/anchor, cancel/late completion, crash/restart, migration/rebuild, OOM/unsafe resource and keyboard/focus as applicable. Cross-slice checkpoints in wave-proposal-01.json do not add human gates. All measured claims cite actual raw/criterion/candidate and limits.
 
 ## 11. Performance and resource budgets
 
-| Measure | Initial production budget / qualification target |
-|---|---|
-| Runtime start | Health-ready < 15 s for a small approved local model on reference Windows hardware after cached files. |
-| Idle containment | Unloaded models release GPU memory and worker process when policy timeout expires. |
-| Model verification | Stream hash at disk speed without loading whole artifact in memory. |
-| Cancellation | Queued work cancels immediately; active generation stops within two token batches or 1 s where runtime supports it. |
-
-Budgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.
+Use the explicit proposed initial-target-register-01.json, not old p95/max forecast prose as a new timing gate. Timing decisions use median of ALL comparable completed trials per workload/state/configuration; retain min/median/max/raw/conditions, failures and timeouts. Resource/quality/rights/security/cleanup limits remain hard. No spike attribution without evidence. Models obey the total application2GiB preferred/3GiB upper aggregate and per-role tiny/small admission; see aggregate-resource-and-selection-policy-02.json. All numeric choices are proposed initial engineering targets needing actual W3 validation, not measurements or RAM/model promises. Optional optimization remains W9.
 
 ## 12. Observability and provenance
 
-Required metrics and diagnostics:
-
-- install/download/verify outcomes
-- model load time
-- tokens/embeddings per second
-- RAM/VRAM high-water
-- runtime crash/OOM
-- profile fallback
-- cache size/cleanup
-
-- One trace/correlation ID links desktop action, core command, workflow job, adapter/model call, provenance activity and evidence artifact.
-- Operational telemetry is content-redacted by default. Durable scholarly provenance records source IDs/passages/hashes, schema/policy/model versions, decisions and derivation—not secret-bearing logs.
-- Support bundles require user preview and classification-aware exclusion of source text, research ideas, prompts and unpublished results.
-- Every promoted output records dependencies so CAP-03 can mark it stale precisely.
+Content-free operational trace IDs/hashes/sizes/status/actual use; durable scholarly source/task/schema/model/profile/policy/actor lineage in protected canonical records. Unknown confidence/usage explicit, no raw private content in default logs.
 
 ## 13. Adjacent-slice handoffs
 
-- Implements local routes declared in S01 and prompt/schema jobs in S04.
-- Supports CAP-06 embeddings/reranking and CAP-08–10 local private AI work.
-- CAP-14 extends artifact/profile matrix to macOS/Linux/DGX Spark.
-
-Handoffs must include portable schemas, accepted/rejected examples, failure fixtures, manifest/version rules, performance baselines and evidence IDs. An informal README-only handoff is insufficient.
+The explicit task edges, parent-slice external dependency unions and ordered prior-slice approval gates in task-register-01.json/ordered-slice-feasibility-witness-05.json jointly govern this proposed execution; retain all original external predecessors. Canonical persistence precedes extraction commits, runtime authority precedes positive model tasks, verifier sampling precedes bulk verification, optional remote cannot block the complete local journey.
 
 ## 14. Migration and backward compatibility
 
-- Version every durable schema, policy, model/index/graph manifest and export profile. Use forward migrations with preflight, backup, rollback/repair evidence and test fixtures from the prior supported release.
-- Rebuilding a derivative does not mutate canonical evidence/decisions. Old and new derivative versions remain distinguishable until promotion and dependent staleness are resolved.
-- Project moves and later Windows/macOS/Linux qualification cannot rely on absolute paths or machine-specific IDs in portable records.
-- Deprecations include reader compatibility, warnings, migration telemetry and a declared removal release. Unsupported old projects open read-only with repair/export options rather than silent partial upgrade.
+Start at actual approved predecessor schema observed28; backup-first staged migration/row+cell+object preservation/interrupted rollback/read-only incompatible handling. Index/model/prompt/schema upgrades retain historic identities and stale derived generations. Never repair original recovery fixtures or mint legacy witnesses.
 
 ## 15. Required slice evidence bundle
 
-- Approved capability decision packet and this approved slice plan at immutable commits.
-- Reviewed commits/diffs for all tasks and criterion-to-evidence records.
-- Unit, contract, integration, end-to-end, failure, cancellation, restart, recovery, migration and performance reports.
-- Security/privacy/rights/research-integrity review and accessibility/UI conformance evidence where applicable.
-- Schemas, migrations, API/client fixtures, model/index/graph manifests, benchmark datasets and hashes.
-- Architecture dependency report, staleness/provenance traces and adjacent-slice handoff fixture.
-- Independent slice review with approved/changes-requested/blocked outcome.
+Criterion-linked machine manifest, actual raw commands/outcomes, exact candidate/source/runtime/fixture/policy closure, declared gold/measurement rights and human annotations, real boundary proof where claimed, source/UX/risk-selected independent review, limits/deferred coverage and adverse history.
 
 ## 16. Definition of Ready
 
-- Capability packet is decision-complete and approved; each decision lists options, recommendation, accepted selection and migration boundary.
-- This plan and all other capability slice plans exist, pass structural checks and are approved.
-- Required ADRs/experience changes are approved before the campaign starts.
-- Dependencies, fixtures, credentials/licenses, platform resources and human authorities are available or explicitly stubbed.
-- The first task is `READY`, no conflicting lease exists, and the campaign can plausibly run to production-ready capability completion without routine stop points.
+After W2 completion/G2, all proposed W3 peers/decisions/architecture/reference and estimates receive normal immutable complete-Wave approval; actual dependency-eligible task claimed through taskctl. Task-start work refines material acceptance, not a new approval packet.
 
 ## 17. Definition of Done
 
-- Every task is `DONE` and independently approved.
-- Slice-wide verification passes from a clean state on the required platform/profile.
-- Failure, denial, cancellation, restart, migration, recovery, security, accessibility and performance paths satisfy this plan.
-- No concealed TODO, placeholder, skipped mandatory test, unreviewed architecture divergence or production blocker remains.
-- Handoff contracts/fixtures and dependency/staleness behavior are accepted by the next slice.
-- The capability campaign automatically advances to its next dependency-ready slice.
+All original criteria plus explicit approved W3 adaptations measured/proven, actual task dispositions integrated, end-to-end slice evidence and independent slice judgment, no invented model/human/data or ignored adverse result. No slice/task completion is asserted here.
 
 ## 18. Risks and mitigations
 
-| Risk | Mitigation |
-|---|---|
-| Model supply-chain risk | Immutable hashes, safe formats, allowlists, license manifests and no trust_remote_code. |
-| Hardware fragmentation | Profiles, CPU fallback, benchmark registry and platform-specific qualification. |
-| Large download burden | Task-oriented recommended models, resumable cache and transparent disk management. |
+Default deny survives missing catalog, expiry, OOM, crash, rights revocation, close/lock and late output. Serial unload/reload is explicit; no automatic remote/provider/model substitution. Model downloads are explicit and outside this planning task. Small-model quality and real protected-index/runtime feasibility are unmeasured. Refuse unsupported roles, retain manual/lexical usefulness, report target failures and use ordinary consequential-evidence route; no silent security/performance waiver.
 
 ## 19. Required ADRs and human decisions
 
-- ADR-CAP07-LOCAL-RUNTIME: llama.cpp/ONNX split, supported formats and sandbox.
-- ADR-CAP07-LOCAL-MODELS: initial approved model set after evaluation/licensing.
-
-All material choices in Sections 4–5 must appear in the capability packet. Before approval, reviewers may accept the recommendation, select a documented alternative, or require more evidence. After capability start, these choices are not reopened for preference; they are reopened only when implementation evidence demonstrates infeasibility or a newly discovered consequential issue outside the approved decision envelope.
+The three material unnumbered architecture topics and the W3 experience delta are ordinary proposed decisions, not accepted ADRs. Reuse accepted decisions within remit; exact normal record identities assigned at planning transition. No placeholder ADR-CAP reference is treated as accepted. The one Wave approval remains pending.
 
 ## 20. Research and standards basis
 
-- **llama.cpp** — Cross-platform local generative inference, embeddings, reranking, grammar constraints and OpenAI-compatible service.  
-  https://github.com/ggml-org/llama.cpp
-- **ONNX Runtime Execution Providers** — Portable CPU/CUDA/DirectML/CoreML inference for embedding, reranking and classification models.  
-  https://onnxruntime.ai/docs/execution-providers/
-- **Safetensors Documentation** — Safer tensor serialization and model artifact inspection.  
-  https://huggingface.co/docs/safetensors/index
-- **Hugging Face Hub Cache Management** — Content-addressed model cache, revisions, cleanup and offline behavior.  
-  https://huggingface.co/docs/huggingface_hub/guides/manage-cache
-
-These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
+See primary-evidence-01.json plus the unchanged read inventory in genuine905b. Primary docs motivate choices but do not prove installed versions, data rights, model quality, resource fit or actual results.
 
 ## 21. AI implementation runbook
 
-1. Run `python tools/planctl.py ready CAP-07 --require-approved` and `python tools/taskctl.py validate`.
-2. Confirm the active campaign is `CAP-07`, this is the current slice, and the approved packet/plan commits match the campaign record.
-3. Load only the governing context, capability packet, this slice plan, task record, affected code and tests.
-4. Execute all tasks in dependency order. Debug, refactor and use approved fallbacks without routine human pauses.
-5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
-6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
-7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
-8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.
+No execution now. After the complete W3 packet is approved, resume its same campaign; claim the next dependency-eligible task, perform risk-selected acceptance closure, characterize, implement, commit, collect exact-candidate selected proof, submit/review/integrate, then slice/checkpoint/Wave qualification. No capability ready/start command or new GRR/GCR/controller.
+
+## Ordered-slice execution and proof ownership05
+
+Execution position is 2 within proposed CAP-07 W3 order: CAP-07.S04, CAP-07.S02, CAP-07.S05, CAP-07.S03. Prior capability slices requiring actual independent APPROVED completion: CAP-07.S01, CAP-07.S04. All tasks in this slice also wait for the exact external union: CAP-01.S03.T03, CAP-07.S01.T03, CAP-07.S04.T02. A task DAG alone is insufficient. No slice approval or READY state is manufactured.
+
+After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.
+
+## Canonical proposed-publication reconciliation
+
+Actual W2/G2 initial completion is recorded at1cc8131d8b74cf6c536d48ce4badc25933981bbb; the current planning predecessor and committed post-exit roadmap is2e2f1a9d042c3dd8db3f8f31b648a36ad004c505. See artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json and the independent Wave/S06/CP10 records. Historical3541 product,1b377 build/reference/Native,fc694 full90 and ownerf86 identities remain distinct. Initial1000 functional commit is qualified, but100k publication/fullmanifest/replay/reopen and continuous performance remain UNQUALIFIED; no1000 productcap or W3metadata/vector100k import-throughput inference. All failed/UNKNOWN/UNTESTED evidence, parser-only2.5333542s acceptance, source-search median7s/all24raws, strictClippyFAIL,409UNKNOWN, security expiry and platform/installer gaps remain. Owner933b moves optional cosmetics and optimization/performance intake to newW10; functional/security qualification residuals remain separately trackedW9, and larger-computing product workW5. Before W3 approval, suggested soft median timing overage strictly<7s may be accepted with W10 debt; completed comparable trials/allraws retained, failed/timeouts and hard functional/security/resource/cancellation bounds unchanged. Hosted university/cloud labels areW11/W12. All48IDs/16slices/924hours including28once, ordered proof ownership, policy03 metrics/token semantics and serial admission are retained. ADR0056–58/reference1.10 remain Proposed, active1.9 unchanged and W3approvalPENDING; no implementation is authorized.

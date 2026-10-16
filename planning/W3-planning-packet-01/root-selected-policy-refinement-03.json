@@ -1,0 +1,82 @@
+{
+  "documentType": "private-proposed-W3-policy-selection",
+  "author": "agent:/root",
+  "status": "SELECTED_FOR_INCORPORATION_IN_UNAPPROVED_W3_PACKET_NOT_ACCEPTED_OR_EXECUTED",
+  "independentFindingLedger": {
+    "path": "artifacts/tmp/W3.planning-draft-01/independent-planning-readiness-refinement-02-02.json",
+    "sha256": "f02fc6bc4f38afc77173a3b4aaa3e3ff01c61bc96148a4f07ea6facdfe739ad8"
+  },
+  "sourcePacket": {
+    "path": "artifacts/tmp/W3.planning-draft-01/refinement-02/source-manifest-02.json",
+    "sha256": "a39d4a7c4faadc9502e1158a2fff48615dceda92c1b814ecfe00206512524731"
+  },
+  "metricPolicy": {
+    "findingId": "W3-PLANNING-METRIC-01",
+    "choice": "Use explicit non-vacuous extraction and verifier role-promotion rules, frozen before any model comparison.",
+    "extraction": {
+      "evaluationUnit": "One frozen eligible (QASPER question ID, declared simple extractive field ID) with existing human answer annotations and authenticated source-anchor mapping. Missing, unanswerable, unsupported and free-form strata remain separately reported; never silently relabel them positive extractive units.",
+      "normalization": "For this custom adapter score only: Unicode NFC and CRLF/CR to LF, then Unicode casefold. Tokenize with Unicode regular expression \\w+|[^\\w\\s], retaining punctuation tokens and duplicate token multiplicities. No stemming, article deletion, synonym/model judging or source-text rewriting. Keep original strings and exact source offsets separately.",
+      "matching": "Each retained acceptable human answer annotation is one reference. Concatenate its ordered extractive spans with one space for token scoring, preserving the original individual spans and anchors. Match token multisets by sum of minimum token counts. Compute precision=overlap/predictionTokens and recall=overlap/referenceTokens. Choose the reference with greatest token F1, then precision, then stable original annotation order. Freeze acceptable-reference membership before comparison; do not assemble one reference from incompatible annotators or invent a missing reference.",
+      "emptyPrediction": "On an answerable eligible unit, absent output, explicit abstention or an empty token sequence gives precision=0 and recall=0. An empty/undefined positive reference is not an eligible answerable unit and requires a visible mapping correction before comparison. Failed/timed-out execution is still a failed run, not a scored abstention.",
+      "aggregation": "Average per-unit precision and recall within each declared eligible field, then give each field equal weight in the field macro. Publish each field's N, metrics and all unit outcomes. No consequential field that fails its declared threshold is hidden by the macro. Pooled micro/token-F1 and exact-span match are separate diagnostics, not alternative passing rules.",
+      "promotionTargets": {
+        "macroPrecisionMinimum": 0.9,
+        "macroRecallMinimum": 0.8
+      },
+      "answerKindAndMissingness": "Keep fixed per-kind confusion, absent/unsupported counts, packet evidence coverage/truncation and hallucinated outputs on actual unanswerable cases. Missing gold or an unsupported stratum is not a free correct answer. Anchor/schema/rights denials remain deterministic hard checks.",
+      "scope": "This is the selected custom initial QASPER adapter metric, not a claim of official leaderboard equivalence, universal scientific extraction or measured quality. Preserve source annotations, annotator disagreement and bounded domain claims."
+    },
+    "verifier": {
+      "labels": [
+        "SUPPORTS",
+        "REFUTES",
+        "NOT_ENOUGH_EVIDENCE",
+        "ABSTAIN"
+      ],
+      "evaluationFrame": "The complete frozen eligible SciFact development frame with actual source labels and rationale mappings, including declared no-evidence cases. Report exact class Ns, exclusions and unknown/unjudged scope before any candidate comparison.",
+      "precisionRule": "For each actionable label SUPPORTS and REFUTES, TP is an exact predicted/gold label match and FP is that predicted label against another actual judged gold label, including NOT_ENOUGH_EVIDENCE. Require the arithmetic mean of these two per-label precisions >=0.90. An absent or zero prediction denominator for either required label is undefined and cannot pass.",
+      "recallRule": "Require TP_SUPPORTS/N_gold_SUPPORTS >=0.80 and TP_REFUTES/N_gold_REFUTES >=0.80 separately. ABSTAIN, missing predictions and wrong labels count as misses. A missing required gold class leaves that role's qualification unestablished; do not invent class members or substitute a pooled metric.",
+      "answeredCoverageRule": "Require the number of valid explicit SUPPORTS, REFUTES or NOT_ENOUGH_EVIDENCE decisions divided by the complete eligible frame N >=0.80. ABSTAIN is unanswered. Technical failures, invalid output and timeouts remain hard failures and cannot be converted into abstention or excluded units.",
+      "diagnostics": "Publish the complete confusion matrix, all per-class precision/recall, answered coverage, abstentions, rationale/anchor coverage and uncertainty intervals with actual Ns and method. NOT_ENOUGH_EVIDENCE is distinct from REFUTES and ABSTAIN. Unjudged evidence is never invented negative gold.",
+      "humanAuthority": "These bounded initial targets do not certify scholarly truth or replace mandatory human review of consequential, inferred, disputed or low-confidence candidates. Same-model serial verification remains correlated, not independent-model evidence."
+    },
+    "appliesToTasks": [
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03",
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "incorporationRequired": "Carry the exact same metric rules into shared contracts, gold strategy, relevant task-register/backlog acceptance additions and slice plans in the complete successor packet. Preserve all existing hard source, rights, budget, resource, security, cleanup and human-authority requirements. Independent incremental review still required; this file alone does not close the finding."
+  },
+  "parserModelAdmission": {
+    "findingId": "W3-PLANNING-RESOURCE-02",
+    "choice": "Initially serialize expensive protected document parsing and new local model inference through the existing shared product resource authority, including across projects supervised by that Core authority.",
+    "existingSeam": "services/core-api/src/research_observatory_core/workflow_executor.py: LocalWorkerAdmission and LocalAdmissionController registration/reservation before claim. Extend the existing product composition; do not create a second generic scheduler or import planning/evaluation controls into runtime.",
+    "reservationRule": "Reserve the whole declared resource demand before claim/dispatch. An active expensive parser reservation excludes model inference and vice versa. Queue the newcomer until the prior owned work is drained and any model is unloaded; only then reobserve pressure, reauthorize and admit. Preserve manual/metadata responsiveness and the interactive reserve. Cancellation, crash and unknown cleanup cannot release a still-live reservation.",
+    "capacityRule": "Retain preferred total application 2048MiB / explicitly selected upper 3072MiB, conservative max(A,B) accounting and incremental physical/commit checks. Unknown or insufficient current parser/model growth or remaining aggregate budget denies or queues the work; do not assume it fits because a process has started or model weights are small. Any later concurrent profile requires actual joint-profile evidence and the existing policy route.",
+    "inheritedParser": "Preserve current parser principal, quality, cancellation, recovery, parser-only logon-session mutex and launcher/package/config 4096MiB private-commit ceiling. That ceiling is neither measured consumption nor a 4GiB RAM requirement and is not silently reduced or qualified by this W3 plan. The new aggregate admission decision may deny an unqualified workload without changing or falsely passing the old parser contract.",
+    "authorityLimit": "The current in-process ledger does not enforce reservations against unrelated Core processes. Keep the real existing Native/project exclusivity and parser mutex boundaries, and qualify the actual claimed composition. Do not infer machine-wide enforcement from a Python lock or disable another process.",
+    "appliesToTasks": [
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T03"
+    ],
+    "implementationAcceptance": "Prove actual parser/model contention queues or denies the newcomer, no overlapping expensive execution, normal drain/unload followed by fresh authorized re-admission, cancellation/crash/lock and no release of a live reservation. Bind actual aggregate/resource observations; no current model load or larger hardware test is requested by this planning selection.",
+    "incorporationRequired": "Carry this choice into aggregate-resource policy, shared contracts, CAP-07.S02 task acceptance and the existing runtime-policy checkpoint in the complete successor packet. Independent incremental review still required; this file alone does not close the finding."
+  },
+  "rationale": "The two independent findings identify real choices missing from the unapproved plan. Freeze usable quality metrics before observing scores and reuse the existing product admission seam to prevent unbudgeted parser/inference overlap. This changes no approved W2 task, creates no corrective task after C35, adds no framework campaign and makes no model/hardware/quality result claim.",
+  "unchangedPlanningFacts": {
+    "tasks": 48,
+    "sliceContributions": 16,
+    "atomicTaskIDsAndDAGUnchanged": true,
+    "engineeringEffortHours": 924,
+    "plannedRefactoringHoursIncludedOnce": 28,
+    "W2G2StillRequired": true,
+    "acceptedArchitectureAndCompleteUXPayloadStillPending": true,
+    "canonicalMutation": false,
+    "modelsDatasetsOrRuntimeExecuted": false,
+    "W3ApprovedOrImplemented": false
+  }
+}

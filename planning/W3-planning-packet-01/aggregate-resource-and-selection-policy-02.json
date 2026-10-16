@@ -1,0 +1,166 @@
+{
+  "status": "PROPOSED_INITIAL_ENGINEERING_BUDGETS__ALL_ACTUAL_MEASUREMENTS_PENDING",
+  "aggregateApplicationPreferredMiB": 2048,
+  "aggregateApplicationUpperMiB": 3072,
+  "aggregateIncludes": "Actual owned Native/Core/renderer/WebView/model/worker descendants, other application background work, model mappings, KV/activations/tokenizer/runtime/workspace and caches. These are whole application targets, never a3GiB worker plus additional Core/UI.",
+  "globalActiveModelJobsMaximum": 1,
+  "profiles": [
+    {
+      "profile": "tiny-generation",
+      "roles": [
+        "generation",
+        "structured-extraction",
+        "nli-candidate"
+      ],
+      "candidateIds": [
+        "tiny-generation-135m"
+      ],
+      "workerFootprintPlanningTargetMiB": 384,
+      "workerJobPrivateCommitLimitMiB": 256,
+      "contextTokensMaximum": 512,
+      "inputTokensMaximum": 384,
+      "outputTokensMaximum": 128,
+      "batchMaximum": 1,
+      "cpuThreadsMaximum": 2
+    },
+    {
+      "profile": "small-generation",
+      "roles": [
+        "generation",
+        "structured-extraction",
+        "nli-candidate"
+      ],
+      "candidateIds": [
+        "small-generation-05b-q4"
+      ],
+      "workerFootprintPlanningTargetMiB": 768,
+      "workerJobPrivateCommitLimitMiB": 512,
+      "contextTokensMaximum": 1024,
+      "inputTokensMaximum": 768,
+      "outputTokensMaximum": 256,
+      "batchMaximum": 1,
+      "cpuThreadsMaximum": 2
+    },
+    {
+      "profile": "optional-larger-local-generation",
+      "roles": [
+        "generation",
+        "structured-extraction",
+        "nli-candidate"
+      ],
+      "candidateIds": [
+        "optional-generation-06b-q8"
+      ],
+      "workerFootprintPlanningTargetMiB": 1280,
+      "workerJobPrivateCommitLimitMiB": 768,
+      "contextTokensMaximum": 2048,
+      "inputTokensMaximum": 1536,
+      "outputTokensMaximum": 512,
+      "batchMaximum": 1,
+      "cpuThreadsMaximum": 4
+    },
+    {
+      "profile": "tiny-embedding",
+      "roles": [
+        "embedding"
+      ],
+      "candidateIds": [
+        "tiny-embedding-minilm-int8"
+      ],
+      "workerFootprintPlanningTargetMiB": 128,
+      "workerJobPrivateCommitLimitMiB": 96,
+      "wordpiecesMaximum": 128,
+      "batchMaximum": 1,
+      "cpuThreadsMaximum": 2
+    },
+    {
+      "profile": "small-embedding",
+      "roles": [
+        "embedding"
+      ],
+      "candidateIds": [
+        "small-embedding-minilm-fp32",
+        "tiny-embedding-minilm-int8"
+      ],
+      "workerFootprintPlanningTargetMiB": 256,
+      "workerJobPrivateCommitLimitMiB": 192,
+      "wordpiecesMaximum": 256,
+      "batchMaximum": 4,
+      "cpuThreadsMaximum": 2
+    }
+  ],
+  "measurementDefinitions": {
+    "A": "Sum actual application-process WorkingSetSize, including mapped/file-backed/shared pages; sum shared pages conservatively rather than inventing perfect deduplication.",
+    "B": "Sum actual application-process PrivateUsage/committed private bytes plus complete read-only mapped model-artifact spans reserved for active models; this conservatively includes model pages even when not resident. Do not add the full model file again to A.",
+    "planningFootprint": "max(A,B), measured for the whole owned application and separately for the model job. Keep A/B/private commit/mapped bytes individually; neither equals model file length. Any unobserved child/metadata is unknown, not zero.",
+    "peaks": "Record actual available polling/high-water metrics and sampling interval/gaps. Sampled RSS maximum is not a mathematical continuous peak; retain uncertainty."
+  },
+  "windowsJobMeaning": {
+    "OSCommitControl": "JOB_OBJECT_LIMIT_JOB_MEMORY/PROCESS_MEMORY limits committed virtual/private memory in the job/process, not total RSS, OS file-backed mappings or complete machine physical RAM.",
+    "notClaimed": "No OS-enforced hard RSS/file-backed/whole-application physical cap is claimed. Whole-app footprint targets use conservative admission plus observation/cancel/unload and actual acceptance evidence; transient overshoot or unknown coverage is retained, not rounded down."
+  },
+  "admission": {
+    "chosenAggregate": "2GiB preferred; upper3GiB only if the user explicitly selects that already-qualified budget/profile policy. Neither is proven fit on this PC now.",
+    "applicationRemaining": "selectedAggregate-currentMeasuredNonModelFootprint-128MiB interactive reserve must cover conservative qualified model profile incremental peak, including mapped artifacts/KV/children. If current non-model use already consumes the budget, deny/queue; no artificial assumption of a small Core/UI baseline.",
+    "physicalHeadroom": "Current available physical RAM must cover conservative predicted INCREMENTAL model/application growth plus max(256MiB,15% of that incremental growth). No4GiB/20%-of-total-RAM floor; do not require available RAM to cover already resident app pages again.",
+    "commitHeadroom": "Current system/process available commit must cover conservative predicted incremental private commit plus max(256MiB,15% of that incremental commit). Distinguish system CommitLimit-CommitTotal from per-process ullAvailPageFile.",
+    "pressure": "Recheck availability/commit, memory pressure and hard paging before dispatch and observe during execution. Unknown or worsening pressure queues/denies/cancels safely; do not silently enlarge the pagefile, trim another process or treat swapping as sufficient fit.",
+    "profiles": "Use actual same-role/model/runtime/context/batch qualified peaks plus a15% engineering reserve, not weight-size arithmetic. Caps may be reduced only if the reduced context/batch still meets required role/packet completeness; do not silently truncate necessary evidence.",
+    "hostObservationLimit": "Parent reported~1.7GiB free during unrelated controls; this is not a benchmark, resource admission witness or promise any tier fits. No host measurement performed for this draft.",
+    "sharedParserModelReservation": "Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise."
+  },
+  "selection": {
+    "initial": "No recommended/default model until that exact role/profile is actually qualified. Start recommendations with the smallest qualified tier satisfying declared role quality, not a predetermined largest model.",
+    "manual": "Exact model/profile selection stays pinned and cannot substitute on OOM, absence or quality failure.",
+    "autoSmallestQualified": "User may grant a bounded installed artifact/profile set and aggregate budget; choose the smallest measured eligible footprint satisfying role quality/resources/rights, record actual selection before dispatch.",
+    "autoBestFit": "User may explicitly enable best-fit within the same granted installed set and budget: filter all hard policy/capability/role-quality/pressure constraints, choose best declared role evaluation, tie-break lower measured footprint. Show actual choice/reason; no unconsented model download/new license/remote destination or pinned-run substitution.",
+    "serial": "Unload extractor before verifier/encoder/reranker switch; no concurrent-model assumption. Same-model verifier remains correlated, no independence claim."
+  },
+  "noPerformanceOrSafetyGuaranteeFromMetadata": true,
+  "actualMeasurements": null,
+  "primarySources": [
+    "https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information",
+    "https://learn.microsoft.com/en-us/windows/win32/api/psapi/ns-psapi-process_memory_counters_ex",
+    "https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-memorystatusex"
+  ],
+  "parserModelAdmission": {
+    "findingId": "W3-PLANNING-RESOURCE-02",
+    "choice": "Initially serialize expensive protected document parsing and new local model inference through the existing shared product resource authority, including across projects supervised by that Core authority.",
+    "existingSeam": "services/core-api/src/research_observatory_core/workflow_executor.py: LocalWorkerAdmission and LocalAdmissionController registration/reservation before claim. Extend the existing product composition; do not create a second generic scheduler or import planning/evaluation controls into runtime.",
+    "reservationRule": "Reserve the whole declared resource demand before claim/dispatch. An active expensive parser reservation excludes model inference and vice versa. Queue the newcomer until the prior owned work is drained and any model is unloaded; only then reobserve pressure, reauthorize and admit. Preserve manual/metadata responsiveness and the interactive reserve. Cancellation, crash and unknown cleanup cannot release a still-live reservation.",
+    "capacityRule": "Retain preferred total application 2048MiB / explicitly selected upper 3072MiB, conservative max(A,B) accounting and incremental physical/commit checks. Unknown or insufficient current parser/model growth or remaining aggregate budget denies or queues the work; do not assume it fits because a process has started or model weights are small. Any later concurrent profile requires actual joint-profile evidence and the existing policy route.",
+    "inheritedParser": "Preserve current parser principal, quality, cancellation, recovery, parser-only logon-session mutex and launcher/package/config 4096MiB private-commit ceiling. That ceiling is neither measured consumption nor a 4GiB RAM requirement and is not silently reduced or qualified by this W3 plan. The new aggregate admission decision may deny an unqualified workload without changing or falsely passing the old parser contract.",
+    "authorityLimit": "The current in-process ledger does not enforce reservations against unrelated Core processes. Keep the real existing Native/project exclusivity and parser mutex boundaries, and qualify the actual claimed composition. Do not infer machine-wide enforcement from a Python lock or disable another process.",
+    "appliesToTasks": [
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T03"
+    ],
+    "implementationAcceptance": "Prove actual parser/model contention queues or denies the newcomer, no overlapping expensive execution, normal drain/unload followed by fresh authorized re-admission, cancellation/crash/lock and no release of a live reservation. Bind actual aggregate/resource observations; no current model load or larger hardware test is requested by this planning selection.",
+    "incorporationRequired": "Carry this choice into aggregate-resource policy, shared contracts, CAP-07.S02 task acceptance and the existing runtime-policy checkpoint in the complete successor packet. Independent incremental review still required; this file alone does not close the finding."
+  },
+  "selectedPolicy03Reference": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "selectedPolicyReview": {
+    "path": "artifacts/tmp/W3.planning-draft-01/independent-selected-policy-review-03-01.json",
+    "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+  },
+  "policyIncorporationStatus": "EXACT_CHOICES_INCORPORATED_PRIVATE_ONLY_PENDING_DIFFERENT_PACKET_REVIEW",
+  "orderedExecutionProofOwnership05": {
+    "registryContractsBeforeRuntime": {
+      "task": "CAP-07.S04.T03",
+      "meaning": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality."
+    },
+    "realRuntimePromptIntegration": {
+      "task": "CAP-07.S02.T03",
+      "meaning": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof."
+    },
+    "actualGoldAndPromotionIntegration": {
+      "task": "CAP-07.S05.T03",
+      "meaning": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+    },
+    "allOtherConsumers": "Exact metricPolicy03 remains byte-equal; later extraction/verifier tasks must prove their own exact task/profile/schema/source outcomes. Source templates and synthetic fixtures are never actual model quality or a real principal PASS."
+  },
+  "orderedExecutionWitness05": "ordered-slice-feasibility-witness-05.json"
+}

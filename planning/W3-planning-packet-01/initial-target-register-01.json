@@ -1,0 +1,434 @@
+{
+  "status": "CONCRETE_PROPOSED_INITIAL_ENGINEERING_TARGETS_NOT_MEASURED",
+  "governingOwnerTimingRule": {
+    "path": "docs/automation/project-automation-guide.md",
+    "section": "8.3",
+    "sha256": "85ae9105d4578fa066f781b1942f7736bd689a66bd09cdf7d8cc738119b874f3"
+  },
+  "timingRule": "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+  "rationale": "The owner selects median timing for initial working software. Numeric unapproved forecast values are proposed starting targets with the explicit small-PC changes below; no historical tail/max statistic becomes a new timing gate. Resource safety, correctness, quality and original method deadlines remain separate hard constraints.",
+  "timingTargets": [
+    {
+      "sliceId": "CAP-06.S01",
+      "workload": "query-parse",
+      "target": 25,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S01",
+      "workload": "first50-local-results-100k-metadata",
+      "target": 250,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S01",
+      "workload": "incremental1000-records",
+      "target": 5,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S01",
+      "workload": "rebuild100k-metadata-plus100k-permitted-passages",
+      "target": 30,
+      "unit": "min",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S02",
+      "workload": "CPU-query-embedding-admitted-short-query",
+      "target": 2,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S02",
+      "workload": "exact-top100-filtered100k-vectors",
+      "target": 0.5,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S02",
+      "workload": "index1000-short-records-admitted-encoder",
+      "target": 10,
+      "unit": "min",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S03",
+      "workload": "fusion2000-candidates",
+      "target": 100,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S03",
+      "workload": "firstpage-excluding-optional-rerank",
+      "target": 1,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S03",
+      "workload": "optional-rerank20",
+      "target": 5,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S03",
+      "workload": "setcompare100k-IDs",
+      "target": 5,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S04",
+      "workload": "editor-local-validation-feedback",
+      "target": 100,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S04",
+      "workload": "local-preview",
+      "target": 3,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S04",
+      "workload": "cancel-UI-ack",
+      "target": 200,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S05",
+      "workload": "virtual-table-first100rows",
+      "target": 500,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S05",
+      "workload": "coverage100k-metadata",
+      "target": 60,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S05",
+      "workload": "sampled-layout5000points",
+      "target": 5,
+      "unit": "min",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S05",
+      "workload": "boundary-setcompare100k",
+      "target": 10,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S06",
+      "workload": "decision-save",
+      "target": 200,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S06",
+      "workload": "TFIDF-retrain100k",
+      "target": 60,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S06",
+      "workload": "queue",
+      "target": 2,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-06.S06",
+      "workload": "audit-selection",
+      "target": 5,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S02",
+      "workload": "cached-small-CPU-model-start",
+      "target": 15,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S02",
+      "workload": "model-cancel-UI-ack",
+      "target": 200,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S03",
+      "workload": "local-egress-preview",
+      "target": 250,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S03",
+      "workload": "adapter-local-overhead-excludes-network",
+      "target": 100,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S04",
+      "workload": "prompt-resolution",
+      "target": 20,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S04",
+      "workload": "bounded-schema-validation",
+      "target": 50,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S04",
+      "workload": "fixture-regression-no-large-model",
+      "target": 10,
+      "unit": "min",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-07.S05",
+      "workload": "safe-fixture-operations-regression",
+      "target": 15,
+      "unit": "min",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S01",
+      "workload": "schema-validation",
+      "target": 20,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S01",
+      "workload": "pack-load2000terms200fields",
+      "target": 500,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S01",
+      "workload": "pack-version-compare",
+      "target": 2,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S01",
+      "workload": "impact100k",
+      "target": 60,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S02",
+      "workload": "structural-lexical-passage-selection",
+      "target": 2,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S03",
+      "workload": "evidence-write",
+      "target": 100,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S03",
+      "workload": "history-read",
+      "target": 250,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S03",
+      "workload": "stale10000",
+      "target": 10,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S03",
+      "workload": "matrix-firstpage100k",
+      "target": 500,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S04",
+      "workload": "deterministic-rule-check",
+      "target": 100,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S04",
+      "workload": "human-queue-firstpage",
+      "target": 500,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S04",
+      "workload": "audit-report100k",
+      "target": 30,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S05",
+      "workload": "matrix-firstpage100k",
+      "target": 1.5,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S05",
+      "workload": "filter",
+      "target": 500,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S05",
+      "workload": "cached-source-return",
+      "target": 300,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S05",
+      "workload": "bulk-impact-preview100k",
+      "target": 10,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S06",
+      "workload": "agreement100k",
+      "target": 10,
+      "unit": "s",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S06",
+      "workload": "comparison-firstpage",
+      "target": 500,
+      "unit": "ms",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    },
+    {
+      "sliceId": "CAP-08.S06",
+      "workload": "export100k",
+      "target": 2,
+      "unit": "min",
+      "statistic": "median of ALL comparable completed trials",
+      "actualResult": null
+    }
+  ],
+  "hardConstraints": {
+    "modelGlobalConcurrentJobs": 1,
+    "no8or16GiBModelWorkloadOnThisPC": true,
+    "noImplicitRemoteSpendOrEgress": true,
+    "modelJobDeadline": "Exact gateway task deadline, no repair/retry can extend it; at most60s initial per-call policy within existing schema range, explicitly selected and recorded.",
+    "cancellation": "UI acknowledgement target is timing only; every actual cancelled job must stop acceptance immediately and drain its real owned descendants within its declared lifecycle method. No forced cleanup labeled normal.",
+    "quality": "Gold task/domain/metric mapping in gold-source-and-annotation-strategy-02.json; actual validation pending. Existing deterministic rights/anchor/shape/security/cleanup constraints remain hard.",
+    "resourcePolicy": "aggregate-resource-and-selection-policy-02.json: total application2GiB preferred/3GiB upper, per-role tiny/small tiers, Job private commit distinct from monitored footprint/mapped pages."
+  },
+  "explicitForecastAdaptations": [
+    "Protected embedded exact vectors replace unapproved Qdrant-service preference for W3.",
+    "Optional rerank defaults20; up to50 only with evaluated resource profile.",
+    "Small-PC visualization5000 sampled points instead of original50000 complete projection.",
+    "Initial fulltext rebuild100k permitted passages instead of1m;100k metadata rows retained.",
+    "Median of all comparable completed timing trials replaces unapproved p95/max timing forecast interpretation, without changing resource/quality/rights/security/cleanup.",
+    "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending.",
+    "Reuse concrete SciFact claim/evidence and QASPER answer/evidence annotations with exact release rights/splits and finite30-case human mapping bridge. No blanket120-document new annotation; task-specific quality/rights/unsupported-domain limits in gold-source-and-annotation-strategy-02.json."
+  ],
+  "actualMeasurements": null,
+  "postExitOwnerPriority": {
+    "authority": {
+      "path": "artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md",
+      "sha256": "933b9af5abc9cebf5ac5dd3a23ce425701de93aef359a50b77c96f002cd76b5d"
+    },
+    "classification": "All timingTargets are suggested soft latency/engineering-duration targets, not method watchdogs or security/cancellation deadlines. All hardConstraints remain hard.",
+    "eligibleOverage": "Completed comparable-trial median overage strictly<7s may be accepted with recordedW10 optimization debt; exactly7s or more requires assessment in the active/unapprovedWave.",
+    "allOriginalTargetNumbersAndRawOutcomeRulesPreserved": true,
+    "failedOrTimedOutTrialsNeverPass": true,
+    "cancellationDistinction": "UI acknowledgement timing is soft as already stated; immediate stop-acceptance and real lifecycle drain remain hard."
+  }
+}

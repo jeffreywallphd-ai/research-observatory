@@ -1,0 +1,76 @@
+{
+  "status": "PROPOSED_QUALIFICATION_CANDIDATES_ONLY",
+  "metadataObservedAt": "2026-10-15T21:40:29.963900+00:00",
+  "noArtifactDownloadedOrLocallyAuthenticated": true,
+  "noRAMOrQualityClaim": true,
+  "candidates": [
+    {
+      "candidateId": "tiny-generation-135m",
+      "publisher": "HuggingFaceTB",
+      "repository": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "role": "Bounded English candidate generation/extraction/verifier only after each role actually qualifies; not general scientific reasoning.",
+      "artifact": "onnx/model_q4.onnx",
+      "publishedArtifactSHA256": "933577110303a2964096d19b6f15d3b4639bef7f99481ac0b61d9f3ad72f392a",
+      "observedFileCommit": "a91318be21aeaf0879874faa161dcb40c68847e9",
+      "publisherReportedFileSize": "182 MB",
+      "licenseReported": "Apache-2.0",
+      "source": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/a91318be21aeaf0879874faa161dcb40c68847e9/onnx/model_q4.onnx",
+      "modelCard": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
+      "runtimeCaveat": "Official ONNX export uses GQA; native ONNX autoregressive/KV input/output driver and its packaged built-in operator support must qualify. This does not assume an official SmolLM2 GGUF repository or Python ML wheel."
+    },
+    {
+      "candidateId": "small-generation-05b-q4",
+      "publisher": "Qwen",
+      "repository": "Qwen/Qwen2.5-0.5B-Instruct-GGUF",
+      "role": "Bounded candidate generation/extraction/verifier only after actual role evaluation.",
+      "artifact": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "publishedArtifactSHA256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+      "observedRepositoryCommit": "9217f5db79a29953eb74d5343926648285ec7e67",
+      "publisherReportedFileSize": "491 MB",
+      "licenseReported": "Apache-2.0",
+      "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/blob/9217f5db79a29953eb74d5343926648285ec7e67/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "modelCard": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF"
+    },
+    {
+      "candidateId": "optional-generation-06b-q8",
+      "publisher": "Qwen",
+      "repository": "Qwen/Qwen3-0.6B-GGUF",
+      "role": "Optional already-qualified larger local choice within user-selected aggregate budget; not a mandatory first download/default.",
+      "artifact": "Qwen3-0.6B-Q8_0.gguf",
+      "publishedArtifactSHA256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+      "observedRepositoryCommit": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "publisherReportedFileSize": "639 MB",
+      "licenseReported": "Apache-2.0",
+      "source": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/blob/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+      "modelCard": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF"
+    },
+    {
+      "candidateId": "tiny-embedding-minilm-int8",
+      "publisher": "sentence-transformers",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "role": "English short-passage encoder, exact tokenizer/mean-pooling/normalization and truncation qualification required.",
+      "artifact": "onnx/model_quint8_avx2.onnx",
+      "publishedArtifactSHA256": "b941bf19f1f1283680f449fa6a7336bb5600bdcd5f84d10ddc5cd72218a0fd21",
+      "observedFileCommit": "5641a7880f40ebf4035d05e60c5f9b7a9c272c84",
+      "publisherReportedFileSize": "23 MB",
+      "licenseReported": "Apache-2.0",
+      "source": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/5641a7880f40ebf4035d05e60c5f9b7a9c272c84/onnx/model_quint8_avx2.onnx",
+      "runtimeCaveat": "Requires actual AVX2/selected operator compatibility. It is a quantized variant, not assumed numerically equivalent to the FP32 model."
+    },
+    {
+      "candidateId": "small-embedding-minilm-fp32",
+      "publisher": "sentence-transformers",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "role": "Same short-passage semantic role with separate actual quality/resource qualification.",
+      "artifact": "onnx/model.onnx",
+      "publishedArtifactSHA256": "6fd5d72fe4589f189f8ebc006442dbb529bb7ce38f8082112682524616046452",
+      "publisherReportedFileSize": "90.4 MB",
+      "licenseReported": "Apache-2.0",
+      "source": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/main/onnx/model.onnx",
+      "immutableRepositoryRevision": null,
+      "missingMetadata": "Pin exact immutable repository revision and all companion/tokenizer/license files during later authorized acquisition; the observed content digest is not a complete runnable bundle."
+    }
+  ],
+  "artifactManifestRequirement": "Later actual authorized acquisition pins exact repository revision, every model/tokenizer/config/license/runtime companion and published digest, then checks local bytes/signature/license/consent. Published file metadata is provenance, not a downloaded verified package. No trust_remote_code, arbitrary DLL/plugin or conversion assumed equivalent.",
+  "candidateScope": "Finite first comparison: tiny-generation135M versus small-generation0.5B and tiny-int8 versus small-FP32 encoder. Optional0.6B is not mandatory; no candidate that fails resource or role quality is recommended. SPECTER2 remains a scientific comparator only if it independently fits an allowed aggregate tier, otherwise report deferred, never a new larger workload."
+}

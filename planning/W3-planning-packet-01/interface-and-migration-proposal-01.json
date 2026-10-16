@@ -1,0 +1,123 @@
+{
+  "status": "PROPOSED_NOT_IMPLEMENTED",
+  "actualExistingSeams": [
+    {
+      "path": "services/core-api/src/research_observatory_core/model_gateway_service.py",
+      "sha256": "370ef8a2fb4b5e40b68bf58eb0d0c2879748f01cd049b308a2e0f05fff1ec87c"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/model_routing_policy.py",
+      "sha256": "032a37d471d0ec1d29e5570ddfc6da8e4ed46d53a135d42827c59b3037cf2ebc"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/database_keys.py",
+      "sha256": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/storage.py",
+      "sha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/model_registry_contracts.py",
+      "sha256": "ec985f09ab715e64bc494546f54e3693c2897b27096fde7648e5a624365ff6b4"
+    }
+  ],
+  "modelAuthorityRecordsProposed": {
+    "sourceClassification": "project/source aggregate+exact revision/hash, category, provenance of classification, actor, expiry, rights observation revision; most restrictive composition; never renderer-supplied grant.",
+    "modelUseGrant": "human authority/source terms separately, purpose/task kind, exact source scope, permitted local/destination, expiry/revocation and policy revision.",
+    "budgetPolicyAndReservation": "current project policy, hard local resource/token/time/disk limits, remote microunit cap0 default; atomic reserve with attempt/idempotency/policy fingerprint, append reconcile/unknown/cancel rather than assumed refunds.",
+    "eligibilityWitness": "Re-resolve canonical input revisions/current rights and classification/grants, exact model/runtime/config/evaluation, current project/actor/resource observation; do not lengthen existing permission freshness merely for convenience.",
+    "workerProtocol": "Private bounded framed request with task identity, exact authorized payload/model artifact handles/profile, cancellation; response closes request/hash/route/usage/resource/validation. No project DB/vault/credential, arbitrary tool, URL or path capability.",
+    "evaluationAttestation": "Product record of exact independent report digest/role/domain/model/prompt/schema/profile/rights/test-frame and actual promotion/expiry; evaluation runtime support assets never imported by product.",
+    "qualificationPurpose": "Exact Core-owned fixture/manifest/profile-scoped qualification operation with real same boundary and unreported evaluation identity where allowed; no ordinary private-data role/evidence/default permission. Later evaluated role eligibility is separate; never fake prior evaluation to run qualification.",
+    "resourceObservation": "Trusted profile observation binds exact model/runtime/config/role, whole application and worker WorkingSet/private-commit/model mappings, pressure/available-commit, measurement interval/gaps and current parent identity. Existing HostModelObservation.memory_mib is a coarse current contract: do not silently reinterpret it as a complete RSS/mapped/aggregate guarantee. Add an internal/versioned richer resource witness at the adapter-policy boundary while preserving ADR21 portable task/result semantics.",
+    "parserModelSharedAdmission": "Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.",
+    "roleMetricPromotionPolicy": "Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints."
+  },
+  "protectedIndexProposal": {
+    "location": "Core-governed derivative indexes class; new lexical/vector generation subpaths are proposed names, not current implementation facts.",
+    "database": "A separate SQLCipher index DB has external-content mirror and FTS table in the same encrypted DB. The primary DB remains authoritative and backed up; derivative bytes excluded per existing file class.",
+    "keyBoundary": "Current DatabaseKeyProvider only owns project-database leases. Add purpose-scoped derivative-index leases through approved key protection/rotation; never silently pass its project-database lease into an arbitrary file, reuse raw secrets across boundaries or expose keys to workers.",
+    "atomicity": "Canonical transaction commits corpus revision+outbox. Idempotent index consumer atomically updates derivative content/FTS/checkpoint per generation. Searches bind generation watermark and recheck canonical rights; source changes return stale/recent overlay explicitly. No cross-store distributed transaction claim.",
+    "rebuild": "New staged generation, exact input/watermark/rights inventory, cancellation/restart checkpoint, integrity-check and source revalidation before pointer swap; old generation retained until no readers. Rebuild after restore/relocation/key rotation with actual validated store."
+  },
+  "migration": "Add canonical records via next actual schema from observed28 or its approved successor, never reserve a future schema number now. Verify backup/copy rows/cells/objects and original preservation, interrupt/cancel/failure rollback and old/new read-only compatibility. Derived indexes are dropped/rebuilt, not falsely included as canonical evidence.",
+  "localRoleBoundary": "Authenticated current Windows application actor plus declared research coder/assignment. No proof of distinct people, cryptographic protection from same project owner/admin or physical foreign-host recovery. Audit exactly what is authenticated and what is human assertion.",
+  "minimumPositiveFixtureOrder": "S07S02T01 implements the minimum canonical records/resource cap/exact artifact consent/integrity before its own real fixture; catalog UX and configurable measured profiles extend this later. No permissive intermediate production adapter.",
+  "selectedPolicy03Reference": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "parserModelAdmission": {
+    "findingId": "W3-PLANNING-RESOURCE-02",
+    "choice": "Initially serialize expensive protected document parsing and new local model inference through the existing shared product resource authority, including across projects supervised by that Core authority.",
+    "existingSeam": "services/core-api/src/research_observatory_core/workflow_executor.py: LocalWorkerAdmission and LocalAdmissionController registration/reservation before claim. Extend the existing product composition; do not create a second generic scheduler or import planning/evaluation controls into runtime.",
+    "reservationRule": "Reserve the whole declared resource demand before claim/dispatch. An active expensive parser reservation excludes model inference and vice versa. Queue the newcomer until the prior owned work is drained and any model is unloaded; only then reobserve pressure, reauthorize and admit. Preserve manual/metadata responsiveness and the interactive reserve. Cancellation, crash and unknown cleanup cannot release a still-live reservation.",
+    "capacityRule": "Retain preferred total application 2048MiB / explicitly selected upper 3072MiB, conservative max(A,B) accounting and incremental physical/commit checks. Unknown or insufficient current parser/model growth or remaining aggregate budget denies or queues the work; do not assume it fits because a process has started or model weights are small. Any later concurrent profile requires actual joint-profile evidence and the existing policy route.",
+    "inheritedParser": "Preserve current parser principal, quality, cancellation, recovery, parser-only logon-session mutex and launcher/package/config 4096MiB private-commit ceiling. That ceiling is neither measured consumption nor a 4GiB RAM requirement and is not silently reduced or qualified by this W3 plan. The new aggregate admission decision may deny an unqualified workload without changing or falsely passing the old parser contract.",
+    "authorityLimit": "The current in-process ledger does not enforce reservations against unrelated Core processes. Keep the real existing Native/project exclusivity and parser mutex boundaries, and qualify the actual claimed composition. Do not infer machine-wide enforcement from a Python lock or disable another process.",
+    "appliesToTasks": [
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T03"
+    ],
+    "implementationAcceptance": "Prove actual parser/model contention queues or denies the newcomer, no overlapping expensive execution, normal drain/unload followed by fresh authorized re-admission, cancellation/crash/lock and no release of a live reservation. Bind actual aggregate/resource observations; no current model load or larger hardware test is requested by this planning selection.",
+    "incorporationRequired": "Carry this choice into aggregate-resource policy, shared contracts, CAP-07.S02 task acceptance and the existing runtime-policy checkpoint in the complete successor packet. Independent incremental review still required; this file alone does not close the finding."
+  },
+  "metricPolicy": {
+    "findingId": "W3-PLANNING-METRIC-01",
+    "choice": "Use explicit non-vacuous extraction and verifier role-promotion rules, frozen before any model comparison.",
+    "extraction": {
+      "evaluationUnit": "One frozen eligible (QASPER question ID, declared simple extractive field ID) with existing human answer annotations and authenticated source-anchor mapping. Missing, unanswerable, unsupported and free-form strata remain separately reported; never silently relabel them positive extractive units.",
+      "normalization": "For this custom adapter score only: Unicode NFC and CRLF/CR to LF, then Unicode casefold. Tokenize with Unicode regular expression \\w+|[^\\w\\s], retaining punctuation tokens and duplicate token multiplicities. No stemming, article deletion, synonym/model judging or source-text rewriting. Keep original strings and exact source offsets separately.",
+      "matching": "Each retained acceptable human answer annotation is one reference. Concatenate its ordered extractive spans with one space for token scoring, preserving the original individual spans and anchors. Match token multisets by sum of minimum token counts. Compute precision=overlap/predictionTokens and recall=overlap/referenceTokens. Choose the reference with greatest token F1, then precision, then stable original annotation order. Freeze acceptable-reference membership before comparison; do not assemble one reference from incompatible annotators or invent a missing reference.",
+      "emptyPrediction": "On an answerable eligible unit, absent output, explicit abstention or an empty token sequence gives precision=0 and recall=0. An empty/undefined positive reference is not an eligible answerable unit and requires a visible mapping correction before comparison. Failed/timed-out execution is still a failed run, not a scored abstention.",
+      "aggregation": "Average per-unit precision and recall within each declared eligible field, then give each field equal weight in the field macro. Publish each field's N, metrics and all unit outcomes. No consequential field that fails its declared threshold is hidden by the macro. Pooled micro/token-F1 and exact-span match are separate diagnostics, not alternative passing rules.",
+      "promotionTargets": {
+        "macroPrecisionMinimum": 0.9,
+        "macroRecallMinimum": 0.8
+      },
+      "answerKindAndMissingness": "Keep fixed per-kind confusion, absent/unsupported counts, packet evidence coverage/truncation and hallucinated outputs on actual unanswerable cases. Missing gold or an unsupported stratum is not a free correct answer. Anchor/schema/rights denials remain deterministic hard checks.",
+      "scope": "This is the selected custom initial QASPER adapter metric, not a claim of official leaderboard equivalence, universal scientific extraction or measured quality. Preserve source annotations, annotator disagreement and bounded domain claims."
+    },
+    "verifier": {
+      "labels": [
+        "SUPPORTS",
+        "REFUTES",
+        "NOT_ENOUGH_EVIDENCE",
+        "ABSTAIN"
+      ],
+      "evaluationFrame": "The complete frozen eligible SciFact development frame with actual source labels and rationale mappings, including declared no-evidence cases. Report exact class Ns, exclusions and unknown/unjudged scope before any candidate comparison.",
+      "precisionRule": "For each actionable label SUPPORTS and REFUTES, TP is an exact predicted/gold label match and FP is that predicted label against another actual judged gold label, including NOT_ENOUGH_EVIDENCE. Require the arithmetic mean of these two per-label precisions >=0.90. An absent or zero prediction denominator for either required label is undefined and cannot pass.",
+      "recallRule": "Require TP_SUPPORTS/N_gold_SUPPORTS >=0.80 and TP_REFUTES/N_gold_REFUTES >=0.80 separately. ABSTAIN, missing predictions and wrong labels count as misses. A missing required gold class leaves that role's qualification unestablished; do not invent class members or substitute a pooled metric.",
+      "answeredCoverageRule": "Require the number of valid explicit SUPPORTS, REFUTES or NOT_ENOUGH_EVIDENCE decisions divided by the complete eligible frame N >=0.80. ABSTAIN is unanswered. Technical failures, invalid output and timeouts remain hard failures and cannot be converted into abstention or excluded units.",
+      "diagnostics": "Publish the complete confusion matrix, all per-class precision/recall, answered coverage, abstentions, rationale/anchor coverage and uncertainty intervals with actual Ns and method. NOT_ENOUGH_EVIDENCE is distinct from REFUTES and ABSTAIN. Unjudged evidence is never invented negative gold.",
+      "humanAuthority": "These bounded initial targets do not certify scholarly truth or replace mandatory human review of consequential, inferred, disputed or low-confidence candidates. Same-model serial verification remains correlated, not independent-model evidence."
+    },
+    "appliesToTasks": [
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03",
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "incorporationRequired": "Carry the exact same metric rules into shared contracts, gold strategy, relevant task-register/backlog acceptance additions and slice plans in the complete successor packet. Preserve all existing hard source, rights, budget, resource, security, cleanup and human-authority requirements. Independent incremental review still required; this file alone does not close the finding."
+  },
+  "orderedExecutionProofOwnership05": {
+    "registryContractsBeforeRuntime": {
+      "task": "CAP-07.S04.T03",
+      "meaning": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality."
+    },
+    "realRuntimePromptIntegration": {
+      "task": "CAP-07.S02.T03",
+      "meaning": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof."
+    },
+    "actualGoldAndPromotionIntegration": {
+      "task": "CAP-07.S05.T03",
+      "meaning": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+    },
+    "allOtherConsumers": "Exact metricPolicy03 remains byte-equal; later extraction/verifier tasks must prove their own exact task/profile/schema/source outcomes. Source templates and synthetic fixtures are never actual model quality or a real principal PASS."
+  },
+  "orderedExecutionWitness05": "ordered-slice-feasibility-witness-05.json"
+}

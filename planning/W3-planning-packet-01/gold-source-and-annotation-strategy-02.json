@@ -1,0 +1,190 @@
+{
+  "status": "CONCRETE_PROPOSED_SOURCE_AND_ANNOTATION_STRATEGY__NO_DATA_DOWNLOADED_OR_GOLD_CREATED",
+  "replaces": "The generic120 newly annotated documents/60 new queries/300 new judgments forecast is superseded. Reuse suitable existing human annotations first; only a small deterministic adapter/role bridge needs new human checking.",
+  "registries": [
+    {
+      "dataset": "SciFact publisher release",
+      "primary": "https://github.com/allenai/scifact",
+      "licensePrimary": "https://github.com/allenai/scifact/blob/master/LICENSE.md",
+      "observedLicenseParts": {
+        "claimsAndEvidenceAnnotations": "CC-BY-4.0",
+        "abstractCorpus": "ODC-By-1.0 per publisher S2ORC attribution",
+        "code": "Apache-2.0, does not license every source text"
+      },
+      "licenseConflict": "Hub allenai/scifact card reports CC-BY-NC2.0 while current publisher LICENSE.md distinguishes CC-BY4/ODC-By1. Do not silently inherit the older card or assume a license change applies to every archive. At later acquisition bind exact release/archive digest and contemporaneous publisher license/version, preserve discrepancy and all notices. If exact release rights cannot be resolved, that pack stays unavailable; no speculative commercial/redistribution grant.",
+      "labels": "Human claims/evidence/rationale with support/contradiction and no-evidence cases. Official train/dev labels are public; test gold is not public. Never report test-set metrics from unlabeled files.",
+      "plannedSmallSubset": "Use<=60 official train claims for template/development; freeze100 official dev claims before any candidate comparison, stratified by observed support/contradiction/no-evidence and source length. Retain the complete selected release corpus as retrieval candidates; no model training or large baseline downloads.",
+      "sampleRule": "Sort each stratum by SHA256(releaseDigest|W3-gold-v1|claimID), allocate near-equal label strata where available without replacement; record exact actual counts/IDs/exclusions and include all eligible if insufficient. Do not invent missing labels or resample after seeing scores.",
+      "splitLimit": "Keep official claim split, report any source-paper overlap and model pretraining contamination unknown. Do not claim document-independent or uncontaminated holdout merely because claim IDs differ.",
+      "scope": "Biomedical scientific claim/abstract retrieval, rationale selection and support/refute/insufficient judgment. Not universal field/topic search relevance or scholarly truth."
+    },
+    {
+      "dataset": "QASPER publisher registry",
+      "primary": "https://allenai.org/data/qasper",
+      "registry": "https://huggingface.co/datasets/allenai/qasper",
+      "card": "https://huggingface.co/datasets/allenai/qasper/blob/main/README.md",
+      "observedLicense": "CC-BY-4.0 dataset card; source papers extracted from S2ORC. Preserve attribution and exact source/license metadata; do not treat the card as permission for arbitrary private/fulltext redistribution or remote model use.",
+      "immutableMetadataLocator": "https://huggingface.co/datasets/allenai/qasper/tree/06806e4608976fc2fac0a090ac425d5b2b29caf4/qasper",
+      "licenseAtThisDataRevisionVerified": false,
+      "labels": "NLP-practitioner questions, separate answerers, extractive/free-form/yes-no/unanswerable answers plus evidence paragraphs and optional highlighted sentences. Preserve multiple annotators and disagreement; not invented new study participants.",
+      "plannedSmallSubset": "Develop on<=30 train questions. Freeze60 labeled validation questions: target40 extractive,10 yes/no,10 unanswerable, one question per paper before repeats and deterministic hash order. If the exact release has fewer eligible rows, include all and report actual limits, never fabricate quotas.",
+      "sampleRule": "SHA256(releaseDigest|W3-gold-v1|paperID|questionID), stratify actual answer type and evidence length; preserve original official paper split. All source evidence remains in the candidate pool; bounded model packet coverage/truncation is reported separately.",
+      "scope": "Within-paper evidence retrieval, exact-span/answer-kind/missingness extraction and answer-to-evidence links. Free-form answers reported with token-F1 as secondary diagnostics, not silently converted into exact simple-field gold. Figure/table-only evidence remains an explicit unsupported stratum until actual parser/role support, never an unexplained drop."
+    }
+  ],
+  "taskMappings": [
+    {
+      "tasks": [
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T02",
+        "CAP-06.S02.T03",
+        "CAP-06.S03.T01",
+        "CAP-06.S03.T02",
+        "CAP-06.S03.T03"
+      ],
+      "gold": "SciFact claim->annotated evidence-document retrieval; QASPER within-paper question->evidence paragraph retrieval. Use complete candidate pools for each benchmark and exact stable-ID mappings.",
+      "metrics": "Recall@20 over annotated relevant evidence, MRR/nDCG only with explicit incomplete-qrel assumptions, lexical-versus-vector-versus-fusion comparison on the same IDs; known-item title/DOI deterministic fixtures separately target0.90 recall@20. Do not call unjudged documents known negatives or apply known-item90% to all semantic claims by accident.",
+      "rightsPrerequisite": "Exact release/digests/notices and source-level lawful local benchmark use verified; no new query labels needed for this bounded initial scope."
+    },
+    {
+      "tasks": [
+        "CAP-07.S04.T03",
+        "CAP-07.S05.T03",
+        "CAP-08.S02.T01",
+        "CAP-08.S02.T02",
+        "CAP-08.S02.T03"
+      ],
+      "gold": "QASPER extractive spans/answer-kind/evidence anchors plus deterministic schema/normalization/invalid-input fixtures. SciFact evidence sentence selection can supplement source packet alignment.",
+      "metrics": "For extraction use exact metricPolicy03.extraction: frozen eligible QASPER (questionID, simplefieldID), whole acceptable human annotations; NFC and CRLF/CR-to-LF then casefold; tokenize \\w+|[^\\w\\s] retaining punctuation and duplicate counts, multiset overlap; best reference F1 then precision then stable annotation order. Answerable empty/abstention P=R=0; equal-field macro precision>=0.90/recall>=0.80; no consequential failed field hidden. Preserve answer-kind/missingness/unsupported strata, exact source offsets and hard rights/anchor checks. Technical failures remain failures, not abstentions; no official leaderboard equivalence. Exact-span/token-F1/micro diagnostics and answer-kind/missingness reports remain separate; no alternative passing rule.",
+      "newHumanWork": "Validate adapter/source-offset/schema mapping on a finite30-case bridge drawn from existing annotations before it becomes a product benchmark; do not reannotate120 documents. Preserve any disagreements with the original labels."
+    },
+    {
+      "tasks": [
+        "CAP-08.S04.T01",
+        "CAP-08.S04.T02",
+        "CAP-08.S04.T03"
+      ],
+      "gold": "SciFact public dev support/refute/no-evidence labels and rationales; QASPER actual unanswerable/evidence cases for source sufficiency. Schema/anchor/rights denials use explicit deterministic adversarial fixtures, labeled synthetic.",
+      "metrics": "For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains. New generated negative claims are not human gold without human review.",
+      "newHumanWork": "Competent domain reviewer checks a stratified subset of the existing labels and local mapping, with independent adjudicator for disputed adaptations. Project high-consequence fields still need actual human verification; a benchmark score cannot remove that obligation."
+    },
+    {
+      "tasks": [
+        "CAP-06.S06.T02",
+        "CAP-06.S06.T03",
+        "CAP-08.S06.T01",
+        "CAP-08.S06.T02"
+      ],
+      "gold": "Deterministic queue/audit/missingness/seed/metric fixtures and retained existing multiple annotations demonstrate mechanics. SciFact scientific-relevance labels are NOT a review-specific inclusion protocol or a real screening recall gold.",
+      "limits": "Project-specific stopping/inclusion/interpretive schema quality needs actual named human decisions and protocol-specific gold; not promised by repurposing QASPER/SciFact labels. Blinding/assignment/agreement software can qualify separately from a claim about real distinct coders."
+    }
+  ],
+  "humanRolesRequired": [
+    {
+      "role": "data-rights steward/implementer",
+      "work": "Capture exact release, original notices/attribution/source classification, lawful intended use and hashes; no license inference from code. Use safe data-only JSON/Parquet reads, never execute downloaded dataset scripts.",
+      "actualPerson": null
+    },
+    {
+      "role": "benchmark adapter author",
+      "work": "Deterministic immutable source-ID/revision/token/sentence/paragraph-to-ADR29 anchor mappings; preserve original labels/annotator IDs and licensing metadata. No model-generated replacement labels.",
+      "actualPerson": null
+    },
+    {
+      "role": "competent human source reviewer",
+      "work": "Finite30-case mapping bridge:10 SciFact,10 QASPER extractive/evidence and10 absence/unsupported/boundary cases; at most20 source documents. Check source/span/label/claim scope and record corrections separately, never rewrite the release. Existing clear labels reused, not all rewritten.",
+      "actualPerson": null
+    },
+    {
+      "role": "independent adjudicator/evidence reviewer",
+      "work": "Independently inspect mappings and disputed adaptations; add second human judgments only where needed. If none is available, retain unqualified human-dependent claim rather than inventing names or treating model agreement as human gold.",
+      "actualPerson": null
+    }
+  ],
+  "newDomainSchemaPrerequisite": "General framework ships candidate/manual source-grounded fields; a custom PICO/theory/causal/interpretive relation pack is not model-qualified by these QA/claim labels. Such a pack requires actual domain-competent field annotations for its promoted roles. EBM-NLP is a credible PIO annotation candidate but its inspected repository lacked a clear data-license grant, so it is a conditional future source, not a required undisclosed license dependency.",
+  "alternativesNotSelectedAsMandatory": [
+    {
+      "source": "https://github.com/bepnye/EBM-NLP",
+      "reason": "Real P/I/O labels and professional test labels are relevant, but the read primary README does not establish dataset redistribution/model-use license. Do not infer rights from availability; only use after actual terms are resolved."
+    },
+    {
+      "source": "https://www.cl.uni-heidelberg.de/statnlpgroup/nfcorpus/",
+      "reason": "Primary terms limit stated free use to academic purposes; qrels are harvested from links rather than human scholarly relevance judgments. Avoid as universal mandatory/commercial gold."
+    }
+  ],
+  "annotationBudget": "No new participant study, recruitment, pay or blanket120-document expert annotation is assumed. Existing author annotations plus the finite mapping bridge satisfy the proposed initial benchmark strategy if rights/roles are available. Any paid annotation or external service requires separate actual spending authority, not inferred from W3 approval.",
+  "samplingAndContamination": "Freeze source/annotation/schema/rights/hash/frame/seed/IDs/eligibility before model comparison; no paper/question leakage from development edits into holdout and no score-dependent exclusions. Known public benchmarks may be in model training: report unknown contamination, do not claim clean unseen generalization. Exact split/source overlaps are measured later, not fabricated now.",
+  "remainingGenuinePrerequisites": [
+    "Acquire and authenticate exact small data releases and their matching terms/source licenses, including the SciFact registry discrepancy and QASPER/S2ORC source provenance.",
+    "An actual competent reviewer and independent adjudicator for the finite mapping/role bridge; identity/results remain null until real work.",
+    "Actual role accuracy, resource fit, packet truncation/evidence coverage and source-offset fidelity; no dataset or model execution performed now."
+  ],
+  "qualificationScope": "English biomedical claims/abstracts and NLP evidence QA are the initial planned evaluation domains; no universal scientific extraction, multilingual, medical decision, theory interpretation or human study validity claim. G3 model-supported outcome still requires actual eligible roles; manual fallback alone is not relabeled AI completion.",
+  "remainingBeforeWaveApproval": "Confirm this explicit bounded initial gold/domain/rights/role strategy in the ordinary complete packet; no need to download datasets/models or invent completed annotation to select it. Exact data-byte/license/mapping authentication and real reviewer judgments are task evidence before benchmark use/promotion, not fabricated planning approvals.",
+  "selectedMetricPolicy": {
+    "findingId": "W3-PLANNING-METRIC-01",
+    "choice": "Use explicit non-vacuous extraction and verifier role-promotion rules, frozen before any model comparison.",
+    "extraction": {
+      "evaluationUnit": "One frozen eligible (QASPER question ID, declared simple extractive field ID) with existing human answer annotations and authenticated source-anchor mapping. Missing, unanswerable, unsupported and free-form strata remain separately reported; never silently relabel them positive extractive units.",
+      "normalization": "For this custom adapter score only: Unicode NFC and CRLF/CR to LF, then Unicode casefold. Tokenize with Unicode regular expression \\w+|[^\\w\\s], retaining punctuation tokens and duplicate token multiplicities. No stemming, article deletion, synonym/model judging or source-text rewriting. Keep original strings and exact source offsets separately.",
+      "matching": "Each retained acceptable human answer annotation is one reference. Concatenate its ordered extractive spans with one space for token scoring, preserving the original individual spans and anchors. Match token multisets by sum of minimum token counts. Compute precision=overlap/predictionTokens and recall=overlap/referenceTokens. Choose the reference with greatest token F1, then precision, then stable original annotation order. Freeze acceptable-reference membership before comparison; do not assemble one reference from incompatible annotators or invent a missing reference.",
+      "emptyPrediction": "On an answerable eligible unit, absent output, explicit abstention or an empty token sequence gives precision=0 and recall=0. An empty/undefined positive reference is not an eligible answerable unit and requires a visible mapping correction before comparison. Failed/timed-out execution is still a failed run, not a scored abstention.",
+      "aggregation": "Average per-unit precision and recall within each declared eligible field, then give each field equal weight in the field macro. Publish each field's N, metrics and all unit outcomes. No consequential field that fails its declared threshold is hidden by the macro. Pooled micro/token-F1 and exact-span match are separate diagnostics, not alternative passing rules.",
+      "promotionTargets": {
+        "macroPrecisionMinimum": 0.9,
+        "macroRecallMinimum": 0.8
+      },
+      "answerKindAndMissingness": "Keep fixed per-kind confusion, absent/unsupported counts, packet evidence coverage/truncation and hallucinated outputs on actual unanswerable cases. Missing gold or an unsupported stratum is not a free correct answer. Anchor/schema/rights denials remain deterministic hard checks.",
+      "scope": "This is the selected custom initial QASPER adapter metric, not a claim of official leaderboard equivalence, universal scientific extraction or measured quality. Preserve source annotations, annotator disagreement and bounded domain claims."
+    },
+    "verifier": {
+      "labels": [
+        "SUPPORTS",
+        "REFUTES",
+        "NOT_ENOUGH_EVIDENCE",
+        "ABSTAIN"
+      ],
+      "evaluationFrame": "The complete frozen eligible SciFact development frame with actual source labels and rationale mappings, including declared no-evidence cases. Report exact class Ns, exclusions and unknown/unjudged scope before any candidate comparison.",
+      "precisionRule": "For each actionable label SUPPORTS and REFUTES, TP is an exact predicted/gold label match and FP is that predicted label against another actual judged gold label, including NOT_ENOUGH_EVIDENCE. Require the arithmetic mean of these two per-label precisions >=0.90. An absent or zero prediction denominator for either required label is undefined and cannot pass.",
+      "recallRule": "Require TP_SUPPORTS/N_gold_SUPPORTS >=0.80 and TP_REFUTES/N_gold_REFUTES >=0.80 separately. ABSTAIN, missing predictions and wrong labels count as misses. A missing required gold class leaves that role's qualification unestablished; do not invent class members or substitute a pooled metric.",
+      "answeredCoverageRule": "Require the number of valid explicit SUPPORTS, REFUTES or NOT_ENOUGH_EVIDENCE decisions divided by the complete eligible frame N >=0.80. ABSTAIN is unanswered. Technical failures, invalid output and timeouts remain hard failures and cannot be converted into abstention or excluded units.",
+      "diagnostics": "Publish the complete confusion matrix, all per-class precision/recall, answered coverage, abstentions, rationale/anchor coverage and uncertainty intervals with actual Ns and method. NOT_ENOUGH_EVIDENCE is distinct from REFUTES and ABSTAIN. Unjudged evidence is never invented negative gold.",
+      "humanAuthority": "These bounded initial targets do not certify scholarly truth or replace mandatory human review of consequential, inferred, disputed or low-confidence candidates. Same-model serial verification remains correlated, not independent-model evidence."
+    },
+    "appliesToTasks": [
+      "CAP-07.S04.T03",
+      "CAP-07.S05.T03",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03",
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03"
+    ],
+    "incorporationRequired": "Carry the exact same metric rules into shared contracts, gold strategy, relevant task-register/backlog acceptance additions and slice plans in the complete successor packet. Preserve all existing hard source, rights, budget, resource, security, cleanup and human-authority requirements. Independent incremental review still required; this file alone does not close the finding."
+  },
+  "selectedPolicy03Reference": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "selectedPolicyReview": {
+    "path": "artifacts/tmp/W3.planning-draft-01/independent-selected-policy-review-03-01.json",
+    "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+  },
+  "policyIncorporationStatus": "EXACT_CHOICES_INCORPORATED_PRIVATE_ONLY_PENDING_DIFFERENT_PACKET_REVIEW",
+  "orderedExecutionProofOwnership05": {
+    "registryContractsBeforeRuntime": {
+      "task": "CAP-07.S04.T03",
+      "meaning": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality."
+    },
+    "realRuntimePromptIntegration": {
+      "task": "CAP-07.S02.T03",
+      "meaning": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof."
+    },
+    "actualGoldAndPromotionIntegration": {
+      "task": "CAP-07.S05.T03",
+      "meaning": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+    },
+    "allOtherConsumers": "Exact metricPolicy03 remains byte-equal; later extraction/verifier tasks must prove their own exact task/profile/schema/source outcomes. Source templates and synthetic fixtures are never actual model quality or a real principal PASS."
+  },
+  "orderedExecutionWitness05": "ordered-slice-feasibility-witness-05.json"
+}

@@ -21,473 +21,202 @@ task_ids:
 - CAP-08.S04.T01
 - CAP-08.S04.T02
 - CAP-08.S04.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.10
 approval:
   status: pending
   approved_by: null
   approved_at: null
   approved_commit: null
 ---
+
 # CAP-08.S04 — Independent evidence verification
 
-> **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-08.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and both plan validators pass in approval mode. Once the capability campaign starts, the agent should execute continuously through its slices and pause only for an allowed infeasibility, external dependency, unavailable required hardware, explicit human decision, or approved design gate.
-
-<div class="visual-flow"><span>Capability decisions approved</span><b>→</b><span>Slice plan approved</span><b>→</b><span>Tasks executed</span><b>→</b><span>Slice integration</span><b>→</b><span>Independent review</span></div>
+PRIVATE PROPOSAL; NO IMPLEMENTATION AUTHORITY.
 
 ## 0. Plan control
 
-| Field | Value |
-|---|---|
-| Capability | `CAP-08` — Evidence schemas, extraction, verification, and adjudication |
-| Capability objective | Transform full text into source-grounded, mode-sensitive evidence records that distinguish observation, machine extraction, inference, verification, dispute, adjudication, and staleness. |
-| Slice | `CAP-08.S04` — Independent evidence verification |
-| Slice outcome | A separate verifier tests passage entailment, schema fit, anchor validity, and unsupported inference. |
-| Wave / priority | `W3` / `P0` |
-| Deployment profiles | `LOC`, `LAB`, `ALL` |
-| Platform targets | `windows-x64` |
-| Backlog tasks | `CAP-08.S04.T01`, `CAP-08.S04.T02`, `CAP-08.S04.T03` |
-| Slice dependencies | `CAP-08.S03.T03`, `CAP-07.S05.T03` |
-| Capability decision packet | `planning/capability-plans/CAP-08.md` — must be approved and decision-complete |
-| Approved experience | `RO-UI-ACADEMIC-MINIMAL-1.3`; relevant pages: schema-manager.html, evidence-matrix.html, document-reader.html, audit-lineage.html |
-| Approval state | `PROPOSED` / human approval pending |
+Private W3 replacement draft of `planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md`. Original hash `4bb7ec95be99235559a7e8a2cef7cf52293ee64cd9a4509b40c98748c11b486c`. Current canonical status NOT_STARTED is unchanged. Wave-scoped execution; the schema's legacy planning_gate spelling does not recreate capability-campaign approval. All peers bind the single Wave packet.
 
 ## 1. Purpose and contribution to the larger vision
 
-A separate verifier tests passage entailment, schema fit, anchor validity, and unsupported inference.
-
-This slice advances the capability objective: **Transform full text into source-grounded, mode-sensitive evidence records that distinguish observation, machine extraction, inference, verification, dispute, adjudication, and staleness.** It is designed as one production vertical inside a long-running capability campaign, not as an isolated technical experiment. The implementation must preserve the platform’s evidence-before-prose rule, source and decision provenance, bounded uncertainty, researcher authority, local-first privacy, cross-platform ports, and the distinction between canonical scholarly state and rebuildable analytical derivatives.
-
-**Implementation thesis.** Verify candidate evidence through a genuinely separate workflow that checks passage entailment, anchor validity, schema fit and unsupported inference, then calibrates machine decisions against sampled human review.
-
-The containing capability is complete only when all of its slices satisfy these exit conditions:
-
-- Researchers can define and version extraction schemas and ontology packs without losing original author wording.
-- Every extracted value links to exact source anchors, extractor configuration, verifier outcome, confidence dimensions, and human review state.
-- Evidence matrices support comparison, disagreement, adjudication, and export without turning missing information into invented data.
+A separate verifier tests passage entailment, schema fit, anchor validity, and unsupported inference. Verifier receives candidate, source packet and schema with a separate role/context, without extractor rationale. Same-model serial verification is disclosed as correlated; human review owns consequential claims.
 
 ## 2. Scope
 
-### 2.1 In scope
+Verifier receives candidate, source packet and schema with a separate role/context, without extractor rationale. Same-model serial verification is disclosed as correlated; human review owns consequential claims.
 
-- Verifier task/decision contract and independent orchestration.
-- Entailment, anchor and schema-fit checks.
-- Calibrated sampling and human verification queues.
-
-### 2.2 Explicit non-goals
-
-- Using a verifier score as final truth.
-- Allowing the extractor to pass its own output as verification.
-- Rechecking source quality or study validity beyond the declared verifier scope.
-- Do not implement downstream capability behavior beyond narrow ports, fixtures and handoffs explicitly named here.
-- Do not introduce university-hosted or managed-cloud infrastructure during the local Windows waves; preserve deployment-neutral contracts only.
-- Do not bypass the Core API, canonical repositories, provenance ledger, durable workflow fabric, rights policy, model gateway or approved experience reference.
-- Do not declare completion from happy-path task tests alone; slice-wide failure, cancellation, restart, migration, security, accessibility and handoff evidence is required.
-
-### 2.3 Slice boundary
-
-- **Consumes:** `CAP-08.S03.T03`, `CAP-07.S05.T03` and the handoffs in Section 13.
-- **Produces:** A separate verifier tests passage entailment, schema fit, anchor validity, and unsupported inference.
-- **Owns:** The portable domain contracts, adapter boundaries, workflows, fixtures, decisions and evidence explicitly listed in this plan.
-- **Does not own:** Product purpose, unrelated capabilities, user-authoritative scholarly judgments, source rights, or provider/database/UI framework internals.
+Non-goals: hosted infrastructure, neural training,8/16GiB model workloads, optional W9 optimization, unapproved larger-compute W5 or new physical foreign-host proof. Do not implement future synthesis/writing/publication authority.
 
 ## 3. Authority, dependencies, and campaign stop conditions
 
-### 3.1 Governing authority
+Proposed dependencies: CAP-07.S05.T03, CAP-08.S02.T03, CAP-08.S03.T03. Inherit accepted ADR21/25/26/28/29 within remit, current Windows protected lifecycle and actual W2 exit/G2 prerequisite. New proposed architecture/reference must be accepted through normal planning before W3 approval. Unknown facts stay unknown; ordinary failures/debugging are not new owner gates.
 
-1. Vision and non-goals in `docs/product/vision.md`.
-2. Accepted ADRs, then `docs/architecture/source/systems-design.md`.
-3. `planning/backlog.yaml` for IDs, dependencies, waves, status and evidence.
-4. Approved capability decision packet `planning/capability-plans/CAP-08.md`.
-5. This approved slice plan.
-6. Approved UI reference, workflow/page contracts and style guide for user-facing work.
-7. Automation and task-control rules.
+## 3A. Exact selected policy03 incorporation
 
-### 3.2 Required upstream state
+The exact selected policy03 is incorporated in this private successor, not adopted or measured: root-selected-policy-refinement-03.json SHA2561c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81. The genuine prior review5ced assesses the selected choices only. This complete packet still requires independent incremental review and ordinary actual authority before one immutableW3 approval.
 
-- All slice dependencies are approved or an explicitly approved integration stub exists: `CAP-08.S03.T03`, `CAP-07.S05.T03`.
-- The capability decision packet contains all material cross-slice choices, candidate options, recommendation, accepted selection, migration boundary and approval.
-- Every slice plan in the capability exists and is structurally valid before capability approval; all plans are approved before campaign start.
-- Required fixtures, benchmark corpora, credentials, model/source licenses, platform resources and human authority are available or represented by approved deterministic stubs.
-
-### 3.3 Decision-complete capability rule
-
-Planning by capability is the default. Before `capability start`, the planning agent inspects all slices and adjacent contracts, researches credible options, and records the strongest best-in-class recommendation as the selected and accepted option for every material decision in the capability packet. Those selections count as completed decisions. The static review site is a confirmation-and-override surface plus the one-time capability approval gate; implementation agents must not repeatedly ask for choices already settled by the packet. After approval, execution proceeds continuously slice by slice through a production-ready end-to-end capability.
-
-### 3.4 Allowed pauses after execution begins
-
-The long-running campaign should continue task-by-task and slice-by-slice. It may pause only when classified as one of the following and recorded by `taskctl`:
-
-- **Infeasible:** validated evidence disproves the selected design and no compatible fallback exists within the approved boundary.
-- **External dependency:** a required source/provider/license/credential/approval controlled outside the repository is unavailable.
-- **Hardware unavailable:** a required qualification target cannot be simulated and is not accessible.
-- **Human decision:** a newly discovered consequential product, architecture, security, rights, ethics or scholarly-authority choice was not reasonably knowable during planning.
-- **Approved design gate:** the implementation requires an intentional change to the governed style guide/workflow/page reference.
-
-Ordinary implementation uncertainty, test failure, debugging, refactoring, model fallback, recoverable performance work, or a choice already covered by the packet is not a pause condition.
+Task additions below preserve original forecasts as history, other proposed timing goals and hard source/rights/security/resource/cleanup requirements. They create no new task or execution authority.
 
 ## 4. Selected implementation decisions
 
-The capability packet's researched best-in-class recommendations are already selected, accepted, and decision-complete. This section projects the applicable decisions into the slice implementation contract. Capability approval authorizes those defaults; a reviewer may override a selection before approval only with explicit rationale. During execution, no implementation agent may silently choose a different candidate.
-
-
-These selections are recommendations until the capability packet and ADRs are approved. Approval turns them into the execution contract for the campaign.
-
-| Decision | Recommended selection | Alternative not selected | Rationale and replaceability | Basis |
-|---|---|---|---|---|
-| **Independence** | Verifier receives candidate plus cited passages and schema, not extractor rationale; use separate prompt role and preferably independently evaluated model route. | Ask extractor to self-critique in the same context. | Context separation reduces confirmation and makes inputs auditable. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
-| **Decision dimensions** | Return anchor-valid, entailed/contradicted/insufficient, schema-fit and inference-supported as separate judgments. | One pass/fail or confidence score. | Different failures require different recovery actions. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
-| **Human sampling** | Stratify by field consequence, model/version, confidence band, schema, novelty and detected disagreement; estimate error with confidence intervals. | Review a convenient untracked sample. | Calibration and governance require a known sampling frame and reproducible selection. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
+Use the concrete proposed choices in this capability front matter and contracts-01.md. Relevant W3 decision register: CAP-08-D01, CAP-08-D02, CAP-08-D03, CAP-08-D04, CAP-08-D05, CAP-08-D06, CAP-08-D07, CAP-08-D08, CAP-08-D09, CAP-08-D10, CAP-08-D11, CAP-08-D12, CAP-08-D13, CAP-08-D14, CAP-08-D15, CAP-08-D16, CAP-08-D17, CAP-08-D18, CAP-08-D19, CAP-08-D20, CAP-08-D21, CAP-08-D22, CAP-08-D23. Recommended != accepted. Preserve four inherited CAP07 W1 decisions exactly.
 
 ## 5. Architecture and implementation design
 
-### 5.1 Components and recommended repository locations
+- Gateway verifier task/prompt and deterministic validators
+- Core risk/sampling/verification queue
+- EvidenceRecord decision/staleness transitions
 
-| Component / location | Responsibility |
-|---|---|
-| `services/workers/verification` | Independent packets, model/rule checks and decisions. |
-| `services/core/research_observatory/modules/evidence_graph/verification.py` | Policy, sampling and state transitions. |
-| `packages/contracts/verification` | Check results, verdict, sampling frame and human review schemas. |
-| `packages/ui/evidence/verification` | Queue, passage comparison and calibration dashboard. |
-| `tests/benchmarks/verification` | SciFact-inspired and project-specific gold sets. |
-
-The paths are recommendations within the approved modular-monolith/package structure. Exact filenames may change without a new decision if module ownership, portable contracts and dependency directions remain intact.
-
-### 5.2 Data model and durable state
-
-| Entity / value object | Required semantics |
-|---|---|
-| `VerificationPacket` | candidate revision, cited passages/anchors, schema, verifier version and blinded fields |
-| `VerificationDecision` | per-dimension outcomes, rationale spans, errors and recommended action |
-| `VerificationSamplingFrame` | population query, strata, seed, sample and inclusion probability |
-| `HumanVerification` | reviewer decision, rationale, adjudication and calibration link |
-
-**Cross-cutting invariants**
-
-- Canonical records, accepted evidence, rights decisions, human adjudications and provenance are authoritative; indexes, graph projections, rankings, generated drafts and detector signals are versioned derivatives.
-- Unknown, not reported, not applicable, denied, unavailable, ambiguous, inferred, disputed, stale and failed remain distinct where relevant.
-- Every long-running operation has stable identity, status, inputs/manifests, progress, cancellation, checkpoint, restart and evidence records.
-- State transitions are authorized in core services and committed atomically with outbox/dependency facts or through an idempotent staged protocol.
-
-### 5.3 Interfaces and contracts
-
-- `Verifier.verify(packet)` returns structured dimensions only after local schema validation.
-- `VerificationPolicy.route(decision)` verifies, disputes, rejects or queues human review.
-- `SamplingService.draw(frame_spec)` is deterministic from snapshot/seed.
-- `CalibrationReport` compares machine/human outcomes by task/model/schema and controls promotion.
-
-All contracts use stable canonical IDs, explicit revisions/status, typed errors and version metadata. Provider SDK objects, SQLite rows, model tensors, graph library objects and UI component state may not cross the owning adapter boundary.
-
-### 5.4 Cross-capability and platform compatibility
-
-- Windows x64 is the current implementation target, but paths, process control, credential storage, accelerators and packaging stay behind adapters required by CAP-14 macOS/Linux qualification.
-- Local and hosted deployments use the same domain/API/workflow semantics; storage, process, authentication and scaling adapters differ later.
-- Downstream CAP-11–19 consume immutable IDs, evidence/provenance, manifests and ports rather than internal tables or framework classes.
-- Model, embedding, reranker, parser, graph and vector choices are pinned and replaceable; changing one marks exact dependents stale and requires evaluation rather than silent regeneration.
+Current paths only. Stable generated contracts/ports, canonical transaction+provenance/outbox and narrow worker authority; no second state store or runtime evaluation dependency. Exact new filenames remain task-selected, not asserted existing.
 
 ## 6. User experience and approved reference
 
-- Verifier view shows candidate and exact source passage side by side; source can open at anchor.
-- Users see which check failed and whether the failure indicates parsing, extraction, schema or interpretation work.
-- Calibration dashboard reports sample design and uncertainty, not only accuracy.
-- High-consequence fields require explicit human status before use in publication outputs.
+The complete proposed reference is architecture-ux/ui-reference/ at this packet root. Actual1.9 is the inherited base, not approval of new W3 interactions; future reference ID/approval remain null. Preserve all14 semantic1.5 workflows. MetricPolicy03 applies only to its declared roles/tasks; shared existing parser/model reservation governs relevant runtime work without imposing a new metric on unrelated retrieval/screening.
 
-- Workflow navigation must show the project’s selected use case, current numbered stage, completed/upcoming states, expected output and next/previous actions.
-- Supporting tools remain accessible, but opening one explains its relationship to the primary path and offers return to the current stage.
-- All semantic states use text/icon in addition to color, meet WCAG 2.2 AA targets, support keyboard operation, and have light/dark parity.
-- Loading, empty, offline, partial, denied, stale, cancellation, failure, retry and recovery states are designed—not left as generic alerts.
-
-**Reference-first rule.** If the planned experience materially differs from `RO-UI-ACADEMIC-MINIMAL-1.3`, update the style guide, workflow catalog, page contract and HTML prototype; run reference validators; obtain explicit approval and a new reference ID; only then implement application code. Restoring a defect to the approved reference does not require a new reference.
+Base RO-UI-ACADEMIC-MINIMAL-1.9, exact inherited semantic catalog1.5/14keys and source-first supporting-return behavior. Apply the material proposed W3 interaction delta only after ordinary reference adoption; do not implement mock7B/GPU32k/prices as defaults. See ux-reference-proposal-01.md for keyboard/focus/status/late result contracts.
 
 ## 7. Security, privacy, rights and research integrity
 
-- Verifier receives minimum local data and follows the same rights/egress policy as extraction.
-- Human queue access is role- and project-scoped.
-- No hidden chain-of-thought is stored; evidence spans and typed reasons are retained.
-
-Additional mandatory controls:
-
-- Treat source content, metadata, model files, provider responses, reports, URLs, archives and rich text as untrusted.
-- Apply least privilege, schema/input validation, destination/path controls, bounded resources, output encoding and redacted diagnostics at trusted boundaries.
-- Private projects and unpublished ideas remain local by default; egress requires project policy, rights decision and visible payload/provider preview.
-- Never fabricate evidence, citations, availability, permissions, method details, model certainty, benchmark success or completion evidence.
-- AI output is candidate state until the domain-specific verifier/human gate promotes it.
+Before reads/dispatch/commit/replay: exact project/session/Intent/source rights+model-use/classification/budget. Source/model output untrusted; encrypted projections/cache, no implicit network/spend, human inclusion/ethics/interpretation/final claim. Prove the material real principal boundary, not mocks alone.
 
 ## 8. Failure, cancellation, restart and recovery
 
-| Material scenario | Required durable and user-visible behavior |
-|---|---|
-| Passage inaccessible | Return anchor/source unavailable; never infer entailment. |
-| Verifier invalid output | Fail validation and queue retry/human review; do not change evidence status. |
-| Machine/human disagreement | Create dispute/adjudication path and feed evaluation, not silent override. |
-| Sampling job interrupted | Persist frame/seed; resume same sample without replacement drift. |
-
-Every scenario receives a deterministic fixture where feasible, expected canonical state, expected derivative state, user message/action, retry/cancel rule, cleanup/repair rule, provenance event and automated test. A restart test must execute from persisted state rather than from an in-memory mock alone.
+Unavailable verifier is unverified, never a pass. Wrong revision/anchor, policy expiry, cancelled job and source drift deny promotion. Repeated model agreement is not human validation or independence. Preserve prior accepted work, failed raw outputs and immutable actor/attempt identity. Normal owned cleanup is required for lifetime claims.
 
 ## 9. Task-by-task implementation plan
 
 ### CAP-08.S04.T01 — Implement verifier workflow and decision contract
 
-**Objective.** Independent model/rule/human verifier inputs, verdicts, reasons, confidence, corrected candidates, and escalation rules.
+Objective: Independent model/rule/human verifier inputs, verdicts, reasons, confidence, corrected candidates, and escalation rules.
 
-| Control | Value |
-|---|---|
-| Dependencies | `CAP-08.S03.T03`, `CAP-07.S05.T03` |
-| Estimate / risk | `L` / `high` |
-| Review gate | `agent-review` |
-| Verification profiles | `evidence`, `ai` |
+Dependencies: CAP-08.S03.T03, CAP-07.S05.T03, CAP-08.S02.T03. Estimate: 20 engineering-effort-hours including 0 planned refactoring hours.
 
-**Expected deliverables**
-
-- Independent model/rule/human verifier inputs, verdicts, reasons, confidence, corrected candidates, and escalation rules.
-
-**Ordered implementation sequence**
-
-1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-08.S04.T01`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
-2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
-3. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
-4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
-5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
-6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
-7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
-
-**Acceptance criteria from the authoritative backlog**
+Original forecast acceptance retained:
 
 - Verifier cannot inherit hidden extractor output beyond the candidate and evidence packet; verdict references exact anchors; unavailable verification is explicit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
 
-**Criterion-linked evidence required**
+Explicit W3 adaptation/additional closure:
 
-- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
-- Named automated tests and report paths mapped to every acceptance criterion.
-- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
-- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
-- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
-- Independent reviewer result. The implementation agent may not self-approve.
+- Separate prompt/context and immutable verifier identity/limits. Use distinct eligible model if available; never load two simultaneously merely to claim independence.
+- For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
 
-**Backlog verification commands**
+Ordered implementation:
 
-```text
-python tools/verify.py --profile evidence
-python tools/verify.py --profile ai
-```
+1. Risk-selected task-start acceptance-closure; inspect current predecessor and material adverse findings; characterize the material boundary before production changes where practical.
+2. Implement the bounded contract through existing Core/worker/generated ports; preserve immutable history and update compatibility/migration as needed.
+3. Separate prompt/context and immutable verifier identity/limits. Use distinct eligible model if available; never load two simultaneously merely to claim independence. For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
+4. Commit then collect criterion-linked exact-candidate evidence with stable selected inputs/normal owned cleanup; independent task disposition and integration.
+
+Evidence/review: Independent commit-bound task disposition; deeper review for policy, model/worker isolation, rights/egress, migrations, cross-process contracts and research-integrity changes. Machine-readable criterion/outcome map with actual candidate/source/runtime/fixtures and raw receipts; failures/skips/limits retained. Happy path plus the material denial/cancel/restart/recovery/rights/staleness cases selected by this task and contracts-01.md. Actual resource/timing/quality evidence for claims made; fixtures do not prove a real security or model boundary. Exact selected policy03 method/denominator/reservation evidence as applicable; no inferred fit/quality/people/license and no suppression of failed execution.
 
 
 ### CAP-08.S04.T02 — Implement entailment, anchor, and schema-fit checks
 
-**Objective.** NLI/LLM/rule ensemble checks for support, contradiction, insufficient evidence, location validity, type/cardinality, and unsupported extrapolation.
+Objective: NLI/LLM/rule ensemble checks for support, contradiction, insufficient evidence, location validity, type/cardinality, and unsupported extrapolation.
 
-| Control | Value |
-|---|---|
-| Dependencies | `CAP-08.S04.T01` |
-| Estimate / risk | `L` / `high` |
-| Review gate | `agent-review` |
-| Verification profiles | `evidence`, `ai`, `documents` |
+Dependencies: CAP-08.S04.T01. Estimate: 20 engineering-effort-hours including 0 planned refactoring hours.
 
-**Expected deliverables**
-
-- NLI/LLM/rule ensemble checks for support, contradiction, insufficient evidence, location validity, type/cardinality, and unsupported extrapolation.
-
-**Ordered implementation sequence**
-
-1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-08.S04.T02`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
-2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
-3. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
-4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
-5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
-6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
-7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
-
-**Acceptance criteria from the authoritative backlog**
+Original forecast acceptance retained:
 
 - Curated positive/negative fixtures meet declared thresholds; invalid anchors always fail; a fluent but unsupported candidate is rejected.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
 
-**Criterion-linked evidence required**
+Explicit W3 adaptation/additional closure:
 
-- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
-- Named automated tests and report paths mapped to every acceptance criterion.
-- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
-- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
-- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
-- Independent reviewer result. The implementation agent may not self-approve.
+- Return anchor-valid/schema-fit/entailed/contradicted/insufficient/inference-supported separately; deterministic anchor checks100% adversarial denial. Unsupported fluent claims fail.
+- For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
 
-**Backlog verification commands**
+Ordered implementation:
 
-```text
-python tools/verify.py --profile evidence
-python tools/verify.py --profile ai
-python tools/verify.py --profile documents
-```
+1. Risk-selected task-start acceptance-closure; inspect current predecessor and material adverse findings; characterize the material boundary before production changes where practical.
+2. Implement the bounded contract through existing Core/worker/generated ports; preserve immutable history and update compatibility/migration as needed.
+3. Return anchor-valid/schema-fit/entailed/contradicted/insufficient/inference-supported separately; deterministic anchor checks100% adversarial denial. Unsupported fluent claims fail. For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
+4. Commit then collect criterion-linked exact-candidate evidence with stable selected inputs/normal owned cleanup; independent task disposition and integration.
+
+Evidence/review: Independent commit-bound task disposition; deeper review for policy, model/worker isolation, rights/egress, migrations, cross-process contracts and research-integrity changes. Machine-readable criterion/outcome map with actual candidate/source/runtime/fixtures and raw receipts; failures/skips/limits retained. Happy path plus the material denial/cancel/restart/recovery/rights/staleness cases selected by this task and contracts-01.md. Actual resource/timing/quality evidence for claims made; fixtures do not prove a real security or model boundary. Exact selected policy03 method/denominator/reservation evidence as applicable; no inferred fit/quality/people/license and no suppression of failed execution.
 
 
 ### CAP-08.S04.T03 — Implement calibrated sampling and human-verification queues
 
-**Objective.** Risk-based and random audit samples, reviewer assignments, agreement tracking, escalation, and threshold reporting.
+Objective: Risk-based and random audit samples, reviewer assignments, agreement tracking, escalation, and threshold reporting.
 
-| Control | Value |
-|---|---|
-| Dependencies | `CAP-08.S04.T02` |
-| Estimate / risk | `M` / `high` |
-| Review gate | `method-review` |
-| Verification profiles | `evidence`, `desktop` |
+Dependencies: CAP-08.S04.T02. Estimate: 16 engineering-effort-hours including 0 planned refactoring hours.
 
-**Expected deliverables**
-
-- Risk-based and random audit samples, reviewer assignments, agreement tracking, escalation, and threshold reporting.
-
-**Ordered implementation sequence**
-
-1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-08.S04.T03`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
-2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
-3. Implement the approved Academic Minimal route and workflow state using shared components. Cover keyboard/focus, screen reader names, light/dark, loading, empty, offline, denied, stale, error and recovery states; update and approve the reference before any intentional UX divergence.
-4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
-5. Build from an immutable snapshot into a staging destination; apply rights filters, produce checksums/manifests, verify independently, then atomically finalize. Test cancellation, disk failure and round trip.
-6. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
-7. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
-8. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
-
-**Acceptance criteria from the authoritative backlog**
+Original forecast acceptance retained:
 
 - High-consequence/low-confidence fields route to humans; audit sample is reproducible; project cannot claim validated extraction without recorded sample results.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
 
-**Criterion-linked evidence required**
+Explicit W3 adaptation/additional closure:
 
-- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
-- Named automated tests and report paths mapped to every acceptance criterion.
-- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
-- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
-- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
-- Independent reviewer result. The implementation agent may not self-approve.
+- Stratified seeded audit frame/probabilities and sample outcomes; review100% high-consequence, inferred, disputed or low-confidence candidates. Error intervals state population/design; no calibrated label from missing annotations.
+- For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
 
-**Backlog verification commands**
+Ordered implementation:
 
-```text
-python tools/verify.py --profile evidence
-python tools/verify.py --profile desktop
-```
+1. Risk-selected task-start acceptance-closure; inspect current predecessor and material adverse findings; characterize the material boundary before production changes where practical.
+2. Implement the bounded contract through existing Core/worker/generated ports; preserve immutable history and update compatibility/migration as needed.
+3. Stratified seeded audit frame/probabilities and sample outcomes; review100% high-consequence, inferred, disputed or low-confidence candidates. Error intervals state population/design; no calibrated label from missing annotations. For verifier promotion use exact metricPolicy03.verifier on the complete frozen eligible SciFact development frame: SUPPORTS/REFUTES per-label TP/FP includes false actionable claims against actual NEI; their arithmetic mean precision>=0.90, SUPPORTS recall>=0.80 and REFUTES recall>=0.80 separately, and valid explicit SUPPORTS/REFUTES/NEI answered coverage>=0.80. Zero/undefined predicted-label denominator or missing required gold class cannot pass. ABSTAIN/missing predictions are misses/unanswered; technical/invalid/timeout failures remain hard failures. Publish full confusion, actual Ns, all class metrics/rationale anchors/uncertainty; unjudged evidence is never negative gold and consequential human review remains.
+4. Commit then collect criterion-linked exact-candidate evidence with stable selected inputs/normal owned cleanup; independent task disposition and integration.
 
+Evidence/review: Independent commit-bound task disposition; deeper review for policy, model/worker isolation, rights/egress, migrations, cross-process contracts and research-integrity changes. Machine-readable criterion/outcome map with actual candidate/source/runtime/fixtures and raw receipts; failures/skips/limits retained. Happy path plus the material denial/cancel/restart/recovery/rights/staleness cases selected by this task and contracts-01.md. Actual resource/timing/quality evidence for claims made; fixtures do not prove a real security or model boundary. Exact selected policy03 method/denominator/reservation evidence as applicable; no inferred fit/quality/people/license and no suppression of failed execution.
 
 ## 10. Slice-wide verification matrix
 
-| Verification family | Required slice evidence |
-|---|---|
-| Domain and schema | Contract examples/negative cases; invariants and state transitions; stable IDs/revisions; property tests where valuable. |
-| Adapter and integration | Real local adapters with deterministic fixtures; idempotency; concurrency; transaction/outbox/dependency behavior; replaceability test double. |
-| End-to-end | Approved workflow from entry point through durable result, source inspection, user decision and restart. |
-| Failure and recovery | At least the Section 8 cases, cancellation acknowledgement, process restart, corrupted/partial derivative repair and no canonical loss. |
-| Security, privacy and rights | Authorization denial, prompt/source injection, malformed files/payloads, secret/content redaction, egress and export policy. |
-| Accessibility and UI reference | Route/page contract, shared tokens, light/dark, keyboard, focus, screen reader, zoom/reflow and visual-baseline checks. |
-| Performance and capacity | Declared fixtures, warm/cold measurements, p50/p95, memory/disk/model footprint, cancellation and regression threshold. |
-| Cross-capability | Upstream fixture compatibility, downstream contract fixture, staleness propagation and no forbidden module dependency. |
-| Independent review | Reviewer maps every criterion to evidence, challenges tests and confirms no concealed production blocker. |
-
-Task verification commands are authoritative minimums. The slice review must also run a clean-state combined profile and any benchmark/security/reference checks described here.
+Complete this slice outcome through actual predecessor ports and real Windows local UI/Core/worker boundaries. Selected evidence: exact/happy, denial/rights revoke, invalid schema/anchor, cancel/late completion, crash/restart, migration/rebuild, OOM/unsafe resource and keyboard/focus as applicable. Cross-slice checkpoints in wave-proposal-01.json do not add human gates. All measured claims cite actual raw/criterion/candidate and limits.
 
 ## 11. Performance and resource budgets
 
-| Measure | Initial production budget / qualification target |
-|---|---|
-| Rule checks | Anchor/schema deterministic checks p95 < 100 ms. |
-| Model verification | Bounded by CAP-07 task deadline; batch where compatible. |
-| Human queue | First item/filter p95 < 500 ms for 100,000 candidates. |
-| Calibration | Report 100,000 decisions < 30 s using aggregate queries. |
-
-Budgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.
+Use the explicit proposed initial-target-register-01.json, not old p95/max forecast prose as a new timing gate. Timing decisions use median of ALL comparable completed trials per workload/state/configuration; retain min/median/max/raw/conditions, failures and timeouts. Resource/quality/rights/security/cleanup limits remain hard. No spike attribution without evidence. Models obey the total application2GiB preferred/3GiB upper aggregate and per-role tiny/small admission; see aggregate-resource-and-selection-policy-02.json. All numeric choices are proposed initial engineering targets needing actual W3 validation, not measurements or RAM/model promises. Optional optimization remains W9.
 
 ## 12. Observability and provenance
 
-Required metrics and diagnostics:
-
-- verdict distributions
-- anchor/schema failures
-- machine-human precision/recall/calibration
-- sampling coverage
-- disagreement/adjudication
-- model/schema regression
-
-- One trace/correlation ID links desktop action, core command, workflow job, adapter/model call, provenance activity and evidence artifact.
-- Operational telemetry is content-redacted by default. Durable scholarly provenance records source IDs/passages/hashes, schema/policy/model versions, decisions and derivation—not secret-bearing logs.
-- Support bundles require user preview and classification-aware exclusion of source text, research ideas, prompts and unpublished results.
-- Every promoted output records dependencies so CAP-03 can mark it stale precisely.
+Content-free operational trace IDs/hashes/sizes/status/actual use; durable scholarly source/task/schema/model/profile/policy/actor lineage in protected canonical records. Unknown confidence/usage explicit, no raw private content in default logs.
 
 ## 13. Adjacent-slice handoffs
 
-- Consumes S02 candidates, S03 states, CAP-05 anchors and CAP-07 models.
-- Verified/disputed outcomes feed Evidence Matrix, graph and synthesis.
-- Calibration gates model/prompt upgrades through CAP-07.S05.
-
-Handoffs must include portable schemas, accepted/rejected examples, failure fixtures, manifest/version rules, performance baselines and evidence IDs. An informal README-only handoff is insufficient.
+The explicit task edges, parent-slice external dependency unions and ordered prior-slice approval gates in task-register-01.json/ordered-slice-feasibility-witness-05.json jointly govern this proposed execution; retain all original external predecessors. Canonical persistence precedes extraction commits, runtime authority precedes positive model tasks, verifier sampling precedes bulk verification, optional remote cannot block the complete local journey.
 
 ## 14. Migration and backward compatibility
 
-- Version every durable schema, policy, model/index/graph manifest and export profile. Use forward migrations with preflight, backup, rollback/repair evidence and test fixtures from the prior supported release.
-- Rebuilding a derivative does not mutate canonical evidence/decisions. Old and new derivative versions remain distinguishable until promotion and dependent staleness are resolved.
-- Project moves and later Windows/macOS/Linux qualification cannot rely on absolute paths or machine-specific IDs in portable records.
-- Deprecations include reader compatibility, warnings, migration telemetry and a declared removal release. Unsupported old projects open read-only with repair/export options rather than silent partial upgrade.
+Start at actual approved predecessor schema observed28; backup-first staged migration/row+cell+object preservation/interrupted rollback/read-only incompatible handling. Index/model/prompt/schema upgrades retain historic identities and stale derived generations. Never repair original recovery fixtures or mint legacy witnesses.
 
 ## 15. Required slice evidence bundle
 
-- Approved capability decision packet and this approved slice plan at immutable commits.
-- Reviewed commits/diffs for all tasks and criterion-to-evidence records.
-- Unit, contract, integration, end-to-end, failure, cancellation, restart, recovery, migration and performance reports.
-- Security/privacy/rights/research-integrity review and accessibility/UI conformance evidence where applicable.
-- Schemas, migrations, API/client fixtures, model/index/graph manifests, benchmark datasets and hashes.
-- Architecture dependency report, staleness/provenance traces and adjacent-slice handoff fixture.
-- Independent slice review with approved/changes-requested/blocked outcome.
+Criterion-linked machine manifest, actual raw commands/outcomes, exact candidate/source/runtime/fixture/policy closure, declared gold/measurement rights and human annotations, real boundary proof where claimed, source/UX/risk-selected independent review, limits/deferred coverage and adverse history.
 
 ## 16. Definition of Ready
 
-- Capability packet is decision-complete and approved; each decision lists options, recommendation, accepted selection and migration boundary.
-- This plan and all other capability slice plans exist, pass structural checks and are approved.
-- Required ADRs/experience changes are approved before the campaign starts.
-- Dependencies, fixtures, credentials/licenses, platform resources and human authorities are available or explicitly stubbed.
-- The first task is `READY`, no conflicting lease exists, and the campaign can plausibly run to production-ready capability completion without routine stop points.
+After W2 completion/G2, all proposed W3 peers/decisions/architecture/reference and estimates receive normal immutable complete-Wave approval; actual dependency-eligible task claimed through taskctl. Task-start work refines material acceptance, not a new approval packet.
 
 ## 17. Definition of Done
 
-- Every task is `DONE` and independently approved.
-- Slice-wide verification passes from a clean state on the required platform/profile.
-- Failure, denial, cancellation, restart, migration, recovery, security, accessibility and performance paths satisfy this plan.
-- No concealed TODO, placeholder, skipped mandatory test, unreviewed architecture divergence or production blocker remains.
-- Handoff contracts/fixtures and dependency/staleness behavior are accepted by the next slice.
-- The capability campaign automatically advances to its next dependency-ready slice.
+All original criteria plus explicit approved W3 adaptations measured/proven, actual task dispositions integrated, end-to-end slice evidence and independent slice judgment, no invented model/human/data or ignored adverse result. No slice/task completion is asserted here.
 
 ## 18. Risks and mitigations
 
-| Risk | Mitigation |
-|---|---|
-| Correlated model errors | Separate context/role, cross-model option and human samples. |
-| Verifier overreach | Typed dimensions and explicit scope; no source-quality claims. |
-| Sampling bias | Stored population/strata/inclusion probability and random seed. |
+Unavailable verifier is unverified, never a pass. Wrong revision/anchor, policy expiry, cancelled job and source drift deny promotion. Repeated model agreement is not human validation or independence. Small-model quality and real protected-index/runtime feasibility are unmeasured. Refuse unsupported roles, retain manual/lexical usefulness, report target failures and use ordinary consequential-evidence route; no silent security/performance waiver.
 
 ## 19. Required ADRs and human decisions
 
-- ADR-CAP08-VERIFY: verifier independence, decision dimensions and human sampling policy.
-
-All material choices in Sections 4–5 must appear in the capability packet. Before approval, reviewers may accept the recommendation, select a documented alternative, or require more evidence. After capability start, these choices are not reopened for preference; they are reopened only when implementation evidence demonstrates infeasibility or a newly discovered consequential issue outside the approved decision envelope.
+The three material unnumbered architecture topics and the W3 experience delta are ordinary proposed decisions, not accepted ADRs. Reuse accepted decisions within remit; exact normal record identities assigned at planning transition. No placeholder ADR-CAP reference is treated as accepted. The one Wave approval remains pending.
 
 ## 20. Research and standards basis
 
-- **Fact or Fiction: Verifying Scientific Claims** — Scientific claim/evidence verification benchmark and rationale retrieval.  
-  https://aclanthology.org/2020.emnlp-main.609/
-- **JSON Schema Draft 2020-12** — Canonical structured-output and schema-pack validation.  
-  https://json-schema.org/draft/2020-12
-- **PROV-O: The PROV Ontology** — Interoperable provenance entities, activities, agents and derivations.  
-  https://www.w3.org/TR/prov-o/
-
-These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
+See primary-evidence-01.json plus the unchanged read inventory in genuine905b. Primary docs motivate choices but do not prove installed versions, data rights, model quality, resource fit or actual results.
 
 ## 21. AI implementation runbook
 
-1. Run `python tools/planctl.py ready CAP-08 --require-approved` and `python tools/taskctl.py validate`.
-2. Confirm the active campaign is `CAP-08`, this is the current slice, and the approved packet/plan commits match the campaign record.
-3. Load only the governing context, capability packet, this slice plan, task record, affected code and tests.
-4. Execute all tasks in dependency order. Debug, refactor and use approved fallbacks without routine human pauses.
-5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
-6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
-7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
-8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.
+No execution now. After the complete W3 packet is approved, resume its same campaign; claim the next dependency-eligible task, perform risk-selected acceptance closure, characterize, implement, commit, collect exact-candidate selected proof, submit/review/integrate, then slice/checkpoint/Wave qualification. No capability ready/start command or new GRR/GCR/controller.
+
+## Ordered-slice execution and proof ownership05
+
+Execution position is 4 within proposed CAP-08 W3 order: CAP-08.S01, CAP-08.S03, CAP-08.S02, CAP-08.S04, CAP-08.S05, CAP-08.S06. Prior capability slices requiring actual independent APPROVED completion: CAP-08.S01, CAP-08.S03, CAP-08.S02. All tasks in this slice also wait for the exact external union: CAP-07.S05.T03, CAP-08.S02.T03, CAP-08.S03.T03. A task DAG alone is insufficient. No slice approval or READY state is manufactured.
+
+## Canonical proposed-publication reconciliation
+
+Actual W2/G2 initial completion is recorded at1cc8131d8b74cf6c536d48ce4badc25933981bbb; the current planning predecessor and committed post-exit roadmap is2e2f1a9d042c3dd8db3f8f31b648a36ad004c505. See artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json and the independent Wave/S06/CP10 records. Historical3541 product,1b377 build/reference/Native,fc694 full90 and ownerf86 identities remain distinct. Initial1000 functional commit is qualified, but100k publication/fullmanifest/replay/reopen and continuous performance remain UNQUALIFIED; no1000 productcap or W3metadata/vector100k import-throughput inference. All failed/UNKNOWN/UNTESTED evidence, parser-only2.5333542s acceptance, source-search median7s/all24raws, strictClippyFAIL,409UNKNOWN, security expiry and platform/installer gaps remain. Owner933b moves optional cosmetics and optimization/performance intake to newW10; functional/security qualification residuals remain separately trackedW9, and larger-computing product workW5. Before W3 approval, suggested soft median timing overage strictly<7s may be accepted with W10 debt; completed comparable trials/allraws retained, failed/timeouts and hard functional/security/resource/cancellation bounds unchanged. Hosted university/cloud labels areW11/W12. All48IDs/16slices/924hours including28once, ordered proof ownership, policy03 metrics/token semantics and serial admission are retained. ADR0056–58/reference1.10 remain Proposed, active1.9 unchanged and W3approvalPENDING; no implementation is authorized.

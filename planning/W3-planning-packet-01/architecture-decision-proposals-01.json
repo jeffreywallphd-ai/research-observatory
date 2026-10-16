@@ -1,0 +1,72 @@
+{
+  "status": "COMPLETE_UNNUMBERED_PROPOSED_TEXTS_PENDING_ACCEPTANCE",
+  "recordingRule": "Use the existing ADR/index/mismatch route only for these material new decisions before the single Wave approval. No ADR number is reserved, no existing accepted ADR bytes edited, no new controller/ECR campaign.",
+  "topics": [
+    {
+      "topic": "model-purpose authority and isolated execution",
+      "extends": [
+        "ADR-0021",
+        "ADR-0028"
+      ],
+      "choice": "Canonical model-use/classification/budget then signed no-network native worker, read-only selected model files and bounded framed pipes; CPU serial resource admission.",
+      "alternatives": [
+        "Same-user loopback model HTTP server alone: simpler but does not meet the claimed no-network/filesystem authority boundary.",
+        "Container runtime: not required on local Windows tier and outside the account/container-free outcome."
+      ],
+      "neededBeforeApproval": "Accepted affected architecture decision/scope for model-purpose worker and authority schema; do not claim connector ADR28 already accepts model principal grants.",
+      "completePrivateText": "docs/adr/ADR-0056-model-purpose-authority-and-isolated-local-execution.md",
+      "acceptedIdentity": null
+    },
+    {
+      "topic": "protected lexical/vector projection",
+      "extends": [
+        "ADR-0012",
+        "ADR-0029"
+      ],
+      "choice": "Separate protected SQLCipher FTS derivative DB and encrypted vector chunks under governed indexes class, canonical revision/generation authority, purpose-scoped key leases/handles, shadow rebuild and rights invalidation; excluded from backup/export.",
+      "alternatives": [
+        "Qdrant local service: useful scale/filter features, but adds service, protection, deployment and snapshot obligations before measured need.",
+        "Plain SQLite/NumPy files: rejected for private vectors/text at rest."
+      ],
+      "neededBeforeApproval": "Accept the protected embedded adapter/rebuild representation decision; exact schema migration and actual feature proof belong to implementation tasks.",
+      "completePrivateText": "docs/adr/ADR-0057-protected-rebuildable-lexical-and-vector-projections.md",
+      "acceptedIdentity": null
+    },
+    {
+      "topic": "local scholarly evaluation/identity authority",
+      "extends": [
+        "ADR-0002",
+        "ADR-0025",
+        "ADR-0026"
+      ],
+      "choice": "Support-only gold registry, product evaluation attestations and scoped model eligibility; local human-declared coder identity with Windows actor and explicit blinding limit.",
+      "alternatives": [
+        "Runtime imports evaluation support assets: violates ADR2 direction.",
+        "Hosted multi-user identity/blinding or model-as-final-verifier: outside local W3/human-authority outcome."
+      ],
+      "neededBeforeApproval": "Record new product evaluation/role transition contracts and truthful local identity boundary in accepted architecture/reference as applicable; no new hosted authority.",
+      "completePrivateText": "docs/adr/ADR-0058-scoped-evaluation-attestations-and-honest-local-coder-authority.md",
+      "acceptedIdentity": null
+    }
+  ],
+  "selectedPolicy03Reference": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "orderedExecutionProofOwnership05": {
+    "registryContractsBeforeRuntime": {
+      "task": "CAP-07.S04.T03",
+      "meaning": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality."
+    },
+    "realRuntimePromptIntegration": {
+      "task": "CAP-07.S02.T03",
+      "meaning": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof."
+    },
+    "actualGoldAndPromotionIntegration": {
+      "task": "CAP-07.S05.T03",
+      "meaning": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+    },
+    "allOtherConsumers": "Exact metricPolicy03 remains byte-equal; later extraction/verifier tasks must prove their own exact task/profile/schema/source outcomes. Source templates and synthetic fixtures are never actual model quality or a real principal PASS."
+  },
+  "orderedExecutionWitness05": "ordered-slice-feasibility-witness-05.json"
+}

@@ -1,0 +1,1094 @@
+{
+  "documentType": "complete-private-W3-planning-proposal",
+  "author": "/root/c21_closeout_review",
+  "preparedAt": "2026-10-15T21:24:29.166422+00:00",
+  "status": "PROPOSED_CANONICAL_W3_PLAN_PENDING_APPROVAL",
+  "sourceHEADObservedOnly": "3541a4b0e842727c0b54af1e4043af2989845134",
+  "initiationAssessment": {
+    "path": "artifacts/tmp/W3.initiation-assessment-01/planning-readiness-assessment-01.json",
+    "sha256": "905b9cad3e0864b338b76a0844d297783ff607f345b3e9e91b31297d2012a905"
+  },
+  "wave": {
+    "id": "W3",
+    "title": "Windows local research workbench",
+    "activationGate": "G2",
+    "exitGate": "G3",
+    "approval": {
+      "status": "PENDING",
+      "approvedBy": null,
+      "approvedCommit": null
+    },
+    "executionCandidate": null,
+    "actualResults": null
+  },
+  "prerequisite": "Actual W2/G2 completed; W3 Proposed planning only. Separate complete Wave approval before any claim.",
+  "outcome": "A researcher opens a protected local Windows project, searches/screens lawful sources, explicitly selects an admitted small local model to produce grounded candidates, independently verifies/inspects/adjudicates and exports evidence with rights, uncertainty and human authority visible; offline without account/container.",
+  "scope": {
+    "sliceIds": [
+      "CAP-06.S01",
+      "CAP-06.S02",
+      "CAP-06.S03",
+      "CAP-06.S04",
+      "CAP-06.S05",
+      "CAP-06.S06",
+      "CAP-07.S04",
+      "CAP-07.S02",
+      "CAP-07.S05",
+      "CAP-07.S03",
+      "CAP-08.S01",
+      "CAP-08.S03",
+      "CAP-08.S02",
+      "CAP-08.S04",
+      "CAP-08.S05",
+      "CAP-08.S06"
+    ],
+    "taskIds": [
+      "CAP-06.S01.T01",
+      "CAP-06.S01.T02",
+      "CAP-06.S01.T03",
+      "CAP-06.S02.T01",
+      "CAP-06.S02.T02",
+      "CAP-06.S02.T03",
+      "CAP-06.S03.T01",
+      "CAP-06.S03.T02",
+      "CAP-06.S03.T03",
+      "CAP-06.S04.T01",
+      "CAP-06.S04.T02",
+      "CAP-06.S04.T03",
+      "CAP-06.S05.T01",
+      "CAP-06.S05.T02",
+      "CAP-06.S05.T03",
+      "CAP-06.S06.T01",
+      "CAP-06.S06.T02",
+      "CAP-06.S06.T03",
+      "CAP-07.S04.T01",
+      "CAP-07.S04.T02",
+      "CAP-07.S04.T03",
+      "CAP-07.S02.T01",
+      "CAP-07.S02.T02",
+      "CAP-07.S02.T03",
+      "CAP-07.S05.T01",
+      "CAP-07.S05.T02",
+      "CAP-07.S05.T03",
+      "CAP-07.S03.T01",
+      "CAP-07.S03.T02",
+      "CAP-07.S03.T03",
+      "CAP-08.S01.T01",
+      "CAP-08.S01.T02",
+      "CAP-08.S01.T03",
+      "CAP-08.S03.T01",
+      "CAP-08.S03.T02",
+      "CAP-08.S03.T03",
+      "CAP-08.S02.T01",
+      "CAP-08.S02.T02",
+      "CAP-08.S02.T03",
+      "CAP-08.S04.T01",
+      "CAP-08.S04.T02",
+      "CAP-08.S04.T03",
+      "CAP-08.S05.T01",
+      "CAP-08.S05.T02",
+      "CAP-08.S05.T03",
+      "CAP-08.S06.T01",
+      "CAP-08.S06.T02",
+      "CAP-08.S06.T03"
+    ],
+    "sliceCount": 16,
+    "taskCount": 48,
+    "preserveInherited": [
+      "CAP07 four W1 decisions/ADR21 envelopes",
+      "ADR25 workflow execution versus ADR26 navigation/catalog1.5",
+      "W2 protected source/anchors/lifecycle/rights/current schema",
+      "All prior immutable IDs/approvals/adverses"
+    ],
+    "deferred": [
+      "W5 large compute and physical foreign-host witness",
+      "W10 optional search-latency/resource optimization",
+      "Hosted university/cloud runtime/IAM",
+      "Foundation-model training/fine-tuning",
+      "8/16GiB model workloads on this PC",
+      "Qdrant service absent measured necessity"
+    ]
+  },
+  "resolvedProposedChoices": {
+    "CAP-06-D02": "Qualify a small CPU encoder on the scientific gold set, retaining SPECTER2 base/proximity/adhoc comparison only within the same admitted resource tier.",
+    "CAP-06-D03": "Protected embedded exact-cosine adapter with bounded streaming for W3; preserve engine-neutral port and defer Qdrant service until measured need and accepted architecture.",
+    "CAP-06-D07": "External-content FTS5 inside SQLCipher, maintained/rebuilt against lawful canonical stable IDs; no plaintext contentless side database.",
+    "CAP-06-D10": "MiniLM short-passage encoder is the first resource/quality qualification candidate, SPECTER2 correct adapters scientific comparator; no activation without exact manifest and actual evaluation.",
+    "CAP-06-D11": "Protected embedded exact scorer for current small-PC tier; no Qdrant sidecar prerequisite or install. Unknown protected-store capability blocks that claim, not permits plaintext.",
+    "CAP-06-D13": "Optional evaluated rerank top20 default on this PC, <=50 only with qualified profile; rights-first and explicit fused-order timeout fallback.",
+    "CAP-06-D19": "Versioned table-first projection with <=5000 sampled points and exact population counts/seed/frame; larger50k layouts deferred to W5.",
+    "CAP-07-D02": "Signed supervised no-network model-purpose native worker with llama.cpp generation and evaluated ONNX C CPU decoder/encoder adapters; tiny SmolLM2 GQA/KV driver compatibility must qualify, with no Python-wheel/custom-op-DLL assumption.",
+    "CAP-07-D04": "Two optional disabled-by-default OpenAI-compatible/Anthropic adapters qualified by safe protocol fixtures; live-provider qualification/activation only with real consent/rights/credentials/budget, not G3 mandatory.",
+    "CAP-07-D09": "Signed supervised no-network model-purpose native worker with llama.cpp generation and evaluated ONNX C CPU decoder/encoder adapters; tiny SmolLM2 GQA/KV driver compatibility must qualify, with no Python-wheel/custom-op-DLL assumption.",
+    "CAP-07-D11": "Per-role tiny/small qualified tiers inside TOTAL application2GiB preferred/3GiB upper, one model job, modest incremental availability/commit-pressure reserve; Job enforces private commit only, not RSS/mapped-page cap. Exact profiles and permitted auto-best-fit in aggregate-resource-and-selection-policy-02.json; all measurements pending. Explicit installed qualified auto-smallest/auto-best-fit allowed; pinned routes remain exact. Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise.",
+    "CAP-07-D12": "OpenAI-compatible and Anthropic protocol adapters, recorded transport tests and optional separately qualified live activation; no Gemini implementation or implicit account/spend.",
+    "CAP-07-D17": "Default zero model repair; configurable maximum one within the same reserved deadline/tokens/resource budget; no invented missing evidence.",
+    "CAP-07-D20": "Reuse concrete SciFact claim/evidence and QASPER answer/evidence annotations with exact release rights/splits and finite30-case human mapping bridge. No blanket120-document new annotation; task-specific quality/rights/unsupported-domain limits in gold-source-and-annotation-strategy-02.json. Existing role-domain targets remain proposed and actual results null. Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints.",
+    "CAP-08-D04": "Separate verifier packet/prompt/role and serial execution; same-model use explicitly correlated, consequential/inferred/disputed/low-confidence cases require human review.",
+    "CAP-08-D15": "Verifier sees candidate plus exact cited source/schema, not extractor rationale; distinct evaluated model preferred only when resource-eligible, never an independence claim from a second prompt.",
+    "CAP-08-D21": "Application-level local named-coder blinding/immutable assignments, explicit same Windows project-owner/admin limits; no hosted identity or physical foreign-host claim."
+  },
+  "DAG": {
+    "oneValidTopologicalOrder": [
+      "CAP-06.S01.T01",
+      "CAP-07.S04.T01",
+      "CAP-06.S01.T02",
+      "CAP-07.S04.T02",
+      "CAP-06.S01.T03",
+      "CAP-07.S04.T03",
+      "CAP-08.S01.T01",
+      "CAP-08.S01.T02",
+      "CAP-07.S02.T01",
+      "CAP-08.S01.T03",
+      "CAP-07.S02.T02",
+      "CAP-07.S02.T03",
+      "CAP-08.S03.T01",
+      "CAP-06.S02.T01",
+      "CAP-08.S03.T02",
+      "CAP-06.S02.T02",
+      "CAP-07.S05.T01",
+      "CAP-08.S03.T03",
+      "CAP-06.S02.T03",
+      "CAP-07.S05.T02",
+      "CAP-07.S05.T03",
+      "CAP-06.S03.T01",
+      "CAP-06.S03.T02",
+      "CAP-07.S03.T01",
+      "CAP-06.S03.T03",
+      "CAP-07.S03.T02",
+      "CAP-07.S03.T03",
+      "CAP-08.S02.T01",
+      "CAP-06.S04.T01",
+      "CAP-08.S02.T02",
+      "CAP-06.S04.T02",
+      "CAP-08.S02.T03",
+      "CAP-06.S04.T03",
+      "CAP-08.S04.T01",
+      "CAP-06.S05.T01",
+      "CAP-08.S04.T02",
+      "CAP-06.S05.T02",
+      "CAP-08.S04.T03",
+      "CAP-06.S05.T03",
+      "CAP-08.S05.T01",
+      "CAP-06.S06.T01",
+      "CAP-08.S05.T02",
+      "CAP-06.S06.T02",
+      "CAP-08.S05.T03",
+      "CAP-06.S06.T03",
+      "CAP-08.S06.T01",
+      "CAP-08.S06.T02",
+      "CAP-08.S06.T03"
+    ],
+    "edges": {
+      "CAP-06.S01.T01": [
+        "CAP-04.S04.T03",
+        "CAP-05.S03.T03"
+      ],
+      "CAP-06.S01.T02": [
+        "CAP-06.S01.T01"
+      ],
+      "CAP-06.S01.T03": [
+        "CAP-06.S01.T02"
+      ],
+      "CAP-06.S02.T01": [
+        "CAP-06.S01.T02",
+        "CAP-07.S01.T03"
+      ],
+      "CAP-06.S02.T02": [
+        "CAP-06.S02.T01",
+        "CAP-07.S02.T03"
+      ],
+      "CAP-06.S02.T03": [
+        "CAP-06.S02.T02"
+      ],
+      "CAP-06.S03.T01": [
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T03"
+      ],
+      "CAP-06.S03.T02": [
+        "CAP-06.S03.T01",
+        "CAP-07.S05.T02"
+      ],
+      "CAP-06.S03.T03": [
+        "CAP-06.S03.T02",
+        "CAP-07.S05.T01"
+      ],
+      "CAP-06.S04.T01": [
+        "CAP-06.S03.T03",
+        "CAP-04.S02.T03"
+      ],
+      "CAP-06.S04.T02": [
+        "CAP-06.S04.T01"
+      ],
+      "CAP-06.S04.T03": [
+        "CAP-06.S04.T02"
+      ],
+      "CAP-06.S05.T01": [
+        "CAP-06.S04.T03",
+        "CAP-04.S04.T03"
+      ],
+      "CAP-06.S05.T02": [
+        "CAP-06.S05.T01"
+      ],
+      "CAP-06.S05.T03": [
+        "CAP-06.S05.T02"
+      ],
+      "CAP-06.S06.T01": [
+        "CAP-06.S05.T02",
+        "CAP-03.S02.T03"
+      ],
+      "CAP-06.S06.T02": [
+        "CAP-06.S06.T01",
+        "CAP-07.S05.T02"
+      ],
+      "CAP-06.S06.T03": [
+        "CAP-06.S06.T02"
+      ],
+      "CAP-07.S04.T01": [
+        "CAP-07.S01.T01",
+        "CAP-00.S05.T02"
+      ],
+      "CAP-07.S04.T02": [
+        "CAP-07.S04.T01"
+      ],
+      "CAP-07.S04.T03": [
+        "CAP-07.S04.T02"
+      ],
+      "CAP-07.S02.T01": [
+        "CAP-07.S01.T03",
+        "CAP-01.S03.T03",
+        "CAP-07.S04.T02"
+      ],
+      "CAP-07.S02.T02": [
+        "CAP-07.S02.T01"
+      ],
+      "CAP-07.S02.T03": [
+        "CAP-07.S02.T02"
+      ],
+      "CAP-07.S05.T01": [
+        "CAP-07.S04.T03",
+        "CAP-03.S03.T03"
+      ],
+      "CAP-07.S05.T02": [
+        "CAP-07.S05.T01"
+      ],
+      "CAP-07.S05.T03": [
+        "CAP-07.S05.T02"
+      ],
+      "CAP-07.S03.T01": [
+        "CAP-07.S01.T03",
+        "CAP-02.S04.T01",
+        "CAP-07.S04.T02",
+        "CAP-07.S05.T02"
+      ],
+      "CAP-07.S03.T02": [
+        "CAP-07.S03.T01"
+      ],
+      "CAP-07.S03.T03": [
+        "CAP-07.S03.T02"
+      ],
+      "CAP-08.S01.T01": [
+        "CAP-03.S01.T03",
+        "CAP-07.S04.T02"
+      ],
+      "CAP-08.S01.T02": [
+        "CAP-08.S01.T01"
+      ],
+      "CAP-08.S01.T03": [
+        "CAP-08.S01.T02"
+      ],
+      "CAP-08.S03.T01": [
+        "CAP-08.S01.T03",
+        "CAP-03.S03.T02"
+      ],
+      "CAP-08.S03.T02": [
+        "CAP-08.S03.T01"
+      ],
+      "CAP-08.S03.T03": [
+        "CAP-08.S03.T02"
+      ],
+      "CAP-08.S02.T01": [
+        "CAP-08.S01.T03",
+        "CAP-05.S03.T03",
+        "CAP-07.S04.T02",
+        "CAP-06.S03.T03"
+      ],
+      "CAP-08.S02.T02": [
+        "CAP-08.S02.T01",
+        "CAP-07.S02.T03",
+        "CAP-07.S05.T02",
+        "CAP-08.S03.T03"
+      ],
+      "CAP-08.S02.T03": [
+        "CAP-08.S02.T02"
+      ],
+      "CAP-08.S04.T01": [
+        "CAP-08.S03.T03",
+        "CAP-07.S05.T03",
+        "CAP-08.S02.T03"
+      ],
+      "CAP-08.S04.T02": [
+        "CAP-08.S04.T01"
+      ],
+      "CAP-08.S04.T03": [
+        "CAP-08.S04.T02"
+      ],
+      "CAP-08.S05.T01": [
+        "CAP-08.S04.T02",
+        "CAP-01.S02.T01"
+      ],
+      "CAP-08.S05.T02": [
+        "CAP-08.S05.T01"
+      ],
+      "CAP-08.S05.T03": [
+        "CAP-08.S05.T02",
+        "CAP-08.S04.T03"
+      ],
+      "CAP-08.S06.T01": [
+        "CAP-08.S05.T03",
+        "CAP-04.S04.T02"
+      ],
+      "CAP-08.S06.T02": [
+        "CAP-08.S06.T01"
+      ],
+      "CAP-08.S06.T03": [
+        "CAP-08.S06.T02"
+      ]
+    },
+    "capabilitySliceExecutionOrder": {
+      "CAP-06": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06"
+      ],
+      "CAP-07": [
+        "CAP-07.S04",
+        "CAP-07.S02",
+        "CAP-07.S05",
+        "CAP-07.S03"
+      ],
+      "CAP-08": [
+        "CAP-08.S01",
+        "CAP-08.S03",
+        "CAP-08.S02",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ]
+    },
+    "sliceExternalDependencies": {
+      "CAP-06.S01": [
+        "CAP-04.S04.T03",
+        "CAP-05.S03.T03"
+      ],
+      "CAP-06.S02": [
+        "CAP-06.S01.T02",
+        "CAP-07.S01.T03",
+        "CAP-07.S02.T03"
+      ],
+      "CAP-06.S03": [
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T03",
+        "CAP-07.S05.T01",
+        "CAP-07.S05.T02"
+      ],
+      "CAP-06.S04": [
+        "CAP-04.S02.T03",
+        "CAP-06.S03.T03"
+      ],
+      "CAP-06.S05": [
+        "CAP-04.S04.T03",
+        "CAP-06.S04.T03"
+      ],
+      "CAP-06.S06": [
+        "CAP-03.S02.T03",
+        "CAP-06.S05.T02",
+        "CAP-07.S05.T02"
+      ],
+      "CAP-07.S04": [
+        "CAP-00.S05.T02",
+        "CAP-07.S01.T01"
+      ],
+      "CAP-07.S02": [
+        "CAP-01.S03.T03",
+        "CAP-07.S01.T03",
+        "CAP-07.S04.T02"
+      ],
+      "CAP-07.S05": [
+        "CAP-03.S03.T03",
+        "CAP-07.S04.T03"
+      ],
+      "CAP-07.S03": [
+        "CAP-02.S04.T01",
+        "CAP-07.S01.T03",
+        "CAP-07.S04.T02",
+        "CAP-07.S05.T02"
+      ],
+      "CAP-08.S01": [
+        "CAP-03.S01.T03",
+        "CAP-07.S04.T02"
+      ],
+      "CAP-08.S03": [
+        "CAP-03.S03.T02",
+        "CAP-08.S01.T03"
+      ],
+      "CAP-08.S02": [
+        "CAP-05.S03.T03",
+        "CAP-06.S03.T03",
+        "CAP-07.S02.T03",
+        "CAP-07.S04.T02",
+        "CAP-07.S05.T02",
+        "CAP-08.S01.T03",
+        "CAP-08.S03.T03"
+      ],
+      "CAP-08.S04": [
+        "CAP-07.S05.T03",
+        "CAP-08.S02.T03",
+        "CAP-08.S03.T03"
+      ],
+      "CAP-08.S05": [
+        "CAP-01.S02.T01",
+        "CAP-08.S04.T02",
+        "CAP-08.S04.T03"
+      ],
+      "CAP-08.S06": [
+        "CAP-04.S04.T02",
+        "CAP-08.S05.T03"
+      ]
+    },
+    "augmentedTaskAndApprovalGateWitness": "ordered-slice-feasibility-witness-05.json",
+    "keyRepair": "Reorder only unapproved slices and decouple S04.T03 contract qualification from later real inference, retaining actual runtime/evaluation proof in S02.T03/S05.T03; include external union and all prior APPROVED gates. No taskctl change.",
+    "qualificationOrderClarification": "Registry refusal/attestation contracts are not model-quality evidence; real local qualification must precede positive scholarly promotion. No scientific/security proof is dropped."
+  },
+  "estimate": {
+    "unit": "engineering-effort-hours",
+    "atomicTaskCount": 48,
+    "total": 924,
+    "byCapability": {
+      "CAP-06": 340,
+      "CAP-07": 240,
+      "CAP-08": 344
+    },
+    "plannedRefactoringIncluded": 28,
+    "basis": "Bottom-up planning estimate including named contract, implementation, selected checks, docs/evidence/review repairs; no elapsed-date, token-spend, throughput or savings promise.",
+    "largerUnknown": "Actual isolation/runtime conversion, quality annotation and protected-index evidence may change the unapproved estimate before approval. No initiation15% cap; once approved supplemental refactoring shares one cumulative15% ceiling.",
+    "reallocation05": {
+      "CAP-07.S04.T03": {
+        "before": 20,
+        "after": 16
+      },
+      "CAP-07.S02.T03": {
+        "before": 20,
+        "after": 22
+      },
+      "CAP-07.S05.T03": {
+        "before": 20,
+        "after": 22
+      }
+    }
+  },
+  "resourceAuthority": "aggregate-resource-and-selection-policy-02.json",
+  "rightsClassificationBudgetBeforeAllow": "contracts-01.md#authority-and-canonical-model-allow",
+  "migrationRecovery": "contracts-01.md#durable-data-migration-rights-and-recovery",
+  "qualityAndVerification": "gold-source-and-annotation-strategy-02.json",
+  "UXProposal": "architecture-ux/ui-reference/",
+  "architectureProposals": "architecture-ux/architecture/",
+  "checkpoints": [
+    {
+      "topic": "runtime-policy-schema foundation",
+      "slices": [
+        "CAP-07.S04",
+        "CAP-07.S02",
+        "CAP-08.S01"
+      ],
+      "proof": "ADR21 real CPU local call through canonical permissions/resource/structured output; no-network/no-vault real principal; lock/cancel/OOM/crash; schema/rights denial and backup-first migration. Apply exact parserModelAdmission03 through existing LocalWorkerAdmission/LocalAdmissionController shared by project supervisors under one Core authority: reserve the whole demand before claim, serialize expensive protected parsing and local inference, retain live reservations through cancellation/crash/unknown cleanup until actual owned drain and model unload, then reobserve pressure/rights and reauthorize the newcomer. Unknown/insufficient growth or remaining2048MiB preferred/explicit3072MiB aggregate max(A,B) queues/denies; retain interactive/incremental reserves. Preserve parser principal, quality, cancellation/recovery, parser-only logon-session mutex and4096MiB private-commit ceiling; that ceiling is not measured consumption, a4GiB RAM requirement, proof of fit or a silently reduced limit. This cooperative ledger is not machine-wide enforcement; no new scheduler or concurrency promise. S04 supplies registry/contract refusal only; the genuine actual runtime/principal/prompt/profile proof at S02.T03 remains mandatory. Later S05.T03 supplies comparative gold/promotion proof; no fixture PASS substitutes."
+    },
+    {
+      "topic": "retrieval-and-observability handoff",
+      "slices": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-07.S05"
+      ],
+      "proof": "Protected lexical/vector/hybrid stable query gold, rights removal, exact replay/drift, rebuild/recovery and resource/telemetry/cache accounting. S05.T03 includes actual local comparative gold/default-upgrade/rollback proof under unchanged metricPolicy03, after actual S02 runtime and full ordered-slice approvals."
+    },
+    {
+      "topic": "discovery-screening optional-remote boundary",
+      "slices": [
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06",
+        "CAP-07.S03"
+      ],
+      "proof": "Visible branch/translation/expansion, denominator/sampling diagnostics, human screening/random audit/stopping, no-account offline complete journey; optional remote contract vs live limits explicit."
+    },
+    {
+      "topic": "evidence production and human plurality",
+      "slices": [
+        "CAP-08.S03",
+        "CAP-08.S02",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ],
+      "proof": "Exact source->candidate->separate verification/human sample->matrix->adjudication/export, preserved alternatives/missingness, rights denial/cancel/restart/migration/recovery and keyboard/focus. Apply the exact selected metricPolicy03 before any comparison: frozen eligible question/field and whole acceptable human references; NFC/newline/casefold tokenization \\w+|[^\\w\\s], retained punctuation/multiplicity, multiset overlap, best F1 then precision then stable annotation order; answerable empty/abstention P=R=0; equal-field macro precision>=0.90 and recall>=0.80, with every consequential field failure visible. Verifier SUPPORTS/REFUTES macro precision>=0.90 plus each actionable-label recall>=0.80 and answered coverage>=0.80 over the complete frozen eligible frame; zero/undefined prediction denominator or missing required gold class cannot pass. NEI, ABSTAIN and technical failure remain distinct; publish exact Ns/confusion/coverage/uncertainty and retain all source/rights/human constraints."
+    }
+  ],
+  "exitCriteria": [
+    "All16 slices/48 tasks integrated with genuine independent task/slice dispositions at actual commits and required end-to-end evidence.",
+    "G3 retrieval/screening/local-approved AI/extraction/verification/matrices proven on declared lawful corpora; local no-account/no-container path complete.",
+    "Unknowns, decomposed quality/uncertainty, source provenance and human authority visible; no single-score truth or fabricated participant/result.",
+    "Fresh full affected repository/profile/Windows qualification including happy/failure/denial/cancel/migration/restart/recovery, privacy/rights/security/accessibility/performance/packaging and resource-bound models.",
+    "Independent Wave review with residual adverse/limits and separate actual human G3 release/next-Wave activation; no release requested before prerequisites."
+  ],
+  "unresolvedDecisions": "unresolved-decision-list-01.json",
+  "publicationPlan": "After W2/G2 only: reconcile current canonical baseline; project reviewed task/dependency/estimate changes and all19 plan payloads into canonical planning; complete exact ADR/reference decisions through existing routes; validate/review the one complete Wave packet; one immutable pre-Wave approval; same durable campaign/taskctl. This file is neither an apply script nor an approval record.",
+  "claims": {
+    "canonicalFilesChanged": false,
+    "testsBuildsModelsExecuted": false,
+    "runtimeScanned": false,
+    "newAgentsSpawned": false,
+    "W2ExitApproved": false,
+    "W3Approved": false,
+    "modelReadyOrMemoryGuaranteed": false
+  },
+  "proposedInitialTargets": "initial-target-register-01.json",
+  "timingDecisionRule": "Timing decisions use the median of ALL comparable completed trials per workload/state/configuration, with raw values, min/median/max and actual external CPU/RAM/disk/power/network conditions retained. The initial plan schedules3 comparable trials, but no observed comparable completed trial is discarded. Failed/timeout trials remain failures. No pooling, retry-to-pass, unproven spike attribution or security/resource/rate/quality/rights/cleanup relaxation. Historical p95/per-sample-max forecast prose is not an adopted W3 timing gate.",
+  "authorityStatus": "Decision-complete recommended choices are explicit; human/architecture/reference approval remains pending. Hardware/model downloading or implementation is not required to decide these proposed choices; actual facts qualify later claims.",
+  "revision": "05 complete private successor: actual ordered slice-gate feasibility correction before approval; old04/94 and reviewed63 reference preserved",
+  "concreteModelCandidates": "small-model-primary-candidates-02.json",
+  "previousPacketObservedHEAD": "3ed9b568c7981f938204eedebca16b731f8d6008",
+  "sourceObservationProvenance": "Root-supplied currentW2 product candidate, not a finalW2 baseline, qualification result, release or independent Git observation by this writer.",
+  "actualFinalW2Baseline": {
+    "integratedW2Commit": "1cc8131d8b74cf6c536d48ce4badc25933981bbb",
+    "planningPredecessorCommit": "2e2f1a9d042c3dd8db3f8f31b648a36ad004c505",
+    "W2Qualification": {
+      "path": "artifacts/evidence/W2.initial-exit-qualification-20261016-01.json",
+      "sha256": "8b932f79613b268bea09cb906987dfb3ba910f56a061eab574f51b9d8a775b49"
+    },
+    "independentWaveDisposition": {
+      "path": "artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json",
+      "sha256": "cd8a21ddcd914002d21b666551884363b18731867c247826f492d96a70d36b7d"
+    },
+    "S06CP10Disposition": {
+      "path": "artifacts/evidence/W2.CAP-05.S06.CP10.independent-final-disposition-01.json",
+      "sha256": "d1c0923f703eade67411916598a7c91d0d8ea853c1e90c10a5a6ae18b8d59622"
+    },
+    "G2Decision": {
+      "path": "artifacts/evidence/W2.exit-decision-20261016-01.md",
+      "sha256": "2850022c6004c8303564ba885926669a8d130b021a54729a91871caa2705a56d"
+    },
+    "normalExitReceipt": {
+      "path": "artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json",
+      "sha256": "25b47a3a9f1a9792e4aff52c4918f67037007d2a2f55b7c859d631f1b5a5c83d"
+    },
+    "postExitDirection": {
+      "path": "artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md",
+      "sha256": "933b9af5abc9cebf5ac5dd3a23ce425701de93aef359a50b77c96f002cd76b5d"
+    },
+    "roadmapActualReview": {
+      "path": "artifacts/tmp/W2.post-exit-roadmap-apply-01.independent-commit-binding-01.json",
+      "sha256": "af220eab71878c2e396c412313a63d27bf816a5e92d9a1a63766e23402c2c43e"
+    },
+    "schemaFacts": [
+      {
+        "path": "planning/backlog.schema.json",
+        "sha256": "77b21cf1bce710921ce13d718b2acc8a4a891ceaf8c7459549bacc60d858b878"
+      },
+      {
+        "path": "planning/capability-plans/capability-plan.schema.json",
+        "sha256": "419a8df4645be48dc51983ad3bccddc2752088bc1d1781ab43619d0d93ae9425"
+      }
+    ],
+    "scope": "Actual owner-accepted initial W2/G2 completion with all original adverse/unknown/unqualified results retained; no universal product PASS."
+  },
+  "selectedPolicy03": {
+    "path": "artifacts/tmp/W3.planning-draft-01/root-selected-policy-refinement-03.json",
+    "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+  },
+  "selectedPolicyReview": {
+    "path": "artifacts/tmp/W3.planning-draft-01/independent-selected-policy-review-03-01.json",
+    "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+  },
+  "selectedPolicyIncorporation": "Private complete packet only; genuine incremental packet review and all ordinary architecture/reference/Wave acceptance remain pending.",
+  "completeArchitectureUXSource": {
+    "path": "artifacts/tmp/W3.architecture-ux-proposals-03/source-manifest-03.json",
+    "sha256": "28d7fabae638d819233290cc3e418e0c197a4c3fd86da103fe51a78f68c4ac39",
+    "all54BoundPayloadEntriesIncluded": true
+  },
+  "proofPhaseOwnership05": {
+    "CAP-07.S04.T03": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality.",
+    "CAP-07.S02.T03": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.",
+    "CAP-07.S05.T03": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+  },
+  "finalPostG2Reconciliation": {
+    "actualFinalW2Baseline": {
+      "historicalInitialW2ProductCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+      "currentCSS": {
+        "path": "apps/desktop/src/app.css",
+        "sha256": "9e6850d8e0ca17c9e4894db78546a20ce20a4bbf6c6256e60b9ea41f0c4438ac"
+      },
+      "C36BuildReferenceNativeCandidate": "1b377b219039ac4eafb0715300a8e5d0c8af716e",
+      "C36Full90Candidate": "fc694f018d9f678942e9c12e0aaa4ac9b9e9f7bc",
+      "C36Full90MachineDisposition": {
+        "path": "artifacts/evidence/W2.C36.T01.current14-component-disposition-01.json",
+        "sha256": "6b7e662cd2b04b713ca442fb1108f680dc1c6cd4ebb062a3fa1f7f5c6d91d091"
+      },
+      "ownerAcceptance": {
+        "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+        "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4"
+      },
+      "ownerAcceptanceIntroductionCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+      "C36NativeComponent": {
+        "path": "artifacts/tmp/W2.C36.T01.native-frontend-component-01/independent-actual-component-disposition-02.json",
+        "sha256": "9074d5b916cfd3137830a3769b1e59a4bba075135820ebe7db82f4612f7decd7"
+      },
+      "C36BuildComponent": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current14-c36-renderer-build-01/independent-c36-actual-component-disposition-02.json",
+        "sha256": "3d6655c37c9726aad7df6bab6d603d2c05e35439eddc2960f374cb0bddb5db92"
+      },
+      "C36ReferenceComponent": {
+        "path": "artifacts/tmp/W2.C36.T01.reference-refresh-independent-actual-disposition-02.json",
+        "sha256": "8731531263495caeb387f27aa1c589d2a1dd55d5d68094ee2915dcaa3c020416"
+      },
+      "unpublishedCaptureRetention": {
+        "path": "artifacts/tmp/W2.C36.T01.unpublished-capture-retention-01.json",
+        "sha256": "a3db40210f1722e4e3059b9afc8c096ef6384772ecbcd6d1b07cbb69a51c3f4d"
+      },
+      "actualFinalIntegratedW2Commit": "1cc8131d8b74cf6c536d48ce4badc25933981bbb",
+      "actualNormalW2Closure": {
+        "path": "artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json",
+        "sha256": "25b47a3a9f1a9792e4aff52c4918f67037007d2a2f55b7c859d631f1b5a5c83d"
+      }
+    },
+    "actualG2Decision": {
+      "ownerAcceptance": {
+        "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+        "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4"
+      },
+      "actualNormalG2Transition": {
+        "path": "artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json",
+        "sha256": "25b47a3a9f1a9792e4aff52c4918f67037007d2a2f55b7c859d631f1b5a5c83d"
+      },
+      "actualExitDecision": {
+        "path": "artifacts/evidence/W2.exit-decision-20261016-01.md",
+        "sha256": "2850022c6004c8303564ba885926669a8d130b021a54729a91871caa2705a56d"
+      }
+    },
+    "actualQualificationAssembly": {
+      "currentPrivateComposition": {
+        "path": "artifacts/tmp/W2.final-S06-qualification-assembly-draft-06/W2.S06.qualification.unfrozen-draft-06.json",
+        "sha256": "27b804b3929804d75178d68494ea67ce1b16675f32b690e9bc65fcdec1856bb7"
+      },
+      "finalActualComposition": {
+        "path": "artifacts/evidence/W2.initial-exit-qualification-20261016-01.json",
+        "sha256": "8b932f79613b268bea09cb906987dfb3ba910f56a061eab574f51b9d8a775b49"
+      }
+    },
+    "actualIndependentWaveDisposition": {
+      "path": "artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json",
+      "sha256": "cd8a21ddcd914002d21b666551884363b18731867c247826f492d96a70d36b7d"
+    },
+    "actualKnownLimitsAndBoundedAuthorities": {
+      "W9W2ResidualFollowUpLink": {
+        "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+        "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4"
+      },
+      "priorExactBoundedLimits": {
+        "parserWarmP95Only": {
+          "authority": {
+            "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+            "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a"
+          },
+          "actualCandidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+          "warmP95Seconds": 62.5333542,
+          "warmTargetSeconds": 60,
+          "acceptedOverageSeconds": 2.5333542,
+          "coldP95Seconds": 59.7308133,
+          "coldTargetSeconds": 90,
+          "canonicalR01SHA256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205",
+          "actualReport": {
+            "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+            "sha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77"
+          },
+          "originalAggregate": "FAIL_EXIT1_RETAINED",
+          "scope": "Only this measured warm observation is nonblocking for CAP-05.S02.T03/S02/W2. No general budget waiver, further tuning/repetition or retrospective median substitution."
+        },
+        "sourceSearchMedianSeven": {
+          "authority": {
+            "path": "artifacts/evidence/W2.C33.T01.review-R01.json",
+            "sha256": "addf38f1c9995896a597a0392d9dab97c4c331a47dc83a9f81067f6b439c62fa"
+          },
+          "perProviderPhaseMedians": 8,
+          "comparableProcessesPerPhase": 3,
+          "allMediansSecondsAtMost": 7,
+          "all24ObservationsRetained": true,
+          "individualOverruns": 6,
+          "maximumIndividualPageSeconds": 10.3904285000026,
+          "canonicalReportRemains": "MEASURED_NONQUALIFYING",
+          "originalStrictSupplementalResult": "FAIL_RETAINED",
+          "optimization": "Provisional W9 only; owner requested no optimization/retry now. This is provider-operation timing, not live provider or combined UI search guarantee.",
+          "memoryScope": "Separate300MiB original benchmark-child peak working set; not whole-job or system RAM.",
+          "ReaderTargetSeconds": 3
+        },
+        "strictClippy": {
+          "disposition": {
+            "path": "artifacts/tmp/W2.C34.T01.exact-clippy-style-debt-W9-disposition-01.json",
+            "sha256": "8e20cc5703963bbe2a23fb152b1186fc89919d926bf18b791dab359be94eca91"
+          },
+          "originalStrictResult": "FAIL_RETAINED",
+          "diagnosticOccurrences": 36,
+          "uniqueSourceIdentities": 21,
+          "futureWork": "W9 scoped style debt only; no blanket warning, security or quality PASS."
+        },
+        "physicalPlatformsAndInstaller": {
+          "authority": {
+            "path": "artifacts/tmp/W2.final-s06-independent-review-01.json",
+            "sha256": "878e5f399f498cdf1837e0415880dd3fd29ebad8ea0ada4fed4134f496ae2480"
+          },
+          "physicalSecondWindowsHost": "UNTESTED_APPROVED_DEFERRED_TO_W5",
+          "installerNSISMSICleanVMInstallUpdateUninstall": "CAP-01.S05_W5_SCOPE_NOT_A_NEW_W2_GATE",
+          "eightOrSixteenGiBModelOrHardwareProofClaimed": false,
+          "macOSLinuxDGXCloudQualificationClaimed": false
+        },
+        "unexplained409": {
+          "authority": {
+            "path": "artifacts/evidence/W2.C33.T01.review-R01.json",
+            "sha256": "addf38f1c9995896a597a0392d9dab97c4c331a47dc83a9f81067f6b439c62fa"
+          },
+          "cause": "UNKNOWN",
+          "fixed": false,
+          "riskAccepted": false,
+          "recurrenceRule": "Stop the affected group if it recurs; later passing evidence does not explain or erase it."
+        },
+        "securityExceptions": {
+          "authority": {
+            "path": "artifacts/tmp/W2.current-packaging-security-20261015-02.independent-component-disposition-01.json",
+            "sha256": "bff3cc266367f96ec89936b2cf921a6c07c3c3c5ffe4555b4d362b728227ef4f"
+          },
+          "count": 20,
+          "expiry": "2026-10-21",
+          "newExceptionsOrExpiryExtension": false,
+          "knownWarningsPreserved": 15
+        },
+        "protectedReviewInitialLatency": {
+          "authority": {
+            "proposal": {
+              "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/proposal-02.json",
+              "sha256": "974f9a77973792da72eec06f6499dc37e9e61f5968fd81b7f6889d916279e165"
+            },
+            "independentScopeDisposition": {
+              "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/independent-scope-disposition-02.json",
+              "sha256": "77c5ba6e54540e2aca1641d5852792ec7223d212400918f965b0e9d325cb514c"
+            },
+            "selectedDecision": {
+              "path": "artifacts/tmp/W2.C35.T01.functional-completion-method-02/decision-01.json",
+              "sha256": "8dc2479b1efb90df60c7d254f9c7e7be6e8f0842d940a4d7d0135a741c31693a"
+            }
+          },
+          "actualFailure": {
+            "path": "artifacts/tmp/W2.protected-import-initial-proof-01.f01/receipt.json",
+            "sha256": "706329215c54a3898402ef64cf823452966eed91cc745041612e9f8d0cdb1338"
+          },
+          "independentActualFunctionalDisposition": {
+            "path": "artifacts/tmp/W2.C35.T01.review-functional-component-and-commit-failure-independent-disposition-01.json",
+            "sha256": "ed7d154adb978af8447b1e1855eecb2df5b04dd761eacae36c74ce2fd2c994ec"
+          },
+          "originalWholeReview1800TargetMet": false,
+          "original1860FailureRetained": true,
+          "functionalCompositionQualified": true,
+          "completeContinuousTimingOrPeakQualified": false,
+          "scope": "Only the demonstrated initial-W2 whole-review latency limitation is nonblocking under actual34e selection8dc. No other hard failure or commit2400 exemption; optional optimization is merely proposed W9 scope.",
+          "freshCommitQualified": false
+        },
+        "initialCommitScaleKnownLimitation": {
+          "authority": {
+            "proposal": {
+              "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+              "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+            },
+            "independentScopeAndSourceReadiness": {
+              "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+              "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+            },
+            "selectedDecision": {
+              "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+              "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+            }
+          },
+          "actualInitial1000Disposition": {
+            "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+            "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+          },
+          "recordsQualified": 1000,
+          "original100kCommitQualified": false,
+          "actual100kOutcomeDiagnosis": {
+            "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+            "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+          },
+          "original100kAdverseReceipt": {
+            "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+            "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+          },
+          "selectedScopeKnownLimitations": {
+            "id": "protected100k-commit-unqualified",
+            "status": "DISCLOSED_INITIAL_W2_DEFERRED_100K_QUALIFICATION_UNDER_SELECTED_04ED",
+            "authority": {
+              "proposal": {
+                "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/proposal-01.json",
+                "sha256": "08ccc3b40a5141c4ff32719f0b360fc6ca56dbf7d0cfed4e7b16d6c7d4cde9e2"
+              },
+              "independentScopeAndSourceReadiness": {
+                "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/independent-scope-and-source-readiness-01.json",
+                "sha256": "02794ed0da161d158e3b267daf9e0617e9faf2bde6385a190db54247164e83c1"
+              },
+              "selectedDecision": {
+                "path": "artifacts/tmp/W2.C35.T01.initial-commit-scale-01/decision-01.json",
+                "sha256": "04edb269b014161eee6414eead42120400b4ec5f76e562045032ba9fd2b64c4b"
+              }
+            },
+            "original100kCommitQualified": false,
+            "actual100kFailureDiagnosis": {
+              "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-independent-outcome-diagnosis-01.json",
+              "sha256": "8dac7d90992f83a7a95a3a1cfed07a23a46b984da746ce7fa3d8fab2d45abb3e"
+            },
+            "actual100kFailureReceipt": {
+              "path": "artifacts/tmp/W2.C35.T01.commit-first-exception-01.f01/receipt.json",
+              "sha256": "f40969429cae9041a2fa866ed2c4013dad716368fc48ad1c8abf10709c3b0c31"
+            },
+            "earlierFailureReceipt": {
+              "path": "artifacts/tmp/W2.protected-import-functional-continuation-01.f01/receipt.json",
+              "sha256": "f1f5f45ac2204de006f9d5ea8532dec1cbf7e76871be46aa9071445e73e74034"
+            },
+            "earlierInitiatingCause": "UNKNOWN",
+            "notQualified": [
+              "Successful100k commit/manifest membership completeness",
+              "100k idempotent replay and fresh-runtime accepted manifest reopen",
+              "100k completion within1800worker/2400sample or absence of other scale defects"
+            ],
+            "actual1000Disposition": {
+              "path": "artifacts/tmp/W2.C35.T01.initial1000-commit-independent-component-disposition-01.json",
+              "sha256": "31db61a99692c0ef87e8d1d40521fbcc74be7e54b4c3508d871f7659d8fc5343"
+            },
+            "meaning": "Initial functional commit acceptance is expressly amended to one supported original1000-record case.100k publication, full manifest/paging, replay/reopen, continuous performance and absence of other scale defects remain unqualified. Existing larger product input limits are unchanged; no enforced1000 product cap or guarantee is introduced. Larger commits may exceed observation time; the observed interrupted transaction rolled back. High-scale work is merely proposed for W9, not adopted scope."
+          },
+          "mandatoryUnverifiedProductCriterionWithinSelectedInitialScope": false,
+          "noEnforced1000ProductCap": true,
+          "W9Adopted": false
+        }
+      },
+      "currentOwnerAcceptedResiduals": [
+        {
+          "id": "parserWarmP95Only",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.parserWarmP95Only",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "sourceSearchMedianSeven",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.sourceSearchMedianSeven",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "strictClippy",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.strictClippy",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "physicalPlatformsAndInstaller",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.physicalPlatformsAndInstaller",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "unexplained409",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.unexplained409",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "securityExceptions",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.securityExceptions",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "protectedReviewInitialLatency",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.protectedReviewInitialLatency",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "initialCommitScaleKnownLimitation",
+          "priorExactObjectLocation": "retainedCriteriaExceptionsAndDebt.initialCommitScaleKnownLimitation",
+          "actualOriginalLabelsAndValuesPreserved": true,
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE",
+          "followUp": "Provisional W9 residual-W2 work; no W9 implementation/packet approval."
+        },
+        {
+          "id": "remaining-cosmetics-and-visual-classification",
+          "actual": "Unperformed final structural reader/selected quality visual/canonical classification stay UNPERFORMED; independent privacy inspection is separate actual completed evidence.",
+          "followUp": "W9",
+          "initialW2BlockingDisposition": "SUPERSEDED_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE"
+        },
+        {
+          "id": "full-foundation-and-same-candidate-profile",
+          "actual": "Broad729 legacy run stopped after243 observations; finite quality/backlog/setup components retain their actual scope. No whole729/755 or current same-candidate44PASS.",
+          "followUp": "W9",
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE"
+        },
+        {
+          "id": "current-all-binary-GUI-and-security-composition-limits",
+          "actual": "No current full Native GUI/newCore end-to-end, full current same-candidate scanner profile, physical foreign-host or installer matrix claim; inherited/current affected components remain individually attributed. Existing20 exceptions expire2026-10-21 with no extension or guard disablement.",
+          "followUp": "W9 residual qualification; existing W5 larger-compute product scope preserved.",
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE"
+        },
+        {
+          "id": "all-other-residual-explicit-items",
+          "actual": "Every remaining limitation/UNKNOWN/unverified/deferred item already identified in original44/28 or scoped final records remains visible and is assigned to W9 by the owner. No unknown becomes a passed check.",
+          "followUp": "W9",
+          "initialW2BlockingDisposition": "NONBLOCKING_BY_EXPLICIT_OWNER_EXIT_ACCEPTANCE"
+        },
+        {
+          "id": "capture-publication-privacy-hook-block",
+          "actual": "Both adverse publication attempts retained; all181 original/unpublished bytes retained; previoussealedhook restored; no hook bypass or credentialPASS. Independent decoded privacy is distinct.",
+          "evidence": {
+            "path": "artifacts/tmp/W2.C36.T01.unpublished-capture-retention-01.json",
+            "sha256": "a3db40210f1722e4e3059b9afc8c096ef6384772ecbcd6d1b07cbb69a51c3f4d"
+          },
+          "authority": {
+            "path": "artifacts/evidence/W2.exit-owner-acceptance-20261016-01.md",
+            "sha256": "9509866c9dd18ceb464ca78caa022f61fc52e2fe2b4af67bb6c63ab62c63d3e4",
+            "actualIntroductionCommit": "f86d735c2a3de03a2e4e4b677802fd9155f4fa0d",
+            "publishedClaimed": true
+          },
+          "initialW2BlockingDisposition": "EXPLICITLY_OWNER_SUPERSEDED_PUBLICATION_REQUIREMENT",
+          "followUp": "W9"
+        }
+      ],
+      "largerComputingProductWave": "W5",
+      "unqualifiedAndFailedLabelsRemain": true,
+      "noSecurityExpiryGuardOrRuntimeChanges": true,
+      "postExitEffectiveRoutes": {
+        "authority": {
+          "path": "artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md",
+          "sha256": "933b9af5abc9cebf5ac5dd3a23ce425701de93aef359a50b77c96f002cd76b5d"
+        },
+        "optionalCosmeticsAndAllOptimizationPerformanceIntake": "W10",
+        "separateFunctionalSecurityQualificationResiduals": "W9; existing expiry remains due, not deferred beyond validity",
+        "largerComputingProductFeatures": "W5",
+        "historicalOwner950986W9AssignmentsAndAllOriginalResultsPreserved": true
+      }
+    },
+    "actualIntegratedSetupEvidenceAndContinuity": {
+      "status": "EXACT_FOUR_FILE_FAST_SETUP_TRANSFER_APPROVED_LOCAL_MAIN_OBSERVED_8DE7",
+      "sourceCommit": "591a4e593e97676278ea12cc1d6d947f68eebb85",
+      "actualTransferCandidate": "55d3aff2a27cb7bcf3e8c1d65afbe328e2181485",
+      "transferParent": "5c68647ca700dd01e3f1bbdc90babe20720c4386",
+      "integrationReview": {
+        "path": "artifacts/evidence/developer-setup-smoke.integration-review-01.json",
+        "sha256": "cce801bfcc5ddc9b03677d5b9cfe8c80d5980ec3ae4371e6e877478b85c6d352"
+      },
+      "priorSourceReview": {
+        "path": "artifacts/tmp/setup-fast-smoke-01.independent-review-01.json",
+        "sha256": "f7048da018e466bbdbb1f90e6c9ebeab1e32ce6a97f4f684cfd711d6f4a6c798"
+      },
+      "focusedProof": {
+        "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/focused-proof/committed-focused-report-01.json",
+        "sha256": "ad67f634f33a6521f477c79dcbfc658e7a71ed9457eab060c7529a781e322061"
+      },
+      "installedSmokes": {
+        "actualResult": {
+          "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/installed-smokes-01/result.json",
+          "sha256": "b9ad7dc95c476539f6d34c1b261736102837f62da731383860bc75abff5a1edc"
+        },
+        "actualSourceSelectionCandidate": "591a4e593e97676278ea12cc1d6d947f68eebb85",
+        "actualInstalledWorkspaceCandidate": "3541a4b0e842727c0b54af1e4043af2989845134",
+        "commands": [
+          {
+            "kind": "Installed desktop dependency Vite version smoke",
+            "exitCode": 0,
+            "seconds": 3.056238500023028,
+            "raw": {
+              "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/installed-smokes-01/0.raw.log",
+              "sha256": "e04ed97d0d2c2197e1f473b3bc42e86278dc48cc440327600e76dca808c4ad96"
+            }
+          },
+          {
+            "kind": "Existing packaging smoke locked-source metadata check",
+            "exitCode": 0,
+            "seconds": 0.5227229000010993,
+            "raw": {
+              "path": "artifacts/tmp/W2.setup-fast-smoke-repair-02/installed-smokes-01/1.raw.log",
+              "sha256": "94939e1e44e5de37c047c4da58b8c400f457088ad6402587403f2d7bbaf7e37f"
+            }
+          }
+        ],
+        "meaning": "These exact direct smoke commands ran on the installed workspace at3541, before the55d3 transfer. They validate the selected installed dependencies/locked-source smoke at that actual identity; they are not an end-to-end invocation of new setup at55d3, not a Cargo build and not a retargeted full profile result."
+      },
+      "localMainFromActualRootCheckpoint": "8de7a8c4e6dc6c6c02690377302b36d95c1ccfb3",
+      "rootCheckpoint": {
+        "path": "artifacts/tmp/W2.current-qualification-checkpoint-20261016-120.json",
+        "sha256": "cf584c6007c548a834a4b28e7cd3b548fc0be4063f33e6c82578916ca0132941"
+      },
+      "scope": "Default setup fast meaningful health/dependency smokes with live progress, fail-fast elapsed output; frozen install/runtime validation retained, explicit full verify unchanged. Installed smokes stay at actual3541/source591a, never retargeted to55d3. No full setup/profile/Wave claim."
+    },
+    "actualPortableRenderedNote": "Actual W2/G2 initial completion is recorded at1cc8131d8b74cf6c536d48ce4badc25933981bbb; the current planning predecessor and committed post-exit roadmap is2e2f1a9d042c3dd8db3f8f31b648a36ad004c505. See artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json and the independent Wave/S06/CP10 records. Historical3541 product,1b377 build/reference/Native,fc694 full90 and ownerf86 identities remain distinct. Initial1000 functional commit is qualified, but100k publication/fullmanifest/replay/reopen and continuous performance remain UNQUALIFIED; no1000 productcap or W3metadata/vector100k import-throughput inference. All failed/UNKNOWN/UNTESTED evidence, parser-only2.5333542s acceptance, source-search median7s/all24raws, strictClippyFAIL,409UNKNOWN, security expiry and platform/installer gaps remain. Owner933b moves optional cosmetics and optimization/performance intake to newW10; functional/security qualification residuals remain separately trackedW9, and larger-computing product workW5. Before W3 approval, suggested soft median timing overage strictly<7s may be accepted with W10 debt; completed comparable trials/allraws retained, failed/timeouts and hard functional/security/resource/cancellation bounds unchanged. Hosted university/cloud labels areW11/W12. All48IDs/16slices/924hours including28once, ordered proof ownership, policy03 metrics/token semantics and serial admission are retained. ADR0056–58/reference1.10 remain Proposed, active1.9 unchanged and W3approvalPENDING; no implementation is authorized.",
+    "actualPostG2Roadmap": {
+      "integratedW2Commit": "1cc8131d8b74cf6c536d48ce4badc25933981bbb",
+      "planningPredecessorCommit": "2e2f1a9d042c3dd8db3f8f31b648a36ad004c505",
+      "W2Qualification": {
+        "path": "artifacts/evidence/W2.initial-exit-qualification-20261016-01.json",
+        "sha256": "8b932f79613b268bea09cb906987dfb3ba910f56a061eab574f51b9d8a775b49"
+      },
+      "independentWaveDisposition": {
+        "path": "artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json",
+        "sha256": "cd8a21ddcd914002d21b666551884363b18731867c247826f492d96a70d36b7d"
+      },
+      "S06CP10Disposition": {
+        "path": "artifacts/evidence/W2.CAP-05.S06.CP10.independent-final-disposition-01.json",
+        "sha256": "d1c0923f703eade67411916598a7c91d0d8ea853c1e90c10a5a6ae18b8d59622"
+      },
+      "G2Decision": {
+        "path": "artifacts/evidence/W2.exit-decision-20261016-01.md",
+        "sha256": "2850022c6004c8303564ba885926669a8d130b021a54729a91871caa2705a56d"
+      },
+      "normalExitReceipt": {
+        "path": "artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json",
+        "sha256": "25b47a3a9f1a9792e4aff52c4918f67037007d2a2f55b7c859d631f1b5a5c83d"
+      },
+      "postExitDirection": {
+        "path": "artifacts/evidence/W2.post-exit-roadmap-direction-20261016-01.md",
+        "sha256": "933b9af5abc9cebf5ac5dd3a23ce425701de93aef359a50b77c96f002cd76b5d"
+      },
+      "roadmapActualReview": {
+        "path": "artifacts/tmp/W2.post-exit-roadmap-apply-01.independent-commit-binding-01.json",
+        "sha256": "af220eab71878c2e396c412313a63d27bf816a5e92d9a1a63766e23402c2c43e"
+      },
+      "schemaFacts": [
+        {
+          "path": "planning/backlog.schema.json",
+          "sha256": "77b21cf1bce710921ce13d718b2acc8a4a891ceaf8c7459549bacc60d858b878"
+        },
+        {
+          "path": "planning/capability-plans/capability-plan.schema.json",
+          "sha256": "419a8df4645be48dc51983ad3bccddc2752088bc1d1781ab43619d0d93ae9425"
+        }
+      ],
+      "scope": "Actual owner-accepted initial W2/G2 completion with all original adverse/unknown/unqualified results retained; no universal product PASS."
+    }
+  }
+}

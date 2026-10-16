@@ -1,0 +1,65 @@
+{
+  "documentType": "ordinary-existing-validator-command-plan-not-executed",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "status": "NOT_RUN_DURING_ACTIVE_C35_COLLECTION",
+  "actualResults": null,
+  "currentPacketRole": "Private complete affected content plus exact inherited design assets/HTML, not a numbered/indexed ADR set or approved reference publication. Do not pass null future identities off as a valid accepted package.",
+  "afterCollectionAndW2G2": [
+    "Reconcile actual final W2 source/planning baseline once. Preserve existing refinement/policy/review files and this payload as history.",
+    "This complete private successor incorporates policy03 in its contracts/gold/resource/task/backlog/slice/checkpoint files and includes all54 architecture/UX source entries. After finalW2/G2 baseline reconciliation, root uses ordinary ADR/reference routes for real proposed identities/metadata and obtains genuine incremental complete-packet review; no new campaign.",
+    "Bind actual proposed full-reference metadata, hashes and the existing presentation-compatibility route while preserving semantic1.5 inputs and all14 workflow objects. No stored-selection migration is implied.",
+    "Run existing reference/ADR checks and obtain genuine independent decisions and human design/architecture/Wave authority in normal order before implementation. Reference validation/static HTML is not runtime/principal/model proof."
+  ],
+  "ordinaryPortableCommandShapes": [
+    {
+      "phase": "Actual numbered/indexed proposed ADR commit only",
+      "command": ".venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base <actual-planning-base> --head <actual-proposal-commit>",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "Complete proposed reference directory with actual assigned proposed identity/metadata; never an accepted package assertion",
+      "command": ".venv/Scripts/python.exe -B -s tools/ui_reference_check.py --repo . --reference <actual-complete-proposed-reference-directory> --report <exclusive-ignored-reference-report>",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "Full proposed package after normal metadata composition; use unchanged existing bundled validator source",
+      "command": ".venv/Scripts/python.exe -B -s <actual-complete-proposed-reference-directory>/scripts/verify_site.py",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "Existing semantic catalog binding; no source edits or regeneration needed for unchanged semantics",
+      "command": "node packages/contracts/workflow-profile/generate.mjs --check",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "After actual normal reference publication/compatibility binding and relevant W3 implementation; existing check uses canonical reference, not this null-identity private packet",
+      "command": ".venv/Scripts/python.exe -B -s tools/ui_workflow_check.py --repo . --report <exclusive-ignored-workflow-report>",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "Same ordinary governed conformance phase; no new checker",
+      "command": ".venv/Scripts/python.exe -B -s tools/ui_token_check.py --repo . --report <exclusive-ignored-token-report>",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "Same ordinary governed conformance phase; no new checker",
+      "command": ".venv/Scripts/python.exe -B -s tools/ui_route_check.py --repo . --report <exclusive-ignored-route-report>",
+      "status": "NOT_RUN"
+    },
+    {
+      "phase": "Same ordinary governed conformance phase; actual accessibility/keyboard/theme/GUI evidence remains future",
+      "command": ".venv/Scripts/python.exe -B -s tools/ui_accessibility_check.py --repo . --report <exclusive-ignored-accessibility-report>",
+      "status": "NOT_RUN"
+    }
+  ],
+  "notRequestedNow": [
+    "No validator/help invocation, GUI/browser/screenshot, model/data download/evaluation, runtime scan, benchmark, package/build, source implementation, taskctl, HEAD or canonical mutation.",
+    "Do not create a validator, controller, ECR or separate approval campaign.",
+    "No visual baseline or accepted record is written merely to make a check pass."
+  ],
+  "newReferenceId": null,
+  "acceptedArchitectureIdentities": null,
+  "humanApproval": null,
+  "independentReview": null,
+  "W3WaveApproval": null
+}

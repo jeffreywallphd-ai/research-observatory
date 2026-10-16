@@ -1,0 +1,1236 @@
+{
+  "documentType": "private-W3-successor05-ordered-slice-feasibility-change-map",
+  "sourcePacket04": {
+    "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/source-manifest-04.json",
+    "sha256": "82e4bfe41bd5032dece94e1cbe034ab4a759552f4687546b0c1b9c0f4ea00449"
+  },
+  "author": "agent:/root/storage_profile_review",
+  "selectedRecommendation": "Existing ordered capability slice arrays reordered without ID renumbering; one explicit dependency removed only after exact runtime/evaluation-proof ownership moves. Parent-slice external unions and genuine prior APPROVED gates included.",
+  "alternatives": [
+    {
+      "candidate": "Reorder unapproved slices plus staged registry/runtime/evaluation ownership",
+      "recommended": true,
+      "reason": "Smallest plan-only correction consistent with existing taskctl; keep complete slice outcomes and every real proof in named tasks."
+    },
+    {
+      "candidate": "Keep numeric order by relocating prompt/schema foundations into earlier runtime and data-persistence foundations into ontology tasks",
+      "recommended": false,
+      "reason": "Credible unapproved redesign with no framework change, but redistributes substantially more task outcomes/estimates/architecture ownership. Not selected because ordered arrays already support the smaller coherent plan."
+    }
+  ],
+  "exactCriterionAndEffortMovement": {
+    "CAP-07.S04.T03": "Registry/prompt/schema approval-state and UI/contract closure before local inference: freeze lawful gold frame, exact scoring/denominator rules and attestation/promotion schema; characterize deterministic scoring with declared synthetic reference cases, malformed/missing/forged report denial, immutable default/upgrade/rollback and benchmark/reviewer/residual bindings. Missing real evaluation remains Unknown/unqualified and cannot promote a role. This task does not claim actual local inference or measured model quality.",
+    "CAP-07.S02.T03": "After complete S04 approval, retain genuine real local prompt/runtime integration: execute exact versioned prompt/schema through the signed no-network current-principal worker and canonical fixture-only qualification authority; measure admitted CPU/profile resources, actual cancellation/crash/normal drain, parser/model serialized reservation and structured/refusal handling. No mocked transport/resource pass or automatic scholarly role promotion. S05.T03 retains actual comparative gold scoring/default-upgrade proof.",
+    "CAP-07.S05.T03": "After complete local-runtime S02 and observability/budget S05 predecessors, collect genuine comparable local model/prompt evaluations through that real admitted runtime on frozen lawful task/domain/profile/gold inputs. Apply unchanged metricPolicy03, bind benchmark/reviewer/residuals and actual report attestation; prove default upgrade/regression denial, controlled promotion/rollback/dependent-stale behavior in the existing dashboard. Registry mechanisms from S04 do not substitute for actual model outcomes; later consuming tasks requalify their exact changed task/prompt/schema inputs."
+  },
+  "effortMovement": {
+    "CAP-07.S04.T03": {
+      "before": 20,
+      "after": 16
+    },
+    "CAP-07.S02.T03": {
+      "before": 20,
+      "after": 22
+    },
+    "CAP-07.S05.T03": {
+      "before": 20,
+      "after": 22
+    }
+  },
+  "estimateRationale": "Reallocate four already-planned integration-proof hours:2 to real runtime/profile/prompt integration and2 to actual comparative evaluations/promotion. Registry/UI/contract closure remains16h. No product outcome or proof is removed; total924 stays because work moves, not because an estimate is forced. These are proposed engineering-effort forecasts, not measurements.",
+  "unchangedFacts": {
+    "taskIDs": 48,
+    "W3SliceIDs": 16,
+    "totalEffort": 924,
+    "refactoringIncludedOnce": 28,
+    "inheritedFourW1Decisions": true,
+    "futureWaveScopeAndStates": true,
+    "all49UIProposalPayloads": true,
+    "reviewed63FileReference": true,
+    "canonicalOrFrameworkMutation": false
+  },
+  "augmentedWitness": {
+    "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/ordered-slice-feasibility-witness-05.json",
+    "sha256": "8c22cb3b22415ef846acdafcf1d163c8c1a657f63834cbda63a9d7b9f63d4866"
+  },
+  "all94PredecessorBindings": [
+    {
+      "path": "aggregate-resource-and-selection-policy-02.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/aggregate-resource-and-selection-policy-02.json",
+        "sha256": "d04cb4df4e3e128ec7441af105d142e99fdd7a79fde9fda8f237d391ae031665"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/aggregate-resource-and-selection-policy-02.json",
+        "sha256": "1e0c1f90180e8857c8d99745ada74b47171458f8f4ea74cc8b89cf9cd5165314"
+      },
+      "changed": true
+    },
+    {
+      "path": "architecture-decision-proposals-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-decision-proposals-01.json",
+        "sha256": "c5238e3db16c98e8d186c556d131d86f51558573ad7ca10b193dc638196a9d46"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-decision-proposals-01.json",
+        "sha256": "b3c538cc8fb5ec1d96c55db13dcd1c2cfe5929250abdf01bec571e9b2a85c8eb"
+      },
+      "changed": true
+    },
+    {
+      "path": "architecture-ux/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+        "sha256": "cee553c4318e9c7ffd9e94eae41aef02dd069471b9c3b1a7ad56d49cde94e6c7"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/architecture/evaluation-and-local-coder-authority.PROPOSED.md",
+        "sha256": "a0f0ee371b45ac8b54ec40c0faf5e50b49daba59611de832e5b7965210fa1330"
+      },
+      "changed": true
+    },
+    {
+      "path": "architecture-ux/architecture/model-purpose-isolation.PROPOSED.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/architecture/model-purpose-isolation.PROPOSED.md",
+        "sha256": "ccbb198c8dac020763950dad5801d39210a3b4534b53415b0d5b4adfdfc786f2"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/architecture/model-purpose-isolation.PROPOSED.md",
+        "sha256": "ccbb198c8dac020763950dad5801d39210a3b4534b53415b0d5b4adfdfc786f2"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/architecture/protected-search-projections.PROPOSED.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/architecture/protected-search-projections.PROPOSED.md",
+        "sha256": "56f42c3d4bde74d08c8f851f321ef2056c6ace765cad7256b113db2c610e36a7"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/architecture/protected-search-projections.PROPOSED.md",
+        "sha256": "56f42c3d4bde74d08c8f851f321ef2056c6ace765cad7256b113db2c610e36a7"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/README.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/README.md",
+        "sha256": "a329eb1d77000a76c96b996793e2e71f024ecb9d83db4d645e2cf036a9edbddf"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/README.md",
+        "sha256": "a329eb1d77000a76c96b996793e2e71f024ecb9d83db4d645e2cf036a9edbddf"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/application-settings.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/application-settings.html",
+        "sha256": "f2d77ca4d95db9b9bb8f268ba3e3637805652a90525adf941cdf2712ab68e146"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/application-settings.html",
+        "sha256": "f2d77ca4d95db9b9bb8f268ba3e3637805652a90525adf941cdf2712ab68e146"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/app.css",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/assets/app.css",
+        "sha256": "db5b4ec869b0fa9beaecd293d814256773366fda17b3c83297bb8e09fc79fcbd"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/app.css",
+        "sha256": "db5b4ec869b0fa9beaecd293d814256773366fda17b3c83297bb8e09fc79fcbd"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/app.js",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/assets/app.js",
+        "sha256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/app.js",
+        "sha256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/print.css",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/assets/print.css",
+        "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/print.css",
+        "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/assets/tokens.css",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/assets/tokens.css",
+        "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/assets/tokens.css",
+        "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/audit-lineage.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/audit-lineage.html",
+        "sha256": "5b9c3b3c0298dcfeb5bc618c81dff2d8ce39c503bd54e50e272983f685439e43"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/audit-lineage.html",
+        "sha256": "5b9c3b3c0298dcfeb5bc618c81dff2d8ce39c503bd54e50e272983f685439e43"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/CAPABILITY_COVERAGE.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/CAPABILITY_COVERAGE.md",
+        "sha256": "6057e2da7580835b5aa4987ec2d482bf6f8e729b366c9c2916da4f99c2e3ee88"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/CAPABILITY_COVERAGE.md",
+        "sha256": "6057e2da7580835b5aa4987ec2d482bf6f8e729b366c9c2916da4f99c2e3ee88"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+        "sha256": "2cfbc278b91da3de662d9595fd0943dbb4ba4a1b292c265a4f8cbe15202ece7c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/CAPABILITY_COVERAGE.proposed.json",
+        "sha256": "2cfbc278b91da3de662d9595fd0943dbb4ba4a1b292c265a4f8cbe15202ece7c"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/claim-graph.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/claim-graph.html",
+        "sha256": "bc16105c4c0747b1024e849110aa92f0e44986f3831a65024a67868025529482"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/claim-graph.html",
+        "sha256": "bc16105c4c0747b1024e849110aa92f0e44986f3831a65024a67868025529482"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/corpus-canvas.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/corpus-canvas.html",
+        "sha256": "0c8bcc307b557899c5b573a81e80548ccb2799cd4a4f0fcec2c2939ed8a7937e"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/corpus-canvas.html",
+        "sha256": "0c8bcc307b557899c5b573a81e80548ccb2799cd4a4f0fcec2c2939ed8a7937e"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/critical-lens.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/critical-lens.html",
+        "sha256": "19d1d06d21c087cf7e7bce1c642660cccc78dfe16c241a898343dcb044c0b859"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/critical-lens.html",
+        "sha256": "19d1d06d21c087cf7e7bce1c642660cccc78dfe16c241a898343dcb044c0b859"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/document-reader.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/document-reader.html",
+        "sha256": "c3cbb89c58aec3769e924efbc49046d40505d7a4052b0ba5458623cf15edb302"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/document-reader.html",
+        "sha256": "c3cbb89c58aec3769e924efbc49046d40505d7a4052b0ba5458623cf15edb302"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/evidence-matrix.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/evidence-matrix.html",
+        "sha256": "eb951f59b4787caa2b207c6eb41ca1859d0c87e9acadaeb16bc68e81b0b8a2ad"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/evidence-matrix.html",
+        "sha256": "eb951f59b4787caa2b207c6eb41ca1859d0c87e9acadaeb16bc68e81b0b8a2ad"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/help-onboarding.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/help-onboarding.html",
+        "sha256": "bcd6564be23dfdc8c760fa70b30ec0d734fd87d4ed67afa6bd7d0003e884a822"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/help-onboarding.html",
+        "sha256": "bcd6564be23dfdc8c760fa70b30ec0d734fd87d4ed67afa6bd7d0003e884a822"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/index.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/index.html",
+        "sha256": "f8f7b0bff7b1061d1c3bfecc9a7b17fdd8534cab2e9fcd76c5f7a15059072488"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/index.html",
+        "sha256": "f8f7b0bff7b1061d1c3bfecc9a7b17fdd8534cab2e9fcd76c5f7a15059072488"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/ingestion-reconciliation.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/ingestion-reconciliation.html",
+        "sha256": "7057618a63d37e9b66268f06701b769b6ee0b833c63dec0b27d6120ef376137d"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/ingestion-reconciliation.html",
+        "sha256": "7057618a63d37e9b66268f06701b769b6ee0b833c63dec0b27d6120ef376137d"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/intent-contract.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/intent-contract.html",
+        "sha256": "d4dd07791a725122963b145c061d118ea80e10fa9d9d01b3154adfba926b8be7"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/intent-contract.html",
+        "sha256": "d4dd07791a725122963b145c061d118ea80e10fa9d9d01b3154adfba926b8be7"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/living-monitor.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/living-monitor.html",
+        "sha256": "55eb32e73698a1273365b13fb072bb9b7d3cb5e0c7b4bd96e844c3e66ec5f4ef"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/living-monitor.html",
+        "sha256": "55eb32e73698a1273365b13fb072bb9b7d3cb5e0c7b4bd96e844c3e66ec5f4ef"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/manuscript-blueprint.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/manuscript-blueprint.html",
+        "sha256": "fbc8d44df99911247baa8647fd152a4d7e83c2ed02b0ca080ebd654f77206e28"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/manuscript-blueprint.html",
+        "sha256": "fbc8d44df99911247baa8647fd152a4d7e83c2ed02b0ca080ebd654f77206e28"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/manuscript-studio.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/manuscript-studio.html",
+        "sha256": "6f996f1f53783024dcc6bdd24053488ef46c4102e48791016c4976dbb4d37a3b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/manuscript-studio.html",
+        "sha256": "6f996f1f53783024dcc6bdd24053488ef46c4102e48791016c4976dbb4d37a3b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/model-center.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/model-center.html",
+        "sha256": "f797042b705012d18f43425dc81f7ffc01fd348532aad0fd0d69eccd29c9bd49"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/model-center.html",
+        "sha256": "f797042b705012d18f43425dc81f7ffc01fd348532aad0fd0d69eccd29c9bd49"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/new-project.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/new-project.html",
+        "sha256": "f035e56d6529be7eba61af2719c0b8d70676cbe056e6730973d945407b046ea4"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/new-project.html",
+        "sha256": "f035e56d6529be7eba61af2719c0b8d70676cbe056e6730973d945407b046ea4"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/novelty-audit.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/novelty-audit.html",
+        "sha256": "3331af9bad0c091fa5176c7320ae9e521990c6a6b24cb4de1cde3096d7fbbc03"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/novelty-audit.html",
+        "sha256": "3331af9bad0c091fa5176c7320ae9e521990c6a6b24cb4de1cde3096d7fbbc03"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/opportunity-radar.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/opportunity-radar.html",
+        "sha256": "97e6a93b19642962481e9b97798939665fcb0930a5757bde5d2ded76fbe7ea5b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/opportunity-radar.html",
+        "sha256": "97e6a93b19642962481e9b97798939665fcb0930a5757bde5d2ded76fbe7ea5b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/PAGE_INVENTORY.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/PAGE_INVENTORY.md",
+        "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/PAGE_INVENTORY.md",
+        "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/PAGE_INVENTORY_SOURCE.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/PAGE_INVENTORY_SOURCE.md",
+        "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/PAGE_INVENTORY_SOURCE.md",
+        "sha256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/parsing-quality.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/parsing-quality.html",
+        "sha256": "46dda260be4fca5124b47ee0a93000d84d2c1a1ed9465c3e861538553153d471"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/parsing-quality.html",
+        "sha256": "46dda260be4fca5124b47ee0a93000d84d2c1a1ed9465c3e861538553153d471"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+        "sha256": "acbe24d31cd59d540b9fa70d63f786c5874792b8a6fa85cdfd210ddac6c8ca19"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/PRESENTATION_COMPATIBILITY.proposed.json",
+        "sha256": "acbe24d31cd59d540b9fa70d63f786c5874792b8a6fa85cdfd210ddac6c8ca19"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/project-settings.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/project-settings.html",
+        "sha256": "71f5c09c3f8ed78e46cff214ab7a5aacc4637b765efa0f31926f7cf3bc27dfd1"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/project-settings.html",
+        "sha256": "71f5c09c3f8ed78e46cff214ab7a5aacc4637b765efa0f31926f7cf3bc27dfd1"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/projects.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/projects.html",
+        "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/projects.html",
+        "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/prototype-index.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/prototype-index.html",
+        "sha256": "a4becae52275dcb596cfc370e6dc02193c14bb8af6e41cc6e5d8eacc83aeccb3"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/prototype-index.html",
+        "sha256": "a4becae52275dcb596cfc370e6dc02193c14bb8af6e41cc6e5d8eacc83aeccb3"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/research-notebook.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/research-notebook.html",
+        "sha256": "b4a00f3f665f5168ccb68a2e366d4ece2d305d2b2e5cdcaf1c35fafd87fdf37a"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/research-notebook.html",
+        "sha256": "b4a00f3f665f5168ccb68a2e366d4ece2d305d2b2e5cdcaf1c35fafd87fdf37a"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/reviewer-simulation.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/reviewer-simulation.html",
+        "sha256": "a5089d240744627270393eb66882c8ff8ff606a1b02f3b227010847737a750d6"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/reviewer-simulation.html",
+        "sha256": "a5089d240744627270393eb66882c8ff8ff606a1b02f3b227010847737a750d6"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/revision-response.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/revision-response.html",
+        "sha256": "955e1a71177c3b4e6517244a29e02d66fcacf4461847ff99d30e02097c8e830a"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/revision-response.html",
+        "sha256": "955e1a71177c3b4e6517244a29e02d66fcacf4461847ff99d30e02097c8e830a"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/schema-manager.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/schema-manager.html",
+        "sha256": "e14d3f35a2c8a6b648d615c5fdf61195da36948ad962cabf6ad06861951ab3b4"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/schema-manager.html",
+        "sha256": "e14d3f35a2c8a6b648d615c5fdf61195da36948ad962cabf6ad06861951ab3b4"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/screening.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/screening.html",
+        "sha256": "ffba9762c7a0a873f7cb01224a85171c049926edf94ce9109d8a545b1b0e40d5"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/screening.html",
+        "sha256": "ffba9762c7a0a873f7cb01224a85171c049926edf94ce9109d8a545b1b0e40d5"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/search-studio.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/search-studio.html",
+        "sha256": "4f8bbd936863779e4439cf9fc83c5ea17f030d1c4b310733c51e53e16f98c7f4"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/search-studio.html",
+        "sha256": "4f8bbd936863779e4439cf9fc83c5ea17f030d1c4b310733c51e53e16f98c7f4"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/SITE_MANIFEST.proposed.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/SITE_MANIFEST.proposed.json",
+        "sha256": "4dbd067619d78b1093cf7f4e0b7ac953ba512723d24729ffe53dfe164a664016"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/SITE_MANIFEST.proposed.json",
+        "sha256": "4dbd067619d78b1093cf7f4e0b7ac953ba512723d24729ffe53dfe164a664016"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/source-manager.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/source-manager.html",
+        "sha256": "084b9a9ae60d702b47310c6f7e9344de310f692272dd644d587f0075602618d1"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/source-manager.html",
+        "sha256": "084b9a9ae60d702b47310c6f7e9344de310f692272dd644d587f0075602618d1"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/study-design.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/study-design.html",
+        "sha256": "a7c4ccc2ac6cc5801cabb42f6cb11335a57be64443f053c1483ad0bb0f803c1b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/study-design.html",
+        "sha256": "a7c4ccc2ac6cc5801cabb42f6cb11335a57be64443f053c1483ad0bb0f803c1b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/style-guide.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/style-guide.html",
+        "sha256": "b5e52549581b62dd186109ea8cb5bb8feca1a86dd6c5882667d890bebc05607e"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/style-guide.html",
+        "sha256": "b5e52549581b62dd186109ea8cb5bb8feca1a86dd6c5882667d890bebc05607e"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/STYLE_GUIDE.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/STYLE_GUIDE.md",
+        "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/STYLE_GUIDE.md",
+        "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/STYLE_GUIDE_SOURCE.md",
+        "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/STYLE_GUIDE_SOURCE.md",
+        "sha256": "460943d212acab377c76fb59cab332e49af07b9e2a10739e47a8b4164d97b1f9"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/synthesis-studio.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/synthesis-studio.html",
+        "sha256": "12471b245c4eade5784fad6dfe09e1220bffe97aa012dc5b4df48b3447c8d694"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/synthesis-studio.html",
+        "sha256": "12471b245c4eade5784fad6dfe09e1220bffe97aa012dc5b4df48b3447c8d694"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/task-center.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/task-center.html",
+        "sha256": "9599ba3e547699937287af79d7d150cf6481321d51ffd9b60e975ef9f4ad91f4"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/task-center.html",
+        "sha256": "9599ba3e547699937287af79d7d150cf6481321d51ffd9b60e975ef9f4ad91f4"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/technical-reports.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/technical-reports.html",
+        "sha256": "115eb33473bcdbc96d2f4ff0b2349dd4729096591a77adbfb79eecbbbbf6eedb"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/technical-reports.html",
+        "sha256": "115eb33473bcdbc96d2f4ff0b2349dd4729096591a77adbfb79eecbbbbf6eedb"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/theory-map.html",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/theory-map.html",
+        "sha256": "4de46364b5fead10c423de0054adf0cea53b921c32b26126cfc3aeb82efd792b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/theory-map.html",
+        "sha256": "4de46364b5fead10c423de0054adf0cea53b921c32b26126cfc3aeb82efd792b"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/WORKFLOW_CATALOG.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/WORKFLOW_CATALOG.json",
+        "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/WORKFLOW_CATALOG.json",
+        "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/ui-reference/WORKFLOW_CATALOG.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/ui-reference/WORKFLOW_CATALOG.md",
+        "sha256": "bb74eb7b6e764aa49277acf5d1b1cdf6668f38dfb70c62878f9f411a1371e75c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/ui-reference/WORKFLOW_CATALOG.md",
+        "sha256": "bb74eb7b6e764aa49277acf5d1b1cdf6668f38dfb70c62878f9f411a1371e75c"
+      },
+      "changed": false
+    },
+    {
+      "path": "architecture-ux/validation-plan.NOT-RUN.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/architecture-ux/validation-plan.NOT-RUN.json",
+        "sha256": "911cb7aa60a43fed95c84c8bd651a5a254a8d01cedc674e8d7fcaa706e528537"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/architecture-ux/validation-plan.NOT-RUN.json",
+        "sha256": "911cb7aa60a43fed95c84c8bd651a5a254a8d01cedc674e8d7fcaa706e528537"
+      },
+      "changed": false
+    },
+    {
+      "path": "backlog-change-proposal-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/backlog-change-proposal-01.json",
+        "sha256": "3b3ff498aec5796a8e2e77d3d07ec543ec1f3066e4b2c7292c76a4887735d0fa"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/backlog-change-proposal-01.json",
+        "sha256": "d9f75305830de2d8672e76a53045820365daa8043bb271eeadc51958ca764c21"
+      },
+      "changed": true
+    },
+    {
+      "path": "baseline-and-source-inventory-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/baseline-and-source-inventory-01.json",
+        "sha256": "7342d401dc0fe01048032879a3cdc50e61bdf9c98055e05c391bfb1fdef666e3"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/baseline-and-source-inventory-01.json",
+        "sha256": "7342d401dc0fe01048032879a3cdc50e61bdf9c98055e05c391bfb1fdef666e3"
+      },
+      "changed": false
+    },
+    {
+      "path": "change-map-04.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/change-map-04.json",
+        "sha256": "4a53cbae70c94ceb2310bd96cb211c7188e9d53d23bc9dc1d1606f2625486f97"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/change-map-04.json",
+        "sha256": "4a53cbae70c94ceb2310bd96cb211c7188e9d53d23bc9dc1d1606f2625486f97"
+      },
+      "changed": false
+    },
+    {
+      "path": "contracts-01.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/contracts-01.md",
+        "sha256": "192ce14e4ceae81fa2dfe30e3a56ed06dc5ae2b1035f3534735402defc22cf2c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/contracts-01.md",
+        "sha256": "968b3b4915e3dd4bcdc1359d99b3a65583489bae0dbe7bbc74a43fd4bd40a905"
+      },
+      "changed": true
+    },
+    {
+      "path": "decision-summary-01.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/decision-summary-01.md",
+        "sha256": "3cd37f34497f01dfd94a4535595bf9bacdf6ff34686b8339a4595c4da2653860"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/decision-summary-01.md",
+        "sha256": "566ca2841faea3e56f03e46d85cd095965c0ade65f98b95fe3e9eb878de21049"
+      },
+      "changed": true
+    },
+    {
+      "path": "gold-source-and-annotation-strategy-02.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/gold-source-and-annotation-strategy-02.json",
+        "sha256": "3910946297dc268250242ab32316fbf18d399d64fdb06c5b52414ec58a12b01c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/gold-source-and-annotation-strategy-02.json",
+        "sha256": "5bd38c4e62c940c114dfeb317bbf740e1272bf2337f0fe8f4542dfc357b1707c"
+      },
+      "changed": true
+    },
+    {
+      "path": "initial-target-register-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/initial-target-register-01.json",
+        "sha256": "d6a8e069ca9ff230f18141461e2f531691ca670f318750b875099c574ece598c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/initial-target-register-01.json",
+        "sha256": "d6a8e069ca9ff230f18141461e2f531691ca670f318750b875099c574ece598c"
+      },
+      "changed": false
+    },
+    {
+      "path": "interface-and-migration-proposal-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/interface-and-migration-proposal-01.json",
+        "sha256": "f26a8663da4ac98c84c879d11b5b9249db87be17d0ec353502f17bb55314f0f0"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/interface-and-migration-proposal-01.json",
+        "sha256": "65852e99b2cadb539be2e38f7acee69c5c735e1ad8dbaf2d937256c08a20c157"
+      },
+      "changed": true
+    },
+    {
+      "path": "original-plan-budget-register-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/original-plan-budget-register-01.json",
+        "sha256": "de9cc4df2c51f69b0eabc3db45a2860d7ab3f7f8a50966790a40baebca764087"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/original-plan-budget-register-01.json",
+        "sha256": "de9cc4df2c51f69b0eabc3db45a2860d7ab3f7f8a50966790a40baebca764087"
+      },
+      "changed": false
+    },
+    {
+      "path": "planning/capability-plans/CAP-06.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/capability-plans/CAP-06.md",
+        "sha256": "d38cb6cd3b1044ea30a7e7853513b90cd03b8735c789f2bbcbfb42f625b4983c"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/capability-plans/CAP-06.md",
+        "sha256": "3d40d884b4376b4778db490be262a16ceee9b15648efbf3b4e58a41053160618"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/capability-plans/CAP-07.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/capability-plans/CAP-07.md",
+        "sha256": "88efd61e52eda6e44107dd5fd953f6824b63b3992666a30f592ba27e6f25ba64"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/capability-plans/CAP-07.md",
+        "sha256": "7ec380791ced63248942d3e34fb5ab11173906aa23b55e7ed5f9d4a08f1df66c"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/capability-plans/CAP-08.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/capability-plans/CAP-08.md",
+        "sha256": "c2425a4e48cc9ef08c9f16d6a4a201860b7fcdf69f6a4dd11d1c2c085932a265"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/capability-plans/CAP-08.md",
+        "sha256": "b24bf3c517d8c919cab39778029aabbfde86ed9b4882a6c355349447fad881e5"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+        "sha256": "fdbdb0218f050a66202c36decf6b37c0d559418989a0d9351faa3e5f1d02196f"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+        "sha256": "710fd7714ec55ca5df2b17a034ecf08aa5325805d37675b914fb3458d4bf2cf9"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+        "sha256": "7cddd51a3e63b2c4a1335af53b2901ff37ca910bbede4340778c867724c8a4a2"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+        "sha256": "3b3da420909dc3f0d42bb5c2251b51d2ea994eb9f4ee0d36082af5bf12fd21b8"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+        "sha256": "9130cc7ac9402814591b815c351dbbda4ffc0dfb82895726fe2a4934f15ba4be"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+        "sha256": "ea65489f5fcd9bec05ba2d5faec5792798ffa4d14399403fa60af3f0afb3a1bd"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+        "sha256": "2a4d95628b491627e967190f59ed31c9a87c25df698e286655ae90469fbcdf8d"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+        "sha256": "3f49d52fbe90e18475199e90263352cf09b92874331a7e337ae4ad5ef7966a01"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+        "sha256": "c7c2b54427ff0433f114703fbb6b46c20ed9fa360709128203e1df2ebd01aa8f"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+        "sha256": "c490645c4affd119923895952f664a8ed9783916ec96bde1cacf60275c757847"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+        "sha256": "446ef61bd87165b7030482ee4c39ff7c836ccdb7e3049642f6ec02ff82ab31f1"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+        "sha256": "2311319c98f17d79ec0e0799ec7fe1c8c43460e91d2d08469eb9aae795a6b5c3"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+        "sha256": "a227ecf6efb7e27ab65fccf1d9982deb7c8a7677c049565f81c1a83bb421c828"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+        "sha256": "902e1a89026edc016d26aa36039ae7415f0b74d6554016cfb4f1e05f8e2e39d6"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+        "sha256": "080b61410dd74450a84b443cef1fabfbfa19ff08b86866edbf22925ccc1c1d52"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+        "sha256": "195241eecef76e46a6cf6697d0340796625c83e4ca1c2bc713db414149ddf6bd"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+        "sha256": "0407a5e4c5d470109491ea9f357af874cb271021bf23aa54effbc13477c2a020"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+        "sha256": "7bb7616a6bd8a287db1ebf18fe45190a01078ce86ba42632c2a84151b6e874e7"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+        "sha256": "51629a8cb57a0a5ef53327f29656030c28a60124482e36ebe23c259c54b3e3d4"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+        "sha256": "0977ff497af85a4c24c3c9c65101064c70e06738fbf37902cad55f779a9ecb38"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+        "sha256": "58f251f1a329462b97e233927446574ae6d96fe311e39cbd23720e6ef882e2a5"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+        "sha256": "0db33680b96808677bf0167565f2ff5b1effef4215068d069d62d85a07a8c170"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+        "sha256": "abaf5d7dffbaa187cc8165ddc25ccbff1017ab547757dddf108db570950c6098"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+        "sha256": "8925bb1eb37e092aed24b21b744a4971e30d120ead448c9e9a9c9effcbe2501e"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+        "sha256": "397a4046e8ffa2213fdbb50919ddc30aff4f99b3bfb3a8cf90300148d9e4e72b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+        "sha256": "c8b64cf2c8672e572f5da6069dd53edef8c95446862dad82c1b62dd4b82b5920"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+        "sha256": "615fd29090e3bff248b47dfc4c227393024e63c622d16a09dd7dc2be956da9a5"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+        "sha256": "db0fa927704fc8c923a1fb1c658c0309ac22c293c7c3a5bf5710603b1a04534c"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+        "sha256": "26816487ff8675e1f5db679728a848f0d0e87bdd4f30d3d6dc62e4ec67530a50"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+        "sha256": "14da849067a30ba635d56728b0737e5f8b2b5fdc10cb19e0d90fc36e4a348e4a"
+      },
+      "changed": true
+    },
+    {
+      "path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+        "sha256": "c2eab0424430a02c7c89d0a64a756ed4c5992bf8d8457b5b52f265e86141a41e"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+        "sha256": "d889974fc3d11ca760818ced0fd1ddef0cc5eb1d70f87306b0b29ca73946205d"
+      },
+      "changed": true
+    },
+    {
+      "path": "primary-evidence-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/primary-evidence-01.json",
+        "sha256": "4010b3c0d7b98a675e50eee06a58ae1dea1d7c52cd2f47d80fedf74e20ceb007"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/primary-evidence-01.json",
+        "sha256": "4010b3c0d7b98a675e50eee06a58ae1dea1d7c52cd2f47d80fedf74e20ceb007"
+      },
+      "changed": false
+    },
+    {
+      "path": "README.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/README.md",
+        "sha256": "d258d3749ccb366a60451e9ea2d8bd95e4a419e61c55c848fb93aba844cb1f88"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/README.md",
+        "sha256": "ec210e03a089d207312e1c3b904a75a635d55739d0f34ab35e2859c7e311872e"
+      },
+      "changed": true
+    },
+    {
+      "path": "refinement-change-map-02.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/refinement-change-map-02.json",
+        "sha256": "a2dff7eca4bf50373e8eefcd593d0cc2330137b74695ee5b4e139386de4c9f00"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/refinement-change-map-02.json",
+        "sha256": "a2dff7eca4bf50373e8eefcd593d0cc2330137b74695ee5b4e139386de4c9f00"
+      },
+      "changed": false
+    },
+    {
+      "path": "root-selected-policy-refinement-03.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/root-selected-policy-refinement-03.json",
+        "sha256": "1c40fcbe2ed959479e74305986b4b2cc7efed18d2fa7895c0a148cf07dc76d81"
+      },
+      "changed": false
+    },
+    {
+      "path": "selected-policy-independent-review-03.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/selected-policy-independent-review-03.json",
+        "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/selected-policy-independent-review-03.json",
+        "sha256": "5cedce3a5144385695f17eb3a8a6329a440fb3bc245d95dc66dbf038cace1f68"
+      },
+      "changed": false
+    },
+    {
+      "path": "small-model-primary-candidates-02.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/small-model-primary-candidates-02.json",
+        "sha256": "eff515a57c798a2f280166237e22265372abd66db970db818fe3b813e4e5c251"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/small-model-primary-candidates-02.json",
+        "sha256": "eff515a57c798a2f280166237e22265372abd66db970db818fe3b813e4e5c251"
+      },
+      "changed": false
+    },
+    {
+      "path": "task-register-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/task-register-01.json",
+        "sha256": "f57ce1cd29e8b2f781c2a0ffb679a9f62c5ff231698baa4acd76c1d220d0cb10"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/task-register-01.json",
+        "sha256": "79a9b14fb2bd340b243136bf71ba6b4a1051074fac9801ea2df308404f10ba9d"
+      },
+      "changed": true
+    },
+    {
+      "path": "unresolved-decision-list-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/unresolved-decision-list-01.json",
+        "sha256": "472f712c07b64160892d006730d01e6c31a4f1e94dfc7d8c19670e88dd151ae5"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/unresolved-decision-list-01.json",
+        "sha256": "472f712c07b64160892d006730d01e6c31a4f1e94dfc7d8c19670e88dd151ae5"
+      },
+      "changed": false
+    },
+    {
+      "path": "ux-reference-proposal-01.md",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/ux-reference-proposal-01.md",
+        "sha256": "eee4a5cee378e37674cc9fa2a96edab59600b062c3ae5904b589406e1b0ef91e"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/ux-reference-proposal-01.md",
+        "sha256": "eee4a5cee378e37674cc9fa2a96edab59600b062c3ae5904b589406e1b0ef91e"
+      },
+      "changed": false
+    },
+    {
+      "path": "wave-proposal-01.json",
+      "predecessor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-04/wave-proposal-01.json",
+        "sha256": "c500ee72c6abba0f94d1fb07fefec66897b7cd994a5fbe0bda2e3e4b47d02b2b"
+      },
+      "successor": {
+        "path": "artifacts/tmp/W3.planning-draft-01/complete-successor-05/wave-proposal-01.json",
+        "sha256": "583f81f580a4052764353fd87c5fc10da9a528a7783c3a4b0200341b86616044"
+      },
+      "changed": true
+    }
+  ],
+  "changedPredecessorPayloadCount": 30,
+  "ordinaryReadinessProjection": {
+    "basis": "Existing taskctl.py index_backlog480/previous_slices_approved1485/task_can_be_ready1533/refresh_derived_states1560, not a new policy or invocation.",
+    "when": "Only after actual G2 and materialization of actual order/dependencies; unfinished corrective tasks currently suppress derived refresh. No current state is changed here.",
+    "eligibleObjects": "Only otherwise never-claimed W3 tasks whose actual post-G2 predecessor status is NOT_STARTED or READY. Only task.status/task.updated_at and derived slice.status may change under the ordinary projection; preserve every owner/lease/review/evidence/base/completion/history and all non-W3 records. Stop if any actual W3 task is already started, owned, reviewed or completed.",
+    "formula": "READY iff every explicit task dependency DONE, every parent-slice depends_on task DONE, actual wave activation gate open, and every preceding capability.slices entry completion.APPROVED. Otherwise NOT_STARTED. READY is a derived availability projection, never Wave/implementation approval.",
+    "sliceStatusRule": "Existing refresh preserves DEFERRED/CANCELLED/BLOCKED/REVIEW/DONE slices and otherwise derives aggregate status. Under the required never-claimed W3 precondition the only projected states are NOT_STARTED or READY; deny unexpected IN_PROGRESS rather than manufacture history. updated_at changes only when a permitted task status actually changes, using actual current time.",
+    "conditionalInitialExample": {
+      "assumptions": [
+        "G2 actually open",
+        "all named external W0/W1/W2 tasks DONE",
+        "CAP-07.S01 completion actually APPROVED",
+        "all48 W3 tasks unclaimed NOT_STARTED",
+        "no W3 slice completion already approved"
+      ],
+      "READY": [
+        "CAP-06.S01.T01",
+        "CAP-07.S04.T01"
+      ],
+      "allOther46": "NOT_STARTED",
+      "actualStateObservedOrWritten": false
+    },
+    "executionBoundary": "Normal complete W3 approval/campaign/ownership and ordinary taskctl claim still required before implementation. Do not call internal helpers as a new bypass or invent a refresh controller.",
+    "differentSourceBasedProjectionNote": {
+      "path": "artifacts/tmp/W3.ordered-planning-data-projection-01.json",
+      "sha256": "98094b94c98ff4666b332e5aead851ab2cd34de68cf3658f301be37e1b9bca61"
+    },
+    "materializationRoute": "After actual G2, explicitly author the independently reviewed unapproved definition/order delta against the actual post-G2 backlog copy, then existing index_backlog -> refresh_derived_states -> serializable_backlog. _position is internal only. Publish through existing save_validated/save_atomic schema/semantic validation, predecessor-SHA CAS and applicable frozen/history guards, with exact independently reviewed target identity/order. No dedicated refresh CLI exists; do not fabricate a task transition or weaken order-sensitive identity_snapshot.",
+    "projectionDiffBoundary": "Separate exact reviewed planning definitions/permutation from derived readiness. Permit projection only task.status between NOT_STARTED/READY, task.updated_at only on real status change, and derived slice.status; compare every excluded field and non-W3 object for equality. Actual G2 is never reopened/repeated/forged; DEFERRED conversion belongs to its normal completed transition, not refresh.",
+    "actualMaterialization": null
+  },
+  "reviewedProposedReference": {
+    "manifest": {
+      "path": "artifacts/tmp/W3.proposed-reference-preparation-01/source-manifest-01.json",
+      "sha256": "98e411517d756c96ee44b8e520ed45055543f96ad9c43ee44c0b2662b901acc6"
+    },
+    "differentDisposition": {
+      "path": "artifacts/tmp/W3.proposed-reference-preparation-01.independent-disposition-01.json",
+      "sha256": "6f68d79a3f76ec39f2a57556f6e89f1381e63ef3a7bb5a15ef4269f97655e1e6"
+    },
+    "identityUnreserved": true,
+    "referenceAccepted": false
+  },
+  "genuineDifferentReview": null,
+  "actualFinalW2G2": null,
+  "W3ImplementationAuthorized": false,
+  "differentPlanningDataProjectionAssessment": {
+    "path": "artifacts/tmp/W3.ordered-planning-data-projection-01.json",
+    "sha256": "98094b94c98ff4666b332e5aead851ab2cd34de68cf3658f301be37e1b9bca61"
+  }
+}

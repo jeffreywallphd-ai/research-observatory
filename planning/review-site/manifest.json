@@ -1037,9 +1037,9 @@
       "slice_count": 11,
       "task_count": 33,
       "exit_gate_id": "G2",
-      "gate_status": "PENDING",
+      "gate_status": "APPROVED",
       "approval_status": "APPROVED",
-      "completion_status": "PAUSED",
+      "completion_status": "APPROVED",
       "unlocks_waves": [
         "W3"
       ],
@@ -6493,6 +6493,29 @@
         "CAP-08"
       ],
       "decision_ids": [
+        "CAP-06-D01",
+        "CAP-06-D02",
+        "CAP-06-D03",
+        "CAP-06-D04",
+        "CAP-06-D05",
+        "CAP-06-D06",
+        "CAP-06-D07",
+        "CAP-06-D08",
+        "CAP-06-D09",
+        "CAP-06-D10",
+        "CAP-06-D11",
+        "CAP-06-D12",
+        "CAP-06-D13",
+        "CAP-06-D14",
+        "CAP-06-D15",
+        "CAP-06-D16",
+        "CAP-06-D17",
+        "CAP-06-D18",
+        "CAP-06-D19",
+        "CAP-06-D20",
+        "CAP-06-D21",
+        "CAP-06-D22",
+        "CAP-06-D23",
         "CAP-07-D02",
         "CAP-07-D03",
         "CAP-07-D04",
@@ -6508,7 +6531,30 @@
         "CAP-07-D17",
         "CAP-07-D18",
         "CAP-07-D19",
-        "CAP-07-D20"
+        "CAP-07-D20",
+        "CAP-08-D01",
+        "CAP-08-D02",
+        "CAP-08-D03",
+        "CAP-08-D04",
+        "CAP-08-D05",
+        "CAP-08-D06",
+        "CAP-08-D07",
+        "CAP-08-D08",
+        "CAP-08-D09",
+        "CAP-08-D10",
+        "CAP-08-D11",
+        "CAP-08-D12",
+        "CAP-08-D13",
+        "CAP-08-D14",
+        "CAP-08-D15",
+        "CAP-08-D16",
+        "CAP-08-D17",
+        "CAP-08-D18",
+        "CAP-08-D19",
+        "CAP-08-D20",
+        "CAP-08-D21",
+        "CAP-08-D22",
+        "CAP-08-D23"
       ],
       "slice_ids": [
         "CAP-06.S01",
@@ -6517,13 +6563,13 @@
         "CAP-06.S04",
         "CAP-06.S05",
         "CAP-06.S06",
-        "CAP-07.S02",
-        "CAP-07.S03",
         "CAP-07.S04",
+        "CAP-07.S02",
         "CAP-07.S05",
+        "CAP-07.S03",
         "CAP-08.S01",
-        "CAP-08.S02",
         "CAP-08.S03",
+        "CAP-08.S02",
         "CAP-08.S04",
         "CAP-08.S05",
         "CAP-08.S06"
@@ -6547,27 +6593,27 @@
         "CAP-06.S06.T01",
         "CAP-06.S06.T02",
         "CAP-06.S06.T03",
-        "CAP-07.S02.T01",
-        "CAP-07.S02.T02",
-        "CAP-07.S02.T03",
-        "CAP-07.S03.T01",
-        "CAP-07.S03.T02",
-        "CAP-07.S03.T03",
         "CAP-07.S04.T01",
         "CAP-07.S04.T02",
         "CAP-07.S04.T03",
+        "CAP-07.S02.T01",
+        "CAP-07.S02.T02",
+        "CAP-07.S02.T03",
         "CAP-07.S05.T01",
         "CAP-07.S05.T02",
         "CAP-07.S05.T03",
+        "CAP-07.S03.T01",
+        "CAP-07.S03.T02",
+        "CAP-07.S03.T03",
         "CAP-08.S01.T01",
         "CAP-08.S01.T02",
         "CAP-08.S01.T03",
-        "CAP-08.S02.T01",
-        "CAP-08.S02.T02",
-        "CAP-08.S02.T03",
         "CAP-08.S03.T01",
         "CAP-08.S03.T02",
         "CAP-08.S03.T03",
+        "CAP-08.S02.T01",
+        "CAP-08.S02.T02",
+        "CAP-08.S02.T03",
         "CAP-08.S04.T01",
         "CAP-08.S04.T02",
         "CAP-08.S04.T03",
@@ -6937,8 +6983,7 @@
       "approval_status": "PENDING",
       "completion_status": "PENDING",
       "unlocks_waves": [
-        "W9",
-        "W10"
+        "W9"
       ],
       "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": []
@@ -6974,15 +7019,38 @@
       "gate_status": "PENDING",
       "approval_status": "PENDING",
       "completion_status": "PENDING",
-      "unlocks_waves": [],
+      "unlocks_waves": [
+        "W10"
+      ],
       "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": []
     },
     {
       "wave_id": "W10",
+      "title": "Cleanup and optimization",
+      "track": "local-baseline",
+      "page": "waves/W10.html",
+      "capability_ids": [],
+      "decision_ids": [],
+      "slice_ids": [],
+      "task_ids": [],
+      "slice_count": 0,
+      "task_count": 0,
+      "exit_gate_id": "G12",
+      "gate_status": "PENDING",
+      "approval_status": "PENDING",
+      "completion_status": "PENDING",
+      "unlocks_waves": [
+        "W11"
+      ],
+      "interrupting_change_request_ids": [],
+      "interrupting_recovery_request_ids": []
+    },
+    {
+      "wave_id": "W11",
       "title": "University-hosted pilot",
       "track": "institutional",
-      "page": "waves/W10.html",
+      "page": "waves/W11.html",
       "capability_ids": [
         "CAP-12"
       ],
@@ -7022,16 +7090,16 @@
       "approval_status": "PENDING",
       "completion_status": "PENDING",
       "unlocks_waves": [
-        "W11"
+        "W12"
       ],
       "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": []
     },
     {
-      "wave_id": "W11",
+      "wave_id": "W12",
       "title": "Managed cloud delivery",
       "track": "cloud",
-      "page": "waves/W11.html",
+      "page": "waves/W12.html",
       "capability_ids": [
         "CAP-13"
       ],
@@ -27891,7 +27959,7 @@
       "capability_alias": "CAP-search-screening",
       "title": "Local search, discovery, corpus diagnostics, and screening",
       "plan_path": "planning/capability-plans/CAP-06.md",
-      "plan_sha256": "f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f",
+      "plan_sha256": "d5deb2682bb0d0635a2d88fcc7248bf0786777376e45b75136a798cfdbf72326",
       "page": "CAP-06/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -27902,14 +27970,14 @@
           "wave": "W3",
           "title": "Fielded lexical search and local indexing",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
-          "plan_sha256": "4af6a1225757f27aad5757d0b9f026c6da51fb310710e9c097d2241d362c07a9",
+          "plan_sha256": "fa17c850c3e6a2653e4497c1435e8eafd021774ca3ad1aa5473359be0defa88b",
           "page": "CAP-06/CAP-06.S01.html",
           "task_count": 3,
           "task_reviews": [
             {
               "task_id": "CAP-06.S01.T01",
               "title": "Define searchable fields, analyzers, and query grammar",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -27950,7 +28018,7 @@
             {
               "task_id": "CAP-06.S01.T01",
               "title": "Define searchable fields, analyzers, and query grammar",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-06/CAP-06.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T03",
@@ -27961,7 +28029,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "92bd81cf2086de47c4c6d472597d03bdb49743d7292979c114de6d92169689af",
+              "plan_section_sha256": "b87539cc70638fb023b1e232ce2ec1d069934722e93eacbcc5280040026ddc40",
               "worksheet": null
             },
             {
@@ -27977,7 +28045,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "da22784faa0a897414ed50cfd48c9cc4a712469fbf53da4b3bae34d680e38168",
+              "plan_section_sha256": "de62bbc3b18f8af895df436d8d2f7b5b2fe230fe4ebccdadfb518d4d026bc971",
               "worksheet": null
             },
             {
@@ -27993,7 +28061,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "aa1a7c8ff179b9525f65f90d1cecb4f1ab8d2046da66208a2c415d5b6d053c12",
+              "plan_section_sha256": "3af73a98a1c5f11bb30c9f04034bef8112d575010d16c91749338dc8befd7065",
               "worksheet": null
             }
           ]
@@ -28004,7 +28072,7 @@
           "wave": "W3",
           "title": "Semantic representations and vector retrieval",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
-          "plan_sha256": "6c6923d4a220fd1070e34da9ba275aa40e883d10f7fc27aef3d41797dd6dd053",
+          "plan_sha256": "bdd0647d0d9cb82705b1454694d6f6267682ad5c5d0f026f0b4934e3f3760e63",
           "page": "CAP-06/CAP-06.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -28063,7 +28131,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "bce4d7122b11fb00ab3ab5d39f7ecb72913c77bfe8d6a14ff2818e75121ee77e",
+              "plan_section_sha256": "5e7d8f31bf84be46f34bce3cad8033c5a9a14ed4cf02066157caf4c583db0370",
               "worksheet": null
             },
             {
@@ -28072,14 +28140,15 @@
               "status": "NOT_STARTED",
               "page": "CAP-06/CAP-06.S02.T02.html",
               "dependencies": [
-                "CAP-06.S02.T01"
+                "CAP-06.S02.T01",
+                "CAP-07.S02.T03"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "f0ae5255c3f80c3eec04abc9eb88fe2503ca13cbeaebc192594a66bf8254df8d",
+              "plan_section_sha256": "a5bdfef345e5394de4e5b4e689f357ec75859f4757e5c8e5bf4eae40b9fbfced",
               "worksheet": null
             },
             {
@@ -28095,7 +28164,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "f1dcf3bfa6fe0afc120c44c2a818c8aa3f86b7402dd5860ed93d49cdc74157ce",
+              "plan_section_sha256": "991a67144094f0db9e2c39115163e25a5082ea57f0fed5c4f15ebab7128eedc0",
               "worksheet": null
             }
           ]
@@ -28106,7 +28175,7 @@
           "wave": "W3",
           "title": "Hybrid retrieval and reranking",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
-          "plan_sha256": "70bab7aac1307ff03c39ea5ef1e85bd6dd7556c627ac7bc2141c9fc891251706",
+          "plan_sha256": "acfb91e2d990656e1d0ef9610124fd7475a5b6f49e9241dae14d1c182b0ee1c8",
           "page": "CAP-06/CAP-06.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -28165,7 +28234,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "8eda4614127f9b8171a686e3c859e53c37a5bf1ca52714fb20e352d578278ed4",
+              "plan_section_sha256": "bd5de860cc1272867b6c221bbec6c905ad53b8cc3bd49d1d15df93a1df0948db",
               "worksheet": null
             },
             {
@@ -28174,14 +28243,15 @@
               "status": "NOT_STARTED",
               "page": "CAP-06/CAP-06.S03.T02.html",
               "dependencies": [
-                "CAP-06.S03.T01"
+                "CAP-06.S03.T01",
+                "CAP-07.S05.T02"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "de1eec42d4f34c59418d2116817b4111a4c1f35752fe4a0bd7993410468b4bd9",
+              "plan_section_sha256": "3836a745f899c94a67d1989c0688c6e7a9fa4fbfcb2aaefc31ad4e935ab1dadf",
               "worksheet": null
             },
             {
@@ -28190,14 +28260,15 @@
               "status": "NOT_STARTED",
               "page": "CAP-06/CAP-06.S03.T03.html",
               "dependencies": [
-                "CAP-06.S03.T02"
+                "CAP-06.S03.T02",
+                "CAP-07.S05.T01"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "86ebf35583bb9295ffa13c01e43754949b1bfcc439c59c63259718e417b49828",
+              "plan_section_sha256": "cd2a1045d5a40f954c6d4bc243234e85a34bd0be61c372b8f4f7d1e3932d14b9",
               "worksheet": null
             }
           ]
@@ -28208,7 +28279,7 @@
           "wave": "W3",
           "title": "Search Studio and transparent expansion",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
-          "plan_sha256": "a0d5ad91ab4c9a3c192a62dc56110563e7cf00a245c056f56268688ff8ba7286",
+          "plan_sha256": "5fb4fa05b96c9edbb6ddf324eabf1fb2da3f41aad90a12fbf9117b89bf1680a3",
           "page": "CAP-06/CAP-06.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -28267,7 +28338,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "e3612881de41593165d43c6906edc50725466a79e716a332c0c02180bf67f831",
+              "plan_section_sha256": "40dea74c4ef7d978493b1f8781fbe7a9c59d898fec5f6f3a69a72f0b793d770d",
               "worksheet": null
             },
             {
@@ -28283,7 +28354,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "9ebf6e2798df20f838d2d995359085d026066ed3c6e6529e5b23423f769d58bc",
+              "plan_section_sha256": "3e4870996323e61e5560bb3a20cadf6f1e3b535f5c7dfd8bb23638c1a439d9ca",
               "worksheet": null
             },
             {
@@ -28299,7 +28370,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "6a5b783910035dcf66f322c9e553e75c550f49f1f0dcbaf0c560f1d080b80385",
+              "plan_section_sha256": "19b6fc23bf99e53ebfdd6afbddaef2221936116d1ff0a50c673adb5ea89ac8d9",
               "worksheet": null
             }
           ]
@@ -28310,7 +28381,7 @@
           "wave": "W3",
           "title": "Corpus canvas, coverage, and reflexivity diagnostics",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
-          "plan_sha256": "a32ddc473cfbc5b3f3d72da10660ddf16e82d523696942a0a03269e5fd613327",
+          "plan_sha256": "36944456ff86e10a408afbf43d4ad3cc156c185b623c16904d3594450c8a466d",
           "page": "CAP-06/CAP-06.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -28369,7 +28440,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "7f6f34f159ee8115f25a87fef737d1943f7ab1805eb7f9284f24eeace293cf8f",
+              "plan_section_sha256": "e725d474ecd84e6a9af58548da692a3555644187a29d6abf3acc9d380614c0e3",
               "worksheet": null
             },
             {
@@ -28385,7 +28456,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "9e32f52dfdb908645e0350faeb12a649e277cd1783d32e616db534fcb014008e",
+              "plan_section_sha256": "669f471ffa30cd60190f6d8bf2b629272d177af4a0d20d192aa565efece9548a",
               "worksheet": null
             },
             {
@@ -28401,7 +28472,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "50f270144e8dde0c1b97d310fece3692c2ad2a26715b3c42f4bd88caf0ec3526",
+              "plan_section_sha256": "107b68005981a872d6fe3c87b1659c89f0c904247f880462d2ba5ec2abc3ec2a",
               "worksheet": null
             }
           ]
@@ -28412,7 +28483,7 @@
           "wave": "W3",
           "title": "Transparent screening and active-learning governance",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
-          "plan_sha256": "1cbc0d7597f95b609f6230bd0788a17e27a5736858efa4c80eaf12bf7949f9b6",
+          "plan_sha256": "cbad18e810ee18c904dbb81669f3b5a062c3a8a0d201ff0b4c8d9657dc1ca633",
           "page": "CAP-06/CAP-06.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -28471,7 +28542,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "3d3bcc23aaa5c281c92fb3d321e3ee93b56776c4a33ee315b81456f5f8569e3f",
+              "plan_section_sha256": "66d9b8deab3c0b10142c37bcae4e9aa4533aa3bdaeb599df7a662023f5f23c21",
               "worksheet": null
             },
             {
@@ -28480,14 +28551,15 @@
               "status": "NOT_STARTED",
               "page": "CAP-06/CAP-06.S06.T02.html",
               "dependencies": [
-                "CAP-06.S06.T01"
+                "CAP-06.S06.T01",
+                "CAP-07.S05.T02"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "79567a220e54993fd6d19db8e57401411ec9838a9c6b9b0a2ba6378320cdcd34",
+              "plan_section_sha256": "cf1506a3c6e6e9a8c67109aac0e68b4a2e34d0b48f423954de78173ee79e6477",
               "worksheet": null
             },
             {
@@ -28503,7 +28575,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "527fbd86914ccfbca207f37f8af5996b75dcd8d321bd85436c6468d0a3792b94",
+              "plan_section_sha256": "f214962923c2078ec9da6ed3a297c1354d6b7c7de378ca9fe25eb93533deae09",
               "worksheet": null
             }
           ]
@@ -28515,7 +28587,7 @@
       "capability_alias": "CAP-model-gateway",
       "title": "Provider-neutral model gateway and governed AI execution",
       "plan_path": "planning/capability-plans/CAP-07.md",
-      "plan_sha256": "b95fdb594bd4bbe52f66cdedae7f5642e15b5f0b300fa17498ae7e551cd0e80f",
+      "plan_sha256": "cb056cd94d33197d798ffea04d43f63acc5a2935b2948fb35f8c7c497cc9fa1c",
       "page": "CAP-07/index.html",
       "decision_count": 20,
       "slice_count": 5,
@@ -30729,12 +30801,114 @@
           ]
         },
         {
+          "slice_id": "CAP-07.S04",
+          "slice_alias": "SLICE-prompt-schema-and-structured-output-registry",
+          "wave": "W3",
+          "title": "Prompt, schema, and structured-output registry",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+          "plan_sha256": "6fd3f69733391a0ae3ea2c20f88f911c25000d63f2af1f0209ea4ffff7c50686",
+          "page": "CAP-07/CAP-07.S04.html",
+          "task_count": 3,
+          "task_reviews": [
+            {
+              "task_id": "CAP-07.S04.T01",
+              "title": "Create versioned prompt and tool-template registry",
+              "status": "READY",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-07.S04.T02",
+              "title": "Implement schema-constrained generation and deterministic validation",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-07.S04.T03",
+              "title": "Implement prompt/schema regression tests and approval states",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S04.T01",
+              "title": "Create versioned prompt and tool-template registry",
+              "status": "READY",
+              "page": "CAP-07/CAP-07.S04.T01.html",
+              "dependencies": [
+                "CAP-07.S01.T01",
+                "CAP-00.S05.T02"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "6a5b60e1e03e3f5b1909d7ea6458738eced0c7fdca40bb7f9d93f734d159f5f6",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S04.T02",
+              "title": "Implement schema-constrained generation and deterministic validation",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S04.T02.html",
+              "dependencies": [
+                "CAP-07.S04.T01"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "8a6ad04ec9fd1d31f91e48df24ae67b819ca464730e5b13dcbf572e7836713bb",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S04.T03",
+              "title": "Implement prompt/schema regression tests and approval states",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S04.T03.html",
+              "dependencies": [
+                "CAP-07.S04.T02"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "ee67794c6ea4c1820dfb0edb1b6ac40c26775274aa80781904dbf00564c5fad5",
+              "worksheet": null
+            }
+          ]
+        },
+        {
           "slice_id": "CAP-07.S02",
           "slice_alias": "SLICE-local-model-runtime-and-model-management",
           "wave": "W3",
           "title": "Local model runtime and model management",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
-          "plan_sha256": "553b03713d2d570d4acdc3d281c6253ac9199738a3f502469a9396ca2dfe53a5",
+          "plan_sha256": "88939fc6640db165b3f7848f8f0073f8c399be6f16a8d6221492ad0dd24f7c5c",
           "page": "CAP-07/CAP-07.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -30786,14 +30960,15 @@
               "page": "CAP-07/CAP-07.S02.T01.html",
               "dependencies": [
                 "CAP-07.S01.T03",
-                "CAP-01.S03.T03"
+                "CAP-01.S03.T03",
+                "CAP-07.S04.T02"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "732bf2cac1c11f6364909b32d82e9cc7fb66bfa03ed96e66ec686a4251c95d4d",
+              "plan_section_sha256": "b390fa6153ebaf6fb76b9aebfa6cfbcab6ecc2864436ae93b66833b5ad1cce01",
               "worksheet": null
             },
             {
@@ -30809,7 +30984,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "e755d4064ffb93a2257bc8232d34e5ab1d534c03774a5ea51ac346b58bb607a6",
+              "plan_section_sha256": "d7e16d1f17da4e76d08a1473f68d6819810ae8b88d1452d7c77660581fc87cb5",
               "worksheet": null
             },
             {
@@ -30825,211 +31000,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "e2e10191ce4f8f7e3712dba5e13b1ea32e0eacdc686e7e7f6d3ca1ed7b6a7b11",
-              "worksheet": null
-            }
-          ]
-        },
-        {
-          "slice_id": "CAP-07.S03",
-          "slice_alias": "SLICE-approved-remote-model-providers",
-          "wave": "W3",
-          "title": "Approved remote model providers",
-          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
-          "plan_sha256": "e2fc97be28ae1455d2ab8e65d3d50da67e1ba5a46a3fa6ff79026f66d5c58c93",
-          "page": "CAP-07/CAP-07.S03.html",
-          "task_count": 3,
-          "task_reviews": [
-            {
-              "task_id": "CAP-07.S03.T01",
-              "title": "Implement the first two external provider adapters behind the gateway",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            },
-            {
-              "task_id": "CAP-07.S03.T02",
-              "title": "Implement egress preview, minimization, and consent",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            },
-            {
-              "task_id": "CAP-07.S03.T03",
-              "title": "Implement offline/network-disabled enforcement and remote fallback behavior",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            }
-          ],
-          "tasks": [
-            {
-              "task_id": "CAP-07.S03.T01",
-              "title": "Implement the first two external provider adapters behind the gateway",
-              "status": "NOT_STARTED",
-              "page": "CAP-07/CAP-07.S03.T01.html",
-              "dependencies": [
-                "CAP-07.S01.T03",
-                "CAP-02.S04.T01"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "18a71d24db0b37a7114243e4335eefd9ccd4ac8f164959379883db5deee3fe52",
-              "worksheet": null
-            },
-            {
-              "task_id": "CAP-07.S03.T02",
-              "title": "Implement egress preview, minimization, and consent",
-              "status": "NOT_STARTED",
-              "page": "CAP-07/CAP-07.S03.T02.html",
-              "dependencies": [
-                "CAP-07.S03.T01"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "9d1371f273a77df3bd94f5b29c4803693e9f304fb910c2a0c03d5c483394c5e0",
-              "worksheet": null
-            },
-            {
-              "task_id": "CAP-07.S03.T03",
-              "title": "Implement offline/network-disabled enforcement and remote fallback behavior",
-              "status": "NOT_STARTED",
-              "page": "CAP-07/CAP-07.S03.T03.html",
-              "dependencies": [
-                "CAP-07.S03.T02"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "9350112749e80731337be2d5c9303d7d36f3f551233f1b45d69862ce83ad55dd",
-              "worksheet": null
-            }
-          ]
-        },
-        {
-          "slice_id": "CAP-07.S04",
-          "slice_alias": "SLICE-prompt-schema-and-structured-output-registry",
-          "wave": "W3",
-          "title": "Prompt, schema, and structured-output registry",
-          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
-          "plan_sha256": "66f4d65bba908975dc5654d35856a4b3f8b8fb996c2f79375899cf9a79ce838b",
-          "page": "CAP-07/CAP-07.S04.html",
-          "task_count": 3,
-          "task_reviews": [
-            {
-              "task_id": "CAP-07.S04.T01",
-              "title": "Create versioned prompt and tool-template registry",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            },
-            {
-              "task_id": "CAP-07.S04.T02",
-              "title": "Implement schema-constrained generation and deterministic validation",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            },
-            {
-              "task_id": "CAP-07.S04.T03",
-              "title": "Implement prompt/schema regression tests and approval states",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            }
-          ],
-          "tasks": [
-            {
-              "task_id": "CAP-07.S04.T01",
-              "title": "Create versioned prompt and tool-template registry",
-              "status": "NOT_STARTED",
-              "page": "CAP-07/CAP-07.S04.T01.html",
-              "dependencies": [
-                "CAP-07.S01.T01",
-                "CAP-00.S05.T02"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "588098906a9d9f1f9a6ff7bf017ccd57cdd0ccd379d0c3bd74c7dff87eb01a10",
-              "worksheet": null
-            },
-            {
-              "task_id": "CAP-07.S04.T02",
-              "title": "Implement schema-constrained generation and deterministic validation",
-              "status": "NOT_STARTED",
-              "page": "CAP-07/CAP-07.S04.T02.html",
-              "dependencies": [
-                "CAP-07.S04.T01"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "1bdf994113302f039dad818a4bbae4055bfa2394845f788c4ecb5b74ee58ce32",
-              "worksheet": null
-            },
-            {
-              "task_id": "CAP-07.S04.T03",
-              "title": "Implement prompt/schema regression tests and approval states",
-              "status": "NOT_STARTED",
-              "page": "CAP-07/CAP-07.S04.T03.html",
-              "dependencies": [
-                "CAP-07.S04.T02"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "3ee3da8b9e9ee74f1210c774a932d3971f4aa51e857b68a0a7c70063f3134d9a",
+              "plan_section_sha256": "09bb55c9291547da40c6500e18531d5d4f16903a452a8e8e0c9a9a69c00c7a5f",
               "worksheet": null
             }
           ]
@@ -31040,7 +31011,7 @@
           "wave": "W3",
           "title": "AI observability, budgets, and evaluation operations",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
-          "plan_sha256": "7010fc281485f009af739ce5d18dbeb5401c92240447f30e79e122776d5bf53c",
+          "plan_sha256": "48cfb7633510dc835baa9e4b2e59e37944732ed83302cdc16a25b73b0a2eb3af",
           "page": "CAP-07/CAP-07.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -31099,7 +31070,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "425f05d4e2e75e1daa8befe91c50db742c63b49ca8521da64fa49c90bcccdadc",
+              "plan_section_sha256": "0d972f9d4bd17b869097617ee59d0179e859b3fd3011d9510351a3ecf3805dc5",
               "worksheet": null
             },
             {
@@ -31115,7 +31086,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "0e8fd22fc822eb505d620e6f867c4ad5f840933f51d3412fd6ff41ee57e0a85c",
+              "plan_section_sha256": "d8e805327d52e8bd8cc3d70bf6d541918360a116bcb96c33e25ab1379604970f",
               "worksheet": null
             },
             {
@@ -31131,7 +31102,111 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "a84daca4dc57be242ec89fd74d8d4a3406af1738e9d523c61a2596a75e862c06",
+              "plan_section_sha256": "59cbc18d67f7281920816bdc8285787dbb1d42f74b53751e287701e1d5f0c33b",
+              "worksheet": null
+            }
+          ]
+        },
+        {
+          "slice_id": "CAP-07.S03",
+          "slice_alias": "SLICE-approved-remote-model-providers",
+          "wave": "W3",
+          "title": "Approved remote model providers",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+          "plan_sha256": "67287463020f7abc9efc4f50b89e674b48f00f003cb5ac58ba7605dd74fb532c",
+          "page": "CAP-07/CAP-07.S03.html",
+          "task_count": 3,
+          "task_reviews": [
+            {
+              "task_id": "CAP-07.S03.T01",
+              "title": "Implement the first two external provider adapters behind the gateway",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-07.S03.T02",
+              "title": "Implement egress preview, minimization, and consent",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-07.S03.T03",
+              "title": "Implement offline/network-disabled enforcement and remote fallback behavior",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S03.T01",
+              "title": "Implement the first two external provider adapters behind the gateway",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S03.T01.html",
+              "dependencies": [
+                "CAP-07.S01.T03",
+                "CAP-02.S04.T01",
+                "CAP-07.S04.T02",
+                "CAP-07.S05.T02"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "b9c14619a8daf52c0c6c70ac40046095a2bddb7821977e3d0de57646490c05c3",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S03.T02",
+              "title": "Implement egress preview, minimization, and consent",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S03.T02.html",
+              "dependencies": [
+                "CAP-07.S03.T01"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "7478708791f72e198f449cea41fa70d4003aa0c42de4da9154bc901f6f163a03",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S03.T03",
+              "title": "Implement offline/network-disabled enforcement and remote fallback behavior",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S03.T03.html",
+              "dependencies": [
+                "CAP-07.S03.T02"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "eaa04cc8bd4b57c3a900709ae25b9c1bff6e9944a93045451773228d4567dedf",
               "worksheet": null
             }
           ]
@@ -31143,7 +31218,7 @@
       "capability_alias": "CAP-evidence-verification",
       "title": "Evidence schemas, extraction, verification, and adjudication",
       "plan_path": "planning/capability-plans/CAP-08.md",
-      "plan_sha256": "ddf910493846d24572db880ad5dc1c6109eda4f4e7d03bc8774a0d46c9f4d084",
+      "plan_sha256": "2d9f7bd19c3444aeb2da4427071200eb09c2a0b856a0a2457cb82599dac075f2",
       "page": "CAP-08/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -31154,7 +31229,7 @@
           "wave": "W3",
           "title": "Core ontology and schema-pack registry",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
-          "plan_sha256": "2c786153da331d34392421284cd6770fc2b381a437b0ff6cba3eca2f69122bad",
+          "plan_sha256": "9a242f8265dd7762d1bf7deddd226d372fbb6f82dc8bfb3ca3b611fe62fce8a1",
           "page": "CAP-08/CAP-08.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -31213,7 +31288,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "dfc7089c08ea759daea6c5f668f9aef31b517d07dbf3806b0861098923b27a2f",
+              "plan_section_sha256": "ab1ce65c603ce2373d1b243aab53f9a48817b0df8e886a1280585012294014e1",
               "worksheet": null
             },
             {
@@ -31229,7 +31304,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "6995a5a60b2add1cdfc8258966fad6e653cad6e58059d481c59c7eb79ef49e09",
+              "plan_section_sha256": "174e51100e38ccae153179e4f6be66afd44193f873b12e8d9d4b059098fae144",
               "worksheet": null
             },
             {
@@ -31245,7 +31320,109 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "1af707d3e7117e459974ea4a380dffef94c6a437eb1dbd3d71aefa1cd819ff37",
+              "plan_section_sha256": "9e38600a5ca4a794b531d48586bb11fff9df454175bd01687586ef96f35d1546",
+              "worksheet": null
+            }
+          ]
+        },
+        {
+          "slice_id": "CAP-08.S03",
+          "slice_alias": "SLICE-evidence-record-status-confidence-and-uncertainty-model",
+          "wave": "W3",
+          "title": "Evidence record, status, confidence, and uncertainty model",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+          "plan_sha256": "e5f6960235da67d38103104f09ca1e08685e7e1eae8ca0482e583ddda85927bd",
+          "page": "CAP-08/CAP-08.S03.html",
+          "task_count": 3,
+          "task_reviews": [
+            {
+              "task_id": "CAP-08.S03.T01",
+              "title": "Implement evidence-record persistence and lineage",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-08.S03.T02",
+              "title": "Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-08.S03.T03",
+              "title": "Implement decomposed confidence and missingness",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S03.T01",
+              "title": "Implement evidence-record persistence and lineage",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S03.T01.html",
+              "dependencies": [
+                "CAP-08.S01.T03",
+                "CAP-03.S03.T02"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "c40c59b4d12a88df4178b02f4b670133366975824093265500c4b52d1d751697",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S03.T02",
+              "title": "Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S03.T02.html",
+              "dependencies": [
+                "CAP-08.S03.T01"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "2128383a26b90bc379b5aa507b8d453b974eed6bb67ff89d3648625f8acf70a3",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S03.T03",
+              "title": "Implement decomposed confidence and missingness",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S03.T03.html",
+              "dependencies": [
+                "CAP-08.S03.T02"
+              ],
+              "claim": {
+                "owner": null,
+                "branch": null,
+                "base_sha": null
+              },
+              "plan_section_sha256": "e5e75cc061dd1823d2c4ed2ad3a2c938ebc069bea7ed97e1fed0fb2043e00dfb",
               "worksheet": null
             }
           ]
@@ -31256,7 +31433,7 @@
           "wave": "W3",
           "title": "Source-grounded extraction pipeline",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
-          "plan_sha256": "bca4989a56008691e29b06f62f66a93dacabc904145ac38db015bda8fc0dceab",
+          "plan_sha256": "7134b75cc56d0c9f2d71a6f2ca16aa6f700ce602f6f993301a625916fd02c83a",
           "page": "CAP-08/CAP-08.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -31309,14 +31486,15 @@
               "dependencies": [
                 "CAP-08.S01.T03",
                 "CAP-05.S03.T03",
-                "CAP-07.S04.T02"
+                "CAP-07.S04.T02",
+                "CAP-06.S03.T03"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "b9b9d16248f7ab979b4b6bfdceb522acb3447b174dac2c25d90bcf5333b97ca2",
+              "plan_section_sha256": "e75804faf18dff79ecd24b81b09484295062a6dc283425dcd26a01b045dda5a2",
               "worksheet": null
             },
             {
@@ -31325,14 +31503,17 @@
               "status": "NOT_STARTED",
               "page": "CAP-08/CAP-08.S02.T02.html",
               "dependencies": [
-                "CAP-08.S02.T01"
+                "CAP-08.S02.T01",
+                "CAP-07.S02.T03",
+                "CAP-07.S05.T02",
+                "CAP-08.S03.T03"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "7189c518f9b497ea1a1b5a9e7b259911d030928e3b0d64a6430981e83b52a70d",
+              "plan_section_sha256": "c1d07f99b74da37a1bd9f50106caf68ee874491ccd543530b3d6c9fe01b25b23",
               "worksheet": null
             },
             {
@@ -31348,109 +31529,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "81e9172f41f366ca5f9a6fcd1a9aef1d513b3b64a38e2eb91d103d68dda80600",
-              "worksheet": null
-            }
-          ]
-        },
-        {
-          "slice_id": "CAP-08.S03",
-          "slice_alias": "SLICE-evidence-record-status-confidence-and-uncertainty-model",
-          "wave": "W3",
-          "title": "Evidence record, status, confidence, and uncertainty model",
-          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
-          "plan_sha256": "a9e96ba15db4e814b0a50ce8169091cc63608a97b427b4260cc079a9b4b374bb",
-          "page": "CAP-08/CAP-08.S03.html",
-          "task_count": 3,
-          "task_reviews": [
-            {
-              "task_id": "CAP-08.S03.T01",
-              "title": "Implement evidence-record persistence and lineage",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            },
-            {
-              "task_id": "CAP-08.S03.T02",
-              "title": "Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            },
-            {
-              "task_id": "CAP-08.S03.T03",
-              "title": "Implement decomposed confidence and missingness",
-              "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
-            }
-          ],
-          "tasks": [
-            {
-              "task_id": "CAP-08.S03.T01",
-              "title": "Implement evidence-record persistence and lineage",
-              "status": "NOT_STARTED",
-              "page": "CAP-08/CAP-08.S03.T01.html",
-              "dependencies": [
-                "CAP-08.S02.T03",
-                "CAP-03.S03.T02"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "c75a59fdf70ddcb10f6e6c8582dfd83e7a1d3ecd0c36b0a541a2aa0ead87b751",
-              "worksheet": null
-            },
-            {
-              "task_id": "CAP-08.S03.T02",
-              "title": "Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states",
-              "status": "NOT_STARTED",
-              "page": "CAP-08/CAP-08.S03.T02.html",
-              "dependencies": [
-                "CAP-08.S03.T01"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "d857f843196bfe853c0bd367286286f10ae057797dfb0f306095fdeacfeb101f",
-              "worksheet": null
-            },
-            {
-              "task_id": "CAP-08.S03.T03",
-              "title": "Implement decomposed confidence and missingness",
-              "status": "NOT_STARTED",
-              "page": "CAP-08/CAP-08.S03.T03.html",
-              "dependencies": [
-                "CAP-08.S03.T02"
-              ],
-              "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
-              },
-              "plan_section_sha256": "0cd31a995857a4af05d50bc1db7fb424a7d185f4cb6c57de6cef83e2ca290f74",
+              "plan_section_sha256": "40a5836d821650caa98f3a4d523295ff724f2150f28835f820e21a83c73ed12d",
               "worksheet": null
             }
           ]
@@ -31461,7 +31540,7 @@
           "wave": "W3",
           "title": "Independent evidence verification",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
-          "plan_sha256": "4bb7ec95be99235559a7e8a2cef7cf52293ee64cd9a4509b40c98748c11b486c",
+          "plan_sha256": "2ee3cd9c1148f149d4c98208b04740acf9be79889709eb6f260351925afaf026",
           "page": "CAP-08/CAP-08.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -31513,14 +31592,15 @@
               "page": "CAP-08/CAP-08.S04.T01.html",
               "dependencies": [
                 "CAP-08.S03.T03",
-                "CAP-07.S05.T03"
+                "CAP-07.S05.T03",
+                "CAP-08.S02.T03"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "9b09679e15d37dd903b698aba27b379bab4f96cddb24bfb2794f9b39fcf8c860",
+              "plan_section_sha256": "4a24e046788424d29d8cdba8a684acfdac8dc6f32cc8cbe3f7b9b92075717268",
               "worksheet": null
             },
             {
@@ -31536,7 +31616,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "4b6048a2b7700273c5e265fe44c779e23977353e6942e9de44a44aada49c5d37",
+              "plan_section_sha256": "d527938c7db02adaa3adc202eccdd4de8fbd17796fbd7aaf3b1f5aaeb18e7cba",
               "worksheet": null
             },
             {
@@ -31552,7 +31632,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "0009cf74853bfbb161f2673e7ba47207a1cb84f39ae2cecab0e9af693af95d4c",
+              "plan_section_sha256": "4b651ca6e3b501f1f5ee51d35dfeb318f9524fac4b4a903a290c894255eef497",
               "worksheet": null
             }
           ]
@@ -31563,7 +31643,7 @@
           "wave": "W3",
           "title": "Evidence matrix and source-first analysis UI",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
-          "plan_sha256": "9cfd207dcb8da3be73cfb1cd1654116f5920b420093dd6c4e09947abf34f5726",
+          "plan_sha256": "b2ab9b0cf88b682aedac5e091609010f0a48964a209afdac4de6cd2ad77a80fd",
           "page": "CAP-08/CAP-08.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -31622,7 +31702,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "6c5bef9d5ba93bcb890b3eb24e622be1046bd3b3f3c025578c004603c6b306c9",
+              "plan_section_sha256": "1c383f35cd29245f0adfd89bb2415125a43eebdd6441c8f83da1660787690e97",
               "worksheet": null
             },
             {
@@ -31638,7 +31718,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "b30d20ef4d1e6ea8f1fae3dd4f95ef94237e5f6085592fe41110271810b697f7",
+              "plan_section_sha256": "e7f264b2e79b16232c29acc2087e97ac3d68acf3134ad410f6910bc1d93d59cc",
               "worksheet": null
             },
             {
@@ -31647,14 +31727,15 @@
               "status": "NOT_STARTED",
               "page": "CAP-08/CAP-08.S05.T03.html",
               "dependencies": [
-                "CAP-08.S05.T02"
+                "CAP-08.S05.T02",
+                "CAP-08.S04.T03"
               ],
               "claim": {
                 "owner": null,
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "171ea2760d13123c1a964dd25c7b387e891d62a6c3febc643475c0772b1a2605",
+              "plan_section_sha256": "8185d4787a526c0f9adf8c3ff08d9080422d45fac31ce694b180d25d0a2c19b6",
               "worksheet": null
             }
           ]
@@ -31665,7 +31746,7 @@
           "wave": "W3",
           "title": "Coder comparison, adjudication, and evidence export",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
-          "plan_sha256": "09c0aaae8cc5e908775a57e252dd6f8e85ecd42e15b59654f91363efe12c7b5e",
+          "plan_sha256": "2adf6ad47370d57eed88a4adb974d50763a4ed1cab24b309568a6dba41049388",
           "page": "CAP-08/CAP-08.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -31724,7 +31805,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "e8533b8844772d9d7ffc0ea0b569e594ca4787189f4864687cd7814727631bd6",
+              "plan_section_sha256": "c75fecf45d1e0d750e5b0518cca12c05da742cb90133aee2bcb7ac4d2c2005d5",
               "worksheet": null
             },
             {
@@ -31740,7 +31821,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "f8b0e0e3148cd331ef4859c8ecc25143940985f1e1ba16e41b0b724ef1722bd0",
+              "plan_section_sha256": "fede6f236ad1900e3797c5735cb38e28a929d6432ce97a04ee1f2f82fc110c8b",
               "worksheet": null
             },
             {
@@ -31756,7 +31837,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "b38b1f5fca6ca7518da04064847b4b4cd63c335852eb1e570ea2105d98d95437",
+              "plan_section_sha256": "665357d4933a34f183c0e5542c343d7d415be707fce19d6f08eec4c1eda3ba7b",
               "worksheet": null
             }
           ]
@@ -33776,7 +33857,7 @@
       "capability_alias": "CAP-university-hosting",
       "title": "University-hosted deployment, institutional identity, collaboration, and operations",
       "plan_path": "planning/capability-plans/CAP-12.md",
-      "plan_sha256": "b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a",
+      "plan_sha256": "ca20b508209d79273e82351f6829ae1a6ab0f06a66f618aad6ac811bafe259b6",
       "page": "CAP-12/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -33784,10 +33865,10 @@
         {
           "slice_id": "CAP-12.S01",
           "slice_alias": "SLICE-desktop-remote-connection-mode-and-api-abstraction",
-          "wave": "W10",
+          "wave": "W11",
           "title": "Desktop remote connection mode and API abstraction",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S01-desktop-remote-connection-mode-and-api-abstraction.md",
-          "plan_sha256": "7a48562fd73a00effeeda8bb731e70c1e9bd11b3cf4c57a4a6f039b259ee413f",
+          "plan_sha256": "f977abacf5d595730937058779d3cec5091d1ee3e06ecbd8544eb0eb9799e392",
           "page": "CAP-12/CAP-12.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -33885,10 +33966,10 @@
         {
           "slice_id": "CAP-12.S02",
           "slice_alias": "SLICE-institutional-service-and-data-plane-foundation",
-          "wave": "W10",
+          "wave": "W11",
           "title": "Institutional service and data-plane foundation",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S02-institutional-service-and-data-plane-foundation.md",
-          "plan_sha256": "52a356af8ef06b292449424edf7a806379dbf5945241728c053151ca0b6f48a3",
+          "plan_sha256": "31f63494d8127653cadb5da1b9ef8983e33c7f5fd99284f4a825af29a7ace31c",
           "page": "CAP-12/CAP-12.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -33987,10 +34068,10 @@
         {
           "slice_id": "CAP-12.S03",
           "slice_alias": "SLICE-institutional-identity-authorization-and-project-isolation",
-          "wave": "W10",
+          "wave": "W11",
           "title": "Institutional identity, authorization, and project isolation",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S03-institutional-identity-authorization-and-project-isolation.md",
-          "plan_sha256": "325fcd54452a1e2d5faf685bb9bdb0b5f5430198e00f8ba1dda85652d2561e12",
+          "plan_sha256": "39acd72286fa951a78a24eaa053c53d6b169a1c1a288d34d6a79a56803e5ac56",
           "page": "CAP-12/CAP-12.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -34088,10 +34169,10 @@
         {
           "slice_id": "CAP-12.S04",
           "slice_alias": "SLICE-team-collaboration-and-scholarly-adjudication",
-          "wave": "W10",
+          "wave": "W11",
           "title": "Team collaboration and scholarly adjudication",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S04-team-collaboration-and-scholarly-adjudication.md",
-          "plan_sha256": "b533315d51a563ba85d286018a5e9cf5b8eea02b6d194e457cadb0175a543d20",
+          "plan_sha256": "a044faa25931380c9dfde9a3c848d6d7809160d7563148f6077b562190081cab",
           "page": "CAP-12/CAP-12.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -34190,10 +34271,10 @@
         {
           "slice_id": "CAP-12.S05",
           "slice_alias": "SLICE-licensed-sources-institutional-rights-retention-and-compute-policy",
-          "wave": "W10",
+          "wave": "W11",
           "title": "Licensed sources, institutional rights, retention, and compute policy",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S05-licensed-sources-institutional-rights-retention-and-compute-policy.md",
-          "plan_sha256": "241dde279ad7add9a9dc3e3de86ca566f5dffd019d10d12c23580f7db735138d",
+          "plan_sha256": "9f9c5c108f2c0a5eb62b9625fd5f0204ab0dd961cbeb59e784a104d5843ec1f7",
           "page": "CAP-12/CAP-12.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -34293,10 +34374,10 @@
         {
           "slice_id": "CAP-12.S06",
           "slice_alias": "SLICE-institutional-operations-disaster-recovery-and-pilot-acceptance",
-          "wave": "W10",
+          "wave": "W11",
           "title": "Institutional operations, disaster recovery, and pilot acceptance",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S06-institutional-operations-disaster-recovery-and-pilot-acceptance.md",
-          "plan_sha256": "c6892478bf6a30f54622dbd33d6becb4e26893072e5f145da4681e54903647bb",
+          "plan_sha256": "acb3e59c2b523d001346617355f313cbc53b3cfdee6d0ab7ec2df93ebb48622a",
           "page": "CAP-12/CAP-12.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -34399,7 +34480,7 @@
       "capability_alias": "CAP-cloud-platform",
       "title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
       "plan_path": "planning/capability-plans/CAP-13.md",
-      "plan_sha256": "fa039ef4af91a2ba491c8d8f343f9833c7524741825dfb11bcb7feac5c8e9086",
+      "plan_sha256": "049cc49ccb82adb279fce8c3f32dcbfa0ef7c9d253d65271850cada815901419",
       "page": "CAP-13/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -34407,10 +34488,10 @@
         {
           "slice_id": "CAP-13.S01",
           "slice_alias": "SLICE-saas-organization-and-tenant-control-plane",
-          "wave": "W11",
+          "wave": "W12",
           "title": "SaaS organization and tenant control plane",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S01-saas-organization-and-tenant-control-plane.md",
-          "plan_sha256": "b9d5eada047de0aeff8e74dbaabf44bde2a5ee0f8f0c4b665ee3fe4aca89a19c",
+          "plan_sha256": "2105afca92b8d5d71cddf7d86bcd9b9cf4df0568fd5e0b19df3c886100d1088a",
           "page": "CAP-13/CAP-13.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -34508,10 +34589,10 @@
         {
           "slice_id": "CAP-13.S02",
           "slice_alias": "SLICE-regional-tenant-data-planes-and-isolation-tiers",
-          "wave": "W11",
+          "wave": "W12",
           "title": "Regional tenant data planes and isolation tiers",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S02-regional-tenant-data-planes-and-isolation-tiers.md",
-          "plan_sha256": "64d262419cd54a0cdee89cddb3a5489f5e9b93de3c0279b0a0969ffa14cff991",
+          "plan_sha256": "b35919f26bd49e34149c8d0b3b6a23fa41ffde5d3a88e9016328b4d24b7ea537",
           "page": "CAP-13/CAP-13.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -34610,10 +34691,10 @@
         {
           "slice_id": "CAP-13.S03",
           "slice_alias": "SLICE-cloud-identity-entitlement-metering-and-billing",
-          "wave": "W11",
+          "wave": "W12",
           "title": "Cloud identity, entitlement, metering, and billing",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S03-cloud-identity-entitlement-metering-and-billing.md",
-          "plan_sha256": "22babd4b8e9cd07a21774b90cd9270eedba257e51d1f95e6f7205b0937ebce4b",
+          "plan_sha256": "a2832ab703eaf7330f12462707f681136eb150b20082a302063aae1f7873089b",
           "page": "CAP-13/CAP-13.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -34711,10 +34792,10 @@
         {
           "slice_id": "CAP-13.S04",
           "slice_alias": "SLICE-elastic-workers-models-search-and-cost-governance",
-          "wave": "W11",
+          "wave": "W12",
           "title": "Elastic workers, models, search, and cost governance",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S04-elastic-workers-models-search-and-cost-governance.md",
-          "plan_sha256": "539dde52a97fe31af51489282e3da1817f06df2fe5e5b6ddcd59f00ff25f121f",
+          "plan_sha256": "c000fbbd273bf53d3e4f0d1d8e092e5f237cfcc47696cdb75f09a86035eb6ebe",
           "page": "CAP-13/CAP-13.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -34813,10 +34894,10 @@
         {
           "slice_id": "CAP-13.S05",
           "slice_alias": "SLICE-cloud-security-privacy-residency-and-compliance-operations",
-          "wave": "W11",
+          "wave": "W12",
           "title": "Cloud security, privacy, residency, and compliance operations",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S05-cloud-security-privacy-residency-and-compliance-operations.md",
-          "plan_sha256": "453ea989e44bec4bee780f0c57d2aa0bc0b6d8413f8b459500cdbab2d87dedd8",
+          "plan_sha256": "f3253e73f6daf697d9b8bb8fa1dc931b229a4e2594a6470ddc7e8e397140ea2e",
           "page": "CAP-13/CAP-13.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -34915,10 +34996,10 @@
         {
           "slice_id": "CAP-13.S06",
           "slice_alias": "SLICE-desktop-cloud-experience-service-reliability-and-launch-gate",
-          "wave": "W11",
+          "wave": "W12",
           "title": "Desktop-cloud experience, service reliability, and launch gate",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S06-desktop-cloud-experience-service-reliability-and-launch-gate.md",
-          "plan_sha256": "4aae7b9e94b7ffcc8898e0651a3dde964a541d928cf257841c9cc27d75838a46",
+          "plan_sha256": "d7c5c6a0c4483d3f28080019b08a8469b4d71f585d6c3966e70f7bc847891c0a",
           "page": "CAP-13/CAP-13.S06.html",
           "task_count": 3,
           "task_reviews": [
