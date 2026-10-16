@@ -1,0 +1,353 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-current14-original-quality-wire-book-restoration-and-exclusive-output-source-binding",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalDecisionIntroductionCommit": "db25c8c74e2432b6267d687edcfddae31dc070eb",
+  "scopeId": "W2-DESKTOP-CURRENT14-01",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-17.py",
+    "sha256": "8e391d1552a546bbcd264315d4f02706f8a6d9a5d06533eee2c54010315699c5"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-17.json",
+    "sha256": "ab89e9cb9cef036de61b9c53c5d7e280a135b2a2ca2392b266b08d67da5b2115"
+  },
+  "manifest": null,
+  "originalProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py",
+    "sha256": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9"
+  },
+  "originalPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-05.json",
+    "sha256": "3ea4f05a87757e46856505c7e63fb65c37b65299e4a75880e2ee47773025a733"
+  },
+  "originalManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/source-proposal-manifest-05.json",
+    "sha256": "dd4218f44913fe2c56f3d57302f084d553f6661dafc0e7d8478b304667a88c9b"
+  },
+  "originalReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-05.json",
+    "sha256": "036b424806c36cbca9be78c2e97a49423ded4bc26f32ea4ffcbb537b683ea12a"
+  },
+  "diagnosis": {
+    "path": "artifacts/tmp/W2.C25.T01.runtime-alias-diagnostic-01.json",
+    "sha256": "beb53efe73e73fbbd808faf3a6db8b3f7a3d7730a584c792720c68b55a588b75"
+  },
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-17.py": "8e391d1552a546bbcd264315d4f02706f8a6d9a5d06533eee2c54010315699c5",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-14.py": "a6d7bc125cf86520b65fc0a1712dfd5d8a233696728a45209ae5b6c20c834389",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-08.mjs": "7207927228867c371d5431df255b698e1d01207dbe94a4f86dac4b01151cd104"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-17.json",
+    "sha256": "9297d8bbb40e4a5d6bbc94027922d77a1e8a7942ac71e7bd53f0c7cc950a60a5"
+  },
+  "recordingReadiness": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.desktop-current14-exclusive-output-17.source-binding-01.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Existing prospective34e+738a finite Current14 restoration of one authored private synthetic preview to the original canonical book value using ASCII JS Unicode escape, with exact separate newwire source pin and builder pointer. Same seven freshf09 output rotations. Preserve Reader section fix16 and all failures; no product/criterion/expected-text/Quality selector/geometry/state/serve_fixture17 or authority change.",
+  "scope": "Exactly new document-correction-current-root-02.ts differs from frozen543 wire only at one corrupted four-codepoint preview sequence restored as ASCII JS \\u{1f4da} (semantic U+1F4DA matching canonicald752). Builder08 points at newwire02 and f09, plus4parent/2methodpath rotations to17/14/08. AuthorizedSources remains exactly producer/method/builder; restoredWireSource is an extra exact finite source ref held under declaredFixedInputs. Keep original26asserts2186calls/90cases180captures/300+3600caps, Reader section fix, Quality selector/expected witness/helper17, product205/85138FAIL/94cf/738ad/current1.9/ref37ef and all security/runtime/alias/deny/source holds unchanged. No result or Native/Core/model/product execution claimed.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "baselineChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "publicationConditions": "Before publication/execution require genuine different17 source/recording review and root truthful four-field finalization only. Real37ef reference prerequisites stay separately pinned. Future matrix/runtime operand outcomes remain unknown; null manifest/introduction/recording fields remain null without self-cycle.",
+  "predecessorProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-16.py",
+    "sha256": "f2d16bbc73928764ab5831a062267430542e1f2e7352b74aacc207321bdec6bb"
+  },
+  "predecessorPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-16.json",
+    "sha256": "44d860d573b1c806c044ceb21341f1929f1e48c2c5928030427114a24d321b1d"
+  },
+  "predecessorManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-successor-16.manifest.json",
+    "sha256": "47a6b6bff8d591cd6006177fcd5fff9be389715f9b9d918ee3bf88c71c8c129c"
+  },
+  "preservedPriorBindingDraft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-source-binding-16.draft.json",
+    "sha256": "66f25e95605ab260cefdebd64d009a1253ba8d5f948568d9f9a22092da2bcc0c"
+  },
+  "actualPostInstallCapture": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-c34-01/receipt.json",
+    "sha256": "85138a54cc5792a9ed13c091d85cfdc7fe8bf3349918ee533f14cd2a7546beae"
+  },
+  "preservedImmediateBinding": {
+    "path": "artifacts/evidence/W2.desktop-current14-exclusive-output-16.source-binding-01.json",
+    "sha256": "e9a0f1ed5fb38ab5b68e6bbc89f5e7f759a5374be5923bf411d98b778578a4b6"
+  },
+  "preservedActualFailure": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/receipt.json",
+    "sha256": "cd0c41229a64fd285c18ae47bc43ee4438cc98b1e31536ab798bbfe9e82fc5cc"
+  },
+  "recordingSemantics": "Records existing prospective owner completion authorization34e and finite738a Current14 scope after genuine source17 and recording review9297, exact actual f08 Unicode diagnosis38148, and separately-qualified reference refresh/original admission37ef. Exactly one authored private preview literal is restored to original U+1F4DA via ASCII JS escape in pinned newwire02, with its builder dependency pointer and seven fresh-output transport literals. Reader section restoration remains. All original expected-text/state/geometry/assertion/capture/cap/security/runtime predicates stay unchanged. Original f08 FAIL and partial observations, older failures and source bytes remain preserved. No later owner inspection, f09 execution/capture success or task/Wave/release approval is claimed. Actual introduction is external after publication; null manifest/actualIntroductionCommit/recordingReadiness and every other draft value remain unchanged.",
+  "freshProductComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/independent-c34-actual-component-disposition-01.json",
+    "sha256": "94cfac10b8ed2a133eae6f144cb2a5dbd75e786a56b90fd359645e0871ec116f"
+  },
+  "frontendManifest": {
+    "path": "apps/desktop/product-dist/application-manifest.json",
+    "sha256": "738ad07bfa745d5636512029754fa99e662d204a305e71b4b88229afc6b25138"
+  },
+  "historicalPredecessorManifestBefore12": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/react-resolution-successor-11.manifest.json",
+    "sha256": "faa3ea83ad87578b64bde9eaf52399f80d25bcae19d743bba3ce0544d24d6e32"
+  },
+  "preservedActualFailureRaw": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/qualification-raw.log",
+    "sha256": "62d3406172a938348268c8b52e29dd9025acc34d83d739a5645ae50b7bb9dfd1"
+  },
+  "preservedActualCompletion": {
+    "path": "artifacts/tmp/W2.current14-dispatch-20261016-04/completion.json",
+    "sha256": "7b4dfbf5b2e7306d1f525c941e41ef83aa9c70a34a8f866c1084ba557786a377"
+  },
+  "pathCoherenceWitness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/exclusive-output-path-coherence-witness-17.json",
+    "sha256": "16554cf5e85f86ac351c5e5ed379310cbea5ae36a0aab0871f24d5885a6b1840"
+  },
+  "permittedFinalizationFields": [
+    "status",
+    "approvedBy",
+    "sourceReadiness",
+    "recordingSemantics"
+  ],
+  "preservedActualChildReport": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/child-report.json",
+    "sha256": "5cc8f56fa2eb3a42a65904ba397f327e770d8f478dfe11fac7cd2f7d3925235b"
+  },
+  "actualRCA": {
+    "path": "artifacts/tmp/W2.Current14-f08-quality-preview-encoding-diagnosis-01.json",
+    "sha256": "38148d5d22fe19ddb59815bcf1e40c0c614f9983d48157f0ef018545731dacee"
+  },
+  "originalPrerequisiteMap": {
+    "path": "artifacts/tmp/W2.current14-pre-capture-prerequisite-map-01/prerequisite-map-01.json",
+    "sha256": "12ade92ae94c8f27b4604e2cb44b0c4db5d36f66e3dd11b3f0d2eb3119b3351f"
+  },
+  "preExecutionConditions": {
+    "actualReferenceRefreshAndOriginalSnapshotDisposition": {
+      "path": "artifacts/tmp/W2.reference-refresh-actual-component-disposition-01.json",
+      "sha256": "37ef44e63e4092fd6864b44b4c30cd2594aeaa6f04b1954b62d2aa45b9023df3"
+    },
+    "actualReferenceResultMeaning": "Genuine37ef remains the separate actual reference refresh/originalsnapshot admission; parent17 retains all original fresh dynamic reference/runtime/source/205 guards. No refresh/build success is guessed or criterion bypassed.",
+    "beforeAnyPublicationOrExecution": [
+      "Genuine different17 source review admits exactly the original book literal restoration in newwire02 plus newwire builder pointer and seven freshf09 transport rotations under34e+738a.",
+      "Root may finalize only status/approvedBy/sourceReadiness/truthful recordingSemantics and publish the exact finite17 binding before one freshf09 complete original matrix. No extra field or false introduction/recording/manifest finalization.",
+      "Keep source/product205/current1.9/reference/runtime inputs fixed for actual collection. Oldf08FAIL/78partial6Reader remain nonaggregate history; no future runtime Quality operand/result is invented."
+    ],
+    "regressionMeaning": "Next unchanged90case/180capture matrix itself is the regression. No extra runner, modified Quality selector/expected witness/helper17 or retry-until-pass authority."
+  },
+  "preservedActualInputManifest": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/input-manifest.json",
+    "sha256": "8717d4d3202390a10fce71ed177c4aef87d6d095ed80dcec10f20574a5e8b43f"
+  },
+  "actualReferenceRefreshAndOriginalSnapshotDisposition": {
+    "path": "artifacts/tmp/W2.reference-refresh-actual-component-disposition-01.json",
+    "sha256": "37ef44e63e4092fd6864b44b4c30cd2594aeaa6f04b1954b62d2aa45b9023df3"
+  },
+  "preservedActualF07": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f07/receipt.json",
+      "sha256": "eb78acc3c9f622d2220a7a5868c7c8cefb3667309d94c9a071c7e2b6900c754a"
+    },
+    "childReport": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f07/child-report.json",
+      "sha256": "c3f4df6fdc57341b6cab29a18eaefede7099bca53ba8a75051cc0b7cfcd96ab4"
+    },
+    "inputManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f07/input-manifest.json",
+      "sha256": "c651b519c3027ee29d8b3c543609170c82f17896e35d55be1dbae12a81a90951"
+    },
+    "qualificationRaw": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f07/qualification-raw.log",
+      "sha256": "084f1b6702433b16c5bbc79f01da7abe593753492cd9ca21bed97110b9734223"
+    },
+    "outerCompletion": {
+      "path": "artifacts/tmp/W2.current14-dispatch-20261016-03/completion.json",
+      "sha256": "d42887474c4794eec17ee5ba6e22706dc9efa10ac6a45f227598db25ea3292d9"
+    },
+    "candidateCommit": "2ae376806dd13f2dbc121a197e5aff0217a56ccc",
+    "status": "FAIL_CURRENT14_CHECKS",
+    "failureCase": "workspace:reader:light:1440x900",
+    "normalOwnedJobs": {
+      "fixtureBuild": {
+        "rootExitCode": 0,
+        "totalLifetimeProcesses": 7,
+        "activeProcesses": 0,
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "timedOut": false
+      },
+      "qualification": {
+        "rootExitCode": 1,
+        "totalLifetimeProcesses": 151,
+        "activeProcesses": 0,
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "timedOut": false
+      }
+    },
+    "selectedInputsUnchanged": true,
+    "admittedGeneratedFixtureUnchanged": true,
+    "retainedPartialObservations": {
+      "caseRows": 72,
+      "designatedCaseRows": 6,
+      "meaning": "Retained actual partial rows only, with no aggregate/current matrix PASS or automatic future-candidate retargeting."
+    },
+    "fullQualificationPassed": false,
+    "realPopulationWitness": {
+      "sourceCalls": 1,
+      "revisionCalls": 1,
+      "rendered": [
+        {
+          "page": 1,
+          "scale": 1
+        },
+        {
+          "page": 2,
+          "scale": 1
+        }
+      ],
+      "textCalls": [
+        {
+          "node": "00000000-0000-7000-8000-00000000000c",
+          "offset": 0
+        }
+      ],
+      "denySource": false,
+      "substituteSource": false,
+      "denyText": false,
+      "scriptExecuted": false
+    }
+  },
+  "restoredWireSource": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-correction-current-root-02.ts",
+    "sha256": "d38a96ad86c3e55707db5de287bee172a7ff02152802db97405e68d93cb260a5"
+  },
+  "originalWirePreserved": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-correction-current-root.ts",
+    "sha256": "543bec87e63bf0b56ddd9b491a4bbd32f4994962a77b3845d89da9048bb09ec7"
+  },
+  "canonicalPreviewSource": {
+    "path": "tests/desktop/fixtures/document-correction.ts",
+    "sha256": "d752de75fcab3a0369122623b4afc9cb8a5e836aac6afa259b5acdc3cfa63d03"
+  },
+  "preservedActualFixtureInputManifest": {
+    "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/fixture-input-manifest.json",
+    "sha256": "00321585fa91ff014e59ade25e0373a55d4f15470215fa831b9c039fa17c6b57"
+  },
+  "preservedActualF08": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/receipt.json",
+      "sha256": "cd0c41229a64fd285c18ae47bc43ee4438cc98b1e31536ab798bbfe9e82fc5cc"
+    },
+    "childReport": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/child-report.json",
+      "sha256": "5cc8f56fa2eb3a42a65904ba397f327e770d8f478dfe11fac7cd2f7d3925235b"
+    },
+    "inputManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/input-manifest.json",
+      "sha256": "8717d4d3202390a10fce71ed177c4aef87d6d095ed80dcec10f20574a5e8b43f"
+    },
+    "fixtureInputManifest": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/fixture-input-manifest.json",
+      "sha256": "00321585fa91ff014e59ade25e0373a55d4f15470215fa831b9c039fa17c6b57"
+    },
+    "qualificationRaw": {
+      "path": "artifacts/tmp/W2.desktop-workspace14-owner-batch-01.f08/qualification-raw.log",
+      "sha256": "62d3406172a938348268c8b52e29dd9025acc34d83d739a5645ae50b7bb9dfd1"
+    },
+    "outerCompletion": {
+      "path": "artifacts/tmp/W2.current14-dispatch-20261016-04/completion.json",
+      "sha256": "7b4dfbf5b2e7306d1f525c941e41ef83aa9c70a34a8f866c1084ba557786a377"
+    },
+    "candidateCommit": "458bff88c43015720a467bc583c21addb33f78d7",
+    "status": "FAIL_CURRENT14_CHECKS",
+    "failureCase": "workspace:parsing-quality:light:1440x900",
+    "normalOwnedJobs": {
+      "fixtureBuild": {
+        "rootExitCode": 0,
+        "totalLifetimeProcesses": 7,
+        "activeProcesses": 0,
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "timedOut": false
+      },
+      "qualification": {
+        "rootExitCode": 1,
+        "totalLifetimeProcesses": 158,
+        "activeProcesses": 0,
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "timedOut": false
+      }
+    },
+    "selectedInputsUnchanged": true,
+    "admittedGeneratedFixtureUnchanged": true,
+    "retainedPartialObservations": {
+      "caseRows": 78,
+      "designatedCaseRows": 6,
+      "readerRows": 6,
+      "readerObservation": {
+        "surfaceId": "reader",
+        "requests": [
+          "http://tauri.localhost/index.html",
+          "http://tauri.localhost/workspace14-navigation.css",
+          "http://tauri.localhost/workspace14-navigation.js",
+          "http://tauri.localhost/reprocessing-navigation-doubles.js",
+          "http://tauri.localhost/anchor-contract.js",
+          "http://tauri.localhost/document-reader-root-ports.js"
+        ],
+        "status": "CHECKS_COMPLETED_PENDING_INDEPENDENT_REVIEW",
+        "populationWitness": {
+          "sourceCalls": 1,
+          "revisionCalls": 1,
+          "rendered": [
+            {
+              "page": 1,
+              "scale": 1
+            },
+            {
+              "page": 2,
+              "scale": 1
+            }
+          ],
+          "textCalls": [
+            {
+              "node": "00000000-0000-7000-8000-00000000000c",
+              "offset": 0
+            }
+          ],
+          "denySource": false,
+          "substituteSource": false,
+          "denyText": false,
+          "scriptExecuted": false
+        },
+        "unexpectedRequests": [],
+        "scriptErrors": []
+      },
+      "qualityPopulationWitness": {
+        "acceptedCount": 0,
+        "createdCount": 0,
+        "reconciledCount": 0,
+        "blocked": false
+      },
+      "meaning": "Reader progressed through all six recorded product state cases and original population assertions, but the full matrix remains FAIL; these partial rows are not overall qualification or a future-candidate retargeted PASS."
+    },
+    "fullQualificationPassed": false
+  },
+  "approvedBy": "human:repository-owner"
+}
