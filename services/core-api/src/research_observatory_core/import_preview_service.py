@@ -745,15 +745,18 @@ class ImportPreviewService:
         from .reconciliation.sources import import_assertion
 
         address = SourceAddress.model_validate(address)
-        if address.kind != "import-member":
+        record_key = address.record_key
+        if address.kind != "import-member" or record_key is None:
             raise ReconciliationProblem("reconciliation-source-kind-invalid")
 
         def read(binding: _Binding):
             repository = binding.adapters.previews
-            manifest = repository.manifest(address.revision_id)
+            inputs = repository.reconciliation_source_inputs(
+                address.context_id, address.revision_id, ordinal=address.ordinal, record_key=record_key
+            )
+            manifest, members = inputs.manifest, inputs.members
             if manifest.preview_id != address.context_id:
                 raise ReconciliationProblem("reconciliation-source-mismatch")
-            members = repository.manifest_members(address.revision_id, after=address.ordinal - 1, limit=1)
             if (
                 len(members) != 1
                 or members[0].ordinal != address.ordinal
@@ -761,11 +764,7 @@ class ImportPreviewService:
             ):
                 raise ReconciliationProblem("reconciliation-source-mismatch")
             member = members[0]
-            historical = repository.draft(address.context_id, revision=manifest.draft_revision)
-            current = repository.draft(address.context_id)
-            selected = repository.draft_selection(
-                address.context_id, revision=current.revision, ordinals=(address.ordinal,)
-            )
+            historical, current, selected = inputs.historical, inputs.current, inputs.selected
             if len(selected) != 1:
                 raise ReconciliationProblem("reconciliation-source-mismatch")
             old_rights = member.decision.rights or historical.authority.rights

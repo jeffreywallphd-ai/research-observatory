@@ -9,7 +9,7 @@ from research_observatory_core.connectors.providers import map_response
 from research_observatory_core.connectors.workflow import ACTIVITY
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
-from research_observatory_core.ports.import_previews import PreviewDraftChange
+from research_observatory_core.ports.import_previews import PreviewDraftChange, PreviewProblem
 from research_observatory_core.reconciliation.contracts import ReconciliationProblem
 from research_observatory_core.workflow_executor import WorkflowCancellationRequested
 
@@ -126,6 +126,136 @@ class ImportOwnerInventoryTests(unittest.TestCase):
         self.assertEqual(source, restarted.reconciliation_source(f.root, second.addresses[0]))
         with self.assertRaises(ReconciliationProblem):
             restarted.reconciliation_sources(f.root, job.job_id, after=3, limit=1)
+
+    def committed_import_address(self):
+        f = self.fixture.fixture
+        self.permitted_draft()
+        job = f.service.schedule_commit(f.root, f.preview, revision=2, request_id=new_uuid_v7())
+        f.service.run_pending()
+        self.assertEqual("succeeded", f.queue.get(job.job_id).state)
+        page = f.service.reconciliation_sources(f.root, job.job_id, after=1, limit=1)
+        self.assertEqual(1, len(page.addresses))
+        return f, page.addresses[0]
+
+    def test_current_source_resolution_uses_one_fresh_protected_read(self):
+        from research_observatory_core import import_preview_repository
+
+        f, address = self.committed_import_address()
+        expected = f.service.reconciliation_source(f.root, address)
+        with patch.object(
+            import_preview_repository,
+            "open_canonical_database",
+            wraps=import_preview_repository.open_canonical_database,
+        ) as opened:
+            actual = f.service.reconciliation_source(f.root, address)
+        self.assertEqual(expected, actual)
+        self.assertEqual(
+            1, opened.call_count, "one source must read manifest/member/history/current/selection in one fresh snapshot"
+        )
+        reopened = self.fixture.restart()
+        self.assertEqual(expected, reopened.reconciliation_source(f.root, address))
+
+    def test_separate_source_resolutions_never_share_a_reader(self):
+        from research_observatory_core import import_preview_repository
+
+        f, address = self.committed_import_address()
+        original = import_preview_repository.open_canonical_database
+        connections = []
+
+        def opened(*args, **kwargs):
+            connection = original(*args, **kwargs)
+            connections.append(connection)
+            return connection
+
+        with patch.object(import_preview_repository, "open_canonical_database", side_effect=opened):
+            first = f.service.reconciliation_source(f.root, address)
+            second = f.service.reconciliation_source(f.root, address)
+        self.assertEqual(first, second)
+        self.assertEqual(2, len(connections), "each resolution must open exactly one fresh protected reader")
+        self.assertIsNot(connections[0], connections[1])
+
+    def test_current_source_preserves_accepted_attempt_and_address_denials(self):
+        f, address = self.committed_import_address()
+        binding = next(iter(f.service._bindings.values()))
+        with (
+            patch.object(binding.adapters.previews, "_accepted_attempt", return_value=new_uuid_v7()),
+            self.assertRaisesRegex(PreviewProblem, "preview-draft-attempt-mismatch"),
+        ):
+            f.service.reconciliation_source(f.root, address)
+        for changed in (
+            {"context_id": new_uuid_v7()},
+            {"revision_id": new_uuid_v7()},
+            {"record_key": "0" * 64},
+            {"ordinal": 1},
+        ):
+            with self.subTest(fields=tuple(changed)), self.assertRaises((ReconciliationProblem, PreviewProblem)):
+                f.service.reconciliation_source(f.root, address.model_copy(update=changed))
+
+    def test_current_source_next_read_rechecks_all_requested_permissions(self):
+        f, address = self.committed_import_address()
+        for action in ("store", "derive", "index", "inspect"):
+            # Inspect denial is terminal: the existing guard forbids later revision.
+            with self.subTest(action=action):
+                f.service.reconciliation_source(f.root, address)
+                current = f.repository.draft(f.preview)
+                selected = f.repository.draft_selection(
+                    f.preview, revision=current.revision, ordinals=(address.ordinal,)
+                )[0]
+                original = selected.decision.rights
+                self.assertIsNotNone(original)
+                denied = original.model_copy(
+                    update={action: ImportPermission(value="denied", basis="researcher-confirmed")}
+                )
+                f.repository.revise_draft(
+                    f.preview,
+                    PreviewDraftChange(
+                        expected_revision=current.revision,
+                        actor=f.actor,
+                        decisions=(selected.decision.model_copy(update={"rights": denied}),),
+                    ),
+                )
+                problem, code = (
+                    (PreviewProblem, "preview-commit-manifest-rights-denied")
+                    if action in {"store", "inspect"}
+                    else (ReconciliationProblem, "reconciliation-rights-denied")
+                )
+                with self.assertRaisesRegex(problem, code):
+                    f.service.reconciliation_source(f.root, address)
+                current = f.repository.draft(f.preview)
+                restore = PreviewDraftChange(
+                    expected_revision=current.revision,
+                    actor=f.actor,
+                    decisions=(selected.decision.model_copy(update={"rights": original}),),
+                )
+                if action == "inspect":
+                    with self.assertRaisesRegex(PreviewProblem, "preview-record-rights-denied"):
+                        f.repository.revise_draft(f.preview, restore)
+                    self.assertEqual(current.revision, f.repository.draft(f.preview).revision)
+                    with self.assertRaisesRegex(PreviewProblem, "preview-commit-manifest-rights-denied"):
+                        f.service.reconciliation_source(f.root, address)
+                else:
+                    f.repository.revise_draft(f.preview, restore)
+                    self.assertEqual(address, f.service.reconciliation_source(f.root, address).address)
+
+    def test_current_source_warm_read_still_denies_unrequested_manifest_member(self):
+        f, address = self.committed_import_address()
+        f.service.reconciliation_source(f.root, address)
+        current = f.repository.draft(f.preview)
+        other = f.repository.draft_page(f.preview, revision=current.revision, after=0, limit=1)[0]
+        self.assertNotEqual(address.ordinal, other.record.ordinal)
+        rights = current.authority.rights.model_copy(
+            update={"inspect": ImportPermission(value="denied", basis="researcher-confirmed")}
+        )
+        f.repository.revise_draft(
+            f.preview,
+            PreviewDraftChange(
+                expected_revision=current.revision,
+                actor=f.actor,
+                decisions=(other.decision.model_copy(update={"rights": rights}),),
+            ),
+        )
+        with self.assertRaisesRegex(PreviewProblem, "preview-commit-manifest-rights-denied"):
+            f.service.reconciliation_source(f.root, address)
 
 
 class ConnectorOwnerInventoryTests(ConnectorWorkflowFixture):

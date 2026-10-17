@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from research_observatory_core import import_preview_repository, repositories
+from research_observatory_core.ingestion.import_drafts import ImportPermission
 from research_observatory_core.ports.import_previews import PreviewDraftChange, PreviewProblem
 
 from tests.data import test_import_commit_publication as publication
@@ -99,6 +100,77 @@ class ImportCommitHotPathTests(unittest.TestCase):
             f.repository._verified_identity(f.inputs, f.claim, f.actor, lambda: f.actor.occurred_at, None, guard)
         self.assertEqual(3, guarded_actions)
         self.assertEqual((0, 0, 0, 0), self.case.counts()[3:7])
+
+    def source_inputs(self, output):
+        f = self.case.fixture
+        manifest = f.repository.manifest(output.revision_id)
+        member = next(
+            row
+            for row in f.repository.manifest_members(output.revision_id, after=0, limit=100)
+            if row.decision.included
+        )
+        return f, manifest, member
+
+    def test_coherent_source_inputs_preserve_all_original_facts_in_one_read(self):
+        f, manifest, member = self.source_inputs(self.case.publish())
+        expected_members = f.repository.manifest_members(manifest.revision_id, after=member.ordinal - 1, limit=1)
+        expected_historical = f.repository.draft(manifest.preview_id, revision=manifest.draft_revision)
+        expected_current = f.repository.draft(manifest.preview_id)
+        expected_selected = f.repository.draft_selection(
+            manifest.preview_id, revision=expected_current.revision, ordinals=(member.ordinal,)
+        )
+        with patch.object(
+            import_preview_repository,
+            "open_canonical_database",
+            wraps=import_preview_repository.open_canonical_database,
+        ) as opened:
+            observed = f.repository.reconciliation_source_inputs(
+                manifest.preview_id, manifest.revision_id, ordinal=member.ordinal, record_key=member.record_key
+            )
+        self.assertEqual(1, opened.call_count)
+        self.assertEqual(
+            (manifest, expected_members, expected_historical, expected_current, expected_selected),
+            (observed.manifest, observed.members, observed.historical, observed.current, observed.selected),
+        )
+
+    def test_source_inputs_use_coherent_snapshot_and_next_read_observes_concurrent_revocation(self):
+        f, manifest, member = self.source_inputs(self.case.publish())
+        before = f.repository.draft(manifest.preview_id)
+        original = f.repository._draft_rows_with_connection
+        changed = False
+
+        def revoke_after_snapshot(*args, **kwargs):
+            nonlocal changed
+            if not changed:
+                changed = True
+                selected = original(*args, **kwargs)[0]
+                rights = (selected.decision.rights or before.authority.rights).model_copy(
+                    update={"inspect": ImportPermission(value="denied", basis="researcher-confirmed")}
+                )
+                f.repository.revise_draft(
+                    manifest.preview_id,
+                    PreviewDraftChange(
+                        expected_revision=before.revision,
+                        actor=f.fixture.fixture.actor,
+                        decisions=(selected.decision.model_copy(update={"rights": rights}),),
+                    ),
+                )
+            return original(*args, **kwargs)
+
+        with patch.object(f.repository, "_draft_rows_with_connection", side_effect=revoke_after_snapshot):
+            observed = f.repository.reconciliation_source_inputs(
+                manifest.preview_id, manifest.revision_id, ordinal=member.ordinal, record_key=member.record_key
+            )
+        self.assertTrue(changed)
+        self.assertEqual(before, observed.current)
+        self.assertEqual(before.revision + 1, f.repository.draft(manifest.preview_id).revision)
+        self.assertTrue(
+            observed.selected[0].decision.rights is None or observed.selected[0].decision.rights.permits("inspect")
+        )
+        with self.assertRaisesRegex(PreviewProblem, "preview-commit-manifest-rights-denied"):
+            f.repository.reconciliation_source_inputs(
+                manifest.preview_id, manifest.revision_id, ordinal=member.ordinal, record_key=member.record_key
+            )
 
 
 if __name__ == "__main__":

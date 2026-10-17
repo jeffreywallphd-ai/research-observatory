@@ -15,7 +15,7 @@ from ..ingestion.import_drafts import (
     RecordDecision,
     Revision,
 )
-from .import_previews import ImportActionGuard, ImportPreviewRepository, PreviewActor
+from .import_previews import ImportActionGuard, ImportPreviewRepository, PreviewActor, PreviewDraft, PreviewDraftRecord
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 
 
@@ -79,6 +79,16 @@ class ImportManifestMember(DraftValue):
         return self
 
 
+class ImportSourceInputs(DraftValue):
+    """Fresh bounded source facts; carries no connection, lease or permission."""
+
+    manifest: ImportManifest = Field(repr=False)
+    members: Annotated[tuple[ImportManifestMember, ...], Field(min_length=1, max_length=1)] = Field(repr=False)
+    historical: PreviewDraft = Field(repr=False)
+    current: PreviewDraft = Field(repr=False)
+    selected: Annotated[tuple[PreviewDraftRecord, ...], Field(min_length=1, max_length=1)] = Field(repr=False)
+
+
 class ImportPublicationInterrupted(RuntimeError):
     """Stop-only request: rollback is not a durable cancellation disposition."""
 
@@ -91,6 +101,10 @@ class ImportCommitRepository(Protocol):
     def latest_commit_request(self, preview_id: str) -> ImportCommitRequest | None: ...
 
     def manifest(self, revision_id: str) -> ImportManifest: ...
+
+    def reconciliation_source_inputs(
+        self, preview_id: str, revision_id: str, *, ordinal: int, record_key: str
+    ) -> ImportSourceInputs: ...
 
     def manifest_for_job(self, job_id: str) -> ImportManifest | None: ...
 

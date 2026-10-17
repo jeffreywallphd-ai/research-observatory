@@ -28,6 +28,7 @@ from .ports.import_commits import (
     ImportManifest,
     ImportManifestMember,
     ImportPublicationInterrupted,
+    ImportSourceInputs,
 )
 from .ports.import_previews import ImportActionGuard, PreviewActor, PreviewDraft, PreviewProblem
 from .ports.repositories import (
@@ -275,37 +276,40 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         if not is_uuid_v7(revision_id):
             raise PreviewProblem("preview-commit-manifest-identity-invalid")
         with self._transaction(None) as connection:
-            self._manifest_access(connection, revision_id, reuse=True)
-            row = connection.execute(
-                "SELECT m.aggregate_id,m.preview_id,p.draft_revision,m.source_sha256,m.identity_sha256,"
-                "m.draft_sha256,p.previous_manifest_revision_id,m.record_count,m.selected_count,"
-                "m.created_count,m.reused_count,s.members_sha256,m.created_at "
-                "FROM import_manifests m JOIN import_manifest_seals s "
-                "ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
-                "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
-                "WHERE m.project_id=? AND m.revision_id=?",
-                (self._project, revision_id),
-            ).fetchone()
-            draft = self._draft(connection, self._read(connection, row[1]), row[2])
-            return ImportManifest(
-                project_id=self._project,
-                revision_id=revision_id,
-                aggregate_id=row[0],
-                preview_id=row[1],
-                draft_revision=row[2],
-                source_sha256=row[3],
-                identity_sha256=row[4],
-                effective_draft_sha256=row[5],
-                parser_version=draft.authority.parser_version,
-                mapping=draft.authority.mapping,
-                previous_manifest_revision_id=row[6],
-                record_count=row[7],
-                selected_count=row[8],
-                created_count=row[9],
-                reused_count=row[10],
-                members_sha256=row[11],
-                created_at=row[12],
-            )
+            return self._manifest_with_connection(connection, revision_id)
+
+    def _manifest_with_connection(self, connection: CanonicalConnection, revision_id: str) -> ImportManifest:
+        self._manifest_access(connection, revision_id, reuse=True)
+        row = connection.execute(
+            "SELECT m.aggregate_id,m.preview_id,p.draft_revision,m.source_sha256,m.identity_sha256,"
+            "m.draft_sha256,p.previous_manifest_revision_id,m.record_count,m.selected_count,"
+            "m.created_count,m.reused_count,s.members_sha256,m.created_at "
+            "FROM import_manifests m JOIN import_manifest_seals s "
+            "ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
+            "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
+            "WHERE m.project_id=? AND m.revision_id=?",
+            (self._project, revision_id),
+        ).fetchone()
+        draft = self._draft(connection, self._read(connection, row[1]), row[2])
+        return ImportManifest(
+            project_id=self._project,
+            revision_id=revision_id,
+            aggregate_id=row[0],
+            preview_id=row[1],
+            draft_revision=row[2],
+            source_sha256=row[3],
+            identity_sha256=row[4],
+            effective_draft_sha256=row[5],
+            parser_version=draft.authority.parser_version,
+            mapping=draft.authority.mapping,
+            previous_manifest_revision_id=row[6],
+            record_count=row[7],
+            selected_count=row[8],
+            created_count=row[9],
+            reused_count=row[10],
+            members_sha256=row[11],
+            created_at=row[12],
+        )
 
     def manifest_members(self, revision_id: str, *, after: int, limit: int) -> tuple[ImportManifestMember, ...]:
         if not is_uuid_v7(revision_id) or type(after) is not int or not 0 <= after <= 200000:
@@ -313,36 +317,82 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         if type(limit) is not int or not 1 <= limit <= 100:
             raise PreviewProblem("preview-commit-manifest-page-limit")
         with self._transaction(None) as connection:
-            self._manifest_access(connection, revision_id, reuse=True)
-            rows = connection.execute(
-                "SELECT ordinal,record_key,source_record_revision_id,decision_json,warnings_json,"
-                "comparison,previous_record_revision_id FROM import_manifest_members "
-                "WHERE project_id=? AND manifest_revision_id=? AND ordinal>? ORDER BY ordinal LIMIT ?",
-                (self._project, revision_id, after, limit),
-            )
-            result: list[ImportManifestMember] = []
-            size = 0
-            try:
-                for row in rows:
-                    size += len(row[3].encode("utf-8")) + len(row[4].encode("utf-8")) + 512
-                    if size > 16 * 1024 * 1024:
-                        if not result:
-                            raise PreviewProblem("preview-commit-manifest-record-limit")
-                        break
-                    result.append(
-                        ImportManifestMember(
-                            ordinal=row[0],
-                            record_key=row[1],
-                            source_record_revision_id=row[2],
-                            decision=RecordDecision.model_validate_json(row[3]),
-                            warnings=tuple(json.loads(row[4])),
-                            comparison=row[5],
-                            previous_record_revision_id=row[6],
-                        )
+            return self._manifest_members_with_connection(connection, revision_id, after=after, limit=limit)
+
+    def _manifest_members_with_connection(
+        self, connection: CanonicalConnection, revision_id: str, *, after: int, limit: int
+    ) -> tuple[ImportManifestMember, ...]:
+        self._manifest_access(connection, revision_id, reuse=True)
+        rows = connection.execute(
+            "SELECT ordinal,record_key,source_record_revision_id,decision_json,warnings_json,"
+            "comparison,previous_record_revision_id FROM import_manifest_members "
+            "WHERE project_id=? AND manifest_revision_id=? AND ordinal>? ORDER BY ordinal LIMIT ?",
+            (self._project, revision_id, after, limit),
+        )
+        result: list[ImportManifestMember] = []
+        size = 0
+        try:
+            for row in rows:
+                size += len(row[3].encode("utf-8")) + len(row[4].encode("utf-8")) + 512
+                if size > 16 * 1024 * 1024:
+                    if not result:
+                        raise PreviewProblem("preview-commit-manifest-record-limit")
+                    break
+                result.append(
+                    ImportManifestMember(
+                        ordinal=row[0],
+                        record_key=row[1],
+                        source_record_revision_id=row[2],
+                        decision=RecordDecision.model_validate_json(row[3]),
+                        warnings=tuple(json.loads(row[4])),
+                        comparison=row[5],
+                        previous_record_revision_id=row[6],
                     )
-            finally:
-                rows.close()
-            return tuple(result)
+                )
+        finally:
+            rows.close()
+        return tuple(result)
+
+    def reconciliation_source_inputs(
+        self, preview_id: str, revision_id: str, *, ordinal: int, record_key: str
+    ) -> ImportSourceInputs:
+        from .reconciliation.contracts import ReconciliationProblem
+
+        if not is_uuid_v7(revision_id):
+            raise PreviewProblem("preview-commit-manifest-identity-invalid")
+        if (
+            type(ordinal) is not int
+            or not 1 <= ordinal <= 200000
+            or type(record_key) is not str
+            or len(record_key) != 64
+            or any(character not in "0123456789abcdef" for character in record_key)
+        ):
+            raise ReconciliationProblem("reconciliation-source-mismatch")
+        # One original fresh protected transaction binds these facts together.
+        # No connection or positive decision survives the invocation. Public
+        # manifest/member/draft methods retain their independent fresh readers.
+        with self._transaction(preview_id) as connection:
+            manifest = self._manifest_with_connection(connection, revision_id)
+            if manifest.preview_id != preview_id:
+                raise ReconciliationProblem("reconciliation-source-mismatch")
+            members = self._manifest_members_with_connection(connection, revision_id, after=ordinal - 1, limit=1)
+            if len(members) != 1 or members[0].ordinal != ordinal or members[0].record_key != record_key:
+                raise ReconciliationProblem("reconciliation-source-mismatch")
+            state = self._read(connection, preview_id)
+            self._active(state)
+            accepted_attempt = self._accepted_attempt(connection, preview_id)
+            historical = self._draft(connection, state, manifest.draft_revision)
+            current = self._draft(connection, state, self._latest(connection, preview_id))
+            if historical.attempt_id != accepted_attempt or current.attempt_id != accepted_attempt:
+                raise PreviewProblem("preview-draft-attempt-mismatch")
+            selected = self._draft_rows_with_connection(
+                connection, preview_id, revision=current.revision, ordinals=(ordinal,)
+            )
+            if len(selected) != 1:
+                raise ReconciliationProblem("reconciliation-source-mismatch")
+            return ImportSourceInputs(
+                manifest=manifest, members=members, historical=historical, current=current, selected=selected
+            )
 
     def _bind_commit(self, inputs: CommitJobInput, claim: WorkflowJobClaim) -> CommitJobInput:
         # Immutable snapshots are read before taking the writer reservation.
