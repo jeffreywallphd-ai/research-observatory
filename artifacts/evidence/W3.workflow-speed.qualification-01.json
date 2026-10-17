@@ -1,0 +1,323 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "owner-authorized-bounded-workflow-maintenance-qualification",
+  "recordedAtUtc": "2026-10-17T16:13:18.835848+00:00",
+  "candidateCommit": "6730dc8dd2358cc2ec63571a7809fdcecd2012a0",
+  "readinessRepairCommit": "2d2e4500e2cbb25b0a3a223ecb867ef9dbd13bee",
+  "integratedPredecessorCommit": "e09c97cb55c6aedde92981de3b867639706c98fb",
+  "sourcePaths": [
+    "artifacts/evidence/W3.workflow-speed.maintenance-01.md",
+    "artifacts/evidence/W3.workflow-speed.owner-direction-20261017-01.json",
+    "docs/automation/codex-tracking-guide.md",
+    "docs/automation/planning-review-site.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/automation/workflow-efficiency.md",
+    "planning/README.md",
+    "quality-scope.json",
+    "tests/foundation/planning_review_browser.py",
+    "tests/foundation/test_plan_review_server.py",
+    "tests/foundation/test_workflow_guidance.py",
+    "tools/plan_review_server.py",
+    "tools/planctl.py",
+    "tools/planning_review/index.html",
+    "tools/planning_review/review.css",
+    "tools/planning_review/review.js",
+    "tools/taskctl.py"
+  ],
+  "readinessRepairPaths": [
+    "artifacts/evidence/W3-readiness-repair.maintenance-01.md",
+    "artifacts/evidence/W3.readiness-repair.owner-approval-20261017-01.json",
+    "quality-scope.json",
+    "tests/foundation/test_planctl_readiness.py",
+    "tests/search/populated_native_owner.py",
+    "tools/planctl.py"
+  ],
+  "sourceSha256": {
+    "artifacts/evidence/W3-readiness-repair.maintenance-01.md": "136751b25275e591255381ba023659f99fc58f19b6184d4a502bac824dd884cc",
+    "artifacts/evidence/W3.readiness-repair.owner-approval-20261017-01.json": "4a5dadb69f53bc8f3d99ec03d3198473dcb7884e4279653700c762a53beca9a4",
+    "artifacts/evidence/W3.workflow-speed.maintenance-01.md": "420f20c862ff4490ef198c6ce089dbb43fc5bc725a039c64841ea89b1e0b11a6",
+    "artifacts/evidence/W3.workflow-speed.owner-direction-20261017-01.json": "f3d00840c4dbcc266a98443a319ae0a39fae96c8e3dfcb04e77a55e7cbaee84b",
+    "docs/automation/codex-tracking-guide.md": "d9daf7c97b4d4363f1bd6319f89b99c8214753d51159ead28a20e74e9c8c7b51",
+    "docs/automation/planning-review-site.md": "8ff796456c69d5b47faf3f84bd5ee4cb6ddc5b8eee35728c6b0ee4674bbe29f3",
+    "docs/automation/project-automation-guide.md": "741a0b5e522db3064a405ee9b4a45ebe0f7e4aeba9e8ed44e7c5bf49be58adcb",
+    "docs/automation/workflow-efficiency.md": "33714bde7878f475412f990c3fed9c7b7be68c8e19b4e9f74660b39355c440f8",
+    "planning/README.md": "15a321e584d03d1925195cfd18c4c21c16739cae1bf998e16aa10012b37bb33f",
+    "quality-scope.json": "eb3556cc782fe1ad10ccfdd8a30634dbf05ea7629ce3e3a3d280c71fb5cc1ddb",
+    "tests/foundation/planning_review_browser.py": "a3d3669730ff2404e648a4dcdc72a0fea673def89fa0cf92f217be3b3c0fc1e1",
+    "tests/foundation/test_plan_review_server.py": "365860e63cfc472e7975a225b92e3e85429875983c01860230b0eac0b4ca8548",
+    "tests/foundation/test_planctl_readiness.py": "72f674ac4f995548e15391c1e34c405dafeecfea71345071aae504cde2b280c5",
+    "tests/foundation/test_workflow_guidance.py": "9d0373d7e078bc6f4a47433f9719a14faf77e110cb2e7a4326faa2974604ec43",
+    "tests/search/populated_native_owner.py": "3eff85d88f96ecf43397efdbaf7f7401a2bd4bcdb67b084077fac5f93761e68a",
+    "tools/plan_review_server.py": "4c3a4485454b8e7956263fbd2f8ffe69b848a8e06e73517ce3c41f03337432d1",
+    "tools/planctl.py": "7f4a5519157d07a707a0999a78a3089de59f0884884a184525b4d4adb2856138",
+    "tools/planning_review/index.html": "159a969335d6224f9c58a08f6b8b0ba32e54c704ae1a37cdc2ad89806d301a95",
+    "tools/planning_review/review.css": "54c108bf8bb24c03004ba1d413114d97cc2f791cfdfb09a4c8c348bf97c24acf",
+    "tools/planning_review/review.js": "6caf8f2dce18a858f1f156aed4b03ee63e5f837cbbc546118455a8a4146634d3",
+    "tools/taskctl.py": "28ebd8d96fb8abadb523f672f16cebe942ab197bcee48daf67ccb6e3c1491430"
+  },
+  "authority": {
+    "ownerDirection": {
+      "path": "artifacts/evidence/W3.workflow-speed.owner-direction-20261017-01.json",
+      "sha256": "f3d00840c4dbcc266a98443a319ae0a39fae96c8e3dfcb04e77a55e7cbaee84b"
+    },
+    "maintenanceNote": {
+      "path": "artifacts/evidence/W3.workflow-speed.maintenance-01.md",
+      "sha256": "420f20c862ff4490ef198c6ce089dbb43fc5bc725a039c64841ea89b1e0b11a6"
+    },
+    "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+    "preserved": "Frozen W3 scope/approval, governed experience, security and migration authority, release prerequisites, hard limits and adverse history. Product Core APIs/native/renderer behavior unchanged by this workflow unit. Future JIT approval-granularity changes remain future governance assessment."
+  },
+  "selectedQualification": {
+    "path": "artifacts/tmp/W3.workflow-speed-qualification-01/report.json",
+    "sha256": "6588c8e4d753847c1cce38df10f8fe1303f82e77ee5d986a7c69b55dfb1dcb19",
+    "mode": "fresh at exact committed candidate",
+    "status": "PASS",
+    "startedAtUtc": "2026-10-17T15:39:25.805560+00:00",
+    "completedAtUtc": "2026-10-17T15:40:30.141434+00:00",
+    "unittestCases": 69,
+    "passedCases": 68,
+    "skippedCases": 1,
+    "explicitSkip": "Actual Windows file symbolic-link creation authority unavailable; no symbolic-link PASS inferred. Actual Windows junction creation/denial passed separately.",
+    "warning": "Deliberate tempfile cleanup-exception injection retained an implicit-cleanup ResourceWarning in raw output; no blanket warning-free claim.",
+    "groups": [
+      {
+        "id": "live-review-and-guidance",
+        "status": "PASS",
+        "exitCode": 0,
+        "seconds": 22.774838000012096,
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/live-review-and-guidance.log",
+        "outputSha256": "4724438cac08f3e70f5bd691fe2bbfa5ab4aa6a53effc01545a206b6d5de9888"
+      },
+      {
+        "id": "focused-actual-Chromium",
+        "status": "PASS",
+        "exitCode": 0,
+        "seconds": 18.80656810000073,
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/focused-actual-Chromium.log",
+        "outputSha256": "161815ba5d79f677c931c42c5377e4c891a8b6bab63013fb157915467baed73c"
+      },
+      {
+        "id": "readiness-and-approval",
+        "status": "PASS",
+        "exitCode": 0,
+        "seconds": 3.0185486000264063,
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/readiness-and-approval.log",
+        "outputSha256": "eeae651b2ea62d234b0939c4f11f8a4691b521f0dfbc3541b5b8040296e9f256"
+      },
+      {
+        "id": "real-git-history-cas-and-review-gates",
+        "status": "PASS",
+        "exitCode": 0,
+        "seconds": 15.395615599991288,
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/real-git-history-cas-and-review-gates.log",
+        "outputSha256": "0859292fa32690d5177fabdd41ea7a4884eadd55000fd4569a998e0f6c6412ba"
+      },
+      {
+        "id": "unchanged-affected-policy-and-selection",
+        "status": "PASS",
+        "exitCode": 0,
+        "seconds": 2.100156100001186,
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/unchanged-affected-policy-and-selection.log",
+        "outputSha256": "9a572580b89a35bc259babd9f63614e2b7e29407ba4d010ccc3e272d916a751e"
+      },
+      {
+        "id": "global-inventory-and-affected-quality",
+        "status": "PASS",
+        "exitCode": 0,
+        "seconds": 1.3078948999755085,
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/global-inventory-and-affected-quality.log",
+        "outputSha256": "d2ae448f8959bc096aa6f8ee6f4b967f1c0310696e63e03c7cf9f471ac451900"
+      }
+    ],
+    "flags": {
+      "headEqualityAfter": true,
+      "inventoryEqualityAfter": true,
+      "inputEqualityAfter": true,
+      "indexEqualityAfter": true,
+      "refsEqualityAfter": true,
+      "producerEqualityAfter": true
+    },
+    "producer": {
+      "path": "artifacts/tmp/W3.workflow-speed-selected-02.py",
+      "sha256": "b4fb0f13d5e3b241e64f5e87c81b79f0e98e4cb8a5288d7af1e625c4bd6272e0"
+    },
+    "pythonExecutableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a"
+  },
+  "completeReadiness": {
+    "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01/report.json",
+    "sha256": "f0966ee74a4d435d5bb8d0ab30c513bb3dfdfbc8bbd5e28b4fe54f950dc994c2",
+    "mode": "fresh actual complete nonpublishing CLI at exact committed candidate",
+    "command": "python -B tools/planctl.py --repo . wave ready W3 --require-approved",
+    "status": "PASS",
+    "actualCommandExitCode": 0,
+    "startedAtUtc": "2026-10-17T15:39:27.503272+00:00",
+    "completedAtUtc": "2026-10-17T16:13:05.854434+00:00",
+    "commandSeconds": 1999.3355979000335,
+    "flags": {
+      "headEqualityAfter": true,
+      "mainEqualityAfter": true,
+      "inputInventoryEqualityAfter": true,
+      "inputEqualityAfter": true,
+      "indexEqualityAfter": true,
+      "refsEqualityAfter": true,
+      "producerEqualityAfter": true,
+      "ownedReadinessOutputCleaned": true,
+      "cleanStatusAfter": true
+    },
+    "rawOutput": {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01/raw.log",
+      "sha256": "5764567f38dc05b48c6ff3eb456373547bfa63e2bbc49b105ce160085cf00268"
+    },
+    "producer": {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01.py",
+      "sha256": "a668a069a918534ab17c4eb131a7d7d41a55ce3e18f86de3bc43f892c17d7497"
+    },
+    "pythonExecutableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "stageTimingLines": [
+      "READINESS_TIMING {\"elapsedSeconds\": 983.476873, \"exitCode\": 0, \"stage\": \"site-generation\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.419567, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-06\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.097032, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-06\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.338408, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-07\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.313226, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-07\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.501805, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-08\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.171776, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-08\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 990.371716, \"exitCode\": 0, \"stage\": \"complete-site-validation\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 1012.566767, \"exitCode\": 0, \"stage\": \"wave-validation-inclusive\"}"
+    ],
+    "limits": "Fresh actual full readiness CLI, unchanged component validators and complete byte/inventory/hash/semantic/link checker, at committed fixed inputs. The checker qualifies the owned generated site, not the retained canonical publication as fresh generated bytes. All canonical tracked bytes stay fixed; owned readiness site normally cleans on both success and failure, while caller raw logs/receipts/TEMP root remain retained. Cleanup failure denies success. No campaign mutation, cache, whole installed-runtime/OS attestation, full Native journey or product/slice/Wave/release qualification claim."
+  },
+  "inputBoundary": {
+    "fileCount": 6963,
+    "selectedAndFullInputMapsExactlyEqual": true,
+    "currentInputBytesAndInventoryEqual": true,
+    "recordedInputMaps": [
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-qualification-01/report.json",
+        "sha256": "6588c8e4d753847c1cce38df10f8fe1303f82e77ee5d986a7c69b55dfb1dcb19"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01/report.json",
+        "sha256": "f0966ee74a4d435d5bb8d0ab30c513bb3dfdfbc8bbd5e28b4fe54f950dc994c2"
+      }
+    ],
+    "limits": "Recorded source inventory/bytes, executable and producer hashes plus fixed HEAD/index/refs during qualifying runs. Installed dependency/environment/OS closure is not attested; no cached evidence or result reuse is authorized."
+  },
+  "criterionProof": [
+    {
+      "boundary": "Normal startup has one fresh readiness owner; failure, cleanup, immutable approval, real Git identity/history/CAS/review/release refusal remain",
+      "groups": [
+        "readiness-and-approval",
+        "real-git-history-cas-and-review-gates"
+      ],
+      "additional": "Fresh complete readiness at source candidate. Actual normal resume still owns its separate fresh admission after integration; this receipt cannot replace it."
+    },
+    {
+      "boundary": "Supported W1/W2 preview and unadmitted/missing/corrupt W3 policy produce valid guidance without changing selector authority",
+      "groups": [
+        "live-review-and-guidance",
+        "unchanged-affected-policy-and-selection"
+      ]
+    },
+    {
+      "boundary": "Live canonical-data navigation/update/error recovery, fixed confined assets, host/origin/method/source bounds and inert imported text",
+      "groups": [
+        "live-review-and-guidance",
+        "focused-actual-Chromium"
+      ],
+      "limits": "Includes actual periodic refresh and focused keyboard/browser AX checks; not product-UI/full accessibility certification."
+    },
+    {
+      "boundary": "No routine HTML publication needed; explicit immutable publication retains complete generation/hash/inventory/semantic/link checking",
+      "groups": [
+        "live-review-and-guidance"
+      ],
+      "additional": "Fresh full readiness runs the unchanged complete static checker against its owned generated tree; canonical tracked publication bytes stay fixed."
+    },
+    {
+      "boundary": "All Python files registered; eight affected source/test files format/lint/types",
+      "groups": [
+        "global-inventory-and-affected-quality"
+      ],
+      "limits": "Pre-existing product-test helper inventory/type restoration separately reviewed, not a same-commit-new-file exemption. Runtime proof at2d2 retains that exact label."
+    }
+  ],
+  "reviewHistory": [
+    {
+      "path": "artifacts/tmp/W3.workflow-and-live-review-scope-advisory-01.json",
+      "sha256": "784540b66a04b541b4a441d13779df95b72e11e3c219eebdffa3c9ab3c8ee426"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-live-review-source-preflight-01.json",
+      "sha256": "ef06ca61cdbca0ae9c24b5b4d287289f31164e6e12f11cda815cb2407a2ee13b"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-live-review-incremental-source-02.json",
+      "sha256": "a8be01c235aa31bc0707a19ff5d48bcea8badfa284664d909fec991022736ace"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-selected-independent-review-01.json",
+      "sha256": "ecf0b9a3874169d2a7d98e10af0a03db27e91878f30b90ad181c1c1820f3fa71"
+    },
+    {
+      "path": "artifacts/tmp/W3.readiness-repair-source-review-01.json",
+      "sha256": "8c184d4026af1332820e59a4fd9273b97c8a91367f5d0be96ba443342e385ed3"
+    },
+    {
+      "path": "artifacts/tmp/W3.preexisting-product-test-inventory-advisory-01.json",
+      "sha256": "4b80c70a3c870915b5baac49210eec47dd35daa7fbe5d0146f887d54157c5ebe"
+    }
+  ],
+  "findingClosure": "Six WF-LIVE source findings and selected regressions authenticated at6730 by independent review; READY-DOC-01 append-only clarification authentic. Final full-readiness/delivery disposition is appended separately before local integration.",
+  "retainedAdverseAndPriorEvidence": [
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-red-01/report.json",
+      "sha256": "6cd1ccc689de369dfeb86c78a1ac76693531d4d2e89a792c7600c2f37f91f39c"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-development-02/report.json",
+      "sha256": "1a28a80d7f18762cbb5c1ce7a36750f9667ec5972c4571b290d025369eee6fa9"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-development-03/report.json",
+      "sha256": "2bf89fdd83adc1cb12a36e98c24af5c8876503c1f52ee4a31cfedfdd8c455de0"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-development-04/report.json",
+      "sha256": "5a59a3062624c97870900bb6d44b17918bfe0a13ae1221014a3d2e473c043568"
+    },
+    {
+      "path": "artifacts/tmp/W3.readiness-repair-full-readiness-01/report.json",
+      "sha256": "2ac1b260a1b9fdc32d0a2080b344625569624e5e6bce33e88c9a9771a6352c3d"
+    },
+    {
+      "path": "artifacts/tmp/W3.readiness-repair-superseded-01.json",
+      "sha256": "3e228efac798f572d5e115c734cb4e2136622fd27917cc94bdf94a9b3ba14355"
+    },
+    {
+      "path": "artifacts/tmp/W3.readiness-repair-qualification-01/report.json",
+      "sha256": "be20b1234b540d911c8e76b72cc2ef05f770f8c864fab03a9afa9c7610091073"
+    },
+    {
+      "path": "artifacts/tmp/W3.readiness-repair-owner-runtime-01/report.json",
+      "sha256": "f1ba5ddbb4ab5f8d1c6b69ef98ea1afcd2f67f1d8696c3aa6472ea4830616b0e"
+    },
+    {
+      "path": "artifacts/tmp/W3.readiness-repair-owner-typing-equivalence-01.json",
+      "sha256": "5a6659693ffd0d6739aed18437c4743dbb087c74c91790e49f18a50922357737"
+    }
+  ],
+  "historyLimits": "Original behavioral red is expected FAIL; dev02 type errors and dev04 browser-import quality error remain actual FAIL. Original2d2 full readiness was deliberately interrupted, actual exit1/FAIL799.608441s with cleanup/fixity retained; never reused as PASS. Earlier2d2 selected checks, runtime owner proof and helper type-erasure comparison retain exact old-candidate limits. Initial default TEMP/prototype/CSP harness failures remain in tool history where no local report exists. No CSP/test/hook/deadline weakened.",
+  "deferredCoverage": "Broader product/Core API/native principal/all-owned lifetime, S01 scale/resource/rights/recovery/UX, checkpoints, repository/profile/packaging and scientific qualification remain with their approved slice/Wave owners. This maintenance does not complete any ordinary W3 task/slice, qualify W3 or approve G3.",
+  "accounting": {
+    "basis": "engineering hours",
+    "originalApprovedP": 924,
+    "plannedRefactoringIncludedOnce": 28,
+    "priorDisclosedSupplementalR": 0,
+    "sameIncrementSpentPlusCommittedRemainingReserve": 12,
+    "cumulativeForecastR": 12,
+    "limit": 138.6,
+    "remaining": 126.6,
+    "interpretation": "Same conservative allocation reconciled without increase or double counting. Engineering spent/remaining split is not independently measured;12 is forecast, not12 measured elapsed hours. Comparison timings are unmatched observations, no quantified speed/cost savings claim."
+  },
+  "next": "Required independent commit-bound final control/evidence disposition, normal evidence/review commits and local-main fast-forward, then ordinary taskctl W3 resume with its own fresh admission; only documented unmet human gates stop product execution."
+}
