@@ -9055,7 +9055,7 @@ waves:
       acceptance-only snapshot records ADR0056-58 and exact reference1.10 publication, independent activation review, and
       material bindings. No scope or estimates changed; G3 remains separate.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w3-implementation
     branch: codex/w3-implementation
@@ -9064,13 +9064,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-16T14:32:43+00:00'
-    updated_at: '2026-10-17T16:50:38+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w3-implementation
-      claimed_at: '2026-10-17T16:50:38+00:00'
-      expires_at: '2026-10-18T16:50:38+00:00'
+    updated_at: '2026-10-17T18:20:52+00:00'
+    pause_reason: Current CAP-06.S01 populated Native qualification cannot meet its unchanged hard2s page boundary (qualifier05
+      preserved FAIL; request-thread diagnostic2.034143s). Hold ordinary execution only at the clean boundary required for
+      linked W3.C03.T01 authority-preserving restoration; no human decision or scope/deadline change requested.
+    pause_category: infeasible
+    lease: null
     corrective_tasks:
     - title: Implement fielded search, filters, snippets, and ranking explanation
       objective: Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.
@@ -9483,7 +9482,7 @@ waves:
       resumed_at: '2026-10-17T16:50:38+00:00'
   checkpoints: []
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
