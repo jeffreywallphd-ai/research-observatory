@@ -9467,6 +9467,102 @@ waves:
           No prior evidence is reused as a new PASS; full100k/resource/lifetime/scientific-gold/slice/Wave qualification remains
           separately required. This spec introduces no new criteria or product authority; claim it only through the existing
           taskctl linked-correction route after this immutable spec is committed.
+    - title: Implement fielded search, filters, snippets, and ranking explanation
+      objective: Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.
+      dependencies:
+      - CAP-06.S01.T02
+      acceptance_criteria:
+      - Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish
+        exact, field, and filter contributions.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights
+        changes; expose ranks rather than probability.
+      verification_commands:
+      - python tools/verify.py --profile search
+      - python tools/verify.py --profile desktop
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - search
+      - desktop
+      id: W3.C03.T01
+      wave: W3
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w3-implementation
+      branch: codex/w3-implementation
+      base_sha: 01f8b4ca9fba4e7e165a0c4fbe0daa7cfbf2ff91
+      worktree: .
+      lease:
+        claimed_by: codex-w3-implementation
+        claimed_at: '2026-10-17T18:37:30+00:00'
+        expires_at: '2026-10-18T02:37:30+00:00'
+      started_at: '2026-10-17T18:37:30+00:00'
+      updated_at: '2026-10-17T18:37:30+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-06.S01.T03
+        origin_commit: f00097f4b3920490113bd03e5f8e914e6a92fb49
+        paused_state_sha256: 5e5115c5991b9ed0657b6e6d67037c8afa932f786d73e643dbb7f0cd06a9c658
+        origin_sha256: 300e2322c7eb9059c2ea5341512757ba20830e67e359f7ead31df18339b4c55b
+        origin_contract_sha256: 112cf41af404ae65852ea40795d9810973c2541ff0d0cb7a2b0836aad8493c73
+        origin_history_sha256: 32327dfb9f0ed015ea1d0f8fdb5a57f0949afb40db3380bc4d92ca8619c26080
+        origin_amendment_id: null
+        authority_sha256: 01058d554893ceb8e32d078121e8ac8b9f48855191485c76e7cf620654e384c2
+        spec:
+          path: artifacts/evidence/W3.C03.T01.spec.json
+          sha256: e0e47ba8c6d8a68b0ed3748eb761c14e8c98d655d29df234edff04b9248be4d0
+          commit: 01f8b4ca9fba4e7e165a0c4fbe0daa7cfbf2ff91
+        reproduction: Fresh unchanged populated Native qualification05 at f00097f4 failed the first /projects/search/page
+          after2002.9426ms at the unchanged hard2s Native transport boundary. Actual clientFAIL/nativeexit101 remains; owner
+          naturally reached0 with no force. All nine fixity flags held. No restart/final joined lifetime proof ran. Actual
+          separate per-request/thread Core API phase diagnostic02 reproduced successful page wall2.034143s/threadCPU1.34375,51
+          foreground protected canonical opens, three current-item captures0.654036s and three import-source resolutions0.425312s.
+          It uses real DPAPI/SQLCipher and an explicitly synthetic principal/ASGI fixture, not Native latency qualification.
+          The first cProfile diagnostic has mixed background call attribution and is not foreground-count evidence. All original
+          failures/raw receipts and independent open S01-NATIVE-LIFETIME-RUNTIME-01 remain preserved.
+        changed_paths:
+        - services/core-api/src/research_observatory_core/import_commit_repository.py
+        - services/core-api/src/research_observatory_core/import_preview_service.py
+        - services/core-api/src/research_observatory_core/ports/import_commits.py
+        - tests/data/test_import_commit_hot_path.py
+        - tests/reconciliation/test_owner_inventory.py
+        impact_analysis: Restore prompt bounded populated search delivery by resolving each current import-source input set
+          inside one fresh coherent protected read transaction rather than opening five separate readers for its manifest,
+          member, historical draft, current draft and selected record. Add one typed bounded method/value to the existing
+          internal import repository port; extract original manifest/member connection helpers without dropping their accepted-output,
+          complete manifest access, immutable seal, active-state, historical/current head, accepted-attempt, record-size/cursor,
+          identity and rights checks. Keep existing service source/context/ordinal/key and store/inspect/derive/index checks
+          and import_assertion projection. No current data/verdict/rights cache, pool, alternate store, generic framework/controller,
+          source/parser fabrication, key/permission/schema/migration/UX/generated API/transport/deadline/baseline/release
+          change. Each source capture and later request still resolves fresh, and existing current actor/Intent/privacy/rights/time/source/index
+          fences remain. Failure-first actual opener-bound regression, full identity/history/rights/next-call-revocation and
+          real persistence checks precede product edits; fresh affected Core/data/reconciliation/search/Windows API and original
+          complete Native2s/lifetime proof plus independent corrective integration review follow. All100k/scientific/resource/renderer/package/slice/Wave
+          proof retains its existing owner. Conservatively allocate4 supplemental refactoring forecast hours for extracting
+          original connection helpers; W3 single cumulative R16 becomesR20 engineering-effort-hours against immutable P924
+          including28 planned once, ceiling138.6, remaining118.6. This is forecast allocation, not observed elapsed effort,
+          cost or a new child budget; cite W3.history-decoding.maintenance-01.md for priorR16. Authority remains the same
+          approved task/W3 contract; claim only through taskctl after committing this immutable spec, with ordinary campaign
+          paused at the required corrective boundary.
     resume_records:
     - id: W3.R01
       wave_id: W3

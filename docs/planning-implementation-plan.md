@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 12fb4a5ac42abf8fad10bb09cf3b6f083b9d132f3d961aae94bdf47a288826a4
+source_sha256: 5e6e4d1f809c8fb37daecb852093aa1f3a0f53ebf23913fbc03dcf9421c3b061
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6151,6 +6151,38 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w3_query_review at `2026-10-17T11:47:57+00:00`
 
 **Latest notes:** Approved W3.C02.T01 R01 at exact f1c154fb18cbfe2dca69d92257f7b8255c1d49c0 with no findings. The bounded worker-phase/coherent cleanup restoration preserves current authority and destructive recovery guarantees and passes fresh affected proof including the unchanged complete populated Native journey. All adverse histories and explicit lifetime/scale/resource/scientific/profile limits remain. Task disposition only.
+
+**Currently open findings:** -
+
+### W3.C03.T01 — Implement fielded search, filters, snippets, and ranking explanation
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** Fresh unchanged populated Native qualification05 at f00097f4 failed the first /projects/search/page after2002.9426ms at the unchanged hard2s Native transport boundary. Actual clientFAIL/nativeexit101 remains; owner naturally reached0 with no force. All nine fixity flags held. No restart/final joined lifetime proof ran. Actual separate per-request/thread Core API phase diagnostic02 reproduced successful page wall2.034143s/threadCPU1.34375,51 foreground protected canonical opens, three current-item captures0.654036s and three import-source resolutions0.425312s. It uses real DPAPI/SQLCipher and an explicitly synthetic principal/ASGI fixture, not Native latency qualification. The first cProfile diagnostic has mixed background call attribution and is not foreground-count evidence. All original failures/raw receipts and independent open S01-NATIVE-LIFETIME-RUNTIME-01 remain preserved.
+
+**Inherited criteria:**
+
+- Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish exact, field, and filter contributions.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights changes; expose ranks rather than probability.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/import_commit_repository.py
+- services/core-api/src/research_observatory_core/import_preview_service.py
+- services/core-api/src/research_observatory_core/ports/import_commits.py
+- tests/data/test_import_commit_hot_path.py
+- tests/reconciliation/test_owner_inventory.py
+#### Review history — W3.C03.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
