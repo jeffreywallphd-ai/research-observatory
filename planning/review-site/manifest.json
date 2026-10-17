@@ -6639,7 +6639,7 @@
         {
           "task_id": "W3.C01.T01",
           "title": "Implement fielded search, filters, snippets, and ranking explanation",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish exact, field, and filter contributions.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -6670,17 +6670,116 @@
           "task_review": {
             "task_id": "W3.C01.T01",
             "title": "Implement fielded search, filters, snippets, and ranking explanation",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w3_c01_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-17T09:05:34+00:00",
+              "notes": "Approved W3.C01.T01 R01 at exact ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c with no findings. Same-writer startup/fence consolidation preserves complete current lawful-source/selection/generation authority and final delivery controls. All selected fresh05 proof is authenticated with truthful bounded Native scope and preserved adverse history. CAP-06.S01 preparation/retirement, full Native journey, actual inner lifetime, scale and later qualification remain hard pending obligations; this is task disposition only."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w3-implementation",
+                    "submitted_at": "2026-10-17T08:31:15+00:00",
+                    "candidate_commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+                    "base_commit": "c3c12aeaaaa031c15c0b2d56d188ec3386d54c3b",
+                    "branch": "codex/w3-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W3.C01.T01.R01.json",
+                      "sha256": "13551036ba66d25c682bb80ea06a83151c675b6b47a0c8608cfe49391bc1d258",
+                      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+                      "recorded_at": "2026-10-17T08:31:15+00:00"
+                    },
+                    "acceptance_criteria_sha256": "01fc79a7ec1bafe7ce6058453825020cbb0421253dceb1a29d6d3629a83dafdd",
+                    "changed_paths": [
+                      "artifacts/evidence/W3.C01.T01.candidate-publication-note-02.md",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W3.html",
+                      "planning/status-summary.md",
+                      "services/core-api/src/research_observatory_core/lexical_query_repository.py",
+                      "tests/search/test_lexical_query_service.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+                      ".venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+                      ".venv/Scripts/python.exe -B -m mypy --no-incremental --cache-dir .\\artifacts\\tmp\\W3.C01.qualification-05\\mypy-cache services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+                      ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+                      "pinned-node24 artifacts/tmp/W3.C01.bounded-native-integration-01.mjs --report artifacts/tmp/W3.C01.T01.bounded-native-runtime-03.json",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_close_lifetime",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows"
+                    ],
+                    "deferred_checks": [
+                      "CAP-06.S01 remains blocked by demonstrated preparation/obsolete-retirement FIFO contention; the original complete Native journey and all FAILs remain unchanged. After actual C01 review/integration, the next lawful linked correction must restore that boundary before full S01 qualification.",
+                      "Fresh full100k metadata/permitted projections, resources, lifetime, full profiles, packaging and independent slice/Wave qualification remain required at their actual owners. Scientific gold/rights/human bridge obligations retain their declared S02/S03 owners. No AI mode or launcher is planned or implemented."
+                    ],
+                    "selection_rationale": "Two-path query fence correction: exact selection/generation/source/time/rights/expiry/cancel/close/result/replay, fresh separately named real Native populated query/page/filter/explanation/admission/rights/close/restart-old-page proof under unchanged two-second bound. This new explicit scenario uses the unchanged Rust Native carrier as fixture/IPC/process owner and a pinned main-entry resolver to select the separately hashed bounded client, never the original full Node scenario. Localization in advisory02 proves current full-journey failure is index preparation/obsolete retirement outside the query fence. Preserve every full-journey FAIL and unchanged original test/assertions; index cleanup remains a hard S01 blocker for the next lawful correction after C01 disposition. Pure grammar/contracts, migrations, TS/UI and packaging remain unchanged and deferred to slice/Wave. No historical evidence reused as a current-candidate PASS.",
+                    "selection_sha256": "02248f68c7ec142a2735b9d20a008700c175a2a517dbd4d5a13c4f5f7b5c87af",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:unit",
+                      "foundation:architecture",
+                      "foundation:quality",
+                      "search:unit"
+                    ],
+                    "packet_sha256": "28e85512b957b5682075dfcbb17cf1952176bbc126fc02f2a89ddbd0f0c334b1"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w3_c01_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-17T09:05:34+00:00",
+                    "notes": "Approved W3.C01.T01 R01 at exact ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c with no findings. Same-writer startup/fence consolidation preserves complete current lawful-source/selection/generation authority and final delivery controls. All selected fresh05 proof is authenticated with truthful bounded Native scope and preserved adverse history. CAP-06.S01 preparation/retirement, full Native journey, actual inner lifetime, scale and later qualification remain hard pending obligations; this is task disposition only."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W3.C01.T01.review-R01.json",
+                    "sha256": "d693b0a0514c99fdf712639a8f63458df16feff11ba31485865443dff5b2e713"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W3.C01.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-17T08:31:15+00:00",
+                    "reviewed_at": "2026-10-17T09:05:34+00:00",
+                    "duration_seconds": 2059,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:unit",
+                      "foundation:architecture",
+                      "foundation:quality",
+                      "search:unit"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

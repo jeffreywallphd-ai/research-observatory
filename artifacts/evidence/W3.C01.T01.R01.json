@@ -1,0 +1,608 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W3.C01.T01",
+  "baseCommit": "c3c12aeaaaa031c15c0b2d56d188ec3386d54c3b",
+  "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+  "branch": "codex/w3-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W3.C01.T01.candidate-publication-note-02.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W3.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/lexical_query_repository.py",
+    "tests/search/test_lexical_query_service.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "query",
+        "delivery",
+        "known-items",
+        "bounded-populated-native"
+      ],
+      "evidence": [
+        "Fresh query/delivery cases preserve deterministic BM25 order, exact field and filter contributions, immutable run/hash/cursor binding, bounded inert snippets and explanations. The new real Native scenario independently proves one populated title/identifier lookup, stable replay and year exclusion through the ordinary generated client and unchanged Native API.",
+        "The separately frozen wholly synthetic fixture retains actual Core-minted ID mapping before lookup and achieves the declared held-out title/DOI recall target. This is technical known-item proof, not scientific relevance or annotated-evidence coverage."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "query",
+        "delivery",
+        "run",
+        "source-authority",
+        "close",
+        "windows-runtime",
+        "bounded-populated-native"
+      ],
+      "evidence": [
+        "The protected-opener regression executes the real canonical opener under the actual outer authority guard and requires at most one open per fresh query fence. It failed with three opens before the edit; real selection republication and generation cancellation deny buffered delivery. A second failure-first real-opener regression preserves the startup budget of three actual opens through derivative entry; it measured seven before consolidation. Initial latest selection, full generation, watermark, source epoch and trusted rights-time partition now share one existing real catalog writer. Catalog authority remains checked on entry and exit; the clock is normalized at entry, with the existing later rollback/expiry/time-partition checks retained. All four cases are rerun at this committed candidate.",
+        "Current source/rights/time activation/expiry/clock rollback, key/path/lifecycle/session and cancellation/result/close boundaries remain covered by affected current tests. Native typed rights-page/status, closed-project page and fresh-session old-page denials are real409 RO-CORE-SEARCH-DENIED responses, not generic transport failures.",
+        "The full original Native scenario remains unchanged and FAIL at preparation cleanup. This selected proof does not execute its post-restart fresh-search/cancellation tail or qualify the complete slice journey."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "lint",
+        "format",
+        "types",
+        "architecture",
+        "query",
+        "delivery",
+        "run",
+        "source-authority",
+        "close",
+        "windows-runtime"
+      ],
+      "evidence": [
+        "Only the two admitted product/test paths change. Exact selection event, generation/event, checkpoint and authority plus the full authenticated generation are compared in the same fresh canonical writer as actor/source/time authority. Current key/path/lifecycle/cancel and final post-consumer/post-store-close fences, complete lawful universe and immutable execution lineage remain.",
+        "No public API, AI mode, UI/reference, schema/migration, permission or release criterion changes. Source/API contracts remain UI-independent. The publication note distinguishes pre-retention generated-tree PASS from the exact historical blob retention and makes no final retained-tree full-byte or product qualification claim."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "known-items",
+        "query",
+        "delivery",
+        "source-authority",
+        "bounded-populated-native"
+      ],
+      "evidence": [
+        "Fresh declared64 held-out synthetic title/DOI queries meet recall@20>=0.90, with separate32-query title and DOI strata. Current affected tests retain ties/pages and rights-aware snippets. Ranks and method scores remain distinct from probabilities.",
+        "All lawful mirror rows, including nonmatches, remain freshly captured and validated before BM25; this fix adds no cross-request authorization cache or warm certificate. Actual selection/generation successor denials preserve the final freshness boundary."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "lint",
+      "commandId": "foundation:quality",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:25:31.154969+00:00",
+      "completedAtUtc": "2026-10-17T08:25:31.369228+00:00",
+      "durationSeconds": 0.21427190001122653,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "format",
+      "commandId": "foundation:quality",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:25:31.380146+00:00",
+      "completedAtUtc": "2026-10-17T08:25:31.495152+00:00",
+      "durationSeconds": 0.11502130003646016,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/format.log",
+      "rawOutputSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "types",
+      "commandId": "foundation:quality",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:25:31.508895+00:00",
+      "completedAtUtc": "2026-10-17T08:25:39.616371+00:00",
+      "durationSeconds": 8.107491899980232,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/types.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m mypy --no-incremental --cache-dir .\\artifacts\\tmp\\W3.C01.qualification-05\\mypy-cache services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:25:39.631107+00:00",
+      "completedAtUtc": "2026-10-17T08:25:44.963808+00:00",
+      "durationSeconds": 5.332714699965436,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "bounded-populated-native",
+      "commandId": "desktop:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:25:44.974475+00:00",
+      "completedAtUtc": "2026-10-17T08:26:58.165428+00:00",
+      "durationSeconds": 73.19098520005355,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/bounded-populated-native.log",
+      "rawOutputSha256": "5ac6c788177b5649a17102f775b9bc64a57ab435398f18b8bba2fe02c47b81cf",
+      "result": "PASS",
+      "command": "pinned-node24 artifacts/tmp/W3.C01.bounded-native-integration-01.mjs --report artifacts/tmp/W3.C01.T01.bounded-native-runtime-03.json",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "query",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:26:58.181943+00:00",
+      "completedAtUtc": "2026-10-17T08:28:07.716997+00:00",
+      "durationSeconds": 69.53508800000418,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/query.log",
+      "rawOutputSha256": "c64870f7bc38452ae43769ef6930d99859b659bd87f2246f08ca4b66dd8d81db",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "delivery",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:28:07.734422+00:00",
+      "completedAtUtc": "2026-10-17T08:28:35.821615+00:00",
+      "durationSeconds": 28.08721140003763,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/delivery.log",
+      "rawOutputSha256": "52016e2a3f9feecf7580fbe2a12e742e682883b90917472455be7fed1652c0f8",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "run",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:28:35.835983+00:00",
+      "completedAtUtc": "2026-10-17T08:29:27.865881+00:00",
+      "durationSeconds": 52.02992569998605,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/run.log",
+      "rawOutputSha256": "b20877f38e9782ab8f001197c60b986d69df8c81b0b7aef7148f516a8f7438e2",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "source-authority",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:29:27.885528+00:00",
+      "completedAtUtc": "2026-10-17T08:29:30.055306+00:00",
+      "durationSeconds": 2.1697993999696337,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/source-authority.log",
+      "rawOutputSha256": "9d30bbd5500bf9fb484b8e32eeb08c8ebb552b96034f5a94e1209581c32c2917",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "close",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:29:30.069056+00:00",
+      "completedAtUtc": "2026-10-17T08:29:42.066295+00:00",
+      "durationSeconds": 11.997254799993243,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/close.log",
+      "rawOutputSha256": "694ff603461f447e07b9523ffc6cbe26ee81101a0aea7d942c08fb9cba72d3b8",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_close_lifetime",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "known-items",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:29:42.086490+00:00",
+      "completedAtUtc": "2026-10-17T08:29:46.364506+00:00",
+      "durationSeconds": 4.2780310999951325,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/known-items.log",
+      "rawOutputSha256": "17338372815aade946a481e77cf0230a81bb401cba24ce034aaafcb9d841082d",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    },
+    {
+      "id": "windows-runtime",
+      "commandId": "search:unit",
+      "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+      "exitCode": 0,
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T08:29:46.381062+00:00",
+      "completedAtUtc": "2026-10-17T08:30:43.447323+00:00",
+      "durationSeconds": 57.06628550001187,
+      "rawOutput": "artifacts/tmp/W3.C01.qualification-05/windows-runtime.log",
+      "rawOutputSha256": "b915f21c5b8695b9152552fa0a509da254e9afb1503cde02fb7ff14acf04b430",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows",
+      "inputReport": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "inputReportSha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "executionContext": "Fresh Windows x64 execution at this exact candidate, stable shared inputs, no other heavy test/generator group. Executable display aliases map to the bound actual argv and installed byte inventory; no cached result or whole-OS attestation."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "300e2322c7eb9059c2ea5341512757ba20830e67e359f7ead31df18339b4c55b",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+      ".venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+      ".venv/Scripts/python.exe -B -m mypy --no-incremental --cache-dir .\\artifacts\\tmp\\W3.C01.qualification-05\\mypy-cache services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py",
+      ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      "pinned-node24 artifacts/tmp/W3.C01.bounded-native-integration-01.mjs --report artifacts/tmp/W3.C01.T01.bounded-native-runtime-03.json",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_close_lifetime",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows"
+    ],
+    "reusedEvidence": [],
+    "rationale": "Fresh exact-candidate query/delivery/authority and separately selected populated Native query/page/denial proof. Same-writer selection verification preserves current authority and all final fences. Current full-slice failure is independently localized to unchanged index preparation/retirement, does not execute this query fence and remains a hard S01 blocker. No prior Native FAIL/diagnostic/partial result is presented as PASS; no original valid assertion, two-second bound or immutable correction path is changed."
+  },
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "search:unit"
+    ],
+    "riskAnalysis": "Two-path query fence correction: exact selection/generation/source/time/rights/expiry/cancel/close/result/replay, fresh separately named real Native populated query/page/filter/explanation/admission/rights/close/restart-old-page proof under unchanged two-second bound. This new explicit scenario uses the unchanged Rust Native carrier as fixture/IPC/process owner and a pinned main-entry resolver to select the separately hashed bounded client, never the original full Node scenario. Localization in advisory02 proves current full-journey failure is index preparation/obsolete retirement outside the query fence. Preserve every full-journey FAIL and unchanged original test/assertions; index cleanup remains a hard S01 blocker for the next lawful correction after C01 disposition. Pure grammar/contracts, migrations, TS/UI and packaging remain unchanged and deferred to slice/Wave. No historical evidence reused as a current-candidate PASS.",
+    "deferred": [
+      "CAP-06.S01 remains blocked by demonstrated preparation/obsolete-retirement FIFO contention; the original complete Native journey and all FAILs remain unchanged. After actual C01 review/integration, the next lawful linked correction must restore that boundary before full S01 qualification.",
+      "Fresh full100k metadata/permitted projections, resources, lifetime, full profiles, packaging and independent slice/Wave qualification remain required at their actual owners. Scientific gold/rights/human bridge obligations retain their declared S02/S03 owners. No AI mode or launcher is planned or implemented."
+    ]
+  },
+  "qualification": {
+    "path": "artifacts/tmp/W3.C01.qualification-05/report.json",
+    "sha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+    "fresh": true,
+    "reused": false,
+    "runtimeClosureAuthenticated": false
+  },
+  "knownItemEvidence": {
+    "path": "artifacts/tmp/CAP-06.S01.T03.known-items-01a148fb-33e1-71c7-9718-c8253238a8c7.json",
+    "sha256": "95dbaab8693259176a38881824ef7fe6c11a6bb556c1a7743cb8ac843a406cab",
+    "strata": [
+      {
+        "split": "development",
+        "kind": "all",
+        "denominator": 8,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "development",
+        "kind": "title",
+        "denominator": 4,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "development",
+        "kind": "doi",
+        "denominator": 4,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "held-out",
+        "kind": "all",
+        "denominator": 64,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "held-out",
+        "kind": "title",
+        "denominator": 32,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "held-out",
+        "kind": "doi",
+        "denominator": 32,
+        "meanRecallAt20": 1.0
+      }
+    ],
+    "limits": [
+      "Exact title and DOI lookup only; no external corpus recall, systematic coverage, scientific gold, human annotation or model-quality claim.",
+      "64 synthetic records: 4 development, 32 held-out and 28 distractors; 8 development and 64 held-out queries, reported separately by title/DOI.",
+      "Ranking/Boolean/filter/rights/snippet/paging failures require separate behavioral tests; this lookup fixture does not establish those boundaries."
+    ]
+  },
+  "nativeEvidence": {
+    "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03.json",
+    "sha256": "367d3c6d91a074c0840a388e75e0a837ddad5419f883c6727e8470f0e3a96ec6",
+    "scope": "Separately named bounded query proof only; unchanged Rust carrier is fixture/process owner, original full Node scenario not executed.",
+    "receipts": [
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/client-report.json",
+        "sha256": "f1c898600e92a7098a8c59bca172a230665caadd534454c577c05e799e8d0e2f",
+        "bytes": 18246
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/native-proof.json",
+        "sha256": "7e4839d022857c0549a0533de901eb71c5b8b8caf80aafc252a137393f01ce27",
+        "bytes": 293
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/owner-report.json",
+        "sha256": "9306157fdd6ddedb7be4f29bacc26f2c634dbb7517fda0895bfc8c1aa60abd08",
+        "bytes": 2475
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/bounded-entry-selection.json",
+        "sha256": "f1763e9e2537cf04adb112d489e625ad97407ba999cbdc47a0ab1cdd83b254ae",
+        "bytes": 761
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/node-stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/compiler.stdout.log",
+        "sha256": "4f3b6330031e1d162ec8e789f47602fa6136cd6f55adf242118954a30e4de8db",
+        "bytes": 292371
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/compiler.stderr.log",
+        "sha256": "c477429688ee1ee64b6f0b4c127a8cb3152da57ca7d189e2813a14b28c3e85de",
+        "bytes": 73
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/native-test.stdout.log",
+        "sha256": "e0ae1f4c136e7e7da2c1f6109b889950a9210bcf46fcf6846d716c771d88d0ae",
+        "bytes": 381
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03-receipts/native-test.stderr.log",
+        "sha256": "917e64132500d78a83c3e7cd189314b747c80ce8d14a861d95be636719d7bad7",
+        "bytes": 294
+      }
+    ],
+    "limits": [
+      "Source Core, explicitly synthetic Native session/Intent/source/rights confirmations.",
+      "Actual fixed fixture setup does not establish renderer corpus/rights editing or file picker/sign-in.",
+      "Separately selected bounded query/page/denial scenario; original full Native client/test remains unchanged and FAIL. Index-preparation cleanup contention remains a hard S01 blocker.",
+      "Existing Rust test function is used solely as unchanged Native fixture/IPC/process owner; its name does not establish execution of the original full Node scenario.",
+      "Stopped state/outer Job no-forced/empty observations do not prove graceful or unforced inner Core stop.",
+      "Single metadata item; no full text, 100k, scientific gold, installed packaging or full-profile PASS.",
+      "Selected source/runtime hashes only; qualifying execution additionally needs the full frozen-input recorder. No complete installed-runtime/OS attestation or reuse authority."
+    ]
+  },
+  "publicationNote": "artifacts/evidence/W3.C01.T01.candidate-publication-note-02.md",
+  "sourceSpec": {
+    "path": "artifacts/evidence/W3.C01.T01.spec.json",
+    "sha256": "0a3ebe04dbff06b8427f7dc98f7d81233302ea8140757cf0d3d30356508fbe35"
+  },
+  "compositionProducerSha256": "78c3bd4168142bba1946b728056c4b0b02b768f8f890bea769c93c007565166c",
+  "developmentAdverseHistory": {
+    "artifacts": [
+      {
+        "path": "artifacts/tmp/W3.C01.qualification-04/report.json",
+        "sha256": "9a90c648977f5bec67a95b7d106799b3b91730f695dbe2fda1fe5cb341cb33f4"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.qualification-04/bounded-populated-native.log",
+        "sha256": "36111c4839f8bfdc8a36440a6aeccd486384e8470eb0544461aee87c4d60be53"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-02.json",
+        "sha256": "b88d889f6a65d664253c9f1d11e4de0211ad0b01c34a4d16f42dd7b05dc4a840"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.startup-open-red-01/report.json",
+        "sha256": "4c764965f219232a59e359ba9a605f0d678f52aed8c00e32cc5808cda4f48411"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.startup-open-red-01/run.log",
+        "sha256": "9bb3c7d189746681a755b389d9d7555228db25ecd57b27ef9ac9b17e6410eb9d"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.startup-development-01/report.json",
+        "sha256": "58c3b6810b27a12382187e85f5a6d41cbec1945ecc537111ed5d938320354a43"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.startup-development-01/run.log",
+        "sha256": "7d495617721085e8cb42455dfe68ac3cb6f32a687b8276ff7b96c650cd117532"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.startup-writer-restoration-advisory-01.json",
+        "sha256": "febc22a676516929b820c3bfa5dbd89c9c3529fd6f7b1d59e37f3128d8944025"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.qualification-03/report.json",
+        "sha256": "132dd058997b0a26e4bfe7fd2f6f8e51069d20e5a3bc4e9c90b17ca0ae6d303c"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.qualification-03/query.log",
+        "sha256": "b37937bfd49127132668d1a6599116a52aa9e6d9b351a26c798009c6aeda0002"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-01.json",
+        "sha256": "63f6431438b4d4fbf4cf5cde328806a78e32ec08e04d7e45f16a23270766b60d"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.owned-lease-regression-development-01.json",
+        "sha256": "547343117ea48115794d9e36b6e3f932206f5e155b368975daf41ac2927bca61"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.owned-lease-regression-development-01.log",
+        "sha256": "a12344f1ef56870a080668569fe5c76e512411d79a7c913e1313c4fb8f1ae2e9"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.owned-lease-development-02/report.json",
+        "sha256": "742505c0b01b07845508188cc2c01bca214bdad2454847a4846de6b6b07cdd71"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.owned-lease-development-02/run.log",
+        "sha256": "620f019dda4eaced10de80769ab4b7fd6f413376e460b44ac076e0a140774b85"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.qualification-02/report.json",
+        "sha256": "17c0bf970384e464e544b341e3658248cfe9b4f2427b88fafa0c6fc82cbb34a4"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.qualification-02/types.log",
+        "sha256": "e8ea0ccdf93c94d735b9756f27ea8bb3cd09eb5d997121a5817f9da0da7b4ffb"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-qualification-01/report.json",
+        "sha256": "9bf9401c3bf0f07cf634c287e7f23592975737fd4fa57e2b7a6f33ccf38b7cbc"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-runtime-01.json",
+        "sha256": "dabb5e37d856527576d844cb980c6db1be7e7e6c5e7bd8a92ef50bc673b2a914"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.development-native-01.json",
+        "sha256": "7006f43c021df3819763622fa11fb85c1db46b2245e4ebe619ad08526169dc05"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.W3-C01-development-native-01.json",
+        "sha256": "68f2a2a7af1b8bf8c0c8da106b157311c091966cd1bb4bc23afa7450645df747"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.status-phase-diagnostic-01/report.json",
+        "sha256": "ef89279e33a80782ca1f87541635aa4fdea18972f3a7c0da43ab9db136563f0b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.W3-C01-status-phase-diagnostic-01.json",
+        "sha256": "8f641a09979014e22b815991a273dd4f99939b3ad53f6d402f7bcf4252eda88a"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.status-phase-diagnostic-02/report.json",
+        "sha256": "ccf2ca99a59ab1e3870a3cc945eb98e7b83e0cdb84ba45df926b4545db8118ab"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.W3-C01-status-phase-diagnostic-02.json",
+        "sha256": "875540ae5647ea84cc1c7b7c73ad791e137ffb84647739daec9a60d679342c4b"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.tracked-regression-before-01.log",
+        "sha256": "b26b21c8e1ac27045b4dc7f9adfd9667c90cdec9747dc4c0f4bc0bf592392156"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.tracked-regression-after-01.log",
+        "sha256": "07037d9ccfd2f2966eeac90b7ba6c6681ab20d39ddb8e91c7d936f7f9517a028"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.fence-characterization-before-02.json",
+        "sha256": "d0784ac8a524e37c2479827b117f59acc516f52bb6f351507ff8fdf8eea15166"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.fence-open-callers-03.json",
+        "sha256": "d2bf950453b911c3d2b29ea662f3e1bcaf239f2dddbd6b77d65b2039813e68b8"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.fence-open-interpretation-04.json",
+        "sha256": "1b361d75ad297324465646cf8c61440762f5a51fa14d08d24296371f65cd720b"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.native-status-diagnostic-advisory-01.json",
+        "sha256": "ac3ba934933ea922d89fed6064c7fe53654f1986b7dbfeee209d3e087ba8ec53"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.query-correction-scope-advisory-02.json",
+        "sha256": "c2c6d47d325338edee77f17d5ac666d08fa9ecaf3432f9308fbed7dcd58854fe"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.observer-design-preflight-01.json",
+        "sha256": "8f1aae0ff276dc0ebf634b31a4a69e023f2196afd3c6a798a3d9bcf29d6963f8"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.bounded-native-source-preflight-01.json",
+        "sha256": "e62a80fce7db33950b53b362c25d67e3dacc464dcd1b47c374c47a4bb67b4766"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.status-phase-diagnostic-01/core-phases-15600.jsonl",
+        "sha256": "88f934be20d66279d2e689bdc6d3a8ac90fdc8e358105dfef46662ace14f4fdd"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.status-phase-diagnostic-01/core-phases-34024.jsonl",
+        "sha256": "e94afeb40472cedcd6ab40983ac553c7b72046a1c94b8c7864bec9b3f4f1fe98"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.status-phase-diagnostic-02/core-phases-34292.jsonl",
+        "sha256": "b8e0886b3f1e23707e30d605f3311df0cce400e9cbbf188e41e9d58d889a9390"
+      },
+      {
+        "path": "artifacts/tmp/W3.C01.status-phase-diagnostic-02/core-phases-40808.jsonl",
+        "sha256": "18861949d7e1aeab947204a033ae193c459f7a9abba405e7c5a576ef8b42fc4d"
+      }
+    ],
+    "assessment": "Committed qualification02 at67b24a0 remained FAIL at a new test optional-selection type error; all nine later groups, including Native, were unexecuted. A test-only fix narrows the actual selected generation and moves denial-operation assertions outside callbacks whose exceptions are fail-closed, avoiding false-positive denial evidence. Qualification03 at1225773 retained its real bounded Native PASS, but the query module failed both strengthened successor observations because catalog.acquire correctly rejected an already-live owned lease. The earlier callback-internal assertions had hidden that fixture setup problem. The repaired tests use the index service real existing writer lease and assert actual successor selection/Incomplete stage outside fail-closed callbacks. Development owned-lease02 passed all three cases; earlier owned-lease01 failed only sandbox temporary-directory setup with WinError5 and proves no behavior. Qualification04 at264253d retained all static PASS results but failed bounded Native page replay with the generic Native error at2033.5146ms after a first page2001899.6573ms. All seven unit groups were unexecuted; exact cause remains unknown without request phase telemetry. Failure-first startup characterization then measured seven actual canonical opens against the unchanged three-open budget. Independent startup advisory supported same-writer consolidation while retaining all full source captures and final fences, and explicitly rejected an unproved mirror replacement. All four real-storage development cases passed in24.7376043s. Fresh05 reruns every selected group at the new exact commit; no02/03/04 PASS observation is reused. Original committed page and later development status generic errors retain unknown historical cause. Two new nonqualifying traces reproduced late running200 status after FIFO wait behind obsolete collection/retirement; those traces are not Native qualification or proof of historical causes. Initial diagnostic producer expected two opens but observed three, correctly retained UNEXPECTED_DIAGNOSTIC_OUTCOME; later trace established nested guard validation plus selection read. No assertion was relaxed. New bounded-source preflight found a Vite import-location issue, repaired before execution with the same installed desktop Vite entry. All full-journey failures and original sources remain preserved."
+  },
+  "scopeLimits": [
+    "Fresh installed bytes observed; no whole-system/OS immutability attestation or cache authority.",
+    "No full S01 journey/post-restart fresh execution/Native cancellation/100k scale/scientific gold/renderer picker/installer/full-profile or Wave qualification. Preparation/retirement contention remains a hard S01 blocker; this is not W10 optional debt or a deadline waiver.",
+    "Native supervisorStopped is returned state only; the existing inner stop helper can force after its deadline. Outer Job no-forced/empty observations and Node normal exit do not prove graceful/unforced inner Core shutdown. No such lifetime claim; S01 requires separate actual stop/drain observations.",
+    "Native supervisorStopped is returned state only. Node normal exit and outer Job active0/no-forced do not establish graceful/unforced inner Core stop; actual S01 lifetime proof remains pending.",
+    "This task disposition cannot approve S01, a checkpoint, W3 or release, and cannot waive the hard preparation/retirement failure. APIs remain independent of UI; no AI-mode planning."
+  ]
+}

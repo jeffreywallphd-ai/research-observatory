@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7dd92e2688cfc32c4200c92d71084edfd416e7d06f5adcd4544ad310e825765d
+source_sha256: 503180db49e55ecac9b7ebbb9f33f8be9b869329b731cbd3212da02d76178315
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6035,7 +6035,7 @@ Original tasks and approvals remain unchanged.
 
 ### W3.C01.T01 — Implement fielded search, filters, snippets, and ranking explanation
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** Fresh committed populated Native slice trial at127372650c07489e7df413156193c084cb47d10b completed search execution but failed its one-item /projects/search/page at2037.9434ms with RO-CORE-API-RESPONSE-INVALID under the unchanged two-second Native response bound. Retained artifacts/tmp/CAP-06.S01.populated-native-runtime-01.json and its seven original receipts; full fresh recorder artifacts/tmp/CAP-06.S01.populated-native-qualification-01/report.json reports FAIL with all six source/runtime fixity flags true. Independent source inspection identifies a duplicate canonical open in each repeated query fence; actual failed invocation has no phase telemetry, so historical cause and concurrent-load contribution remain unknown.
 
@@ -6052,13 +6052,43 @@ Original tasks and approvals remain unchanged.
 - tests/search/test_lexical_query_service.py
 #### Review history — W3.C01.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `28e85512b957b5682075dfcbb17cf1952176bbc126fc02f2a89ddbd0f0c334b1`
+
+- Candidate / base / branch: `ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c` / `c3c12aeaaaa031c15c0b2d56d188ec3386d54c3b` / `codex/w3-implementation`
+- Submitted by / at: codex-w3-implementation / `2026-10-17T08:31:15+00:00`
+- Evidence: `artifacts/evidence/W3.C01.T01.R01.json` / `13551036ba66d25c682bb80ea06a83151c675b6b47a0c8608cfe49391bc1d258` / `ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c`
+- Acceptance-criteria SHA-256: `01fc79a7ec1bafe7ce6058453825020cbb0421253dceb1a29d6d3629a83dafdd`
+- Verification-selection SHA-256: `02248f68c7ec142a2735b9d20a008700c175a2a517dbd4d5a13c4f5f7b5c87af`
+- Changed paths: `artifacts/evidence/W3.C01.T01.candidate-publication-note-02.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W3.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/lexical_query_repository.py`, `tests/search/test_lexical_query_service.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py`, `.venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py`, `.venv/Scripts/python.exe -B -m mypy --no-incremental --cache-dir .\artifacts\tmp\W3.C01.qualification-05\mypy-cache services/core-api/src/research_observatory_core/lexical_query_repository.py tests/search/test_lexical_query_service.py`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`, `pinned-node24 artifacts/tmp/W3.C01.bounded-native-integration-01.mjs --report artifacts/tmp/W3.C01.T01.bounded-native-runtime-03.json`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_close_lifetime`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows`
+- Deferred checks: `CAP-06.S01 remains blocked by demonstrated preparation/obsolete-retirement FIFO contention; the original complete Native journey and all FAILs remain unchanged. After actual C01 review/integration, the next lawful linked correction must restore that boundary before full S01 qualification.`, `Fresh full100k metadata/permitted projections, resources, lifetime, full profiles, packaging and independent slice/Wave qualification remain required at their actual owners. Scientific gold/rights/human bridge obligations retain their declared S02/S03 owners. No AI mode or launcher is planned or implemented.`
+- Selection rationale: Two-path query fence correction: exact selection/generation/source/time/rights/expiry/cancel/close/result/replay, fresh separately named real Native populated query/page/filter/explanation/admission/rights/close/restart-old-page proof under unchanged two-second bound. This new explicit scenario uses the unchanged Rust Native carrier as fixture/IPC/process owner and a pinned main-entry resolver to select the separately hashed bounded client, never the original full Node scenario. Localization in advisory02 proves current full-journey failure is index preparation/obsolete retirement outside the query fence. Preserve every full-journey FAIL and unchanged original test/assertions; index cleanup remains a hard S01 blocker for the next lawful correction after C01 disposition. Pure grammar/contracts, migrations, TS/UI and packaging remain unchanged and deferred to slice/Wave. No historical evidence reused as a current-candidate PASS.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w3_c01_review / `2026-10-17T09:05:34+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W3.C01.T01.review-R01.json` / `d693b0a0514c99fdf712639a8f63458df16feff11ba31485865443dff5b2e713`
+
+**Review notes:** Approved W3.C01.T01 R01 at exact ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c with no findings. Same-writer startup/fence consolidation preserves complete current lawful-source/selection/generation authority and final delivery controls. All selected fresh05 proof is authenticated with truthful bounded Native scope and preserved adverse history. CAP-06.S01 preparation/retirement, full Native journey, actual inner lifetime, scale and later qualification remain hard pending obligations; this is task disposition only.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w3_c01_review at `2026-10-17T09:05:34+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approved W3.C01.T01 R01 at exact ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c with no findings. Same-writer startup/fence consolidation preserves complete current lawful-source/selection/generation authority and final delivery controls. All selected fresh05 proof is authenticated with truthful bounded Native scope and preserved adverse history. CAP-06.S01 preparation/retirement, full Native journey, actual inner lifetime, scale and later qualification remain hard pending obligations; this is task disposition only.
 
 **Currently open findings:** -
 

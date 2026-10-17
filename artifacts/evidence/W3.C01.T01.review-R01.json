@@ -1,0 +1,203 @@
+{
+  "task_id": "W3.C01.T01",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/w3_c01_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-17T09:05:08.864334+00:00",
+  "reviewed_state_commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+  "candidate_commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+  "base_commit": "c3c12aeaaaa031c15c0b2d56d188ec3386d54c3b",
+  "packet_sha256": "28e85512b957b5682075dfcbb17cf1952176bbc126fc02f2a89ddbd0f0c334b1",
+  "evidence_sha256": "13551036ba66d25c682bb80ea06a83151c675b6b47a0c8608cfe49391bc1d258",
+  "acceptance_criteria_sha256": "01fc79a7ec1bafe7ce6058453825020cbb0421253dceb1a29d6d3629a83dafdd",
+  "selection_sha256": "02248f68c7ec142a2735b9d20a008700c175a2a517dbd4d5a13c4f5f7b5c87af",
+  "findings": [],
+  "closures": [],
+  "corrective_integration": {
+    "evidence_sha256": "13551036ba66d25c682bb80ea06a83151c675b6b47a0c8608cfe49391bc1d258",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Reviewed exact R01 and committed c3c12aea..ce1a7c6f correction against the frozen two-path spec, original independently approved DONE CAP-06.S01.T03 contract, Accepted ADR-0057/0025 and approved S01 scope. Fresh05 passes all 12 selected groups: 31 selected Python cases, four static groups and separately named actual populated Native query/page/filter/explanation/admission/rights/close/restart-old-page proof. The original full Native scenario and all failures remain unchanged; the bounded scenario executes its separately hashed client through the unchanged Rust fixture/IPC owner with the unchanged two-second Native response bound. The demonstrated preparation/obsolete-retirement FIFO contention is outside the corrected query path and remains a hard S01 blocker requiring its own lawful correction. This disposition does not approve S01, W3, release, graceful inner Core shutdown, Native cancellation, post-restart fresh execution, scale, scientific gold or full profiles."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Fresh query and delivery evidence preserves deterministic weighted best-row-per-positive-leaf BM25, stable score/item-ID order, exact field contributions, year-filter membership, immutable input/run/result/cursor bindings and bounded inert snippets/explanations. The new real Native scenario asserts the actual canonical item/work revisions, one populated title/identifier result, identical replay, explanation components and a year-excluded empty result through the ordinary generated client and unchanged Native transport. The fresh frozen synthetic title/DOI frame reports recall@20=1.0 on 64 held-out queries, separately 32 title and 32 DOI; the eight development queries stay separate. This is declared technical known-item lookup, not scientific relevance or systematic coverage."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The two new real-opener budgets retain their failure-first observations: three actual canonical opens against the one-open fence bound, and seven against the three-open startup bound. Both execute real protected storage and current authority guards, and pass at this exact candidate. Actual current owned leases republish the selection and cancel the generation during buffered delivery; assertions outside fail-closed callbacks prove the successor selection and Incomplete stage occurred before denial. All 31 selected Python cases pass without skips, covering source authority epochs, rights denial/activation/expiry, clock rollback, cancellation, immutable canonical acceptance and protected close boundaries, with real Windows Core composition. Fresh bounded Native proof contains four actual 409 RO-CORE-SEARCH-DENIED responses for rights page/status, closed project and fresh-session old page; generic transport failure is not counted as denial. Full Native journey, later fresh execution/cancellation and slice lifetime/scale remain unqualified."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The only product/test changes are the two exact frozen spec paths. Startup reads authenticated latest selection, complete latest generation, watermark, source epoch and trusted normalized time partition in one existing catalog writer. Its real project guard and current actor command/accepted Intent/privacy authority checks run before and after the writer body. Repeated fences authenticate the exact selection event/generation/event/checkpoint/authority and complete generation inside the existing fresh source writer. Current key/path/lifecycle, expiry/rollback/activation, cancellation, full lawful-source validation and post-consumer/post-store-close fences remain. No API, AI mode, UI reference, migration, permission, baseline or release contract changes. The six other paths are bounded claim/publication artifacts; original task/history and W3 approval are unchanged. The publication note truthfully separates the full pre-retention checker PASS from two exact historical retained blobs, without asserting a final retained-tree full-byte PASS."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "The fresh declared held-out 64-query technical title/DOI frame meets the inherited 0.90 target with recall@20=1.0 and exact frozen fixture/Core-minted mapping. Existing delivery and current-source tests preserve stable ties/pages, exact cursors, rights-aware snippets and ranks/method scores distinct from probabilities. Complete lawful mirror validation, including nonmatching rows, still precedes BM25. The second complete canonical source capture and item/work/source/document lineage remain, including empty or denied items. There is no mirror-enumeration shortcut, cross-request authorization cache or warm-read certificate. Selection republication and generation cancellation are rechecked after consumption and after protected store close before any buffered result returns."
+    }
+  ],
+  "review_scope": {
+    "depth": "expanded task review for protected rights/source authority and affected public/Native delivery integration",
+    "committed_range": "c3c12aeaaaa031c15c0b2d56d188ec3386d54c3b..ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+    "changed_paths": [
+      "artifacts/evidence/W3.C01.T01.candidate-publication-note-02.md",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W3.html",
+      "planning/status-summary.md",
+      "services/core-api/src/research_observatory_core/lexical_query_repository.py",
+      "tests/search/test_lexical_query_service.py"
+    ],
+    "source_bindings": [
+      {
+        "path": "services/core-api/src/research_observatory_core/lexical_query_repository.py",
+        "raw_sha256": "a24691133e71b57e22038cf321ff9d8ad9b3de455cc1852cb69712be9433e37b"
+      },
+      {
+        "path": "tests/search/test_lexical_query_service.py",
+        "raw_sha256": "4fb666b9e0d770f36f9d436421999c6a8f7bcfb68d2a4b60c57501ea4cfbab04"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/lexical_catalog_repository.py",
+        "raw_sha256": "152906a36b36b75a23cd0469aa626f0283c4f756122bacfc9a9695106ef725ce"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/lexical_index_repository.py",
+        "raw_sha256": "d14b9a5b3dbcb43b83e6fc9dc57e831e996cbe4c1d431ceaaef3ba57d4fe01d0"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/corpus_repository.py",
+        "raw_sha256": "928b6b81320342ae5c135dfb50b417730b5d07e5958f1acbe3fb732515b492dc"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/lexical_input_repository.py",
+        "raw_sha256": "c8c89ec4ca261e1bf6f32751a7f571bdf4b7e9f7e76e24c0aec09004ad6416d5"
+      }
+    ],
+    "authority_authentication": {
+      "origin_task_id": "CAP-06.S01.T03",
+      "origin_commit": "127372650c07489e7df413156193c084cb47d10b",
+      "origin_snapshot_sha256": "300e2322c7eb9059c2ea5341512757ba20830e67e359f7ead31df18339b4c55b",
+      "independently_recomputed_origin_snapshot": true,
+      "original_task_history_unchanged_origin_base_candidate": true,
+      "inherited_contract_and_verification_fields_equal": true,
+      "approved_wave_authority_unchanged": true,
+      "ordinary_campaign_remains_paused": true
+    },
+    "separate_preintegration_component": {
+      "path": "artifacts/tmp/W3.C01.fixture-quiescent-preintegration-review-01.json",
+      "sha256": "e2821397853208bb8a755952dedd8a090b468874699d92a8d376fa68254a8701",
+      "scope": "Independent disposition of prior main..c3c12aea populated Native fixture and quiescent metadata only; this formal review covers the subsequent eight-path C01 delta. Neither review alone infers ordinary campaign resume or S01/Wave/release approval."
+    }
+  },
+  "evidence_authentication": {
+    "canonical_submission": "planning/backlog.yaml: W3.C01.T01.review_control.current_submission",
+    "packet_digest_recomputed": true,
+    "selection_digest_recomputed": true,
+    "acceptance_digest_recomputed": true,
+    "packet_manifest_candidate_base_branch_paths_checks_deferred_rationale_and_command_ids_equal": true,
+    "prior_formal_attempts": 0,
+    "prior_open_findings": [],
+    "manifest": {
+      "path": "artifacts/evidence/W3.C01.T01.R01.json",
+      "raw_sha256": "addc710213138407af9653d84018476a8f576188736ca87838235714973b05ac",
+      "canonical_sha256": "13551036ba66d25c682bb80ea06a83151c675b6b47a0c8608cfe49391bc1d258"
+    },
+    "authenticated_reference_rows": 62,
+    "selected_raw_log_rows": 12,
+    "native_receipt_rows": 9,
+    "qualification": {
+      "path": "artifacts/tmp/W3.C01.qualification-05/report.json",
+      "sha256": "600267a21adfa04c54b49e9da350a65742b20c5ac6493e4f90ae95371522871b",
+      "status": "PASS",
+      "fresh": true,
+      "reused": false,
+      "runtimeClosureAuthenticated": false,
+      "selected_groups": 12,
+      "selected_python_cases": 31,
+      "skips": 0,
+      "unexecuted_check_ids": [],
+      "all_seven_reported_fixity_flags": true,
+      "producer_sha256": "256c28c6cbaadf475005c49063b94d6a9a02cd107b5485fc308a1eace5f88238",
+      "pinned_evidence_builder_sha256": "78c3bd4168142bba1946b728056c4b0b02b768f8f890bea769c93c007565166c"
+    },
+    "native": {
+      "path": "artifacts/tmp/W3.C01.T01.bounded-native-runtime-03.json",
+      "sha256": "367d3c6d91a074c0840a388e75e0a837ddad5419f883c6727e8470f0e3a96ec6",
+      "status": "PASS",
+      "elapsed_seconds": 73.0681379,
+      "original_full_journey_executed": false,
+      "seven_boundary_assertions": true,
+      "four_typed_409_denials": true,
+      "nine_receipts_hash_authenticated": true,
+      "actual_test_source_sha256": {
+        "artifacts/tmp/W3.C01.bounded-native-client-01.mjs": "59a70b03be4a2a7dd53f4d9c3917754e1f81e4ff2517281bd3ee85139733c84e",
+        "artifacts/tmp/W3.C01.bounded-native-entry-01.mjs": "af72cd306a384066e57d7bd9dd4af64d2dc609c4b8035282b5a6f950927c3546",
+        "artifacts/tmp/W3.C01.bounded-native-integration-01.mjs": "836b8e232bc21e369aebe2e2186cbc80fe18807fd41da71898fccd040e3ad876"
+      },
+      "scope": "Separate query/page/denial client selected only at the exact original main entry URL; actual executed self URL/hash and adapter receipt agree. The resolver does not transform product/generated-client modules or responses. Unchanged Rust carrier owns fixture, IPC and processes; its test name does not establish the original full Node scenario ran. Outer Job natural active0/no-forced and supervisorStopped do not prove graceful/unforced inner Core stop."
+    },
+    "known_item": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.known-items-01a148fb-33e1-71c7-9718-c8253238a8c7.json",
+      "sha256": "95dbaab8693259176a38881824ef7fe6c11a6bb556c1a7743cb8ac843a406cab",
+      "fixture_sha256": "62f37a7259351dfa82c9ea1f2de8148d9e299c6c6db27cad16a903ee45a9ae32",
+      "core_mapping_count": 64,
+      "held_out_queries": 64,
+      "held_out_title_queries": 32,
+      "held_out_doi_queries": 32,
+      "held_out_recall_at_20": 1.0,
+      "development_queries": 8,
+      "limits": [
+        "Exact title and DOI lookup only; no external corpus recall, systematic coverage, scientific gold, human annotation or model-quality claim.",
+        "64 synthetic records: 4 development, 32 held-out and 28 distractors; 8 development and 64 held-out queries, reported separately by title/DOI.",
+        "Ranking/Boolean/filter/rights/snippet/paging failures require separate behavioral tests; this lookup fixture does not establish those boundaries."
+      ]
+    },
+    "publication": {
+      "note": "artifacts/evidence/W3.C01.T01.candidate-publication-note-02.md",
+      "checker_report_sha256": "522ca2d56eaf3b9093e8e7b64e8260e1ea2c84d7c300a64b0eef82f66a70cff1",
+      "checker_receipt_sha256": "63934bcd702add5683696c4e57971cb8a2d1e9474ec65a02b139d913bab9802d",
+      "retention_proof_sha256": "cbed92342e71f6d9d0ed99738ffdefe73ee0a87c74875ce8e70eb3ffaad37226",
+      "scope": "499 pages, zero errors/warnings and exit0 in 923.6255974000087 observed seconds before exact ECR-0008/ECR-0014 historical retention; product sources were uncommitted at that checker. Seven other observed files remained equal at retention. No final retained-tree full-byte or exact committed product PASS is inferred."
+    },
+    "limits": "Independent source/raw authentication of retained actual owner execution, not a reviewer test rerun or independent process/PID/driver observation. Before/after reported equality is scoped evidence, not proof of whole-process or whole-system immutability. No complete installed-runtime/OS attestation, evidence reuse authority or cache is asserted."
+  },
+  "adverse_history": {
+    "qualification_02": "FAIL at 67b24a0: optional-selection type error; nine later groups unexecuted.",
+    "qualification_03": "FAIL at 1225773: both strengthened callback-outside denial observations failed because fixture attempted acquisition of an already-live owned lease; its bounded Native PASS remains historical, not reused.",
+    "qualification_04": "FAIL at 264253d: bounded Native page replay generic timeout; all seven unit groups unexecuted. Its page1899.6573ms/replay2033.5146ms observations remain adverse; historical cause unknown.",
+    "red_regressions": "Original fence three-open and startup seven-open failures retained unchanged. Current test fixture uses the actual existing owner lease and validates side effects outside the callbacks.",
+    "fresh_05_basis": "New product startup consolidation and repaired actual-lease tests justify fresh execution of every selected group at ce1a7c6f. No earlier PASS is reused and no failed overall report is relabelled PASS.",
+    "original_full_native": "Original committed populated Native page2037.9434ms FAIL and later full-journey failures/assertions remain preserved. Nonqualifying later traces localize a preparation/retirement FIFO contention; they do not establish unknown historical timeout causes. This is the first formal R01 review, not an invented prior formal round."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "search:unit"
+    ],
+    "riskAnalysis": "Two-path query fence correction: exact selection/generation/source/time/rights/expiry/cancel/close/result/replay, fresh separately named real Native populated query/page/filter/explanation/admission/rights/close/restart-old-page proof under unchanged two-second bound. This new explicit scenario uses the unchanged Rust Native carrier as fixture/IPC/process owner and a pinned main-entry resolver to select the separately hashed bounded client, never the original full Node scenario. Localization in advisory02 proves current full-journey failure is index preparation/obsolete retirement outside the query fence. Preserve every full-journey FAIL and unchanged original test/assertions; index cleanup remains a hard S01 blocker for the next lawful correction after C01 disposition. Pure grammar/contracts, migrations, TS/UI and packaging remain unchanged and deferred to slice/Wave. No historical evidence reused as a current-candidate PASS.",
+    "deferred": [
+      "CAP-06.S01 remains blocked by demonstrated preparation/obsolete-retirement FIFO contention; the original complete Native journey and all FAILs remain unchanged. After actual C01 review/integration, the next lawful linked correction must restore that boundary before full S01 qualification.",
+      "Fresh full100k metadata/permitted projections, resources, lifetime, full profiles, packaging and independent slice/Wave qualification remain required at their actual owners. Scientific gold/rights/human bridge obligations retain their declared S02/S03 owners. No AI mode or launcher is planned or implemented."
+    ]
+  },
+  "deferred_scope": [
+    "Demonstrated index preparation/obsolete-retirement FIFO contention remains a hard CAP-06.S01 blocker. The next lawful bounded correction follows actual C01 disposition/integration; this is not W10 optional optimization debt or a waived Native deadline.",
+    "The unchanged original full populated Native scenario remains failed. Post-restart fresh execution, deterministic Native cancellation and actual inner Core stop/drain observations remain S01 obligations.",
+    "Full100k metadata/permitted projections, resource bounds, full affected profiles, packaging, integrated slice/checkpoint and fresh Wave qualification plus independent judgments remain pending. Scientific gold/rights/human bridge evidence retains its S02/S03 ownership.",
+    "No S01/W3/release approval, new experience reference, future AI-mode planning or launcher authority is conferred. Core/query/generated APIs remain independent of UI."
+  ],
+  "independence": {
+    "implementation_owner": "codex-w3-implementation",
+    "statement": "I authored no product code, test fixture, owner evidence producer, qualification report, criterion manifest or task mutation. I independently inspected the committed correction and governing contract, authenticated original task/approval preservation and exact frozen R01, examined selected raw logs, Native scenario/producers/receipts and adverse history, and reviewed bounded publication truth. I ran no tests/probes/Node/builds/generators/scanners or global validator. Read-only Git/source/JSON/YAML/hash inspection was used. This new ledger is my sole file write, performed only after the owner confirmed submission and HTML generation quiescent; no source, runtime, owner evidence, backlog or frozen packet was edited."
+  },
+  "notes": "Approved W3.C01.T01 R01 at exact ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c with no findings. Same-writer startup/fence consolidation preserves complete current lawful-source/selection/generation authority and final delivery controls. All selected fresh05 proof is authenticated with truthful bounded Native scope and preserved adverse history. CAP-06.S01 preparation/retirement, full Native journey, actual inner lifetime, scale and later qualification remain hard pending obligations; this is task disposition only."
+}
