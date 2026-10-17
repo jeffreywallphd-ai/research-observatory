@@ -1,0 +1,251 @@
+{
+  "task_id": "CAP-06.S01.T03",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/w3_query_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-17T05:10:20.1108150Z",
+  "reviewed_state_commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+  "candidate_commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+  "base_commit": "a6e2b9146f788d489006998fccb0669bfba91bc7",
+  "packet_sha256": "7650d0ed2a8c19dcac9feb97078b1344872be50a47b0b61a2b6a71d4ede4329d",
+  "evidence_sha256": "d7a5e33d2b5585fa3814631106e493ce98ca8ca7c71a866b08fc11acb7ad9e38",
+  "acceptance_criteria_sha256": "01fc79a7ec1bafe7ce6058453825020cbb0421253dceb1a29d6d3629a83dafdd",
+  "selection_sha256": "ae3828da6182849b5f90821483cbd4b114918eca85edf931dbadd7ebe380b4eb",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The actual declared64 held-out synthetic title/DOI queries achieve recall@20=1.0, with32 title and32 DOI queries separately reported; the8 development queries remain separate. The frozen64-record split, Core-minted item mapping before lookup and exact fixture digest are authenticated. This establishes technical known-item lookup only. Reviewed weighted best-row-per-distinct-positive-leaf BM25 keeps negative/year/filter effects neutral, uses complete current lawful statistics before scoring and stable score/item-ID ties, and preserves Boolean batching/item identity. Actual protected ranking/query/delivery tests and the generated client/browser cases cover reversed input, duplicate leaves, ties, exact cursors and explanation components. Search Studio distinguishes exact/field contributions, filter membership and method scores/ranks without probabilities or qualified semantic/rerank claims."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The selected evidence comprises24 actual passing observations from qualification02 and one separately executed fresh26-case lifecycle supplement at the same continuously frozen committed candidate. Original qualification02 remains FAIL. Actual selected search execution reports148 cases with no skips;4 existing/additive API cases,16 storage-contract cases,9 specifically corrected migration cases,17 rights cases,20 document/source cases,4 client cases,13 desktop static cases,3 production-browser journeys and one selected Rust admission test pass. Real current-user DPAPI/SQLCipher/Core composition covers populated lookup and current rights, foreground status/replay/cancel during an owned phase barrier, rejected late outputs and subsequent success. The separate real Rust-supervisor/generated-client journey uses an empty lawful corpus and proves bounded public admission, durable worker/run, replay/status/page, old-result denial across close/restart, cancellation availability and normal owned drain. It does not prove populated Rust retrieval or deterministic running-work cancellation. The browser uses controlled Core/native replies to prove actual production React/generated-client state, inert Unicode markup, focus/keyboard, paging/source return, both themes/narrow reflow, exact lost-ack retry, failed-poll recovery and late anchor/navigation/lock fences. These separate boundaries and residuals are explicit."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The102-path candidate is within approved CAP-06.S01.T03 and its necessary current-authority/compatibility closures under Accepted ADR0057 and immutable source/anchor ADR0029; Proposed ADR0061 is documentary implementation, not new approval. Schema30 appends immutable typed query inputs/runs and authority epochs; populated protected29 migration, preservation, rollback/interruption/retry and old recovery guarantees are exercised. Complementary independent source review authenticates unchanged schema29, frozen predecessor fixtures and58 historical recovery branches; five changed migration tests append only current30 expectations while preserving predecessor/history/backup/ciphertext/negative assertions. Six search operations are additive and all102 predecessor operations/component schemas remain compatible with the exact claim base. Pure ports and Core APIs remain independent of UI with root-only storage adapters. Candidate-selected lint/format/types, architecture/regressions, ADR, contracts and planning views pass. Actual Node24 product build and the separate task-owned verifier bind approved UI1.10,204 payload artifacts plus manifest and185 pinned PDF resources, with six actual assembler rejection cases; the unchanged shared helper remains FAIL and no whole desktop-profile PASS is claimed. The low command-display error is explicitly corrected by the append-only provenance erratum below; it does not replace or alter the frozen evidence. Privacy/publication claims preserve exact admissions and distinguish full pre-retention generated-tree PASS from two authenticated historical-page retentions, without a retained-tree full-byte PASS."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "The declared held-out denominator64 and both32-query strata meet the0.90 target, with original per-query outcomes, IDs and8 development outcomes retained. Actual ranking/delivery tests and the reviewed strict cursor/value contracts preserve finite method scores, one hit per item, stable ties, exact run/configuration/input/result/page binding and complete bounded prefixes. Every lawful mirror row, including nonmatches, is authorized before it can affect BM25 statistics; current actor/Intent/session/project, source/copy/head, selection/lifecycle, epoch, activation/expiry/clock rollback and cancellation fences prevent stale disclosure. Source-verified inert bounded Unicode snippets preserve actual canonical projection/codepoint identity, with real containing-node association only when available and honest unanchored previews otherwise. Whole accepted projections preserve cross-node/uncovered text without inventing cross-projection phrases or offsets. The pre-submission final-commit time gap is repaired after actual terminal publication and authenticated by three passing rollback regressions. No warm-read certificate, index-only authorization shortcut, fabricated anchor, probability, scientific coverage or100k qualification is introduced."
+    }
+  ],
+  "pre_submission_advisory_reviews": [
+    {
+      "id": "AUTH-COMMIT-TIME-01",
+      "kind": "independent-pre-submission-provisional-advisory-not-a-formal-round",
+      "status": "remediated-and-qualified-before-first-R01",
+      "original_candidate": "ffed5dada98d5c04cdba90e8027da6f631cf2744",
+      "assessment": "Original source checked trusted time before terminal queue completion but only head/cancel immediately before writer exit. Actual failure-first SQLCipher reproductions retained persisted acceptance after expiry, same-partition clock rollback and nonmatching source activation. Committed check_current now runs after real queue completion, observation classification and validated result construction, immediately before the same canonical transaction exits, without demanding a running lease after success. The three permanent exact-candidate regressions execute the real terminal writer, then transition authority, require denial, no accepted output, running job and exact aggregate/run/input/observation/artifact/output/provenance/outbox history rollback. All pass in the fresh148-case selected search observation. No prior formal RNN or finding-control history is invented.",
+      "original_component": {
+        "path": "artifacts/tmp/CAP-06.S01.T03.authority-component-review-01.json",
+        "sha256": "1e1efcabc7df5567e15bb85338de79645d91f66cd997bd8aa71b92c30fd4bf94"
+      },
+      "committed_component": {
+        "path": "artifacts/tmp/CAP-06.S01.T03.authority-component-review-02.json",
+        "sha256": "26f17f8f47279da7cff8a4d75648bb0c5b81c85cf5f0c3903e86bb6675c5f700"
+      },
+      "qualifying_check": "search"
+    },
+    {
+      "id": "T03-METHOD-02-SELECTOR",
+      "kind": "task-local-pre-submission-method-advisory-not-a-formal-round",
+      "status": "closed-before-qualifying-execution",
+      "assessment": "Exact failed01 report/log digests authenticate the nine selected migration cases before parsing; original selection digests are retained and rechecked in qualification02 and the supplement. Final selector equality is true. No old137-case PASS is transplanted to the repaired candidate."
+    },
+    {
+      "id": "T03-METHOD-02-PRODUCT-LIFETIME",
+      "kind": "task-local-pre-submission-method-advisory-not-a-formal-round",
+      "status": "closed-before-qualifying-execution",
+      "assessment": "Complete confined product artifact hashes are checked after product binding, before/after the browser consumer, at qualification02 closure and across the supplement. Both producer sets preserve raw/supplemental evidence, dependency wiring and generated output lifetimes. The command-display discrepancy discovered after submission remains explicitly disclosed below."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w3-implementation",
+    "complementary_reviewer": "agent:/root/w3_authority_review",
+    "statement": "I independently reviewed committed query/rank/lawful-statistics/source delivery/cursor/API/client and SearchWorkspace/ApplicationRuntime/Reader boundaries, replayed the changed committed Intent/final-fence regressions and authenticated actual selected evidence and canonical R01. Of my28 original ffed source bindings,26 remain exact; only the reviewed lexical_search_repository and task-start worksheet differ. Complementary authority review at exact7c3afbb9 covers Native/Core/session/actor lifecycle, canonical input/run/result/lineage, SQLCipher holds/close, schema30/preserved29 migrations, privacy and publication; its25 selected unchanged source bindings and committed remediation assessment are authenticated. I authored no product code, committed tests, owner qualification producer, criterion manifest or task mutation. Earlier method/API/UI/scale/proof-ownership/privacy reviews were advisory and grant no product approval. I ran no tests, product probes, Node processes, builds, generators, scanners or global validator. I used the existing read-only task_submission_packet_errors helper, which returned no errors. I did not personally observe a fresh process/PID/driver chain or claim full machine attestation; actual owner tool-reported execution, pinned producer source, complete raw artifacts and independent source review establish the bounded execution evidence. This formal disposition writes only this new consolidated ledger after publication became quiescent; source/HEAD/index/refs/runtime/dependencies/backlog/frozen packet/manifest/producers remain unmodified."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:unit",
+      "search:unit",
+      "security-local:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Expanded task review is required for public/cross-process search and private-response contracts, rights/time-dependent statistical universe, canonical run acceptance/migration, protected close lifetime, cancellation and governed UI. Source review plus actual protected Core, empty-corpus real Native, controlled production-browser, strict client/API, source/rights/compatibility, migration and task-owned product binding address the material task risks. The separately diagnosed lifecycle retry completes the same continuously frozen campaign; it does not convert either failed overall report to PASS or authorize caching. No unchanged whole-profile rerun was requested without an impact path.",
+    "deferred": [
+      "CAP-06.S01 integrated review/qualification still owns populated actual Rust/Native-to-Core search proof,100k distinct metadata plus100k permitted projection workload, resource/latency and combined adversarial evidence. One synthetic metadata preparation advisory, small fixtures and empty Native corpus establish none of those results.",
+      "Scientific SciFact/QASPER annotated-evidence retrieval remains PENDING/UNQUALIFIED. Actual release/digest/notice/rights/source mapping and competent reviewer/independent adjudicator30-case bridge are required before benchmark use. Same-ID lexical baseline/comparison obligations at CAP-06.S02.T02 and CAP-06.S03.T01 remain; technical title/DOI lookup does not waive or satisfy scientific proof.",
+      "Original intermittent native delete-to-trash failure remains UNKNOWN and must remain visible for fresh slice/Wave judgment. The unchanged shared desktop helper remains FAIL; complete affected repository/deployment profiles, packaging, security/privacy/rights/accessibility/performance/restart/recovery and independent Wave review precede separate human release approval. No later-platform, installer, model qualification, probability or coverage claim is made.",
+      "UI-independent Core/API preservation supports future clients. Headless AI mode, launcher work and AI-mode planning remain outside this task."
+    ]
+  },
+  "evidence_authentication": {
+    "result": "AUTHENTICATED_WITH_EXPLICIT_COMMAND_DISPLAY_ERRATUM",
+    "canonical_submission": "planning/backlog.yaml: CAP-06.S01.T03.review_control.current_submission",
+    "packet_errors": [],
+    "no_prior_formal_attempts_or_open_findings": true,
+    "changed_paths": 102,
+    "criterion_rows": 4,
+    "selected_check_rows": 25,
+    "authenticated_selected_raw_log_hashes": 25,
+    "authenticated_selected_supplemental_hashes": 15,
+    "authenticated_development_adverse_artifact_hashes": 50,
+    "authenticated_supplement_pinned_evidence_producer_hashes": 50,
+    "source_component": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.query-ui-source-review-ffed5dad-01.json",
+      "sha256": "3f700e8126b3c003fd4ce6a1cfa8dfe685fb3e71972116e9db6f7b127d580513"
+    },
+    "frozen_snapshot": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.frozen-R01-binding-01.json",
+      "sha256": "47b241a335212ab5cc32f24e8e8ebc034758904241d45c71ecb4dc561255e627",
+      "matches_canonical_current_submission": true
+    },
+    "manifest": {
+      "path": "artifacts/evidence/CAP-06.S01.T03.R01.json",
+      "raw_sha256": "be901c04a760174ee0010791b444bc2b245a08985088f9c4e6e897757b4ad43b",
+      "canonical_sha256": "d7a5e33d2b5585fa3814631106e493ce98ca8ca7c71a866b08fc11acb7ad9e38",
+      "frozen_unchanged": true
+    },
+    "original_qualification": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "sha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "status": "FAIL",
+      "passing_groups": 24,
+      "failing_group": "project-lifecycle",
+      "final_ten_fixity_flags": true,
+      "runtimeClosureAuthenticated": false
+    },
+    "fresh_supplement": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-supplement-03/report.json",
+      "sha256": "c9b82ef52eecd429d716c61b047fff35ffbd425d081e1843cd3fcd60e728b059",
+      "status": "PASS",
+      "unmodified_cases": 26,
+      "unittest_seconds": 4.73,
+      "invocation_seconds": 7.635660700005246,
+      "raw_sha256": "a16aee64f63c26f3791da5b26a238a4e948b461ab3dfb08ce60ae915d2d32b16",
+      "all_twelve_fixity_flags": true,
+      "source_runtime_maps_equal_original02": true,
+      "single_invocation": true,
+      "runtimeClosureAuthenticated": false
+    },
+    "known_item": {
+      "fixture_sha256": "62f37a7259351dfa82c9ea1f2de8148d9e299c6c6db27cad16a903ee45a9ae32",
+      "bound_core_item_mapping": 64,
+      "synthetic_records": 64,
+      "held_out_queries": 64,
+      "held_out_title_queries": 32,
+      "held_out_doi_queries": 32,
+      "held_out_recall_at_20": 1.0,
+      "development_queries": 8,
+      "all72_query_outcomes": "PASS",
+      "limit": "Wholly artificial technical exact title/DOI lookup; no scientific annotated-evidence relevance or coverage."
+    },
+    "selected_counts": {
+      "search_cases": 148,
+      "api_compatibility_cases": 4,
+      "storage_contract_cases": 16,
+      "corrected_migration_cases": 9,
+      "rights_cases": 17,
+      "document_source_cases": 20,
+      "lifecycle_supplement_cases": 26,
+      "architecture_regressions": 20,
+      "client_cases": 4,
+      "desktop_static_cases": 13,
+      "production_browser_cases": 3,
+      "selected_rust_admission_cases": 1,
+      "rust_cases_filtered_out": 239,
+      "product_binding_checks": 19,
+      "product_negative_cases": 6,
+      "product_payload_artifacts": 204,
+      "product_inventory_including_manifest": 205,
+      "pinned_pdf_resources": 185,
+      "product_declared_source_files": 261
+    },
+    "runtime_and_provenance_limit": "Installed file bytes and complete dependency resolution maps equal across the original and supplemental observation endpoints under coordinated immutability. The two exact Vitest result outputs are separately named; ordinary optimized executable cache bytes remain pinned. No cache reuse, OS/driver/full-machine or absence-of-transient-mutation attestation follows. Original Native timestamps and its empty lawful corpus boundary remain authoritative."
+  },
+  "evidence_display_errata": [
+    {
+      "id": "R01-DISPLAY-01",
+      "severity": "low",
+      "blocking": false,
+      "kind": "append-only-documentary-provenance-erratum",
+      "criterion_index": 3,
+      "frozen_packet_sha256": "7650d0ed2a8c19dcac9feb97078b1344872be50a47b0b61a2b6a71d4ede4329d",
+      "frozen_manifest_canonical_sha256": "d7a5e33d2b5585fa3814631106e493ce98ca8ca7c71a866b08fc11acb7ad9e38",
+      "affected_field": "checks[id=product-binding].command; same frozen selected_checks display",
+      "frozen_display": "node24 artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.json",
+      "actual_privacy_safe_invocation": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-06.S01.T03.verify-product-build-01.py node24 artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.json",
+      "node24_meaning": "The pinned Node24.19.0 executable is an argument to the Python verifier. Its exact local executable path remains solely in the authoritative ignored original report; node24 is the privacy-safe display alias.",
+      "node24_executable_sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+      "venv_python_executable_sha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+      "authoritative_original_report": {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+        "sha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+        "check_id": "product-binding",
+        "working_directory": ".",
+        "started_at": "2026-10-17T00:14:43.60987-04:00",
+        "completed_at": "2026-10-17T00:14:53.559154-04:00",
+        "duration_seconds": 9.909781299997121,
+        "exit_code": 0
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-06.S01.T03.verify-product-build-01.py",
+        "sha256": "8ecfaf8094d68e82270688608863fb238718bc2e63b6ae96cf779d50254e40f4"
+      },
+      "raw_output": {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02/product-binding.log",
+        "sha256": "1d7328efb5b19f0f7e653838408c422c0bfdae3524db1804393c10bc1525e619"
+      },
+      "supplemental_output": {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.json",
+        "sha256": "b1a543cd301551697a4d1afd6368e797b15e2be5718716c4ec3a83bf5ab4a710"
+      },
+      "explanation": "The task-local display regex consumed the leading Python executable/verifier through the later node.exe argument. This was discovered after freezing and was not caught in earlier producer preflight. The shortened display is inaccurate and must not be treated as an executed or replayable Node command. The original report, pinned verifier source/executables, raw output,19 checks and six rejection outputs authenticate the actual Python invocation. Other inspected product-build/native-api display commands retain their correct executable role.",
+      "disposition": "This ledger supplies the explicit corrected provenance while preserving frozen packet, manifest, reports and producer bytes. No execution, result, duration, coverage, criterion mapping or runtime fact is changed. The explicitly bound original inputReport establishes the actual command, so the documentary display defect does not leave required execution proof missing or require a test rerun/R02. No open blocking finding or silent historical rewrite is introduced."
+    }
+  ],
+  "retained_adverse_evidence": [
+    {
+      "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01/report.json",
+      "sha256": "f657511c18ffa8a9ec53beee42129ee624a01c0d507a985a39ccd2303f9e7401",
+      "status": "FAIL",
+      "assessment": "Original ffed candidate25 groups had23 PASS plus Native deadline and nine stale current-successor migration failures, and runtime byte equality failed because PNPM junction traversal reached four workspace outputs via five labels. This attempt remains FAIL; no retrospective closure or Native timeout root cause is invented."
+    },
+    {
+      "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "sha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "status": "FAIL",
+      "assessment": "Actual unmodified archive/restore/exact-confirmed recoverable delete case failed at held rename to trash with WinError5. This was a functional lifecycle observation, not creation setup. Original owner/cause remains UNKNOWN. The independently reviewed diagnostic proves an injected owned child-share denial, exact manifest/DB rollback and one ordinary recovery, plus one observed original-case pass and limited cached-guard closure; it does not identify the historical owner or prove all handles absent. Exactly one unmodified26-case supplemental run subsequently passed at the same frozen candidate. No hidden product retry, assertion weakening, reliability statistic or retrospective overall PASS is inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-diagnostic-review-01.json",
+      "sha256": "b775479a74bc37a8925781b485ac5fe11d0228c157654543f01ac7fec9b46497",
+      "assessment": "Complementary independent localized diagnostic review supports the single affected retry and requires retaining original cause UNKNOWN and fresh slice/Wave judgment."
+    },
+    {
+      "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-supplement-producer-preflight-02.json",
+      "sha256": "1f239e2daf801385c869010879ae0a6825fe85f86c1cde87e31b7b1d3e18abea",
+      "assessment": "Task-local one-module method was independently reviewed before execution. The later discovered command-display issue is explicitly qualified in this ledger rather than silently modifying its frozen assembler."
+    },
+    {
+      "path": "artifacts/tmp/CAP-06.S01.T03.same-candidate-supplementation-advisory-01.json",
+      "sha256": "5fb6d5bf0b519e7709368e748ad4dfe931895af8b346f594fb7986eaf721166c",
+      "assessment": "Same continuously frozen campaign supplementation is distinct from generic reuse. Fresh Native/principal, benchmark and whole-Wave requirements are unchanged."
+    }
+  ],
+  "notes": "Approved CAP-06.S01.T03 R01 at exact7c3afbb9 after independent expanded source, actual evidence and immutable packet authentication. The command-display erratum is explicit; original qualification01/02 FAILs, separate lifecycle supplement and UNKNOWN native residual are preserved. This is task disposition only, not CAP-06.S01/W3/G3 approval or a scale, scientific gold, whole-profile, installed-package or AI-mode qualification."
+}

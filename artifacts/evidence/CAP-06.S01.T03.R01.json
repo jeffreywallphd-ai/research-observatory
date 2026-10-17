@@ -1,0 +1,1107 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-06.S01.T03",
+  "baseCommit": "a6e2b9146f788d489006998fccb0669bfba91bc7",
+  "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+  "branch": "codex/w3-implementation",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/search-native-integration.mjs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/search_admission.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/SearchWorkspace.test.tsx",
+    "apps/desktop/src/app/SearchWorkspace.tsx",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-06.S01.T03.candidate-publication-note-01.md",
+    "artifacts/evidence/CAP-06.S01.T03.candidate-publication-note-02.md",
+    "artifacts/evidence/CAP-06.S01.T03.fixture-privacy-note-01.md",
+    "artifacts/evidence/CAP-06.S01.T03.task-start.md",
+    "docs/adr/ADR-0061-bind-lexical-search-delivery-to-existing-core-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/search-queries.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/core-api/search.test.ts",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-06/CAP-06.S01.T03.html",
+    "planning/review-site/CAP-06/CAP-06.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W3.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/document_parse_worker.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/lexical_catalog_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_delivery.py",
+    "services/core-api/src/research_observatory_core/lexical_index_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_index_store.py",
+    "services/core-api/src/research_observatory_core/lexical_input_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_query_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_run_lineage.py",
+    "services/core-api/src/research_observatory_core/lexical_run_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_search_api.py",
+    "services/core-api/src/research_observatory_core/lexical_search_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_search_worker.py",
+    "services/core-api/src/research_observatory_core/lexical_source_repository.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0030_lexical_search_runs.py",
+    "services/core-api/src/research_observatory_core/ports/lexical_search.py",
+    "services/core-api/src/research_observatory_core/search/delivery_values.py",
+    "services/core-api/src/research_observatory_core/search/errors.py",
+    "services/core-api/src/research_observatory_core/search/ranking.py",
+    "services/core-api/src/research_observatory_core/search/run_schema.py",
+    "services/core-api/src/research_observatory_core/search/run_values.py",
+    "services/core-api/src/research_observatory_core/search/workflow.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/connectors/test_plugin_grant_migration.py",
+    "tests/data/test_import_commit_migration.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/desktop/fixtures/search-core-port.mjs",
+    "tests/desktop/test_search_interactions.py",
+    "tests/documents/test_acquisition_recovery_migration.py",
+    "tests/documents/test_anchor_invalidation_migration.py",
+    "tests/documents/test_document_revision_migration.py",
+    "tests/documents/test_local_attachment.py",
+    "tests/documents/test_oa_acquisition.py",
+    "tests/documents/test_reference_migration.py",
+    "tests/fixtures/search/v29-populated-predecessor.json",
+    "tests/fixtures/search/v29-populated-predecessor.zip",
+    "tests/foundation/test_architecture_check.py",
+    "tests/reconciliation/test_corpus_migration.py",
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_version_migration.py",
+    "tests/reports/test_migration.py",
+    "tests/rights/test_migration.py",
+    "tests/search/fixture_support.py",
+    "tests/search/fixtures/synthetic-known-items.v1.json",
+    "tests/search/test_index_close_lifetime.py",
+    "tests/search/test_index_migration.py",
+    "tests/search/test_known_item_lookup.py",
+    "tests/search/test_lexical_delivery.py",
+    "tests/search/test_lexical_query_service.py",
+    "tests/search/test_lexical_ranking.py",
+    "tests/search/test_lexical_search_activity.py",
+    "tests/search/test_search_api.py",
+    "tests/search/test_search_api_compatibility.py",
+    "tests/search/test_search_display_fields.py",
+    "tests/search/test_search_run_migration.py",
+    "tests/search/test_search_run_repository.py",
+    "tests/search/test_search_run_schema.py",
+    "tests/search/test_search_run_values.py",
+    "tests/search/test_search_runtime_windows.py",
+    "tests/search/test_search_source_authority.py",
+    "tests/search/test_search_workflow.py",
+    "tools/architecture_check.py",
+    "tools/core_api_contract.py",
+    "tools/core_api_search.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "search",
+        "client",
+        "desktop-static",
+        "desktop-browser",
+        "native-api"
+      ],
+      "evidence": [
+        "Frozen wholly artificial title/DOI known-item fixture is bound before lookup to actual Core-minted IDs. Fresh SQLCipher FTS5/BM25 retrieves the declared held-out queries, separately reported from development queries; original outcomes, denominators and stable replay are retained in the named report. This is technical known-item recall only, not scientific annotated-evidence relevance or coverage.",
+        "Deterministic best-row-per-positive-leaf weighted BM25, duplicate-positive-leaf handling, negative/year neutrality and stable score/item-ID ties are tested. Bounded pages bind the exact canonical run, selected generation, full current lawful corpus, input/result hashes, request and cursor identities. UI exposes exact/field/filter contributions, method-specific scores, ranks and explicit unqualified semantic/not-run rerank states."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "search",
+        "api-compatibility",
+        "client",
+        "native-admission",
+        "native-api",
+        "desktop-browser",
+        "rights",
+        "project-lifecycle",
+        "document-source-compatibility"
+      ],
+      "evidence": [
+        "Actual protected Core tests cover current-rights and nonoutbox source mutation, expiry/future activation/clock rollback, selection/session/project/actor/Intent substitutions, immutable run/source/job/attempt binding, stale source and exact paged replay, atomic queue/provenance/outbox completion, bounded inert Unicode snippets and precise source disclosure. Phase barriers prove foreground status/exact-command replay/cancellation during work, late-output rejection and fresh success without forced termination.",
+        "The real Rust supervisor/authenticated Core/current-user DPAPI/SQLCipher/generated-client journey proves public run/replay/status/page and denied claimed actor/session/unknown routes, close/restart old-result denial, fresh command/cancel and normal owned drain. Its lawful corpus is empty; populated behavior is separately exercised in actual Core tests, and controlled browser replies prove UI behavior only.",
+        "Three production-browser journeys cover paging/source/Reader return focus, Unicode inertness, explanation Escape, both themes/narrow reflow, rights-driven context clearing, no protected Storage leakage, exact lost-ack retry, visible failed-poll recovery and late anchor replies after navigation/lock. Close regressions preserve real file/sidecar/key holds across genuine read-only companion consumption and drain both handles on setup/read/key failures."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "search",
+        "migration-compatibility",
+        "storage-contracts",
+        "api-contract",
+        "api-compatibility",
+        "contract-types",
+        "desktop-types",
+        "native-admission",
+        "product-build",
+        "product-binding",
+        "architecture",
+        "architecture-regression",
+        "adr",
+        "quality-scope",
+        "lint",
+        "format",
+        "types",
+        "backlog-views",
+        "document-source-compatibility"
+      ],
+      "evidence": [
+        "Additive schema30 appends immutable typed search input/run history and material source epochs. Actual frozen populated29 migration preserves every prior cell/object/history and backup, with interruption/rollback/retry and the nine specifically corrected older-chain compatibility cases. The other137 earlier compatibility cases are deferred to slice/Wave; their qualification01 observations are not reused for this candidate. Closed manifest_json/run_json subtype validation retains principal/job/source/FK constraints; published29 hashes/fixtures and58 historical recovery branches are unchanged.",
+        "Six fixed search operations are additive; all102 predecessor operations and component schemas compare equal to the exact claim base. Generated client and Rust admission preserve existing Native authority and bounded requests/replies. UI-independent pure ports keep HTTP/worker orchestration separate from root-only adapters, composed at Core startup. Documentary Proposed ADR0061 records existing accepted authority, not a new architecture approval.",
+        "Fresh Node24 product build and separately named task-owned binding checks authenticate current approved1.10 reference, exact204 artifacts/all185 pinned PDF resources and unchanged Native offline policy. Six actual assembler rejection cases cover missing module/map, obsolete/extra chunk, modified pin and reference-fixture leakage. The unchanged shared helper's actual failures remain FAIL and are not called desktop:application or a profile PASS.",
+        "The candidate publication note distinguishes the ordinary full generated-tree check from the exact two reviewed historical-page retentions; no final retained-tree full-byte PASS, frozen approval rewrite, framework optimization, privacy baseline exception or gate change is claimed."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "search",
+        "rights",
+        "client",
+        "desktop-browser",
+        "native-api"
+      ],
+      "evidence": [
+        "Declared64 held-out synthetic title/DOI queries meet recall@20>=0.90 with separate32-query title and DOI strata and preserved8 development outcomes. Stable reversed-input ranking, exact ties, offset/cursor boundaries and rights-aware snippets have fresh regressions. Rankings remain method scores rather than probabilities.",
+        "All current lawful mirror rows, including nonmatches, are authorized before they may affect BM25 statistics. Complete source capture and final current fences deny rights/source/time changes, including excluded nonmatching rows. No warm-read certificate, index-only authorization shortcut or scientific relevance claim is introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "lint",
+      "commandId": "foundation:quality",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m ruff check -- services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py services/core-api/src/research_observatory_core/lexical_delivery.py services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_index_store.py services/core-api/src/research_observatory_core/lexical_input_repository.py services/core-api/src/research_observatory_core/lexical_query_repository.py services/core-api/src/research_observatory_core/lexical_run_lineage.py services/core-api/src/research_observatory_core/lexical_run_repository.py services/core-api/src/research_observatory_core/lexical_search_api.py services/core-api/src/research_observatory_core/lexical_search_repository.py services/core-api/src/research_observatory_core/lexical_search_worker.py services/core-api/src/research_observatory_core/lexical_source_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0030_lexical_search_runs.py services/core-api/src/research_observatory_core/ports/lexical_search.py services/core-api/src/research_observatory_core/search/delivery_values.py services/core-api/src/research_observatory_core/search/errors.py services/core-api/src/research_observatory_core/search/ranking.py services/core-api/src/research_observatory_core/search/run_schema.py services/core-api/src/research_observatory_core/search/run_values.py services/core-api/src/research_observatory_core/search/workflow.py services/core-api/src/research_observatory_core/storage.py tests/connectors/test_plugin_grant_migration.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/desktop/test_search_interactions.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/documents/test_reference_migration.py tests/foundation/test_architecture_check.py tests/reconciliation/test_corpus_migration.py tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py tests/reports/test_migration.py tests/rights/test_migration.py tests/search/fixture_support.py tests/search/test_index_close_lifetime.py tests/search/test_index_migration.py tests/search/test_known_item_lookup.py tests/search/test_lexical_delivery.py tests/search/test_lexical_query_service.py tests/search/test_lexical_ranking.py tests/search/test_lexical_search_activity.py tests/search/test_search_api.py tests/search/test_search_api_compatibility.py tests/search/test_search_display_fields.py tests/search/test_search_run_migration.py tests/search/test_search_run_repository.py tests/search/test_search_run_schema.py tests/search/test_search_run_values.py tests/search/test_search_runtime_windows.py tests/search/test_search_source_authority.py tests/search/test_search_workflow.py tools/architecture_check.py tools/core_api_contract.py tools/core_api_search.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:32.938559+00:00",
+      "completedAtUtc": "2026-10-17T04:13:33.657091+00:00",
+      "durationSeconds": 0.7183514000207651,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "format",
+      "commandId": "foundation:quality",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m ruff format --check -- services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py services/core-api/src/research_observatory_core/lexical_delivery.py services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_index_store.py services/core-api/src/research_observatory_core/lexical_input_repository.py services/core-api/src/research_observatory_core/lexical_query_repository.py services/core-api/src/research_observatory_core/lexical_run_lineage.py services/core-api/src/research_observatory_core/lexical_run_repository.py services/core-api/src/research_observatory_core/lexical_search_api.py services/core-api/src/research_observatory_core/lexical_search_repository.py services/core-api/src/research_observatory_core/lexical_search_worker.py services/core-api/src/research_observatory_core/lexical_source_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0030_lexical_search_runs.py services/core-api/src/research_observatory_core/ports/lexical_search.py services/core-api/src/research_observatory_core/search/delivery_values.py services/core-api/src/research_observatory_core/search/errors.py services/core-api/src/research_observatory_core/search/ranking.py services/core-api/src/research_observatory_core/search/run_schema.py services/core-api/src/research_observatory_core/search/run_values.py services/core-api/src/research_observatory_core/search/workflow.py services/core-api/src/research_observatory_core/storage.py tests/connectors/test_plugin_grant_migration.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/desktop/test_search_interactions.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/documents/test_reference_migration.py tests/foundation/test_architecture_check.py tests/reconciliation/test_corpus_migration.py tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py tests/reports/test_migration.py tests/rights/test_migration.py tests/search/fixture_support.py tests/search/test_index_close_lifetime.py tests/search/test_index_migration.py tests/search/test_known_item_lookup.py tests/search/test_lexical_delivery.py tests/search/test_lexical_query_service.py tests/search/test_lexical_ranking.py tests/search/test_lexical_search_activity.py tests/search/test_search_api.py tests/search/test_search_api_compatibility.py tests/search/test_search_display_fields.py tests/search/test_search_run_migration.py tests/search/test_search_run_repository.py tests/search/test_search_run_schema.py tests/search/test_search_run_values.py tests/search/test_search_runtime_windows.py tests/search/test_search_source_authority.py tests/search/test_search_workflow.py tools/architecture_check.py tools/core_api_contract.py tools/core_api_search.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:33.672012+00:00",
+      "completedAtUtc": "2026-10-17T04:13:33.787748+00:00",
+      "durationSeconds": 0.11555350001435727,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/format.log",
+      "rawOutputSha256": "60b1abe1dfdcd741df7a1fc710e64e44c702e4ab4e4529c9c4a0ff7a0063f067",
+      "rawOutputCanonicalSha256": "60b1abe1dfdcd741df7a1fc710e64e44c702e4ab4e4529c9c4a0ff7a0063f067",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "types",
+      "commandId": "foundation:quality",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m mypy --no-incremental --cache-dir .\\artifacts\\tmp\\CAP-06.S01.T03.qualification-02\\mypy-cache services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py services/core-api/src/research_observatory_core/lexical_delivery.py services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_index_store.py services/core-api/src/research_observatory_core/lexical_input_repository.py services/core-api/src/research_observatory_core/lexical_query_repository.py services/core-api/src/research_observatory_core/lexical_run_lineage.py services/core-api/src/research_observatory_core/lexical_run_repository.py services/core-api/src/research_observatory_core/lexical_search_api.py services/core-api/src/research_observatory_core/lexical_search_repository.py services/core-api/src/research_observatory_core/lexical_search_worker.py services/core-api/src/research_observatory_core/lexical_source_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0030_lexical_search_runs.py services/core-api/src/research_observatory_core/ports/lexical_search.py services/core-api/src/research_observatory_core/search/delivery_values.py services/core-api/src/research_observatory_core/search/errors.py services/core-api/src/research_observatory_core/search/ranking.py services/core-api/src/research_observatory_core/search/run_schema.py services/core-api/src/research_observatory_core/search/run_values.py services/core-api/src/research_observatory_core/search/workflow.py services/core-api/src/research_observatory_core/storage.py tests/connectors/test_plugin_grant_migration.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/desktop/test_search_interactions.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/documents/test_reference_migration.py tests/foundation/test_architecture_check.py tests/reconciliation/test_corpus_migration.py tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py tests/reports/test_migration.py tests/rights/test_migration.py tests/search/fixture_support.py tests/search/test_index_close_lifetime.py tests/search/test_index_migration.py tests/search/test_known_item_lookup.py tests/search/test_lexical_delivery.py tests/search/test_lexical_query_service.py tests/search/test_lexical_ranking.py tests/search/test_lexical_search_activity.py tests/search/test_search_api.py tests/search/test_search_api_compatibility.py tests/search/test_search_display_fields.py tests/search/test_search_run_migration.py tests/search/test_search_run_repository.py tests/search/test_search_run_schema.py tests/search/test_search_run_values.py tests/search/test_search_runtime_windows.py tests/search/test_search_source_authority.py tests/search/test_search_workflow.py tools/architecture_check.py tools/core_api_contract.py tools/core_api_search.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:33.803554+00:00",
+      "completedAtUtc": "2026-10-17T04:13:43.350588+00:00",
+      "durationSeconds": 9.546774899994489,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/types.log",
+      "rawOutputSha256": "ff7fa338160fc834760e2981fabb96c5026e1c7b5fbf91dba5fe0364c0f97c94",
+      "rawOutputCanonicalSha256": "e01191578d3a3bac202cef72aec747f3048def999e4a0906368a5b91b8849682",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "quality-scope",
+      "commandId": "foundation:quality",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -c \"import sys; from pathlib import Path; sys.path.insert(0,'tools'); from quality_check import load_scope; print('Declared/discovered Python files:',len(load_scope(Path.cwd())))\"",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:43.367334+00:00",
+      "completedAtUtc": "2026-10-17T04:13:43.575798+00:00",
+      "durationSeconds": 0.20838300001923926,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/quality-scope.log",
+      "rawOutputSha256": "1cb964a0ab97b1c006e13267bdc351666b5af043d53f987346046cf037f925e2",
+      "rawOutputCanonicalSha256": "7d6e43c4f8246a5187ea817fd1408966cc4e064b23228f903f4099b1993cfd25",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B tools/architecture_check.py --repo .",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:43.590326+00:00",
+      "completedAtUtc": "2026-10-17T04:13:49.106231+00:00",
+      "durationSeconds": 5.515851800009841,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "architecture-regression",
+      "commandId": "foundation:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.foundation.test_architecture_check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:49.116388+00:00",
+      "completedAtUtc": "2026-10-17T04:13:51.017988+00:00",
+      "durationSeconds": 1.9015189000056125,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/architecture-regression.log",
+      "rawOutputSha256": "a68d290b3678ea9cb36d707f42945748429e448b792c50770518dea8190bd547",
+      "rawOutputCanonicalSha256": "a967e7097c2e0801ac1d9381e0a38fc6081c140c1ceb39dd43fe16f4bfdb3638",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "adr",
+      "commandId": "foundation:adr",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B tools/adr_check.py --repo . --base a6e2b9146f788d489006998fccb0669bfba91bc7 --head 7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:51.038954+00:00",
+      "completedAtUtc": "2026-10-17T04:13:54.553963+00:00",
+      "durationSeconds": 3.514908499986632,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/adr.log",
+      "rawOutputSha256": "414c879f3aa6f1f9e2f8195065db160ca9f51ca0c500c7a26b0984e22bbeb5a1",
+      "rawOutputCanonicalSha256": "9396576ca023b44c0c65d58a8ff54832c88fa25b3ea4e57f7edab7b46c9440f1",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "backlog-views",
+      "commandId": "foundation:backlog-views",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B tools/backlog_views.py --repo . --check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:54.571685+00:00",
+      "completedAtUtc": "2026-10-17T04:13:58.333024+00:00",
+      "durationSeconds": 3.7612849999859463,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/backlog-views.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "rawOutputCanonicalSha256": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "api-contract",
+      "commandId": "contracts:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B tools/core_api_contract.py --check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:13:58.349480+00:00",
+      "completedAtUtc": "2026-10-17T04:14:01.668308+00:00",
+      "durationSeconds": 3.318774100014707,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/api-contract.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "rawOutputCanonicalSha256": "906caa6683fd9e71ddbb3b34c25bd5234d25d8a396df0d3d5a20095eec2aee31",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "api-compatibility",
+      "commandId": "service:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.search.test_search_api_compatibility tests.service.test_core_api.CoreApiTests.test_uvicorn_starts_on_an_os_assigned_loopback_port tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:01.683753+00:00",
+      "completedAtUtc": "2026-10-17T04:14:10.105288+00:00",
+      "durationSeconds": 8.421466800005874,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/api-compatibility.log",
+      "rawOutputSha256": "395ed37fbc66285de609ee5d9e33fc8a5d16e16e79142f38ee33011311de6d73",
+      "rawOutputCanonicalSha256": "78d18806ada12ec449daaa602c91779a1ced10b07f03da021ec80f88840e32cb",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "storage-contracts",
+      "commandId": "contracts:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.contracts.test_protected_database_contract tests.data.test_sqlite_schema tests.data.test_sqlite_recovery_contract",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:10.119491+00:00",
+      "completedAtUtc": "2026-10-17T04:14:13.259029+00:00",
+      "durationSeconds": 3.1394785000011325,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/storage-contracts.log",
+      "rawOutputSha256": "4afb382128e177ebe20b88b4a1e446f05a3e0e4885b12bb49bd5a7823b9998ab",
+      "rawOutputCanonicalSha256": "988044c847e53a3a8007f1b33cdafa7800f341f230a1f3388b055bb5956b4419",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "contract-types",
+      "commandId": "contracts:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "workingDirectory": "packages/contracts",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:13.274070+00:00",
+      "completedAtUtc": "2026-10-17T04:14:13.828659+00:00",
+      "durationSeconds": 0.5545089000079315,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/contract-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "client",
+      "commandId": "contracts:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 node_modules/vitest/vitest.mjs run core-api/search.test.ts",
+      "workingDirectory": "packages/contracts",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:13.838341+00:00",
+      "completedAtUtc": "2026-10-17T04:14:14.600957+00:00",
+      "durationSeconds": 0.762533600005554,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/client.log",
+      "rawOutputSha256": "0cde99e1cebaa4e2d953f8a7a2b484b2bbd6680e754e9cfdf2646c6a46bb6b82",
+      "rawOutputCanonicalSha256": "0cde99e1cebaa4e2d953f8a7a2b484b2bbd6680e754e9cfdf2646c6a46bb6b82",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "desktop-types",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 node_modules/typescript/bin/tsc --noEmit",
+      "workingDirectory": "apps/desktop",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:14.616321+00:00",
+      "completedAtUtc": "2026-10-17T04:14:15.274516+00:00",
+      "durationSeconds": 0.65809170002467,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/desktop-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "desktop-static",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 node_modules/vitest/vitest.mjs run src/app/SearchWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx",
+      "workingDirectory": "apps/desktop",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:15.287560+00:00",
+      "completedAtUtc": "2026-10-17T04:14:16.709170+00:00",
+      "durationSeconds": 1.4215151000244077,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/desktop-static.log",
+      "rawOutputSha256": "e89c0c80a8cd3f29ffc8e29b569db03e86da899cbef8e34eee73745c0b57d503",
+      "rawOutputCanonicalSha256": "e89c0c80a8cd3f29ffc8e29b569db03e86da899cbef8e34eee73745c0b57d503",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "native-admission",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "cargo test --locked --lib lexical_search_public_admission_is_closed_bounded_and_preserves_current_authority -- --nocapture",
+      "workingDirectory": "apps/desktop/src-tauri",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:16.725597+00:00",
+      "completedAtUtc": "2026-10-17T04:14:41.872952+00:00",
+      "durationSeconds": 25.138788599986583,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/native-admission.log",
+      "rawOutputSha256": "2ac9d9dad1b4e8b89b20ccbc86b785c8f4a556fc751728f2ee6aa08acadfb0f1",
+      "rawOutputCanonicalSha256": "2ac9d9dad1b4e8b89b20ccbc86b785c8f4a556fc751728f2ee6aa08acadfb0f1",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "product-build",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 .\\artifacts\\tmp\\CAP-06.S01.T03.build-product-01.mjs",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:41.886285+00:00",
+      "completedAtUtc": "2026-10-17T04:14:43.595282+00:00",
+      "durationSeconds": 1.7088968999742065,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/product-build.log",
+      "rawOutputSha256": "2034f438f1d1cd09cbfa7aa326ac6a43d1e0a05ab556a0e32cb54c7933d8d685",
+      "rawOutputCanonicalSha256": "b635b419ba6c1e604773679f7b0e5dcf9ee45c847c689582045c5f9f5c731ddf",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "product-binding",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:43.609870+00:00",
+      "completedAtUtc": "2026-10-17T04:14:53.559154+00:00",
+      "durationSeconds": 9.909781299997121,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/product-binding.log",
+      "rawOutputSha256": "1d7328efb5b19f0f7e653838408c422c0bfdae3524db1804393c10bc1525e619",
+      "rawOutputCanonicalSha256": "87f8c156451fdb9a5a31afc1d493360d99909bf1fda0c74a1583f130348aac45",
+      "supplementalOutputSha256": {
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.json": "b1a543cd301551697a4d1afd6368e797b15e2be5718716c4ec3a83bf5ab4a710",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-missing-source-anchor-module.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-missing-source-anchor-module.stderr.log": "1d63bc37e9aad805b6d18d9259250b7eb86ef21914d691a0fcbce403e9144071",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-missing-source-anchor-map.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-missing-source-anchor-map.stderr.log": "30c11d026df24f649430a332e1cd5f9f99c9e60f5cd597c0196cfd220b6658a5",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-obsolete-shared-chunk.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-obsolete-shared-chunk.stderr.log": "04026f6632b63a9cec7228b0749643c4c0533f1782ad51f47630a14d5508ba15",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-extra-unbound-chunk.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-extra-unbound-chunk.stderr.log": "b940f8029ca9f7d9930a34f12d30e67ad88b53c298ea261fc73c30ea456b9c87",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-changed-pinned-pdf-resource.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-changed-pinned-pdf-resource.stderr.log": "0c797f0657dd1cbf45d7a5cf5c89232f896f83b2e16a2197de7471620a5fc9a5",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-reference-fixture-page.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.negative-reference-fixture-page.stderr.log": "430cafa3c2488483a9087dea1f1fc17743d11a72629d66b64a5e1c2e0ed1ed7b"
+      },
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "desktop-browser",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_search_interactions.SearchInteractionTests",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:14:53.569749+00:00",
+      "completedAtUtc": "2026-10-17T04:15:05.226096+00:00",
+      "durationSeconds": 11.656302799994592,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/desktop-browser.log",
+      "rawOutputSha256": "e367f7fd1e8d520c4396b12837d283ca3896cef56f945d2b67ca5dd61c61eb61",
+      "rawOutputCanonicalSha256": "8734cedf270cc397042cd1971d4adda1a1b4e84610b2dcc589887b0f6519dc96",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "native-api",
+      "commandId": "desktop:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": "node24 apps/desktop/scripts/search-native-integration.mjs --report artifacts/tmp/CAP-06.S01.T03.qualification-02-native-api.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:15:05.242901+00:00",
+      "completedAtUtc": "2026-10-17T04:16:00.165392+00:00",
+      "durationSeconds": 54.921573899977375,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/native-api.log",
+      "rawOutputSha256": "597109327bafd49aae65aa615f3b51f4bd12e45f16c9cb43424ae0201fcc6cc6",
+      "rawOutputCanonicalSha256": "597109327bafd49aae65aa615f3b51f4bd12e45f16c9cb43424ae0201fcc6cc6",
+      "supplementalOutputSha256": {
+        "artifacts/tmp/CAP-06.S01.T03.qualification-02-native-api.json": "6c8dec6834fb0b1741cb3e7cde6db7e99272e8a4578479581f1b84b2cb65ec1a"
+      },
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "search",
+      "commandId": "search:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.search.test_derivative_keys tests.search.test_index_canonical_schema tests.search.test_index_catalog tests.search.test_index_close_lifetime tests.search.test_index_document_source tests.search.test_index_migration tests.search.test_index_service tests.search.test_index_sources tests.search.test_index_text_chunks tests.search.test_known_item_lookup tests.search.test_lexical_compiler tests.search.test_lexical_delivery tests.search.test_lexical_query_service tests.search.test_lexical_ranking tests.search.test_lexical_search_activity tests.search.test_native_index_service tests.search.test_protected_lexical_store tests.search.test_query_contracts tests.search.test_query_grammar tests.search.test_search_api tests.search.test_search_api_compatibility tests.search.test_search_display_fields tests.search.test_search_run_migration tests.search.test_search_run_repository tests.search.test_search_run_schema tests.search.test_search_run_values tests.search.test_search_runtime_windows tests.search.test_search_source_authority tests.search.test_search_workflow tests.search.test_windows_derivative_index",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:16:00.180239+00:00",
+      "completedAtUtc": "2026-10-17T04:25:00.132406+00:00",
+      "durationSeconds": 539.9329307000153,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/search.log",
+      "rawOutputSha256": "f95c4eb482f82ac7e5ca57c71bd52c958b874d441f744054710cd6bc875e5515",
+      "rawOutputCanonicalSha256": "1955ab614871781d8f7d33d706ce2a48c5c767d17cabd37dcbc5c99d8b394c7c",
+      "supplementalOutputSha256": {
+        "artifacts/tmp/CAP-06.S01.T03.known-items-01a14816-c1c9-7eac-a38b-c5c96160c7de.json": "7d8b4fd11ce0f642e443f87d64cd8968ace2136b8e116e00a7e514f743fa466d"
+      },
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "migration-compatibility",
+      "commandId": "data:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_local_attachment.AttachmentMigrationTests.test_interrupted_v22_migration_leaves_exact_v21_predecessor_retryable tests.documents.test_local_attachment.AttachmentMigrationTests.test_literal_populated_v21_migrates_without_changing_work_version_or_ciphertext tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_interrupted_v23_migration_leaves_populated_v22_source_retryable tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_literal_populated_v22_migrates_without_changing_attachment_rights_or_ciphertext tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_literal_v23_preserves_rows_ciphertext_and_verified_backup tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_recovery_contract_is_retained_for_prior_verified_backups tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_each_v21_step_failure_rolls_back_exact_v20_and_retries tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens tests.reports.test_migration.CorpusReportMigrationTests.test_frozen_v18_recovery_contract_survives_successor",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:25:00.147973+00:00",
+      "completedAtUtc": "2026-10-17T04:25:08.774271+00:00",
+      "durationSeconds": 8.626183100015623,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/migration-compatibility.log",
+      "rawOutputSha256": "2b50e1ffb2dc922816551c27ac10220f8f8649691e8bf71e643834fb7252b60e",
+      "rawOutputCanonicalSha256": "f3a4765b49090713d3f9982a9f39774d2845486f353c79fe3bd9686065c2782e",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "rights",
+      "commandId": "security-local:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.rights.test_repository tests.rights.test_corpus_recheck",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:25:08.789297+00:00",
+      "completedAtUtc": "2026-10-17T04:25:59.192278+00:00",
+      "durationSeconds": 50.4029246000282,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/rights.log",
+      "rawOutputSha256": "10094ffd27c71a8f4f2f8257887a271be3c4b4ac574e5c930ee934029db47814",
+      "rawOutputCanonicalSha256": "f97c3fac91bae8cc2f7ae20b419f389f082fe1e590d087ee0bf5c029c7509a82",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "document-source-compatibility",
+      "commandId": "documents:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_revision_repository tests.parsing.test_protected_parse_source tests.documents.test_document_revision_workflow",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:25:59.209498+00:00",
+      "completedAtUtc": "2026-10-17T04:27:38.495892+00:00",
+      "durationSeconds": 99.28633550001541,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/document-source-compatibility.log",
+      "rawOutputSha256": "0bbe50ece6ad6431dfd42ada9126e895cd658fbaaf05d16a58e551da3b76320a",
+      "rawOutputCanonicalSha256": "5b0b3d942b245a64c588f6f10c03ecdf665fb990b876149e243e612fcf62dbda",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "inputReportSha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    },
+    {
+      "id": "project-lifecycle",
+      "commandId": "service:unit",
+      "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+      "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.service.test_project_lifecycle",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "result": "PASS",
+      "timedOut": false,
+      "startedAtUtc": "2026-10-17T04:37:08.395433+00:00",
+      "completedAtUtc": "2026-10-17T04:37:16.031107+00:00",
+      "durationSeconds": 7.635660700005246,
+      "rawOutput": "artifacts/tmp/CAP-06.S01.T03.lifecycle-supplement-03/project-lifecycle.log",
+      "rawOutputSha256": "a16aee64f63c26f3791da5b26a238a4e948b461ab3dfb08ce60ae915d2d32b16",
+      "rawOutputCanonicalSha256": "c5ea54188c7e0eb3689d1d62772ea0f9bf74935e66a5326d9908b6838353ab80",
+      "supplementalOutputSha256": {},
+      "inputReport": "artifacts/tmp/CAP-06.S01.T03.lifecycle-supplement-03/report.json",
+      "inputReportSha256": "c9b82ef52eecd429d716c61b047fff35ffbd425d081e1843cd3fcd60e728b059",
+      "executionContext": "Actual Windows x64 execution at this candidate during continuously frozen campaign; original02 records retain their own times, lifecycle is separate fresh03 invocation. Pinned Python and Node24.19.0; one group at a time. node24 is a privacy-safe display alias; exact paths/argv/bytes are in the respective ignored report.",
+      "provenance": "Exact committed candidate and fixed shared inputs. All tracked/installed-runtime/producer inventories equal before/after; no cached reuse or whole-OS/driver/transient-mutation attestation."
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:unit",
+      "search:unit",
+      "security-local:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Public/cross-process contracts, immutable canonical runs/schema migration, protected close lifetime, worker cancellation/foreground availability and governed search UI require expanded task review. Fresh affected search, migration, source/rights/project lifecycle, existing parser-lane workflow compatibility, API/client/Rust admission, actual Native and production-browser checks complement source/architecture/ADR/quality contracts. Parser workflow fixtures do not establish actual hardware resource fit. Task-owned product binding is separate from the unchanged shared-helper FAIL. No earlier development PASS substitutes for this candidate.",
+    "deferred": [
+      "S01 integration owns complete100k distinct metadata/100k permitted-passage scale, resource and latency trials, integrated adversarial proof and independent slice judgment. Small fixtures and empty Native corpus do not establish scale or resource fit.",
+      "Scientific SciFact/QASPER annotated-evidence retrieval remains PENDING/UNQUALIFIED. Exact source releases/digests/notices/rights, stable mappings and actual competent human reviewer/independent adjudicator30-case bridge are required before benchmark use. Retain same-ID lexical baseline obligations at CAP-06.S02.T02 and CAP-06.S03.T01; this is proof timing, not an exemption or a shift of all obligations to CAP-07.S05.T03.",
+      "Fresh complete affected/repository/deployment profiles, cross-capability packaging/security/privacy/rights/accessibility/performance/restart/recovery and independent Wave review precede the separate human release decision. No shared desktop-profile PASS, installer, model qualification, later-platform or headless-AI-mode claim."
+    ]
+  },
+  "qualification": {
+    "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+    "sha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+    "originalStatus": "FAIL",
+    "supplement": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-supplement-03/report.json",
+      "sha256": "c9b82ef52eecd429d716c61b047fff35ffbd425d081e1843cd3fcd60e728b059",
+      "status": "PASS"
+    },
+    "composition": "24 actual original02 PASS observations plus one separately executed fresh03 lifecycle module; original02 overall FAIL remains unchanged. Same continuously frozen campaign, no cache/prior-candidate substitution or newly executed Native claim.",
+    "fresh": true,
+    "reused": false,
+    "runtimeClosureAuthenticated": false,
+    "limit": "Fresh native execution and installed-file equality; no cached reuse, OS/driver attestation or whole-system immutability claim."
+  },
+  "knownItemEvidence": {
+    "path": "artifacts/tmp/CAP-06.S01.T03.known-items-01a14816-c1c9-7eac-a38b-c5c96160c7de.json",
+    "sha256": "7d8b4fd11ce0f642e443f87d64cd8968ace2136b8e116e00a7e514f743fa466d",
+    "strata": [
+      {
+        "split": "development",
+        "kind": "all",
+        "denominator": 8,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "development",
+        "kind": "title",
+        "denominator": 4,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "development",
+        "kind": "doi",
+        "denominator": 4,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "held-out",
+        "kind": "all",
+        "denominator": 64,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "held-out",
+        "kind": "title",
+        "denominator": 32,
+        "meanRecallAt20": 1.0
+      },
+      {
+        "split": "held-out",
+        "kind": "doi",
+        "denominator": 32,
+        "meanRecallAt20": 1.0
+      }
+    ],
+    "boundary": "actual SQLCipher FTS5/BM25; explicit synthetic lawful mirror; Core UUID factory; in-memory vault/key adapters",
+    "limits": [
+      "Exact title and DOI lookup only; no external corpus recall, systematic coverage, scientific gold, human annotation or model-quality claim.",
+      "64 synthetic records: 4 development, 32 held-out and 28 distractors; 8 development and 64 held-out queries, reported separately by title/DOI.",
+      "Ranking/Boolean/filter/rights/snippet/paging failures require separate behavioral tests; this lookup fixture does not establish those boundaries."
+    ]
+  },
+  "nativeEvidence": {
+    "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02-native-api.json",
+    "sha256": "6c8dec6834fb0b1741cb3e7cde6db7e99272e8a4578479581f1b84b2cb65ec1a",
+    "limits": [
+      "Source Core integration harness; no packaged installer proof.",
+      "Empty lawful corpus; populated ranking/rights and known-item quality are separate checks."
+    ]
+  },
+  "productBindingEvidence": {
+    "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02-product-binding.json",
+    "sha256": "b1a543cd301551697a4d1afd6368e797b15e2be5718716c4ec3a83bf5ab4a710",
+    "sharedHelperStatus": "FAIL",
+    "sharedHelperErrors": [
+      "desktop product manifest implementedCapabilities must equal ['CAP-01', 'CAP-02.S01.T03', 'CAP-02.S04.T02', 'CAP-02.S04.T03', 'CAP-03.S02.T02', 'CAP-03.S03.T03', 'CAP-03.S05.T03', 'CAP-03.S06.T02', 'CAP-03.S06.T03', 'CAP-03.S06.T04', 'CAP-03.S06.T05', 'CAP-07.S01.T02']",
+      "desktop product bundle must contain only the functional index/runtime inventory: found=['assets/78-EUC-H.bcmap', 'assets/78-EUC-V.bcmap', 'assets/78-H.bcmap', 'assets/78-RKSJ-H.bcmap', 'assets/78-RKSJ-V.bcmap', 'assets/78-V.bcmap', 'assets/78ms-RKSJ-H.bcmap', 'assets/78ms-RKSJ-V.bcmap', 'assets/83pv-RKSJ-H.bcmap', 'assets/90ms-RKSJ-H.bcmap', 'assets/90ms-RKSJ-V.bcmap', 'assets/90msp-RKSJ-H.bcmap', 'assets/90msp-RKSJ-V.bcmap', 'assets/90pv-RKSJ-H.bcmap', 'assets/90pv-RKSJ-V.bcmap', 'assets/Add-H.bcmap', 'assets/Add-RKSJ-H.bcmap', 'assets/Add-RKSJ-V.bcmap', 'assets/Add-V.bcmap', 'assets/Adobe-CNS1-0.bcmap', 'assets/Adobe-CNS1-1.bcmap', 'assets/Adobe-CNS1-2.bcmap', 'assets/Adobe-CNS1-3.bcmap', 'assets/Adobe-CNS1-4.bcmap', 'assets/Adobe-CNS1-5.bcmap', 'assets/Adobe-CNS1-6.bcmap', 'assets/Adobe-CNS1-UCS2.bcmap', 'assets/Adobe-GB1-0.bcmap', 'assets/Adobe-GB1-1.bcmap', 'assets/Adobe-GB1-2.bcmap', 'assets/Adobe-GB1-3.bcmap', 'assets/Adobe-GB1-4.bcmap', 'assets/Adobe-GB1-5.bcmap', 'assets/Adobe-GB1-UCS2.bcmap', 'assets/Adobe-Japan1-0.bcmap', 'assets/Adobe-Japan1-1.bcmap', 'assets/Adobe-Japan1-2.bcmap', 'assets/Adobe-Japan1-3.bcmap', 'assets/Adobe-Japan1-4.bcmap', 'assets/Adobe-Japan1-5.bcmap', 'assets/Adobe-Japan1-6.bcmap', 'assets/Adobe-Japan1-UCS2.bcmap', 'assets/Adobe-Korea1-0.bcmap', 'assets/Adobe-Korea1-1.bcmap', 'assets/Adobe-Korea1-2.bcmap', 'assets/Adobe-Korea1-UCS2.bcmap', 'assets/B5-H.bcmap', 'assets/B5-V.bcmap', 'assets/B5pc-H.bcmap', 'assets/B5pc-V.bcmap', 'assets/CNS-EUC-H.bcmap', 'assets/CNS-EUC-V.bcmap', 'assets/CNS1-H.bcmap', 'assets/CNS1-V.bcmap', 'assets/CNS2-H.bcmap', 'assets/CNS2-V.bcmap', 'assets/DocumentViewerWorkspace.js', 'assets/DocumentViewerWorkspace.js.map', 'assets/ETHK-B5-H.bcmap', 'assets/ETHK-B5-V.bcmap', 'assets/ETen-B5-H.bcmap', 'assets/ETen-B5-V.bcmap', 'assets/ETenms-B5-H.bcmap', 'assets/ETenms-B5-V.bcmap', 'assets/EUC-H.bcmap', 'assets/EUC-V.bcmap', 'assets/Ext-H.bcmap', 'assets/Ext-RKSJ-H.bcmap', 'assets/Ext-RKSJ-V.bcmap', 'assets/Ext-V.bcmap', 'assets/FoxitDingbats.pfb', 'assets/FoxitFixed.pfb', 'assets/FoxitFixedBold.pfb', 'assets/FoxitFixedBoldItalic.pfb', 'assets/FoxitFixedItalic.pfb', 'assets/FoxitSerif.pfb', 'assets/FoxitSerifBold.pfb', 'assets/FoxitSerifBoldItalic.pfb', 'assets/FoxitSerifItalic.pfb', 'assets/FoxitSymbol.pfb', 'assets/GB-EUC-H.bcmap', 'assets/GB-EUC-V.bcmap', 'assets/GB-H.bcmap', 'assets/GB-V.bcmap', 'assets/GBK-EUC-H.bcmap', 'assets/GBK-EUC-V.bcmap', 'assets/GBK2K-H.bcmap', 'assets/GBK2K-V.bcmap', 'assets/GBKp-EUC-H.bcmap', 'assets/GBKp-EUC-V.bcmap', 'assets/GBT-EUC-H.bcmap', 'assets/GBT-EUC-V.bcmap', 'assets/GBT-H.bcmap', 'assets/GBT-V.bcmap', 'assets/GBTpc-EUC-H.bcmap', 'assets/GBTpc-EUC-V.bcmap', 'assets/GBpc-EUC-H.bcmap', 'assets/GBpc-EUC-V.bcmap', 'assets/H.bcmap', 'assets/HKdla-B5-H.bcmap', 'assets/HKdla-B5-V.bcmap', 'assets/HKdlb-B5-H.bcmap', 'assets/HKdlb-B5-V.bcmap', 'assets/HKgccs-B5-H.bcmap', 'assets/HKgccs-B5-V.bcmap', 'assets/HKm314-B5-H.bcmap', 'assets/HKm314-B5-V.bcmap', 'assets/HKm471-B5-H.bcmap', 'assets/HKm471-B5-V.bcmap', 'assets/HKscs-B5-H.bcmap', 'assets/HKscs-B5-V.bcmap', 'assets/Hankaku.bcmap', 'assets/Hiragana.bcmap', 'assets/KSC-EUC-H.bcmap', 'assets/KSC-EUC-V.bcmap', 'assets/KSC-H.bcmap', 'assets/KSC-Johab-H.bcmap', 'assets/KSC-Johab-V.bcmap', 'assets/KSC-V.bcmap', 'assets/KSCms-UHC-H.bcmap', 'assets/KSCms-UHC-HW-H.bcmap', 'assets/KSCms-UHC-HW-V.bcmap', 'assets/KSCms-UHC-V.bcmap', 'assets/KSCpc-EUC-H.bcmap', 'assets/KSCpc-EUC-V.bcmap', 'assets/Katakana.bcmap', 'assets/LICENSE_FOXIT', 'assets/LICENSE_LIBERATION', 'assets/LiberationSans-Bold.ttf', 'assets/LiberationSans-BoldItalic.ttf', 'assets/LiberationSans-Italic.ttf', 'assets/LiberationSans-Regular.ttf', 'assets/NWP-H.bcmap', 'assets/NWP-V.bcmap', 'assets/ParsingQualityWorkspace.js', 'assets/ParsingQualityWorkspace.js.map', 'assets/RKSJ-H.bcmap', 'assets/RKSJ-V.bcmap', 'assets/Roman.bcmap', 'assets/UniCNS-UCS2-H.bcmap', 'assets/UniCNS-UCS2-V.bcmap', 'assets/UniCNS-UTF16-H.bcmap', 'assets/UniCNS-UTF16-V.bcmap', 'assets/UniCNS-UTF32-H.bcmap', 'assets/UniCNS-UTF32-V.bcmap', 'assets/UniCNS-UTF8-H.bcmap', 'assets/UniCNS-UTF8-V.bcmap', 'assets/UniGB-UCS2-H.bcmap', 'assets/UniGB-UCS2-V.bcmap', 'assets/UniGB-UTF16-H.bcmap', 'assets/UniGB-UTF16-V.bcmap', 'assets/UniGB-UTF32-H.bcmap', 'assets/UniGB-UTF32-V.bcmap', 'assets/UniGB-UTF8-H.bcmap', 'assets/UniGB-UTF8-V.bcmap', 'assets/UniJIS-UCS2-H.bcmap', 'assets/UniJIS-UCS2-HW-H.bcmap', 'assets/UniJIS-UCS2-HW-V.bcmap', 'assets/UniJIS-UCS2-V.bcmap', 'assets/UniJIS-UTF16-H.bcmap', 'assets/UniJIS-UTF16-V.bcmap', 'assets/UniJIS-UTF32-H.bcmap', 'assets/UniJIS-UTF32-V.bcmap', 'assets/UniJIS-UTF8-H.bcmap', 'assets/UniJIS-UTF8-V.bcmap', 'assets/UniJIS2004-UTF16-H.bcmap', 'assets/UniJIS2004-UTF16-V.bcmap', 'assets/UniJIS2004-UTF32-H.bcmap', 'assets/UniJIS2004-UTF32-V.bcmap', 'assets/UniJIS2004-UTF8-H.bcmap', 'assets/UniJIS2004-UTF8-V.bcmap', 'assets/UniJISPro-UCS2-HW-V.bcmap', 'assets/UniJISPro-UCS2-V.bcmap', 'assets/UniJISPro-UTF8-V.bcmap', 'assets/UniJISX0213-UTF32-H.bcmap', 'assets/UniJISX0213-UTF32-V.bcmap', 'assets/UniJISX02132004-UTF32-H.bcmap', 'assets/UniJISX02132004-UTF32-V.bcmap', 'assets/UniKS-UCS2-H.bcmap', 'assets/UniKS-UCS2-V.bcmap', 'assets/UniKS-UTF16-H.bcmap', 'assets/UniKS-UTF16-V.bcmap', 'assets/UniKS-UTF32-H.bcmap', 'assets/UniKS-UTF32-V.bcmap', 'assets/UniKS-UTF8-H.bcmap', 'assets/UniKS-UTF8-V.bcmap', 'assets/V.bcmap', 'assets/WP-Symbol.bcmap', 'assets/app.css', 'assets/app.js', 'assets/app.js.map', 'assets/documentCorrections.js', 'assets/documentCorrections.js.map', 'assets/documentViewer.worker.js', 'assets/documentViewer.worker.js.map', 'assets/pdf.worker.js', 'assets/pdf.worker.js.map', 'assets/pdfjs.LICENSE', 'assets/preload-helper.js', 'assets/preload-helper.js.map', 'assets/rolldown-runtime.js', 'assets/sourceAnchors.js', 'assets/sourceAnchors.js.map', 'index.html']",
+      "desktop product manifest does not bind the approved design reference identity",
+      "reference-only routes entered the desktop product runtime: ['document-reader.html', 'parsing-quality.html', 'search-studio.html']"
+    ],
+    "limits": [
+      "Functional product binding and actual assembler negative checks only; no packaged installer, scale, whole-desktop-profile or shared-helper PASS.",
+      "Negative fixture snapshots contain actual product artifacts and the exact assembler; reduced source tree is sufficient only for artifact rejection tests."
+    ]
+  },
+  "publicationNote": "artifacts/evidence/CAP-06.S01.T03.candidate-publication-note-02.md",
+  "privacyNote": "artifacts/evidence/CAP-06.S01.T03.fixture-privacy-note-01.md",
+  "goldProofTimingAdvisory": {
+    "path": "artifacts/tmp/CAP-06.S01.T03.gold-proof-ownership-advisory-01.json",
+    "sha256": "768ff6a1dc56dc384c2165bdd3c83be31ce886e67dc8cf221ae07bc3c00aa610",
+    "limit": "Interpretation of timing only; no scientific human judgment or benchmark prerequisite waiver."
+  },
+  "developmentAdverseHistory": {
+    "qualification02Failure": {
+      "path": "artifacts/tmp/CAP-06.S01.T03.qualification-02/report.json",
+      "sha256": "31dbb2c0b4b4d953f32d7c9becb7b6129021cd64e338e9127e402c6abb3072ce",
+      "status": "FAIL",
+      "failedCheck": {
+        "id": "project-lifecycle",
+        "commandId": "service:unit",
+        "commit": "7c3afbb9a9442871ada211c39cbbcacab40134fa",
+        "command": ".\\.venv\\Scripts\\python.exe -B -m unittest -v tests.service.test_project_lifecycle",
+        "workingDirectory": ".",
+        "exitCode": 1,
+        "result": "FAIL",
+        "timedOut": false,
+        "startedAtUtc": "2026-10-17T04:27:38.515647+00:00",
+        "completedAtUtc": "2026-10-17T04:27:46.392255+00:00",
+        "durationSeconds": 7.876552700006869,
+        "rawOutput": "artifacts/tmp/CAP-06.S01.T03.qualification-02/project-lifecycle.log",
+        "rawOutputSha256": "10c1921a7eb695a5d77340232b98ab462838a78a97a365dcd80a6ad7e1427787",
+        "rawOutputCanonicalSha256": "49c96dcc6b31fbf3b780d43756f58b8f0a5f1c1c4947cf2aaabd81b7927a9d58",
+        "supplementalOutputSha256": {}
+      }
+    },
+    "lifecycleDiagnosis": [
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-diagnostic-01.py",
+        "sha256": "ab84e79251eaffe49a8b63f995bd9302a0795b0d285028ab8267c45c36104b34"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-diagnostic-01.json",
+        "sha256": "60f49b7bfcfe404bacc0e6c7e9831ec0e81ae21955ab7019f78189b4f9eac6f3"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-diagnostic-01.log",
+        "sha256": "66c4f6e96eca807b7d5001ffd17a506685d10a17fd13c0b0a78d32c06bd5bfa3"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.lifecycle-diagnostic-review-01.json",
+        "sha256": "b775479a74bc37a8925781b485ac5fe11d0228c157654543f01ac7fec9b46497"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.same-candidate-supplementation-advisory-01.json",
+        "sha256": "5fb6d5bf0b519e7709368e748ad4dfe931895af8b346f594fb7986eaf721166c"
+      }
+    ],
+    "lifecycleResidual": "Original qualification02 delete-to-trash WinError5 cause UNKNOWN. Diagnostic injected a real native child-share denial and proved exact manifest/DB rollback and one recovery; isolated original case passed with observed guards. One unmodified26-case lifecycle supplement is separate, not root-cause attribution or retroactive PASS. Retain this intermittent native residual for fresh slice/Wave judgment; no product retry, test weakening, assertion relaxation or framework change.",
+    "artifacts": [
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.core-runtime-development-01.log",
+        "sha256": "04c3c0145851eb16b6bbba53c321161f7d65f081349db5b7bc8ff8cae3925227"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.core-runtime-development-03.log",
+        "sha256": "ebb7cd54284cfcbb31db4d367e18fedfd86408d38537762370f7e9c171370a47"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.api-compatibility-red-01.log",
+        "sha256": "4ad4ddf10cc1b90e3d82f1e6089d97026fe1988389bed77d31d36a8f3159638e"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.close-lifetime-red-01.log",
+        "sha256": "0baf3b71d02b6982fb6e061e280fc0c3f3b6c22162ea36347ba29df99bd00dbe"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-phase-diagnostic-03.jsonl",
+        "sha256": "98ce0adf1ca22c7468869f7bdf2debc87589644f14b0b18815de92c2b923f137"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-phase-diagnostic-03.json",
+        "sha256": "4ab7e0ca825d7f87cbaa32bcd3b73a85387ab8db196b6b5d0a7721a783e32ba2"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-phase-diagnostic-04.json",
+        "sha256": "82d575f2f1ba20e3ad9c01f66a53002a9cb04079b8b3a61ef3939f5816238089"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.adapter-boundary-red-01.log",
+        "sha256": "3d9232b07a85f9e0e9ec3443a3a9706794313368df2e71173b9b4d153c6f9a09"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.adapter-boundary-red-02.log",
+        "sha256": "a4482c502e4fdf7a8d0d1ec4df0c91a06697be676f3caaa12af55b8eff70e5ed"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.adapter-boundary-red-03.log",
+        "sha256": "d511770588f80d74ca2a13afa7687f39b6914a00a13d98584ff7c6eb4faadc26"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.search-browser-development-01.log",
+        "sha256": "05bed209133743b0bb6c0d6bdba4625b337ebc29f055378b8c37db3bb55d56a0"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.search-browser-development-02.log",
+        "sha256": "1dbb467d4f7af86f1b14bcbf7b9e132d33c4c5fcf0af03bdcf4e85e20eb90584"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.search-browser-development-03.log",
+        "sha256": "6ab7a2628f0c28ce03596a8dbcb2b1c816439403d7049e060fa09ef6f36818aa"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.storage-compatibility-development-01.log",
+        "sha256": "2c9b236960b142d253f84dccd0d202bb5110f9c0032edddef35a7c9bcb6fffec"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.candidate-publication-check-01.receipt.json",
+        "sha256": "a78469c3e621d2b22bcb27973cd0189ca2111d4c009805de3e11c9b390401745"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.publication-ref-drift-01.json",
+        "sha256": "98625b53f30e7979463707b684e4476a53c9426d34e4bb07d9cf0927cc952d46"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.clock-quality-development-01.json",
+        "sha256": "c0439dc0187d2038b4720d276391ada59054c79d062e5ac7c01e0857c779b4ce"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.product-privacy-preflight-01.log",
+        "sha256": "505342fe0231fe479c882e8cde0d7ecec3f0dcc2567655654ec98c53b0c5f0a4"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.product-privacy-preflight-02.log",
+        "sha256": "04ec6489d2acbf412370dd070b7c43cd49e4b7fc55c2cf7badf08babb4588e21"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.product-privacy-preflight-02.receipt.json",
+        "sha256": "50979eb13a1effd47306d04c1b3e90680cb2cafa45847090ea4fb21c72e1a708"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-01.json",
+        "sha256": "84b83910969bb3de7c3ac8b897042dde7d4e7356a66d308bdb67e2e0ec983352"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-01.log",
+        "sha256": "380cccaea11e22a2e94b340e1572c92fdb27912f38a5e70e03afaf14eb65db6c"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-02.json",
+        "sha256": "9c16f7a42c2ceb723f2896e93923dacfdcbac465706cad1f2e45d23d7e37ec86"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-02.log",
+        "sha256": "fb0b6f6ddbe975f1e3a6f4b4f4139d6281b37bf7a043d62719216bcfc115a892"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-03.json",
+        "sha256": "359dbab70940bfecbcf6f645c2ab65aec36c77df4c084b1d7beb3c00a7c87b57"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-03.log",
+        "sha256": "1e1add183f87baa4248a26f1d656f543f8d217c8303c36b412ab6a5aad6010a3"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-04.json",
+        "sha256": "4d989e44677f998abc835d4a68332e46186ce05c8728885a301b5478429606e6"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-04.log",
+        "sha256": "0d99042649def31a94bb612705682a492316460053c7a3f38489894c21dd7913"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-05.json",
+        "sha256": "4d989e44677f998abc835d4a68332e46186ce05c8728885a301b5478429606e6"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-05.log",
+        "sha256": "e9be5b3d98a7c4178b95cfa09035cc3b9f02e0ad9775c416d2d8ac568372a602"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-06.json",
+        "sha256": "956023bc18034f519d5ef448e08ce1ce40d8ce942bb71df8c14af9a9b3bf81ad"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-06.log",
+        "sha256": "d8f1b9e79be202f9f87ba7dc655a0c071f56e34bd7850fe73f403720ac15bc28"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-07.json",
+        "sha256": "0d37f92d94b1e44142c017f1999b5500c9d1bf3f4bd7bbf9b72cbe13f71010b2"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-boundary-development-07.log",
+        "sha256": "27b6ac8a0093bc3f2522bbca543758ba0593cc4c4e35af1d480ea37bdb760556"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01/report.json",
+        "sha256": "f657511c18ffa8a9ec53beee42129ee624a01c0d507a985a39ccd2303f9e7401"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01/native-api.log",
+        "sha256": "758ae2eaf10daefd87bfbd5ad6aeb03c5e7d0e7c62c95e5b80aeeb758cf6aa20"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01-native-api.json",
+        "sha256": "bbcc22b468b55d3abd0736686ea906c1c81855995c60d812273fca926156850a"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01/migration-compatibility.log",
+        "sha256": "4ae0a05ea237759c38d4a09863087365906d83ab065ef622c2d3710c08e9ac0b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01-runtime-drift-diagnostic-01.json",
+        "sha256": "312ae2c5268d0aee2c35aa92999b372d3e394f300b542b1c69984eab195bf936"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.qualification-01-runtime-drift-resolution-01.json",
+        "sha256": "7ef7f746c3a895ac2c466bbb0e78a778e7e08540dc77291b669bdb6b6a50719b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.runtime-inventory-method-advisory-01.json",
+        "sha256": "c261e02450b13cc4819cb3f2f9b09024bd0f1fb6e8a3b3459aadd40b5df972f3"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.authority-component-review-01.json",
+        "sha256": "1e1efcabc7df5567e15bb85338de79645d91f66cd997bd8aa71b92c30fd4bf94"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.query-ui-source-review-ffed5dad-01.json",
+        "sha256": "3f700e8126b3c003fd4ce6a1cfa8dfe685fb3e71972116e9db6f7b127d580513"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.commit-time-reproduction-01.log",
+        "sha256": "9e4dae749ea4622315a62a91ea62465c06f32ba223b8d5119055351e0f003f9d"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.commit-time-permanent-red-01.log",
+        "sha256": "fcf98e5b842a832cd1920e45100d25929b9e36408590bd560071952cadab44ea"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.intent-coherent-red-01.log",
+        "sha256": "0204b9af25af9bd3b4735cd262568274a22fe9762460e93d2b777959ca9bb6d8"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-phase-diagnostic-05.execution.json",
+        "sha256": "8e0dff7a30f10213226118bced82299269b1a5353978668fb29258e258624a80"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-phase-diagnostic-05.json",
+        "sha256": "07309bfa337b2d274766c13091b43f548d30aac650b2b3caa54fc01e0896b823"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-phase-diagnostic-05.jsonl",
+        "sha256": "b9f20c6b1ddcd97be7cb1e790e89684c261b4d2192477b2446f81fd06eb5a819"
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.T03.native-timeout-authority-advisory-06.json",
+        "sha256": "a89ca0b2034160e398627db898cf3f418ae285e401cf5f6a0b2107051d238ab1"
+      }
+    ],
+    "assessment": "Qualification01 remains FAIL: Native exceeded2s, nine current-successor migration expectations were stale, and the task-local recorder followed PNPM junction aliases into four workspace outputs. No retroactive PASS. Three permanent canonical commit-time regressions first reproduced persisted acceptance after expiry/rollback/nonmatching activation. Final current-input checks now run after terminal publication with atomic rollback; real same-connection history checks cover them. The search callback uses the existing fresh coherent Intent reader instead of three opens; a real accepted Intent change remains visible and no cross-call cache is introduced. Passing diagnostic05 does not establish failing01 timeout cause; fresh Native proof uses the original hard deadline. Original implementation/parser/API alias/browser fixture/schema-policy/architecture failures remain unqualified. Native diagnostics measured a2.91208s SQLCipher close/GIL stall after a0.00131s checkpoint; genuine-readonly clean-checkpoint companion fixes that path without releasing lifetime guards or changing timeout/dependency. Historical-checker54fail red is a diagnostic; preceding loader/sandbox errors are not valid behavioral red tests. Initial Node20 runs, setup errors and diagnostic wrappers do not qualify the product."
+  },
+  "scopeLimits": [
+    "Technical known-item fixture is wholly artificial and uses a declared lawful mirror/in-memory keys. Actual populated Core uses fixture Native authority; real Rust supervisor uses an empty lawful corpus. Neither is scientific gold, installed packaging or100k qualification.",
+    "Controlled browser Core/native replies establish renderer state/focus and failure handling, not actual source authority. Actual Native/Core and rights/storage cases provide separate bounded proof.",
+    "Core search remains available via UI-independent APIs and existing admitted worker. Future headless AI mode/launcher and AI planning remain outside this task."
+  ]
+}
