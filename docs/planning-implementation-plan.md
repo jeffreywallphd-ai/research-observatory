@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a72120077bf7f25b835db71973b906ee76f38d03e7597cf5862af0ed0b48f0a4
+source_sha256: 284ca2675dc7d0f57244110edc165412d2d7644746cd2e026a35ebac2b398352
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6094,7 +6094,7 @@ Original tasks and approvals remain unchanged.
 
 ### W3.C02.T01 — Implement incremental FTS5 indexing and rebuild
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-06.S01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** The preserved full populated Native development journey failed foreground search status after restart under the unchanged two-second Native response bound. Separate nonqualifying actual Core phase diagnostic02 (artifacts/tmp/W3.C01.status-phase-diagnostic-02/report.json) reproduced request19 running200 after2.9594033s, including2.5321196s FIFO wait behind worker collect_obsolete2.5973173s/retire2.0870084s. No run-result/query-fence call occurred in that request. Original historical generic-error causes remain unknown; all full/bounded failures and raw traces remain preserved. The query-only correction W3.C01.T01 is independently approved, DONE and locally integrated at5410a1c94af476c09049fcbb4d19f6f6b2e2ab9d; the separate preparation/retirement defect remains a hard CAP-06.S01 blocker.
 
@@ -6114,13 +6114,43 @@ Original tasks and approvals remain unchanged.
 - tests/search/test_native_index_service.py
 #### Review history — W3.C02.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `6cd5533347c28622d7ca04a80b5411ef9e30c86db225298a13d29b0a4f9be549`
+
+- Candidate / base / branch: `f1c154fb18cbfe2dca69d92257f7b8255c1d49c0` / `0b65ead522a5d2d22394f4425da8024b50ff269d` / `codex/w3-implementation`
+- Submitted by / at: codex-w3-implementation / `2026-10-17T11:12:31+00:00`
+- Evidence: `artifacts/evidence/W3.C02.T01.R01.json` / `e958f0ee1880adba405eb8ab4c95312ab819ee68659cf5cdbd527555415086ef` / `f1c154fb18cbfe2dca69d92257f7b8255c1d49c0`
+- Acceptance-criteria SHA-256: `9e6da57e528ad5d3fd17b36d46891b8e3b282f1fc300fc7f76b1393294bb3156`
+- Verification-selection SHA-256: `bb84289ccedbd85da141ff153b5acc3a68936b5326d7de6e11d2e3f919f408e6`
+- Changed paths: `artifacts/evidence/W3.C02.T01.candidate-publication-note-01.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W3.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/lexical_catalog_repository.py`, `services/core-api/src/research_observatory_core/lexical_index_repository.py`, `tests/search/test_index_catalog.py`, `tests/search/test_index_service.py`, `tests/search/test_native_index_service.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py tests/search/test_index_service.py tests/search/test_index_catalog.py tests/search/test_native_index_service.py`, `.venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py tests/search/test_index_service.py tests/search/test_index_catalog.py tests/search/test_native_index_service.py`, `.venv/Scripts/python.exe -B -m mypy --no-incremental --cache-dir .\artifacts\tmp\W3.C02.qualification-01\mypy-cache services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py tests/search/test_index_service.py tests/search/test_index_catalog.py tests/search/test_native_index_service.py`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`, `pinned-node24 apps/desktop/scripts/search-populated-native-integration.mjs --report artifacts/tmp/CAP-06.S01.populated-native-runtime-02.json`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_catalog`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_service`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_sources`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_protected_lexical_store`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_derivative_keys`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_windows_derivative_index`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_close_lifetime`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_native_index_service`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_search_activity`
+- Deferred checks: `Fresh installed bytes observed; no whole-system/OS immutability attestation or cache authority.`, `One populated metadata item is not100k metadata/permitted passages, scientific gold, general resource, renderer picker, installed packaging, full-profile, slice or Wave qualification.`, `Original cancellation retains succeeded/cancelled completion race; deterministic running-cancel/late acceptance is separate selected Core proof.`, `Supervisor Stopped and outer Job no-forced/empty plus Node normal exit do not prove graceful/unforced inner Core shutdown or all owned descendants. Actual S01 lifetime proof remains pending.`
+- Selection rationale: Five-path index collection/retirement restoration. Fresh protected catalog/service/source/store/key/Windows and real Native session/DPAPI tests cover coherent current authority, actual guarded FIFO and opener boundaries, each guarded ID page, terminal mark then fresh cleanup, initialized/absent/bootstrap witness modes, session stop/close/reopen, exact historical-key rekey/revoked retry, reader drain, DELETE eligibility, actual process-crash bootstrap phases and immutable selection/source/recovery. Changed catalog selected/file-bound helper composition also selects current query/delivery/run/source-authority/known-item/runtime/activity regressions. The ORIGINAL complete populated Native/generated-client journey, sources/assertions/deadlines unchanged from12737265 and no Node loader options, must freshly complete initial and post-restart searches, typed denials, replay and actual cancellation outcome. No early full profiles: schema/migration/UI/grammar/package/toolchain sources are unchanged, with full profiles deferred to actual slice/checkpoint/Wave owners.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w3_query_review / `2026-10-17T11:47:57+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W3.C02.T01.review-R01.json` / `a7a0385ce5d97fff79b8717db957506041e71e41824773107b39a1fbd0efc64d`
+
+**Review notes:** Approved W3.C02.T01 R01 at exact f1c154fb18cbfe2dca69d92257f7b8255c1d49c0 with no findings. The bounded worker-phase/coherent cleanup restoration preserves current authority and destructive recovery guarantees and passes fresh affected proof including the unchanged complete populated Native journey. All adverse histories and explicit lifetime/scale/resource/scientific/profile limits remain. Task disposition only.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w3_query_review at `2026-10-17T11:47:57+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approved W3.C02.T01 R01 at exact f1c154fb18cbfe2dca69d92257f7b8255c1d49c0 with no findings. The bounded worker-phase/coherent cleanup restoration preserves current authority and destructive recovery guarantees and passes fresh affected proof including the unchanged complete populated Native journey. All adverse histories and explicit lifetime/scale/resource/scientific/profile limits remain. Task disposition only.
 
 **Currently open findings:** -
 

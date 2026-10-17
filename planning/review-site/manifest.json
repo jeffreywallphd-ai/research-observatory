@@ -6787,7 +6787,7 @@
         {
           "task_id": "W3.C02.T01",
           "title": "Implement incremental FTS5 indexing and rebuild",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Committed corpus changes appear incrementally; interrupted indexing resumes or rebuilds safely; restricted text is excluded according to policy.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -6821,17 +6821,129 @@
           "task_review": {
             "task_id": "W3.C02.T01",
             "title": "Implement incremental FTS5 indexing and rebuild",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w3_query_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-17T11:47:57+00:00",
+              "notes": "Approved W3.C02.T01 R01 at exact f1c154fb18cbfe2dca69d92257f7b8255c1d49c0 with no findings. The bounded worker-phase/coherent cleanup restoration preserves current authority and destructive recovery guarantees and passes fresh affected proof including the unchanged complete populated Native journey. All adverse histories and explicit lifetime/scale/resource/scientific/profile limits remain. Task disposition only."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w3-implementation",
+                    "submitted_at": "2026-10-17T11:12:31+00:00",
+                    "candidate_commit": "f1c154fb18cbfe2dca69d92257f7b8255c1d49c0",
+                    "base_commit": "0b65ead522a5d2d22394f4425da8024b50ff269d",
+                    "branch": "codex/w3-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W3.C02.T01.R01.json",
+                      "sha256": "e958f0ee1880adba405eb8ab4c95312ab819ee68659cf5cdbd527555415086ef",
+                      "commit": "f1c154fb18cbfe2dca69d92257f7b8255c1d49c0",
+                      "recorded_at": "2026-10-17T11:12:31+00:00"
+                    },
+                    "acceptance_criteria_sha256": "9e6da57e528ad5d3fd17b36d46891b8e3b282f1fc300fc7f76b1393294bb3156",
+                    "changed_paths": [
+                      "artifacts/evidence/W3.C02.T01.candidate-publication-note-01.md",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W3.html",
+                      "planning/status-summary.md",
+                      "services/core-api/src/research_observatory_core/lexical_catalog_repository.py",
+                      "services/core-api/src/research_observatory_core/lexical_index_repository.py",
+                      "tests/search/test_index_catalog.py",
+                      "tests/search/test_index_service.py",
+                      "tests/search/test_native_index_service.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py tests/search/test_index_service.py tests/search/test_index_catalog.py tests/search/test_native_index_service.py",
+                      ".venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py tests/search/test_index_service.py tests/search/test_index_catalog.py tests/search/test_native_index_service.py",
+                      ".venv/Scripts/python.exe -B -m mypy --no-incremental --cache-dir .\\artifacts\\tmp\\W3.C02.qualification-01\\mypy-cache services/core-api/src/research_observatory_core/lexical_index_repository.py services/core-api/src/research_observatory_core/lexical_catalog_repository.py tests/search/test_index_service.py tests/search/test_index_catalog.py tests/search/test_native_index_service.py",
+                      ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+                      "pinned-node24 apps/desktop/scripts/search-populated-native-integration.mjs --report artifacts/tmp/CAP-06.S01.populated-native-runtime-02.json",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_catalog",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_service",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_sources",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_protected_lexical_store",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_derivative_keys",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_windows_derivative_index",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_close_lifetime",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_native_index_service",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_search_activity"
+                    ],
+                    "deferred_checks": [
+                      "Fresh installed bytes observed; no whole-system/OS immutability attestation or cache authority.",
+                      "One populated metadata item is not100k metadata/permitted passages, scientific gold, general resource, renderer picker, installed packaging, full-profile, slice or Wave qualification.",
+                      "Original cancellation retains succeeded/cancelled completion race; deterministic running-cancel/late acceptance is separate selected Core proof.",
+                      "Supervisor Stopped and outer Job no-forced/empty plus Node normal exit do not prove graceful/unforced inner Core shutdown or all owned descendants. Actual S01 lifetime proof remains pending."
+                    ],
+                    "selection_rationale": "Five-path index collection/retirement restoration. Fresh protected catalog/service/source/store/key/Windows and real Native session/DPAPI tests cover coherent current authority, actual guarded FIFO and opener boundaries, each guarded ID page, terminal mark then fresh cleanup, initialized/absent/bootstrap witness modes, session stop/close/reopen, exact historical-key rekey/revoked retry, reader drain, DELETE eligibility, actual process-crash bootstrap phases and immutable selection/source/recovery. Changed catalog selected/file-bound helper composition also selects current query/delivery/run/source-authority/known-item/runtime/activity regressions. The ORIGINAL complete populated Native/generated-client journey, sources/assertions/deadlines unchanged from12737265 and no Node loader options, must freshly complete initial and post-restart searches, typed denials, replay and actual cancellation outcome. No early full profiles: schema/migration/UI/grammar/package/toolchain sources are unchanged, with full profiles deferred to actual slice/checkpoint/Wave owners.",
+                    "selection_sha256": "bb84289ccedbd85da141ff153b5acc3a68936b5326d7de6e11d2e3f919f408e6",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:unit",
+                      "foundation:architecture",
+                      "foundation:quality",
+                      "search:unit"
+                    ],
+                    "packet_sha256": "6cd5533347c28622d7ca04a80b5411ef9e30c86db225298a13d29b0a4f9be549"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w3_query_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-17T11:47:57+00:00",
+                    "notes": "Approved W3.C02.T01 R01 at exact f1c154fb18cbfe2dca69d92257f7b8255c1d49c0 with no findings. The bounded worker-phase/coherent cleanup restoration preserves current authority and destructive recovery guarantees and passes fresh affected proof including the unchanged complete populated Native journey. All adverse histories and explicit lifetime/scale/resource/scientific/profile limits remain. Task disposition only."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W3.C02.T01.review-R01.json",
+                    "sha256": "a7a0385ce5d97fff79b8717db957506041e71e41824773107b39a1fbd0efc64d"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W3.C02.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-17T11:12:31+00:00",
+                    "reviewed_at": "2026-10-17T11:47:57+00:00",
+                    "duration_seconds": 2126,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:unit",
+                      "foundation:architecture",
+                      "foundation:quality",
+                      "search:unit"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }
