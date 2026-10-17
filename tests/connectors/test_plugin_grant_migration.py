@@ -131,11 +131,11 @@ class PluginGrantMigrationTests(unittest.TestCase):
             connection.close()
         self.assertNotEqual(b"SQLite format 3\x00", self.database.read_bytes()[:16])
 
-    def _assert_current_v29_history(self) -> None:
+    def _assert_current_v30_history(self) -> None:
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
             self.assertEqual(30, current.execute("PRAGMA user_version").fetchone()[0])
-            self.assertEqual(v0029_lexical_index_generations.TARGET_SCHEMA_SHA256, storage._schema_fingerprint(current))
+            self.assertEqual(v0030_lexical_search_runs.TARGET_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(0, current.execute("SELECT count(*) FROM plugin_grant_events").fetchone()[0])
             for table in (*storage.ACQUISITION_TABLES, *storage.DOCUMENT_INTAKE_TABLES):
@@ -205,6 +205,13 @@ class PluginGrantMigrationTests(unittest.TestCase):
                         v0028_document_enrichments.TARGET_SCHEMA_SHA256,
                         v0029_lexical_index_generations.TARGET_SCHEMA_SHA256,
                     ),
+                    (
+                        v0030_lexical_search_runs.revision,
+                        29,
+                        30,
+                        v0029_lexical_index_generations.TARGET_SCHEMA_SHA256,
+                        v0030_lexical_search_runs.TARGET_SCHEMA_SHA256,
+                    ),
                 ],
                 [
                     tuple(row)
@@ -226,7 +233,7 @@ class PluginGrantMigrationTests(unittest.TestCase):
         self.assertEqual("migrated", result.status)
         self.assertEqual(MIGRATION_IDS, result.migration_ids)
         self.assertEqual("current", migrate_database(self.database, expected_project_id=PROJECT_ID).status)
-        self._assert_current_v29_history()
+        self._assert_current_v30_history()
         assert result.recovery_manifest_relative_path is not None
         manifest_path = self.state.parent / result.recovery_manifest_relative_path
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -260,7 +267,7 @@ class PluginGrantMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(MIGRATION_IDS, result.migration_ids)
-        self._assert_current_v29_history()
+        self._assert_current_v30_history()
         assert result.recovery_manifest_relative_path is not None
         manifest_path = self.state.parent / result.recovery_manifest_relative_path
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

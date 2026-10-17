@@ -299,14 +299,14 @@ class CorpusReportMigrationTests(unittest.TestCase):
         self.assertEqual(18, frozen["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(19, frozen_v19["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(20, frozen_v20["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28, 29], current["properties"]["targetSchemaVersion"]["enum"])
+        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28, 29, 30], current["properties"]["targetSchemaVersion"]["enum"])
         self.assertEqual(SCHEMA_SHA256, frozen["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, frozen_v19["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(
             "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6",
             frozen_v20["properties"]["targetSchemaSha256"]["const"],
         )
-        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current_targets[29])
+        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current_targets[30])
 
     def test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup(self) -> None:
         for kind in ("import-corpus", "connector-corpus"):

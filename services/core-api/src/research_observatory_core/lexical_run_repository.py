@@ -363,17 +363,10 @@ class SqliteLexicalRunRepository:
                     return replay, WorkflowAtomicCompletion(accepted.outputs)
                 renewed = [0.0]
 
-                def check():
+                def check_current():
                     self.index._check_cancel(cancelled)
                     self._authority(db, inputs)
                     self.index._fence(db, snapshot.validation)
-                    now = self.index.catalog.now()
-                    if (
-                        now < snapshot.validated_at
-                        or source_authority_epoch(db, self.project) != snapshot.source_authority_epoch
-                        or rights_time_partition(db, self.project, now) != snapshot.rights_time_partition
-                    ):
-                        raise IndexServiceProblem("search source authority changed before commit")
                     selection = self.index.catalog._selection(db)
                     if (
                         selection is None
@@ -383,11 +376,19 @@ class SqliteLexicalRunRepository:
                     ):
                         raise IndexServiceProblem("search selection changed before commit")
                     self.index._current(snapshot.generation)
+                    now = self.index.catalog.now()
                     if (
-                        snapshot.validation.expires_at is not None
-                        and self.index.catalog.now() >= snapshot.validation.expires_at
+                        now < snapshot.validated_at
+                        or source_authority_epoch(db, self.project) != snapshot.source_authority_epoch
+                        or rights_time_partition(db, self.project, now) != snapshot.rights_time_partition
                     ):
+                        raise IndexServiceProblem("search source authority changed before commit")
+                    if snapshot.validation.expires_at is not None and now >= snapshot.validation.expires_at:
                         raise IndexServiceProblem("search permission expired before commit")
+                    self.index._check_cancel(cancelled)
+
+                def check():
+                    check_current()
                     lease = self.queue._lease_row(db, claim, self.now(), states=("running",))
                     self.queue._verify_attempt_capability(db, claim)
                     if lease[3] is not None:
@@ -491,10 +492,16 @@ class SqliteLexicalRunRepository:
                 # The transaction contains the entire accepted node, immutable
                 # subtype, source edges, provenance/outbox, staged output and
                 # fenced terminal winner. No derivative transaction participates.
-                self.index._fence(db, validation)
-                self.index._check_cancel(cancelled)
-                return SearchRunRecord(
-                    revision_id=revision.revision_id, payload_sha256=content_sha256(content), content=content
-                ), WorkflowAtomicCompletion((output,))
+                result = (
+                    SearchRunRecord(
+                        revision_id=revision.revision_id, payload_sha256=content_sha256(content), content=content
+                    ),
+                    WorkflowAtomicCompletion((output,)),
+                )
+                # The queue is now terminal, so renewing a running lease would
+                # reject a legitimate winner. Current source/time/authority must
+                # still hold after that write or the entire acceptance rolls back.
+                check_current()
+                return result
 
         return self.index._bounded(publish)

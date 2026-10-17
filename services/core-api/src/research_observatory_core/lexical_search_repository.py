@@ -4,12 +4,16 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
+from .ingestion.preview_workflow import PreviewIntentContext
 from .lexical_delivery import CoreLexicalResultService
 from .lexical_index_repository import CoreLexicalIndexService
 from .lexical_run_repository import SqliteLexicalRunRepository
 from .lexical_search_worker import LexicalSearchActivity
 from .lexical_source_repository import CanonicalIndexSources
+from .ports.import_previews import PreviewProblem
 from .ports.workflow_executor import WorkflowActor
+from .repositories import sqlite_intent_authority_snapshot
+from .research_intents import validated_workflow_authority
 from .search import parse_query
 from .search.delivery_values import SearchJob
 from .search.run_values import SearchRequestInput
@@ -39,6 +43,31 @@ class SqliteLexicalSearchRepository:
     def __init__(self, documents, *, derivative_keys, database_keys):
         self.documents, self.derivative_keys, self.database_keys = documents, derivative_keys, database_keys
 
+    def _intent(self, root):
+        def current(binding):
+            # Fresh for this guarded phase. All three authority components
+            # share one canonical snapshot; nothing survives into a later call.
+            reader = sqlite_intent_authority_snapshot(binding.path, binding.project_id)
+            bridge = reader.project_identity()
+            if bridge is None or bridge.manifest_project_id != binding.project_id:
+                raise PreviewProblem("preview-intent-project-mismatch")
+            _, revisions, _, _ = validated_workflow_authority(reader, expected_project_id=bridge.domain_project_id)
+            selected = next(iter(revisions), None)
+            if selected is None or selected.get("projectId") != bridge.domain_project_id:
+                raise PreviewProblem("preview-intent-context-unavailable")
+            return PreviewIntentContext.model_validate(
+                {
+                    "projectId": bridge.manifest_project_id,
+                    "domainProjectId": selected["projectId"],
+                    "intentId": selected["intentId"],
+                    "revisionId": selected["revisionId"],
+                    "contentHash": selected["revisionContentHash"],
+                    "status": selected["status"],
+                }
+            )
+
+        return self.documents.imports._action(root, current)
+
     def _using(self, repository, root, session, action, *, orchestration=None):
         sources = CanonicalIndexSources(
             repository,
@@ -52,9 +81,7 @@ class SqliteLexicalSearchRepository:
             index,
             session_id=session,
             now=self.documents.now,
-            intent=lambda: self.documents.imports._action(
-                root, lambda binding: self.documents.imports._intent(binding)
-            ),
+            intent=lambda: self._intent(root),
         )
         try:
             return action(runs)

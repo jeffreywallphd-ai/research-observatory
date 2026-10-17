@@ -372,7 +372,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual(17, old["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28, 29], current["properties"]["targetSchemaVersion"]["enum"])
+        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28, 29, 30], current["properties"]["targetSchemaVersion"]["enum"])
         self.assertEqual(SCHEMA_SHA256, old["properties"]["targetSchemaSha256"]["const"])
         self.assertIn(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["enum"])
         # A structural historical witness remains interpretable by the frozen

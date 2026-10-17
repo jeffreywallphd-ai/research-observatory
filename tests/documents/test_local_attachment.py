@@ -1151,6 +1151,7 @@ class AttachmentMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             plan.migration_ids,
         )
@@ -1175,7 +1176,7 @@ class AttachmentMigrationTests(unittest.TestCase):
                 ),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 self.manifest["counts"]["reconciliation_versions"],
                 db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0],
@@ -1214,7 +1215,7 @@ class AttachmentMigrationTests(unittest.TestCase):
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as canonical_db:
-            self.assertEqual(29, canonical_db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, canonical_db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(1, canonical_db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0])
 
 
@@ -1306,6 +1307,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             plan.migration_ids,
         )
@@ -1329,7 +1331,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
                 _schema_fingerprint(backup),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
         self.assertEqual(before_rows, self._source_rows())
@@ -1360,7 +1362,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
         self.assertEqual(before_rows, self._source_rows())
 

@@ -52,6 +52,30 @@ allocation or overrun must be itemized cumulatively before commitment.
 
 ## Current-authority closure during implementation
 
+Independent source review at candidate
+`ffed5dada98d5c04cdba90e8027da6f631cf2744` exposed a missed final-publication
+boundary (`AUTH-COMMIT-TIME-01`). The running-attempt check ended before the
+terminal queue write; the final watermark fence did not recheck trusted time,
+permission activation/expiry, selection and lifecycle before canonical commit.
+Three real SQLCipher reproductions changed expiry, rolled time back within the
+same permission partition, or activated a nonmatching source after the real
+terminal writer. All three failed because accepted output had already persisted,
+although subsequent delivery was denied. Preserve this adverse result in
+`artifacts/tmp/CAP-06.S01.T03.commit-time-reproduction-01.log` (SHA256
+`9e4dae749ea4622315a62a91ea62465c06f32ba223b8d5119055351e0f003f9d`).
+Add permanent regressions before repair. Separate the reusable current-input
+guard from running-lease renewal, then invoke that guard after terminal output
+and observation classification, immediately before transaction exit. Require
+atomic rollback of queue acceptance and all scholarly/provenance history.
+
+Fresh migration compatibility also found nine stale current29 assertions in
+attachment/acquisition, rights, connector and corpus-report tests. Extend only
+their current successor expectations through30, including assertions reached
+after the first failure. Preserve every literal predecessor, old schema hash,
+backup/ciphertext comparison, historical recovery branch and rollback assertion.
+Replay the nine concrete cases and their remaining assertions; the original
+146-case result with nine failures remains adverse evidence.
+
 Read-only advisory `artifacts/tmp/CAP-06.S01.T03.warm-read-authority-advisory-01.json`
 SHA256 `eb5938476563c590dabe5138751632902a8791ccbdd2150f65ed15309d679be6`
 identified current import draft and object-state writes without outbox events.
@@ -115,6 +139,18 @@ deadline remain unchanged. Add real foreground-progress/reopen, read-only-write
 denial, rename denial during consumption, setup/read failure drain and revoked-key
 tests. Preserve the earlier failures and diagnostic limits. The unwrapped Native
 development journey subsequently passed, but exact-candidate proof is still due.
+
+Fresh qualification01 still failed its Native transport deadline; its cause
+remains unknown. The separate passing phase diagnostic05 measured terminal
+status at 1.626 seconds and page at 1.731 seconds, with derivative close below
+1.5 milliseconds and no observed heartbeat gaps. Independent advisory06 found
+repeated three-connection Intent reads on these guarded search paths. A real
+canonical regression observes six opens for two successive reads, including an
+accepted Intent change between them. Use the existing fresh coherent one-
+connection Intent reader inside each existing guarded callback; retain bridge,
+workflow, actor, in-writer, source, time and lifecycle checks. No authority is
+cached across calls or phases. Replay actual Native execution with the unchanged
+two-second deadline; the diagnostic does not establish the prior timeout cause.
 
 The architecture check exposed concrete storage dependencies in unfinished
 business/API modules. Pure command/activity ports now separate HTTP and worker

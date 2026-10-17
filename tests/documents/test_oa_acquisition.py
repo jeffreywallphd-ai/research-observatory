@@ -419,6 +419,7 @@ class AcquisitionMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             plan.migration_ids,
         )
@@ -429,7 +430,7 @@ class AcquisitionMigrationTests(unittest.TestCase):
             self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(self.manifest["schemaSha256"], _schema_fingerprint(db))
         with closing(sqlite3.connect(self.database)) as db:
-            self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
             self.assertEqual(0, db.execute("SELECT count(*) FROM acquisition_locations").fetchone()[0])
         for item in self.manifest["ciphertext"]:
