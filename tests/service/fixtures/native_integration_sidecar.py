@@ -9,7 +9,12 @@ import json
 import os
 import re
 import sys
+import threading
+from collections.abc import Iterator
+from contextlib import ExitStack, contextmanager
+from dataclasses import asdict
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 from research_observatory_core import main as core_main
@@ -85,6 +90,191 @@ def _signed_document_probe():
     )
     verify_worker_runtime(runtime)
     return runtime, str(guardian)
+
+
+@contextmanager
+def _owned_roles_probe(profile_vault_root: Path) -> Iterator[None]:
+    # Only the private Windows Native fixture supplies this enable switch.
+    # No arbitrary filename, command, role or output directory is accepted.
+    if os.environ.get("RO_W3_CORE_LIFETIME_PROBE") != "1":
+        yield
+        return
+
+    from research_observatory_core import main as core_main
+    from research_observatory_core import windows_credentials
+    from research_observatory_core.windows_credentials import (
+        WindowsRecoveryNativeAuthority,
+        _recovery_current_process_identity,
+    )
+
+    from workers.windows import connector_launcher, lpac_launcher, no_write_acl, recovery_guardian
+
+    repository = Path(__file__).resolve().parents[3]
+    scratch = repository / "artifacts" / "tmp"
+    fixture = profile_vault_root.parent
+    if (
+        fixture.parent != scratch
+        or not fixture.name.startswith("search-populated-native-")
+        or fixture != fixture.resolve(strict=True)
+        or profile_vault_root != profile_vault_root.resolve(strict=True)
+    ):
+        raise ValueError("native-lifetime-fixture-invalid")
+    proof_root = fixture / "core-owned-role-proof"
+    if not proof_root.is_dir() or proof_root != proof_root.resolve(strict=True):
+        raise ValueError("native-lifetime-proof-root-invalid")
+    for path in (proof_root, profile_vault_root, fixture, scratch):
+        if path.is_symlink() or path.is_junction():
+            raise ValueError("native-lifetime-proof-redirected")
+
+    # Import every alias-bearing module BEFORE capturing originals. Count entry,
+    # not successful spawn; even failed launch attempts invalidate zero proof.
+    originals = (
+        (recovery_guardian, "start_guardian", "guardian"),
+        (connector_launcher, "start_guardian", "guardian"),
+        (connector_launcher, "_launch_signed_worker", "connector-worker"),
+        (lpac_launcher, "_launch", "lpac-worker"),
+        (lpac_launcher, "_run_icacls", "acl-utility"),
+        (no_write_acl, "_run_icacls", "acl-utility"),
+    )
+    coverage = {
+        "aliasesMatchedAtInstall": connector_launcher.start_guardian is recovery_guardian.start_guardian
+        and no_write_acl._run_icacls is lpac_launcher._run_icacls,
+        "observerError": False,
+    }
+    counters = {
+        role: {"attempts": 0, "returns": 0, "errors": 0, "inflight": 0}
+        for role in ("guardian", "connector-worker", "lpac-worker", "acl-utility")
+    }
+    guard = threading.Lock()
+    identity = asdict(_recovery_current_process_identity())
+    source_paths = [Path(__file__)]
+    for module in (
+        connector_launcher,
+        lpac_launcher,
+        no_write_acl,
+        recovery_guardian,
+        core_main,
+        windows_credentials,
+    ):
+        source_file = module.__file__
+        if not isinstance(source_file, str):
+            raise ValueError("native-lifetime-source-unavailable")
+        source_paths.append(Path(source_file))
+
+    def source_pins() -> dict[str, str]:
+        return {
+            path.relative_to(repository).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in source_paths
+        }
+
+    initial_pins = source_pins()
+
+    def note(role: str, event: str) -> None:
+        try:
+            with guard:
+                counts = counters[role]
+                if event == "entry":
+                    counts["attempts"] += 1
+                    counts["inflight"] += 1
+                else:
+                    counts[event] += 1
+                    counts["inflight"] -= 1
+        except BaseException:
+            # An observer error never replaces an original launch result or
+            # exception. Missing/uncertain proof is denied by the Native owner.
+            coverage["observerError"] = True
+
+    def wrap(original: Any, role: str) -> Any:
+        def observed(*args: Any, **kwargs: Any) -> Any:
+            note(role, "entry")
+            try:
+                result = original(*args, **kwargs)
+            except BaseException:
+                note(role, "errors")
+                raise
+            note(role, "returns")
+            return result
+
+        return observed
+
+    installed = [(module, name, wrap(getattr(module, name), role)) for module, name, role in originals]
+    runtime_returned = False
+    with ExitStack() as stack:
+        for module, name, wrapper in installed:
+            stack.enter_context(patch.object(module, name, new=wrapper))
+        try:
+            yield
+            runtime_returned = True
+        finally:
+            # No wait, poll, launch, kill, pipe read or worker cleanup is added.
+            # A nonzero invocation cannot claim normal drain with this observer.
+            try:
+                aliases_retained = all(getattr(module, name) is wrapper for module, name, wrapper in installed)
+                pins_equal = source_pins() == initial_pins
+                # Runtime shutdown must already have stopped launch-capable
+                # worker pumps. Query only; never join or extend their deadline.
+                live = [thread for thread in threading.enumerate() if thread.is_alive()]
+
+                def proven_nonlaunch(thread: threading.Thread) -> bool:
+                    if thread is threading.main_thread():
+                        return True
+                    target = getattr(thread, "_target", None)
+                    if target is core_main._watch_supervisor:
+                        return True
+                    owner = getattr(target, "__self__", None)
+                    return (
+                        getattr(target, "__func__", None) is WindowsRecoveryNativeAuthority._write_control
+                        and type(owner) is WindowsRecoveryNativeAuthority
+                        and getattr(owner, "_writer", None) is thread
+                    )
+
+                live_threads = sorted(thread.name for thread in live)
+                unexpected_threads = sorted(thread.name for thread in live if not proven_nonlaunch(thread))
+                # This is the FINAL registry snapshot, after every potentially
+                # interleaving source/alias/thread check. Text names grant no
+                # exemption. Remaining launch-capable/unknown threads deny zero.
+                with guard:
+                    observed = {role: dict(counts) for role, counts in counters.items()}
+                    coverage_snapshot = dict(coverage)
+                zero = (
+                    runtime_returned
+                    and coverage_snapshot["aliasesMatchedAtInstall"]
+                    and not coverage_snapshot["observerError"]
+                    and aliases_retained
+                    and pins_equal
+                    and not unexpected_threads
+                    and all(all(value == 0 for value in counts.values()) for counts in observed.values())
+                )
+                record = {
+                    "kind": "test-only-core-owned-role-zero-observation",
+                    "coreIdentity": identity,
+                    "installedBeforeRuntimeComposition": True,
+                    "runtimeReturned": runtime_returned,
+                    "finalizedBeforeCoreExit": True,
+                    "coverage": coverage_snapshot,
+                    "aliasesRetainedUntilFinalization": aliases_retained,
+                    "sourcePins": initial_pins,
+                    "sourcePinsEqualAfter": pins_equal,
+                    "liveThreadsAtFinalization": live_threads,
+                    "unexpectedLiveThreads": unexpected_threads,
+                    "roles": observed,
+                    "observedZeroRoleAttempts": zero,
+                    "positiveWorkerGuardianDrain": "NOT_OBSERVED",
+                    "limits": (
+                        "Selected metadata-only journey. Any invocation or uncertainty invalidates observed zero. "
+                        "Originals forward unchanged. Observer import/wrapper/hash/receipt overhead is part of the "
+                        "instrumented run; no new waits or cleanup."
+                    ),
+                }
+                filename = f"core-owned-roles-{identity['process_id']}-{identity['creation_filetime']}.json"
+                with (proof_root / filename).open("x", encoding="utf-8", newline="\n") as output:
+                    output.write(json.dumps(record, indent=2) + "\n")
+                    output.flush()
+                    os.fsync(output.fileno())
+            except BaseException:
+                # Retained Core exit alone cannot replace a missing receipt.
+                # Original runtime return/exception and cleanup remain unchanged.
+                pass
 
 
 _STAGE_EXCEPTION_CLASSES = {
@@ -242,27 +432,28 @@ def main() -> int:
         # The child never prints a local path, token, or exception body.
         print("RO-W2-SIGNED-DOCUMENT-PROBE-INVALID", file=sys.stderr, flush=True)
         return 2
-    if signed_probe is None:
-        return run_supervised(CoreSettings(), profile_vault_root=profile_vault_root)
-    from workers.windows import document_launcher, recovery_guardian
+    with _owned_roles_probe(profile_vault_root):
+        if signed_probe is None:
+            return run_supervised(CoreSettings(), profile_vault_root=profile_vault_root)
+        from workers.windows import document_launcher, recovery_guardian
 
-    runtime, guardian = signed_probe
-    temporary = _canonical_probe_path(
-        str(profile_vault_root.parent / "temporary"),
-        Path(__file__).resolve().parents[3] / "artifacts" / "tmp",
-        directory=True,
-    )
-    original_app_factory = core_main.create_runtime_app
+        runtime, guardian = signed_probe
+        temporary = _canonical_probe_path(
+            str(profile_vault_root.parent / "temporary"),
+            Path(__file__).resolve().parents[3] / "artifacts" / "tmp",
+            directory=True,
+        )
+        original_app_factory = core_main.create_runtime_app
 
-    def diagnostic_app_factory(**kwargs):
-        return _StageExceptionProbe(original_app_factory(**kwargs), temporary)
+        def diagnostic_app_factory(**kwargs):
+            return _StageExceptionProbe(original_app_factory(**kwargs), temporary)
 
-    with (
-        patch.object(document_launcher, "load_installed_worker_runtime", return_value=runtime),
-        patch.object(recovery_guardian, "_guardian_command", return_value=[guardian, "--plugin-acl-guardian"]),
-        patch.object(core_main, "create_runtime_app", side_effect=diagnostic_app_factory),
-    ):
-        return run_supervised(CoreSettings(), profile_vault_root=profile_vault_root)
+        with (
+            patch.object(document_launcher, "load_installed_worker_runtime", return_value=runtime),
+            patch.object(recovery_guardian, "_guardian_command", return_value=[guardian, "--plugin-acl-guardian"]),
+            patch.object(core_main, "create_runtime_app", side_effect=diagnostic_app_factory),
+        ):
+            return run_supervised(CoreSettings(), profile_vault_root=profile_vault_root)
 
 
 if __name__ == "__main__":

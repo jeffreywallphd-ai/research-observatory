@@ -4327,6 +4327,8 @@ fn recovery_control_writer(mut stdin: std::process::ChildStdin) -> mpsc::SyncSen
 }
 
 fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool) -> bool {
+    #[cfg(all(test, windows, feature = "integration-harness"))]
+    native_stop_proof::event(process.containment.0, native_stop_proof::Event::NormalEntry);
     process.cancellation.store(true, Ordering::Release);
     if security_stop.load(Ordering::Acquire) {
         return stop_running_process_immediately(process);
@@ -4353,8 +4355,18 @@ fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool
 }
 
 fn stop_running_process_immediately(process: &mut RunningProcess) -> bool {
+    #[cfg(all(test, windows, feature = "integration-harness"))]
+    native_stop_proof::event(
+        process.containment.0,
+        native_stop_proof::Event::ImmediateEntry,
+    );
     process.cancellation.store(true, Ordering::Release);
     process.containment.terminate();
+    #[cfg(all(test, windows, feature = "integration-harness"))]
+    native_stop_proof::event(
+        process.containment.0,
+        native_stop_proof::Event::DirectKillInvoked,
+    );
     let _ = process.child.kill();
     let stopped = process.child.wait().is_ok();
     if stopped {
@@ -5187,6 +5199,8 @@ impl ProcessTreeContainment {
     }
 
     fn terminate(&self) {
+        #[cfg(all(test, windows, feature = "integration-harness"))]
+        native_stop_proof::event(self.0, native_stop_proof::Event::TerminateInvoked);
         use std::mem::size_of;
         use windows_sys::Win32::Foundation::CloseHandle;
         use windows_sys::Win32::System::JobObjects::{
@@ -5235,6 +5249,13 @@ impl ProcessTreeContainment {
 #[cfg(windows)]
 impl Drop for ProcessTreeContainment {
     fn drop(&mut self) {
+        #[cfg(all(test, windows, feature = "integration-harness"))]
+        {
+            let ticket = native_stop_proof::before_close(self.0);
+            let succeeded = unsafe { windows_sys::Win32::Foundation::CloseHandle(self.0) != 0 };
+            native_stop_proof::after_close(ticket, succeeded);
+        }
+        #[cfg(not(all(test, windows, feature = "integration-harness")))]
         unsafe {
             windows_sys::Win32::Foundation::CloseHandle(self.0);
         }
@@ -5252,6 +5273,9 @@ impl ProcessTreeContainment {
 
     fn terminate(&self) {}
 }
+
+#[cfg(all(test, windows, feature = "integration-harness"))]
+mod native_stop_proof;
 
 #[cfg(all(test, windows, feature = "integration-harness"))]
 mod populated_search_integration;

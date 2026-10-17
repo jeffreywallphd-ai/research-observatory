@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, realpath, rm, writeFile, open } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, lstat, realpath, rm, writeFile, open } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "vite";
@@ -32,6 +32,7 @@ try {
   for(const relative of ["apps/desktop/scripts/search-populated-native-integration.mjs",
     "apps/desktop/scripts/search-populated-native-client.mjs","apps/desktop/src-tauri/src/supervisor.rs",
     "apps/desktop/src-tauri/src/supervisor/populated_search_integration.rs",
+    "apps/desktop/src-tauri/src/supervisor/native_stop_proof.rs",
     "tests/service/fixtures/native_integration_sidecar.py","packages/contracts/core-api/generated.ts",
     "tests/search/populated_native_owner.py","tests/service/test_native_project_contract.py","workers/windows/lpac_launcher.py"])
     report.inputSha256[relative]=await sha(path.join(repo,relative));
@@ -70,6 +71,55 @@ try {
     assert.equal(run.status,"PASS");assert.equal(run.forcedTermination,false);
     assert.equal(run.naturalDrainObservation.active,0);assert.equal(run.binaryReaderCompleted,true);
   }
+  report.lifetimeStops=[];
+  for(const stage of ["restart","final"]){
+    const stop=JSON.parse(await readFile(path.join(fixture,`native-stop-${stage}.json`),"utf8"));
+    assert.equal(stop.kind,"actual-native-inner-core-stop-observation");
+    assert.equal(stop.stage,stage);
+    assert.equal(stop.coreNormalContainedDrain,true);
+    assert.equal(stop.boundedJourneyNormalLifetime,true);
+    assert.equal(stop.attemptMatches,true);
+    assert.equal(stop.ownedZeroRolesIndependentlyChecked,true);
+    assert.equal(stop.record.normalEntries,1);
+    for(const key of ["immediateEntries","terminateInvocations","directKillInvocations"])
+      assert.equal(stop.record[key],0);
+    assert.equal(stop.record.closeAttempts,1);assert.equal(stop.record.closeResults,1);
+    assert.equal(stop.record.closeSucceeded,true);
+    const before=stop.record.beforeClose;
+    for(const key of ["accountingQueryOk","processListQueryOk","completeProcessList"])
+      assert.equal(before[key],true);
+    for(const key of ["activeProcesses","totalTerminatedProcesses","assignedProcesses","returnedProcesses"])
+      assert.equal(before[key],0);
+    assert.deepEqual(before.processIds,[]);
+    assert.equal(stop.waitResult,0);assert.equal(stop.exitCodeKnown,true);assert.equal(stop.exitCode,0);
+    assert.equal(stop.identityEqual,true);assert.equal(stop.observerHandleClosed,true);
+    assert.deepEqual(stop.identityAfter,stop.record.identity);
+    const identity=stop.record.identity;
+    assert.ok(Number.isSafeInteger(identity.process_id)&&identity.process_id>0&&identity.process_id<=0xffffffff);
+    assert.match(identity.creation_filetime,/^[0-9a-f]{16}$/u);
+    assert.match(identity.executable_identity,/^[0-9a-f]{64}$/u);
+    const name=`core-owned-roles-${identity.process_id}-${identity.creation_filetime}.json`;
+    const roles=JSON.parse(await readFile(path.join(fixture,"core-owned-role-proof",name),"utf8"));
+    assert.deepEqual(roles,stop.ownedRoleReceipt);
+    assert.deepEqual(roles.coreIdentity,identity);
+    assert.equal(roles.kind,"test-only-core-owned-role-zero-observation");
+    for(const key of ["installedBeforeRuntimeComposition","runtimeReturned","finalizedBeforeCoreExit",
+      "aliasesRetainedUntilFinalization","sourcePinsEqualAfter","observedZeroRoleAttempts"])
+      assert.equal(roles[key],true);
+    assert.equal(roles.coverage.aliasesMatchedAtInstall,true);assert.equal(roles.coverage.observerError,false);
+    assert.deepEqual(roles.unexpectedLiveThreads,[]);
+    assert.equal(roles.positiveWorkerGuardianDrain,"NOT_OBSERVED");
+    assert.deepEqual(Object.keys(roles.roles).sort(),["acl-utility","connector-worker","guardian","lpac-worker"]);
+    for(const counts of Object.values(roles.roles))
+      assert.deepEqual(counts,{attempts:0,returns:0,errors:0,inflight:0});
+    report.lifetimeStops.push({stage,coreIdentity:identity,roleReceiptName:name,
+      coreNormalContainedDrain:true,observedZeroRoleAttempts:true,boundedJourneyNormalLifetime:true});
+  }
+  assert.notDeepEqual(
+    [report.lifetimeStops[0].coreIdentity.process_id,report.lifetimeStops[0].coreIdentity.creation_filetime],
+    [report.lifetimeStops[1].coreIdentity.process_id,report.lifetimeStops[1].coreIdentity.creation_filetime],
+    "restart must produce a distinct actual Core incarnation");
+  assert.deepEqual(report.native.lifetimeReceiptPaths,["native-stop-restart.json","native-stop-final.json"]);
   assert.equal(report.client.status,"PASS");
   assert.equal(report.native.normalChildExit,true);assert.equal(report.native.childReaped,true);assert.equal(report.native.supervisorStopped,true);
   assert.equal(await sha(path.join(fixture,"client/client.mjs")),report.generatedClientBundleSha256);
@@ -86,6 +136,7 @@ try {
     const retained=reportPath.replace(/\.json$/u,"-receipts");assert.notEqual(retained,reportPath);
     await mkdir(retained);report.receipts=[];
     for(const name of ["client-report.json","native-proof.json","owner-report.json","node-stderr.log",
+      "native-stop-restart.json","native-stop-final.json",
       "compiler.stdout.log","compiler.stderr.log","native-test.stdout.log","native-test.stderr.log"]){
       const source=path.join(fixture,name);
       let bytes;
@@ -94,6 +145,31 @@ try {
       const target=path.join(retained,name);await writeFile(target,bytes,{flag:"wx"});
       assert.equal(await sha(source),digest);assert.equal(await sha(target),digest);
       report.receipts.push({path:path.relative(repo,target).split(path.sep).join("/"),sha256:digest,bytes:bytes.length});
+    }
+    const roleRoot=path.join(fixture,"core-owned-role-proof");
+    let entries=[];
+    try{entries=await readdir(roleRoot,{withFileTypes:true});}
+    catch(error){if(error.code!=="ENOENT"||report.status==="PASS")throw error;}
+    assert.ok(entries.length<=8,"fixed fixture role receipt bound");
+    if(entries.length){
+      await mkdir(path.join(retained,"core-owned-role-proof"));
+      for(const entry of entries.sort((a,b)=>a.name.localeCompare(b.name))){
+        assert.ok(entry.isFile()&&!entry.isSymbolicLink());
+        assert.match(entry.name,/^core-owned-roles-[1-9][0-9]{0,9}-[0-9a-f]{16}\.json$/u);
+        const source=path.join(roleRoot,entry.name);
+        const metadata=await lstat(source);
+        assert.ok(metadata.isFile()&&!metadata.isSymbolicLink()&&metadata.size<=131072);
+        const bytes=await readFile(source);assert.ok(bytes.length<=131072);
+        const digest=createHash("sha256").update(bytes).digest("hex");
+        const target=path.join(retained,"core-owned-role-proof",entry.name);
+        await writeFile(target,bytes,{flag:"wx"});
+        assert.equal(await sha(source),digest);assert.equal(await sha(target),digest);
+        report.receipts.push({path:path.relative(repo,target).split(path.sep).join("/"),sha256:digest,bytes:bytes.length});
+      }
+    }
+    if(report.status==="PASS"){
+      assert.equal(entries.length,2);
+      assert.deepEqual(entries.map(entry=>entry.name).sort(),report.lifetimeStops.map(stop=>stop.roleReceiptName).sort());
     }
   }catch(error){report.status="FAIL";failure??=error;report.receiptFailureType=error.constructor.name;}
   if(report.status==="PASS") {
