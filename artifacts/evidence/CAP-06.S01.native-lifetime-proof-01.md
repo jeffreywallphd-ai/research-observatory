@@ -88,3 +88,37 @@ handle and object validity until remaining handles close:
 [process termination](https://learn.microsoft.com/en-us/windows/win32/procthread/terminating-a-process).
 These sources justify the observation design, not an unobserved failing API
 or a new runtime result. No shipping recovery helper, policy or deadline changes.
+
+
+## Append-only populated journey adverse outcome and correction boundary
+
+Qualifier04 at f00097f4 passed all six Rust roots, but its outer owner retained
+one unobserved member after10s and forced cleanup; FAIL remains. Diagnostic01
+then directly ran the compiled six tests to natural0 and separately identified
+its compiler-only lingering member as MSVC vctip.exe through the original Job
+and actual opened-process membership/image queries. That diagnostic compiler
+exit0/forced cleanup remains FAIL; it does not retroactively identify the old
+unrecorded members. Approved contracts-01.md explicitly distinguishes compiler
+helper teardown from product Native/model lifetime. Default build preparation02
+then naturally passed using a warm Cargo-validated artifact; no cold-build
+cleanup or comparable compiler speed claim is made.
+
+Fresh qualifier05 preserves all original owner/Native gates and executed six
+Python units, affected quality and six Rust roots to natural PASS. Its original
+populated journey failed at the first /projects/search/page:2002.9426ms,
+RO-CORE-API-RESPONSE-INVALID at the unchanged hard2s response boundary. ClientFAIL
+and Nativeexit101 remain, despite separately observed natural outer0/no force.
+No joined restart/final lifetime receipt exists. The exact fixed-input report
+SHA256 is dae34a387de3d3f76fb5e13838325a6c5d1bc3d687fbfca5e1f7cdc393543ac5.
+The independent adverse review is retained alongside this note; source design
+adequacy is separate from NOT_APPROVED_FOR_INTEGRATION_RUNTIME_PROOF_INCOMPLETE.
+
+A focused actual Windows headless API phase diagnostic02 also observed a2.034143s
+page,51 foreground canonical opens and three current import-source resolutions.
+This is nonqualifying instrumentation of a synthetic ASGI fixture, with natural
+owned cleanup; it does not identify every cause of the historical Native failure.
+The earlier cProfile diagnostic mixes background call attribution and cannot
+establish foreground counts. The next bounded product repair uses linked
+W3.C03.T01, keeps all source/rights checks in fresh coherent transactions and
+retains the Native2s/stop5s limits. Its spec is prospective authority-preserving
+restoration, not a qualified fix, completion, task reopening or release decision.

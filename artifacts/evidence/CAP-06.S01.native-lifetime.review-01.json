@@ -1,0 +1,274 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-independent-native-lifetime-source-and-actual-adverse-qualification-review",
+  "reviewer": "agent:/root/w3_authority_review",
+  "reviewedAt": "2026-10-17T18:16:10.137946+00:00",
+  "reviewedCommit": "f00097f4b3920490113bd03e5f8e914e6a92fb49",
+  "integratedPredecessorCommit": "9f73f0f3841ff850b73203bedb22d1e6304ca39b",
+  "status": "NOT_APPROVED_FOR_INTEGRATION_RUNTIME_PROOF_INCOMPLETE",
+  "scope": "Exact eight-path test-only Native lifetime observation delta and actual fresh qualifying05 outcome. No ordinary DONE task reopening or source fix; no product/S01/W3/release approval.",
+  "sourceSha256": {
+    "apps/desktop/scripts/search-populated-native-integration.mjs": "c777347cb3d94aaca477c78f205e4c2254ebe4e15d27019c83faa8301dd51729",
+    "apps/desktop/src-tauri/src/supervisor.rs": "e0cc95bd4367ae083675f5579f404f52003c775d34cae2d376285f7f10cdfcda",
+    "apps/desktop/src-tauri/src/supervisor/native_stop_proof.rs": "821bfdc73857f4636f4163e3133706e6de7fd06cf12b2e9ce46f332bffbb33be",
+    "apps/desktop/src-tauri/src/supervisor/populated_search_integration.rs": "169010de2052152d88027cac30a230bc8e7e45466fb966b773592230d107555a",
+    "artifacts/evidence/CAP-06.S01.native-lifetime-proof-01.md": "c52ea3c1b7b3d1d1856bf5bdbd36ff5fd83e8bef40aea028dc937cd97096e46a",
+    "quality-scope.json": "c2c856e78b530cd0d86874d5ffe87b4c749ffe5c39d3af630d417f3dba89e5b4",
+    "tests/service/fixtures/native_integration_sidecar.py": "01b9ff9ebe47f964eed113a84d24dac477e6f124b77621c3ae3fd80b5f384066",
+    "tests/service/test_native_owned_role_probe.py": "8679e3476461f087dc5b7aa50cc176bbb3ebe16f120c2d95d68ab0e5d194866f"
+  },
+  "authorityBindings": {
+    "planning/W3-planning-packet-01/contracts-01.md": "b656fe8604edc5ca663ca867ed189b9e1b824baa34191613b54c373c2a3d0da4",
+    "docs/adr/ADR-0008-supervise-the-local-core-process-through-a-portable-native-boundary.md": "ef704f7d8de769324ec5a1a25019b05cabccd0eaaa9e24f023265b327186ada4",
+    "docs/adr/ADR-0057-protected-rebuildable-lexical-and-vector-projections.md": "a6016f3a03a92880df026a422ae6e4bfe5091db8728479fe9ea75b2fb7ee0c3d",
+    "artifacts/evidence/CAP-06.S01.native-lifetime-proof-01.md": "c52ea3c1b7b3d1d1856bf5bdbd36ff5fd83e8bef40aea028dc937cd97096e46a"
+  },
+  "sourceAssessment": {
+    "result": "No material additional source defect identified in this bounded observer/producer delta; adequacy of source design is separate from failed actual journey.",
+    "facts": [
+      "Shipping supervisor changes are compiled only for test+Windows+integration-harness. Original stop/force logic,5sSTOP_TIMEOUT,2sNative transport and actual owner deadlines remain. Original Job CloseHandle remains once and queries surround it without retained/duplicated Job or extra process wait/cleanup.",
+      "Noninheritable retained PROCESS query/synchronize handle binds actual live PID/birth/image identity. Receiptv2 independently queries same-object postexit PID/birth, labels image identity observed at bind, and requires signaled known0exit plus exactly1normal/noimmediate/noforce/originalcompleteemptyJobpreclose/single successful close. Missing/query/mismatch/live/duplicate/force/nonzero observations deny.",
+      "Private Python probe installed before runtime composition counts selected actual guardian/connector/LPAC/ACL aliases, forwards original values/exceptions, checks source/alias continuity and only identity-proven nonlaunch thread targets; final counter snapshot follows potentially interleaving checks. Any attempt/unknown denies zero. This cannot establish positive role drain.",
+      "Rust fixture and Node require exact restart/final Core identity/attempt/role-receipt equality, distinct incarnations and retained raw copies before successful cleanup. Producer05 requires exact6Python and6Rust root IDs/counts/no skipped or ignored selected cases plus original natural owner drain before full unchanged generated-client journey.",
+      "Frozen contract line120 distinguishes compiler-only helper teardown from actual Native/model lifetime, while preserving normal-owned drain and adverse outcomes. Separate preparation is not runtime evidence or a replacement for actual journey."
+    ]
+  },
+  "actualQualification": {
+    "path": "artifacts/tmp/W3.S01.native-lifetime-qualification-05/report.json",
+    "sha256": "dae34a387de3d3f76fb5e13838325a6c5d1bc3d687fbfca5e1f7cdc393543ac5",
+    "status": "FAIL",
+    "producerPath": "artifacts/tmp/W3.S01.native-lifetime-qualify-05.py",
+    "producerSha256": "632c804c1ba53938c28fa480f88a9817d88c36ddfe490849cab548fa1be06a84",
+    "startedAtUtc": "2026-10-17T18:12:28.509550+00:00",
+    "completedAtUtc": "2026-10-17T18:13:45.094561+00:00",
+    "recordedFlags": {
+      "headUnchanged": true,
+      "mainUnchanged": true,
+      "inventoryUnchanged": true,
+      "inputBytesUnchanged": true,
+      "indexUnchanged": true,
+      "refsUnchanged": true,
+      "producerUnchanged": true,
+      "cleanAfter": true,
+      "selectedRuntimeUnchanged": true
+    },
+    "currentEightSourcePinsEqualRecordedInputs": true,
+    "selectedRuntimeFixity": "All9recorded flags true including selected executable/config byte equality; not whole installed dependency/environment/OS attestation.",
+    "checks": [
+      {
+        "id": "probe-forwarding-and-refusal-units",
+        "status": "PASS",
+        "exitCode": 0,
+        "rawPath": "artifacts/tmp/W3.S01.native-lifetime-qualification-05/probe-forwarding-and-refusal-units.log",
+        "rawSha256": "57def969ff2adb86b0934a9fa8596dd5d3093cf16fdea636c4cf564dec857549",
+        "caseClosure": {
+          "expectedCaseIds": [
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_synthetic_complete_no_invocation_calibration",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_any_attempt_forwards_same_result_and_denies_zero",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_original_exception_identity_is_preserved_and_never_zero",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_final_counter_snapshot_includes_late_entry_from_finished_thread",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_allowed_names_do_not_authorize_unknown_live_thread_targets",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_alias_change_after_install_invalidates_zero"
+          ],
+          "observedPassedCaseIds": [
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_alias_change_after_install_invalidates_zero",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_allowed_names_do_not_authorize_unknown_live_thread_targets",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_any_attempt_forwards_same_result_and_denies_zero",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_final_counter_snapshot_includes_late_entry_from_finished_thread",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_original_exception_identity_is_preserved_and_never_zero",
+            "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_synthetic_complete_no_invocation_calibration"
+          ],
+          "reportedRunCount": 6,
+          "reportedZeroSkipTerminalOk": true,
+          "exactExpectedCasesExecuted": true,
+          "limits": "Task-specific raw identity/count closure; synthetic Python units and Rust intentional adverse calibrations are not positive model/parser/guardian proof."
+        },
+        "ownedRun": null
+      },
+      {
+        "id": "global-inventory-and-affected-python-quality",
+        "status": "PASS",
+        "exitCode": 0,
+        "rawPath": "artifacts/tmp/W3.S01.native-lifetime-qualification-05/global-inventory-and-affected-python-quality.log",
+        "rawSha256": "781cb2eb57db08744c4dbf665492cf11eecdde6660ef8729647c058e9dfba43f",
+        "caseClosure": null,
+        "ownedRun": null
+      },
+      {
+        "id": "actual-windows-native-observer-calibrations",
+        "status": "PASS",
+        "exitCode": null,
+        "rawPath": null,
+        "rawSha256": null,
+        "caseClosure": {
+          "expectedCaseIds": [
+            "supervisor::native_stop_proof::tests::calibration_child",
+            "supervisor::native_stop_proof::tests::actual_normal_exit_and_original_preclose_job_are_required",
+            "supervisor::native_stop_proof::tests::actual_five_second_fallback_and_security_force_deny_normal_proof",
+            "supervisor::native_stop_proof::tests::actual_wrong_object_query_dead_binding_and_missing_close_fail_closed",
+            "supervisor::native_stop_proof::tests::synthetic_duplicate_hook_replay_denies_without_actual_double_close",
+            "supervisor::native_stop_proof::tests::synthetic_identity_substitution_denies_actual_process_proof"
+          ],
+          "observedPassedCaseIds": [
+            "supervisor::native_stop_proof::tests::actual_five_second_fallback_and_security_force_deny_normal_proof",
+            "supervisor::native_stop_proof::tests::actual_normal_exit_and_original_preclose_job_are_required",
+            "supervisor::native_stop_proof::tests::actual_wrong_object_query_dead_binding_and_missing_close_fail_closed",
+            "supervisor::native_stop_proof::tests::calibration_child",
+            "supervisor::native_stop_proof::tests::synthetic_duplicate_hook_replay_denies_without_actual_double_close",
+            "supervisor::native_stop_proof::tests::synthetic_identity_substitution_denies_actual_process_proof"
+          ],
+          "reportedPassed": 6,
+          "reportedFailed": 0,
+          "reportedIgnored": 0,
+          "reportedMeasured": 0,
+          "reportedFilteredOut": 277,
+          "exactExpectedCasesExecuted": true,
+          "limits": "Task-specific raw identity/count closure; synthetic Python units and Rust intentional adverse calibrations are not positive model/parser/guardian proof."
+        },
+        "ownedRun": {
+          "label": "native-calibrations",
+          "status": "PASS",
+          "forcedTermination": false,
+          "startedAtUtc": "2026-10-17T18:12:34.479120+00:00",
+          "deadlineSeconds": 360,
+          "exitCode": 0,
+          "postProcessObservation": {
+            "total": 24,
+            "active": 0
+          },
+          "naturalDrainObservation": {
+            "total": 24,
+            "active": 0
+          },
+          "binaryReaderCompleted": true,
+          "elapsedSeconds": 6.634679600014351,
+          "completedAtUtc": "2026-10-17T18:12:41.113802+00:00",
+          "stdout": "native-calibrations.stdout.log",
+          "stdoutSha256": "3a1b8913fdbad5a783264911263e72d85ebaeba2fd1ad9effb1a0d4384c3530c",
+          "stderr": "native-calibrations.stderr.log",
+          "stderrSha256": "3f023106363c8ccf183b7f1ef49e50f7640e8ededafef0bc8e9b5d5c4e44fd11"
+        }
+      },
+      {
+        "id": "full-populated-native-lifetime",
+        "status": "FAIL",
+        "exitCode": 1,
+        "rawPath": "artifacts/tmp/W3.S01.native-lifetime-qualification-05/full-populated-native-lifetime.log",
+        "rawSha256": "936801486a52e52257152d155e046d38134a48e576b8ad907a7b495ed9eaaac2",
+        "caseClosure": null,
+        "ownedRun": null
+      }
+    ],
+    "outcomeSummary": "Exact6Python PASS, affected quality/global inventoryPASS and exact6Rust calibrations PASS with natural owned drain. Original populated Native journey FAIL at first public page; no restart/final joined normal lifetime receipts."
+  },
+  "actualRuntimeFailure": {
+    "nativeReport": {
+      "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05.json",
+      "sha256": "5bf7ab08aeccc48eb5f49df998822e00e920c47ce668bbd02a6a8464781917bc",
+      "status": "FAIL"
+    },
+    "clientReceipt": {
+      "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/client-report.json",
+      "sha256": "f9f74d8828a13713f65cfdc923ddd285d650eecd2c8b455c19f110dc86ea1390",
+      "status": "FAIL",
+      "lastCall": {
+        "path": "/projects/search/page",
+        "elapsedMs": 2002.9426000000021,
+        "kind": "error",
+        "status": null,
+        "nativeCode": "RO-CORE-API-RESPONSE-INVALID"
+      }
+    },
+    "ownerReceipt": {
+      "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/owner-report.json",
+      "sha256": "6ec894971fd54dbb72a16c1d3d592531b256f8c18835b7e77e74ebba1df73255",
+      "status": "FAIL",
+      "runs": [
+        {
+          "label": "compiler",
+          "exitCode": 0,
+          "status": "PASS",
+          "forcedTermination": false,
+          "naturalDrainObservation": {
+            "total": 3,
+            "active": 0
+          },
+          "binaryReaderCompleted": true
+        },
+        {
+          "label": "native-test",
+          "exitCode": 101,
+          "status": "FAIL",
+          "forcedTermination": false,
+          "naturalDrainObservation": {
+            "total": 5,
+            "active": 0
+          },
+          "binaryReaderCompleted": true
+        }
+      ]
+    },
+    "receiptHashesAuthenticated": [
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/client-report.json",
+        "sha256": "f9f74d8828a13713f65cfdc923ddd285d650eecd2c8b455c19f110dc86ea1390",
+        "bytes": 13210
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/owner-report.json",
+        "sha256": "6ec894971fd54dbb72a16c1d3d592531b256f8c18835b7e77e74ebba1df73255",
+        "bytes": 2478
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/node-stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/compiler.stdout.log",
+        "sha256": "ca1c3beadc7b6fc92431ad48cebb4fb5059d5e529b561751d73cf8338f69847b",
+        "bytes": 292371
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/compiler.stderr.log",
+        "sha256": "3cd43c816e5458cb38422afa99d617fee963164df9d49f3efc36928accecce94",
+        "bytes": 73
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/native-test.stdout.log",
+        "sha256": "ebc8f946c251f13b9f1b22126849100ce18a13ba58308131777a155be7d4ad76",
+        "bytes": 373
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/native-test.stderr.log",
+        "sha256": "a32edb2b8c69bbc83dab1c3058eef7b62fd00e2e393312ed170df5ab3f3e393c",
+        "bytes": 560
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-05-receipts/core-owned-role-proof/core-owned-roles-32680-01dd5e631bad7c26.json",
+        "sha256": "9191f206120d4849c1778b9299afc9f717ae250785963bd27f6365d30d6c9340",
+        "bytes": 2242
+      }
+    ],
+    "limits": "Compiler naturalPASS and outer Native naturalempty total5/active0/noForce do not convert native-test exit101/clientFAIL toPASS, nor prove unobserved inner Core graceful stop. One retained zero-role receipt without corresponding restart/final stop joins is insufficient. No normal lifetime verdict is inferred."
+  },
+  "findingLedger": [
+    {
+      "id": "S01-NATIVE-LIFETIME-RUNTIME-01",
+      "severity": "high",
+      "status": "OPEN_ACTUAL_HARD_NATIVE_BOUNDARY_FAILURE",
+      "criterion": "Approved S01 actual end-to-end/normal lifetime evidence and unchanged2sNative API boundary; no failed/timeout or hard-bound relaxation.",
+      "evidence": "Original one-item Native journey first /projects/search/page returned Native error RO-CORE-API-RESPONSE-INVALID after2002.9426000000021ms. Rust root then failed child assertions, native exit101. No restart/final normal receipt reached.",
+      "cause": "UNKNOWN. Passing calibrations, prior NativePASS or current instrumentation do not establish cause. Do not attribute to CPU/generator/antivirus/cache contention or normal close without measured boundary evidence.",
+      "smallestNextStep": "One bounded nonqualifying phase diagnosis of the actual page path with unchanged real Native/current actor/session/Intent/rights/source/key guards and unchanged2sdeadline; distinguish request arrival/queue or project mutex wait from protected opens/query/fences/close/response. Preserve original raw failure and stop/drain observations. No blind rerun, retry-to-pass, timeout increase or weaker assertion. If product restoration is needed, select the existing linked-correction route for its DONE owning task before product source edits; private proof changes alone cannot waive the product failure."
+    }
+  ],
+  "priorHistory": "Candidate68 original full-postexit-image identity unknown, qualifier03 actual failure/forced outer cleanup, qualifier04 sixRustPASS plus outeractive1forced, compiler-only vctip member diagnostic and first ownership/setup/source preflights remain distinct adverse history. Currentv2 retained-object refinement follows prior advisory without changing shipping recovery helper. None is relabelledPASS or averaged away.",
+  "accounting": "This is selected approved-slice verification source; no supplemental product refactor claimed. Existing cumulativeforecastR16/P924 remains unchanged; no product completion or new framework authority inferred.",
+  "integrationDisposition": "Do not locally integrate this test-only candidate as qualified Native lifetime proof yet. Runtime hard-bound failure remains unresolved; source/calibration adequacy alone is insufficient. No required human gate or demonstrated infeasibility is inferred; ordinary bounded diagnosis/correction continues.",
+  "limits": [
+    "Reviewer performed only read-only source/contracts/data/hash/Git inspection; only this ignored artifact written. No tests/Native probes/Job or process queries/CLI/build/Node/validator/generator/scanner/source import or source/runtime/HEAD/index/ref/backlog mutation.",
+    "Actual outcomes are retained parent-run report/raw observations authenticated by hashes and source; full fixed-input history is producer-observed, not independent OS/runtime attestation.",
+    "Zero-role metadata proof is not positive guardian/parser/model/all-owned proof for other workloads, renderer/installed packaging,100k/scientific/resource or S01/W3/release completion."
+  ]
+}
