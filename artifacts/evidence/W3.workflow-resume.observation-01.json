@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "ordinary-W3-resume-after-reviewed-workflow-integration",
+  "entryCommit": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+  "actualCommandExitCode": 0,
+  "commandSeconds": 2874.7904190000263,
+  "startedAtUtc": "2026-10-17T16:17:26.377688+00:00",
+  "completedAtUtc": "2026-10-17T17:05:45.962370+00:00",
+  "originalObserverStatus": "FAIL",
+  "observerDefect": "Only completionUnchanged is false; legal resume changes PAUSED to IN_PROGRESS.",
+  "originalReport": {
+    "path": "artifacts/tmp/W3.resume-after-workflow-01/report.json",
+    "sha256": "3c1fdaa2781376cf56f1316df1d93ab9969f84a9106cf8a5ccae628f8b31952a"
+  },
+  "actualAuthentication": {
+    "path": "artifacts/tmp/W3.resume-after-workflow-authentication-01.json",
+    "sha256": "0a6a7b8dbabd7b808d1f127448dab185cc6cef896f66131eff7e823a6124c955"
+  },
+  "independentReview": {
+    "path": "artifacts/evidence/W3.workflow-resume.review-01.json",
+    "sha256": "45155cc908d728e9b7000afb21c4ff96d6c0074972cc79e78e2e2b971f414d0b"
+  },
+  "transitionReceipt": {
+    "authority": "evidence-only",
+    "casOutcome": "matched-and-replaced",
+    "changedFields": [
+      "waves"
+    ],
+    "documentType": "taskctl-transition-receipt",
+    "operation": "wave",
+    "predecessorSha256": "7ec5a6e15726d2307c54bae80ac0928dc9d03293e948e36476f9cd4ed581f6c0",
+    "producerCommit": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+    "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+    "status": "COMMITTED",
+    "successorSha256": "47c26a6bd72c2526bb7048c07da5e5cafb44e08a37e6de197a65136c220dd56b"
+  },
+  "canonicalDelta": {
+    "campaign": "PAUSED to ACTIVE plus exact one source-defined resume/lease binding",
+    "completionStatus": "PAUSED to IN_PROGRESS",
+    "otherCompletionFieldsUnchanged": true,
+    "allOtherCanonicalFieldsUnchanged": true,
+    "approvalUnchanged": true
+  },
+  "liveDisplay": {
+    "url": "http://127.0.0.1:57003/waves/W3.html",
+    "campaign": "PAUSED to ACTIVE",
+    "completion": "PAUSED to IN_PROGRESS",
+    "staticW3BytesUnchanged": true,
+    "staticW3Sha256": "de431308d1ba139279717e82a688982d95c2597838e6548edcbc995378c2c90c",
+    "observations": [
+      {
+        "path": "artifacts/tmp/W3.live-resume-before-01.json",
+        "sha256": "f1a1da938126ffafd6af793cf083938768f37ad33e5a6b63f7707e1e949141e5"
+      },
+      {
+        "path": "artifacts/tmp/W3.live-resume-after-01.json",
+        "sha256": "c256ffae0fa9d1862075f081748fcc976e9e55d0bebdb1a51fd5d8136801a01a"
+      }
+    ]
+  },
+  "generatedMarkdownSha256": {
+    "docs/planning-implementation-plan.md": "a73c953b0bd907cb769ad03a6453de2ba8ee0920f423b9449b859959f9beebbd",
+    "planning/status-summary.md": "1687d58f861f4e297bb9eb6f95a716c3db03bb3ca3d0ea2e883d9ebd517f5820"
+  },
+  "limits": "Original failed observer and actual successful command are preserved separately; no admission rerun or bypass. Nested fresh readiness success is source-control-flow inference because existing helper discards successful child stdout; no child log/timing is fabricated or earlier readiness reused. Live HTTP observations are display-only. Normal Markdown views generated and checked; static HTML unchanged. No product/task/slice/Wave completion, G3/release or remote authority. Supplemental refactoring forecast remains the same R12/P924 allocation; this metadata publication does not reset it."
+}

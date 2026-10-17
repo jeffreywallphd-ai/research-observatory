@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "independent-actual-ordinary-wave-resume-transition-disposition",
+  "reviewer": "agent:/root/w3_authority_review",
+  "reviewedAt": "2026-10-17T17:07:12.360319+00:00",
+  "entryCommit": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+  "status": "AUTHENTICATED_ALLOWED_ORDINARY_W3_RESUME",
+  "findings": [],
+  "disposition": "Actual ordinary taskctl resume succeeded and persisted the exact allowed PAUSED-to-ACTIVE campaign transition. Original observer aggregateFAIL is preserved as an expectation defect, not reclassifiedPASS. No blocking authority or canonical-delta issue identified for this actual transition.",
+  "scope": "Post-drain independent source/raw/report/authentication/CAS/full canonical-delta review only. No admission rerun, broad product audit or independent task/slice/Wave/release approval. This privacy-safe record omits machine-local raw argv/runtime paths; exact raw command remains in ignored original report.",
+  "evidence": {
+    "originalObserver": {
+      "reportPath": "artifacts/tmp/W3.resume-after-workflow-01/report.json",
+      "reportSha256": "3c1fdaa2781376cf56f1316df1d93ab9969f84a9106cf8a5ccae628f8b31952a",
+      "producerPath": "artifacts/tmp/W3.resume-after-workflow-01.py",
+      "producerSha256": "c44e108ab5133e2a4f3469e5f72b51ad7649ddf49f17fc3b0ec5fbdd929acef1",
+      "rawPath": "artifacts/tmp/W3.resume-after-workflow-01/raw.log",
+      "rawSha256": "d319f9c06b5609ef5a5b5948f4166557db2a2c5d0077ad37453ae144ff6bd4b2",
+      "status": "FAIL",
+      "actualCommandExitCode": 0,
+      "commandSeconds": 2874.7904190000263,
+      "startedAtUtc": "2026-10-17T16:17:26.377688+00:00",
+      "completedAtUtc": "2026-10-17T17:05:45.962370+00:00",
+      "flags": {
+        "headUnchanged": true,
+        "mainUnchanged": true,
+        "inputInventoryUnchanged": true,
+        "onlyBacklogInputChanged": true,
+        "indexUnchanged": true,
+        "refsUnchanged": true,
+        "producerUnchanged": true,
+        "campaignActive": true,
+        "campaignLeasePresent": true,
+        "approvalUnchanged": true,
+        "completionUnchanged": false
+      }
+    },
+    "postDrainAuthentication": {
+      "path": "artifacts/tmp/W3.resume-after-workflow-authentication-01.json",
+      "sha256": "0a6a7b8dbabd7b808d1f127448dab185cc6cef896f66131eff7e823a6124c955",
+      "status": "ACTUAL_TASKCTL_RESUME_AUTHENTICATED",
+      "producerPath": "artifacts/tmp/W3.resume-after-workflow-authenticate-01.py",
+      "producerSha256": "14f99ddd01a3527333b466b6c130df928117f53fc7c371266ffea997e3cf161f",
+      "sourcePreflightPath": "artifacts/tmp/W3.resume-authenticator-source-preflight-01.json",
+      "sourcePreflightSha256": "7a5a90077580820d48bfcaddb4ff0e22e199592cf98afb3288ac0638769b292f"
+    },
+    "source": {
+      "taskctlPath": "tools/taskctl.py",
+      "taskctlSha256": "28ebd8d96fb8abadb523f672f16cebe942ab197bcee48daf67ccb6e3c1491430",
+      "sourceEqualsEntryCommittedBlob": true,
+      "resumeLines": "9623-9700",
+      "freshReadinessGateLines": "6766-6793"
+    }
+  },
+  "independentCurrentInputAuthentication": {
+    "headAndMain": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+    "branch": "codex/w3-implementation",
+    "stagedDeltaEmpty": true,
+    "observedTrackedDelta": [
+      "planning/backlog.yaml"
+    ],
+    "beforeAndAfterInventoriesExactlyEqual": true,
+    "recordedInputCount": 6965,
+    "allCurrent6965AfterInputBytesExact": true,
+    "onlyOriginalBeforeAfterInputChanged": "planning/backlog.yaml",
+    "laterViewsBoundary": "Parent held Markdown views until this exact current-after-map review finished. Subsequent normal view generation/live observations are new metadata, not retroactive drift of completed original observation."
+  },
+  "canonicalTransition": {
+    "beforeGitBacklog": {
+      "commit": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+      "rawSha256": "284ca2675dc7d0f57244110edc165412d2d7644746cd2e026a35ebac2b398352",
+      "note": "LF Git bytes; taskctl CAS correctly binds separate raw CRLF checkout predecessor."
+    },
+    "beforeRawCheckoutSha256": "7ec5a6e15726d2307c54bae80ac0928dc9d03293e948e36476f9cd4ed581f6c0",
+    "afterRawCheckoutSha256": "47c26a6bd72c2526bb7048c07da5e5cafb44e08a37e6de197a65136c220dd56b",
+    "campaign": "PAUSED -> ACTIVE with exact source-defined bindings and one appended resume record",
+    "completion": "PAUSED -> IN_PROGRESS status only; all other completion keys/values unchanged",
+    "resumeRecord": {
+      "id": "W3.R01",
+      "wave_id": "W3",
+      "control_revision": 12,
+      "prior_status": "PAUSED",
+      "pre_resume_commit": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+      "prior_campaign_sha256": "30b96dba241a785fb1206c968ca642a936c5fb5a005b30834cddb935082ebff1",
+      "branch": "codex/w3-implementation",
+      "worktree": ".",
+      "profile": "LOC",
+      "platform": "windows-x64",
+      "actor": "codex-w3-implementation",
+      "resumed_at": "2026-10-17T16:50:38+00:00"
+    },
+    "lease": {
+      "claimed_by": "codex-w3-implementation",
+      "claimed_at": "2026-10-17T16:50:38+00:00",
+      "expires_at": "2026-10-18T16:50:38+00:00"
+    },
+    "leaseDurationHours": 24,
+    "entireCanonicalDocumentEqualsSourceDefinedExpectedSuccessor": true,
+    "allOtherWavesTasksSlicesCapabilitiesControlsGatesReviewsCheckpointsAndHistoryUnchanged": true,
+    "W3FrozenApprovalUnchanged": true,
+    "priorCampaignCanonicalSha256": "30b96dba241a785fb1206c968ca642a936c5fb5a005b30834cddb935082ebff1",
+    "oldResumeRecordCount": 0,
+    "newResumeRecordCount": 1
+  },
+  "actualTransitionReceipt": {
+    "authority": "evidence-only",
+    "casOutcome": "matched-and-replaced",
+    "changedFields": [
+      "waves"
+    ],
+    "documentType": "taskctl-transition-receipt",
+    "operation": "wave",
+    "predecessorSha256": "7ec5a6e15726d2307c54bae80ac0928dc9d03293e948e36476f9cd4ed581f6c0",
+    "producerCommit": "9e3026ad464902e3d81443f9aeddd9eb3d97b3a4",
+    "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+    "status": "COMMITTED",
+    "successorSha256": "47c26a6bd72c2526bb7048c07da5e5cafb44e08a37e6de197a65136c220dd56b"
+  },
+  "admissionEvidenceLimit": {
+    "fact": "Actual taskctl exit0 plus unchanged mandatory command_wave_resume -> require_wave_planning_ready path supports successful fresh nested readiness by source-control-flow inference. Existing helper captures stdout/stderr and discards them when child returns0.",
+    "notAvailable": "No separately retained nested readiness stdout, stage logs or timings are fabricated or required. Actual command2874.790419s is retained; child-stage attribution is unknown.",
+    "separateEarlierControlProof": "Source6730 fresh complete readiness qualification1999.3355979s remains its distinct prior control proof, not reused as this admission."
+  },
+  "observerFindingClosure": {
+    "id": "RESUME-OBSERVER-POSTCONDITION-01",
+    "status": "CLOSED_BY_APPEND_ONLY_ACTUAL_TRANSITION_AUTHENTICATION",
+    "assessment": "completionUnchanged=false is the sole false observer flag and is required by the real legal transition. Original producer/raw/report/statusFAIL and preflight advisories remain unchanged. All10other original flags true; no permissive replacement predicate, test weakening, bypass, result cache or rerun."
+  },
+  "nextBoundary": "Normal derived Markdown/live observation and privacy-checked metadata publication may record this active campaign. Any later applier must use actual authenticated command result and exact current backlog/live lease/identity/ordinary controls rather than old wrapper aggregate. This record is evidence, not a new mutation authority. Local integration of later metadata still uses its normal exact-commit review as applicable.",
+  "limits": [
+    "Read-only Git/bytes/YAML/hash/source review and only this new ignored append-only artifact. No tests/workloads/probes/scans/builds/validators/generators/taskctl/Node or source/runtime/HEAD/index/refs/backlog mutation by reviewer.",
+    "Recorded flags and actual command are retained owner-run observations authenticated against exact producers/raw/current canonical facts; no whole-process/installed-runtime/OS attestation.",
+    "No product Native/Core/inner-stop/scale/resource/scientific qualification, ordinary task completion, slice/Wave completion, G3/release or push approval."
+  ]
+}

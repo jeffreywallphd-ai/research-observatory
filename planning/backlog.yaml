@@ -9055,20 +9055,22 @@ waves:
       acceptance-only snapshot records ADR0056-58 and exact reference1.10 publication, independent activation review, and
       material bindings. No scope or estimates changed; G3 remains separate.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w3-implementation
     branch: codex/w3-implementation
     worktree: .
-    base_sha: f295e80e2ec8bfdd6711411759612f4bae23e80d
+    base_sha: 9e3026ad464902e3d81443f9aeddd9eb3d97b3a4
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-16T14:32:43+00:00'
-    updated_at: '2026-10-17T06:21:11+00:00'
-    pause_reason: Quiescent linked corrective route for demonstrated populated Native page response failure; restore current
-      candidate within unchanged approved authority, no human gate.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-10-17T16:50:38+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w3-implementation
+      claimed_at: '2026-10-17T16:50:38+00:00'
+      expires_at: '2026-10-18T16:50:38+00:00'
     corrective_tasks:
     - title: Implement fielded search, filters, snippets, and ranking explanation
       objective: Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.
@@ -9466,9 +9468,22 @@ waves:
           No prior evidence is reused as a new PASS; full100k/resource/lifetime/scientific-gold/slice/Wave qualification remains
           separately required. This spec introduces no new criteria or product authority; claim it only through the existing
           taskctl linked-correction route after this immutable spec is committed.
+    resume_records:
+    - id: W3.R01
+      wave_id: W3
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 9e3026ad464902e3d81443f9aeddd9eb3d97b3a4
+      prior_campaign_sha256: 30b96dba241a785fb1206c968ca642a936c5fb5a005b30834cddb935082ebff1
+      branch: codex/w3-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w3-implementation
+      resumed_at: '2026-10-17T16:50:38+00:00'
   checkpoints: []
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
