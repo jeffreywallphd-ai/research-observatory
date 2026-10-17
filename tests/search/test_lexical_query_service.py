@@ -228,8 +228,7 @@ class LexicalQueryServiceTests(CanonicalIndexFixture):
         published: list[IndexGeneration | None] = []
 
         def republish(snapshot, store):
-            lease = self.service.catalog.acquire(snapshot.generation.generation_id)
-            self.addCleanup(lease.close)
+            lease = self.service._leases[snapshot.generation.generation_id]
             self.service.catalog.publish_ready(
                 lease,
                 store.projection(),
@@ -252,8 +251,7 @@ class LexicalQueryServiceTests(CanonicalIndexFixture):
         stages: list[str] = []
 
         def invalidate(snapshot, _store):
-            lease = self.service.catalog.acquire(snapshot.generation.generation_id)
-            self.addCleanup(lease.close)
+            lease = self.service._leases[snapshot.generation.generation_id]
             self.service.catalog.cancel(lease)
             stages.append(self.service.catalog.get(lease.generation_id).stage)
             return snapshot
