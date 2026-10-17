@@ -10,7 +10,9 @@ import subprocess
 import sys
 import threading
 import time
+from io import TextIOWrapper
 from pathlib import Path
+from typing import Any, cast
 
 ROOT = Path(__file__).resolve().parents[2]  # Same depth in tests/search after installation.
 sys.path[:0] = [str(ROOT), str(ROOT / "services/core-api/src")]
@@ -30,7 +32,7 @@ def owned_run(argv: list[str], fixture: Path, label: str, seconds: int) -> dict:
     reader = None
     reader_errors = []
     started = time.monotonic()
-    record = {
+    record: dict[str, Any] = {
         "label": label,
         "status": "RUNNING",
         "forcedTermination": False,
@@ -45,7 +47,7 @@ def owned_run(argv: list[str], fixture: Path, label: str, seconds: int) -> dict:
             # binary buffer directly so CRLF and every original byte survive.
             assert process.stdout is not None and process.stdin is not None
             process.stdin.close()
-            output = process.stdout.buffer
+            output = cast(TextIOWrapper, process.stdout).buffer
 
             def drain_bytes():
                 try:
@@ -128,7 +130,7 @@ def main() -> int:
     report_path = fixture / "owner-report.json"
     with report_path.open("x", encoding="utf-8") as stream:
         json.dump({"status": "RUNNING"}, stream)
-    report = {
+    report: dict[str, Any] = {
         "documentType": "fixed-populated-native-process-ownership",
         "status": "FAIL",
         "runs": [],

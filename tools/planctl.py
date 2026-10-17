@@ -12,6 +12,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import UTC, datetime
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
@@ -101,10 +102,18 @@ def wave_review_page(root: Path, wave_id: str) -> Path:
     return root / "planning" / "review-site" / "waves" / f"{wave_id}.html"
 
 
-def generate_review(root: Path, capability: str | None = None) -> int:
+def generate_review(root: Path, capability: str | None = None, output: Path | None = None) -> int:
     command = [sys.executable, str(root / "tools/plan_review_site.py"), "--repo", str(root)]
     if capability:
         command.extend(["--capability", capability])
+    if output is not None:
+        command.extend(["--output", str(output)])
+        # The owned output is deleted after readiness. Do not advertise its URI
+        # as a persistent review page; preserve child error output on failure.
+        result = subprocess.run(command, check=False, stdout=subprocess.PIPE, text=True)
+        if result.returncode and result.stdout:
+            print(result.stdout, end="", file=sys.stderr)
+        return result.returncode
     return subprocess.run(command, check=False).returncode
 
 
@@ -536,7 +545,7 @@ def approve(
     return 0
 
 
-def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
+def validate_wave(root: Path, wave_id: str, approved: bool, site: Path | None = None) -> int:
     data, _ = load_backlog(root)
     wave = next((item for item in data.get("waves", []) if item.get("id") == wave_id), None)
     if wave is None:
@@ -610,14 +619,28 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
                             file=sys.stderr,
                         )
                         failures += 1
-    failures += int(
-        bool(
-            subprocess.run(
-                [sys.executable, str(root / "tools/plan_review_check.py"), "--repo", str(root)], check=False
-            ).returncode
-        )
-    )
+    command = [sys.executable, str(root / "tools/plan_review_check.py"), "--repo", str(root)]
+    if site is not None:
+        command.extend(["--site", str(site)])
+    failures += int(bool(subprocess.run(command, check=False).returncode))
     return 1 if failures else 0
+
+
+def ready_wave(root: Path, wave_id: str) -> int:
+    # Source links require the same two-component depth as planning/review-site.
+    # Each invocation exclusively owns its output; no published page is changed.
+    local = root / ".local"
+    local.mkdir(exist_ok=True)
+    if local.resolve() != local:
+        raise ValueError("Readiness output parent must be confined to the actual repository/.local")
+    with tempfile.TemporaryDirectory(prefix="wave-ready-", dir=local) as temporary:
+        site = Path(temporary)
+        if generate_review(root, output=site):
+            print("ERROR: readiness review-site generation failed", file=sys.stderr)
+            return 1
+        result = validate_wave(root, wave_id, True, site=site)
+    # Cleanup is part of success. Its failure propagates to the fail-closed CLI.
+    return result
 
 
 def prepare_wave(root: Path, wave_id: str) -> list[Path]:
@@ -2618,21 +2641,25 @@ def main() -> int:
                 )
                 print_wave_review_link(root, args.wave)
                 return result
+            if args.wave_command == "ready":
+                result = ready_wave(root, args.wave)
+                if result:
+                    print(
+                        "Wave readiness failed; inspect the preceding generation, approval or validation errors.",
+                        file=sys.stderr,
+                    )
+                else:
+                    print("Wave readiness verified using isolated output. Published review pages are unchanged.")
+                print_wave_review_link(root, args.wave)
+                return result
             generate_review(root)
-            require_approved = True if args.wave_command == "ready" else args.require_approved
-            result = validate_wave(root, args.wave, require_approved)
-            if result and args.wave_command == "ready":
-                print(
-                    "Wave is not ready. Classify every contributing capability decision, resolve the decisions "
-                    "binding in this Wave, approve every Wave slice plan, and record one commit-bound pre-Wave "
-                    "approval using the linked page.",
-                    file=sys.stderr,
-                )
+            result = validate_wave(root, args.wave, args.require_approved)
             print_wave_review_link(root, args.wave)
             return result
         except (OSError, ValueError, json.JSONDecodeError, yaml.YAMLError, subprocess.CalledProcessError) as exc:
             print(f"ERROR: {exc}", file=sys.stderr)
-            generate_review(root)
+            if args.wave_command != "ready":
+                generate_review(root)
             print_wave_review_link(root, args.wave)
             return 1
 

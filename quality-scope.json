@@ -809,6 +809,8 @@
     "tests/search/test_search_runtime_windows.py",
     "tests/search/test_search_source_authority.py",
     "tests/search/test_search_workflow.py",
-    "tools/core_api_search.py"
+    "tools/core_api_search.py",
+    "tests/foundation/test_planctl_readiness.py",
+    "tests/search/populated_native_owner.py"
   ]
 }

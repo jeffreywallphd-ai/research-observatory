@@ -1,0 +1,29 @@
+{
+  "documentType": "bounded-readiness-repair-direct-owner-exception",
+  "observedAtUtc": "2026-10-17T14:56:56.363696+00:00",
+  "predecessor": "e09c97cb55c6aedde92981de3b867639706c98fb",
+  "authority": "Direct human user approval in the current W3 conversation; exact message timestamp is not supplied. This observation time is not asserted as the message timestamp.",
+  "exactUserMessage": "Approved. Please implement the bounded readiness repair, complete the required tests, review and local integration, then continue W3 to completion. Keep the broader framework-work prohibition in force; stop only at required human gates.",
+  "approvedPacket": {
+    "path": "artifacts/tmp/W3.resume-readiness-exception-02/decision-packet.json",
+    "sha256": "972d9d48917cfd1cfb4fcb40caf2647238b89aed292511ae4233b383c694234b"
+  },
+  "proposalPatchSha256": "4c9d458237bedb5386487a235abe61af7fd91999800d7243a32538e942b2fec0",
+  "implementationPaths": [
+    "tools/planctl.py",
+    "tests/foundation/test_planctl_readiness.py"
+  ],
+  "necessaryQualityRegistration": {
+    "path": "quality-scope.json",
+    "appendOnlyEntry": "tests/foundation/test_planctl_readiness.py",
+    "authority": "docs/automation/toolchain.md requires every governed Python file to be listed; docs/automation/design-first-ui-changes.md strictly additive Python inventory permits a same-commit new regular tests file entry, preserving metadata, roots and existing entry order. This is required bookkeeping for the explicitly approved test, not another implementation or gate behavior change."
+  },
+  "requiredProof": [
+    "Actual predecessor real-Git cleanliness behavioral failure",
+    "Focused routing/failure/cleanup regressions and existing approval/identity/CAS checks",
+    "Fresh complete unchanged generator/checker readiness at exact committed fixed inputs",
+    "Independent commit-bound control disposition before local-main integration",
+    "Normal taskctl readiness/clean/identity/CAS resume before ordinary W3 continuation"
+  ],
+  "limits": "The broader framework-work prohibition remains in force. Only this concrete repair, necessary test registration, conforming debugging, normal evidence/review/publication and local integration/resume are authorized. No taskctl/kernel/checker/generator implementation, approval/security/privacy/baseline/UX/API/deadline/release change, new controller/GRR/GCR/ECR, optional optimization, push or W3 release approval. Historical packets, adverse results and proposal rounds remain unchanged. This is bounded defect restoration with no optional structural cleanup; current approved Wave estimate/accounting remains unchanged."
+}
