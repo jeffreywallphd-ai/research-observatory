@@ -122,3 +122,59 @@ establish foreground counts. The next bounded product repair uses linked
 W3.C03.T01, keeps all source/rights checks in fresh coherent transactions and
 retains the Native2s/stop5s limits. Its spec is prospective authority-preserving
 restoration, not a qualified fix, completion, task reopening or release decision.
+
+## Append-only fresh C03 restoration and Native lifetime closure
+
+Fresh committed candidate `9b7825b974a041ba18e75645b5d0a7bb06152047`
+qualifies the bounded W3.C03.T01 one-transaction import-source restoration.
+The unchanged original Native carrier, client, owner and observer inputs equal
+`f00097f4b3920490113bd03e5f8e914e6a92fb49`; no deadline, admission, rights,
+accepted-output, cancellation or final delivery check was relaxed.
+
+Qualification03 passed all21 selected groups:81 affected Python cases, six
+separate Python observer calibrations, six actual Windows Rust root cases,
+affected quality/architecture and the complete populated Native journey.
+All nine producer fixity observations held over6977 tracked/nonignored inputs.
+Its report SHA256 is
+`fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677`.
+Installed dependency/OS closure is not authenticated; these are fresh checks,
+not reusable cached evidence or independent continuous-mutation attestation.
+
+Native06 SHA256
+`f6b465bf00cc11c23a57fe2e55da16f0e08e398906ec60f4f3c22fbb424683b4`
+records128 generated-client calls,124 HTTP200 responses, four typed409 denials
+and an actually cancelled terminal run. All calls meet the original hard2s
+bound; maximum1854.2408ms. Its four successful page calls are1531.9139,
+1854.2408,1460.5544 and1679.3809ms. Qualifier command elapsed106.379312s
+and Native driver elapsed104.969997s are distinct measured windows.
+
+Both distinct actual Core incarnations join independently retained raw role
+receipts to the original retained process handle and original Job observations.
+Fresh same-handle postexit PID/birth equality, signaled/known exit0,
+complete empty original preclose Job, one normal entry without immediate,
+terminate or direct-kill entry, and one successful original close hold.
+Image identity is observed at bind. The four selected role counters are all
+zero attempts/returns/errors/inflight, with expected source/alias/thread coverage.
+This establishes zero attempted roles in this metadata journey, not positive
+parser/guardian/worker drain or universal lifetime. Outer compiler and Native
+test owners report actual exit0/natural active0/no force and completed readers;
+the existing helper can request TerminateJobObject on an already empty Job.
+
+Independent component review closes S01-NATIVE-LIFETIME-RUNTIME-01 only for
+this fresh candidate. Its exact publication-safe projection is retained as
+`artifacts/evidence/CAP-06.S01.native-lifetime.review-02.json`, SHA256
+`0ffa355f7428b4799595780955bf45ee5bb45a79921fa71d4b83b5b3837ad8ed`.
+The exact original review with private runtime bindings remains ignored.
+The earlier adverse tracked review01, all failed qualifiers/raw outcomes and
+unknown historical causes remain unchanged. Separate independent C03 R01 task
+approval is retained in `artifacts/evidence/W3.C03.T01.review-R01.json`;
+its product qualification does not approve the full slice, Wave or release.
+
+C03 keeps the conservative full4 helper-extraction allocation charged:
+priorR16 plus4 equals cumulativeR20 against frozenP924, including planned28
+once; ceiling138.6 and remaining118.6. This is engineering-effort allocation,
+not observed4elapsedhours or monetary savings. No further allocation is made
+by this proof note or component review. Full100k metadata/permitted passages,
+scientific human gold, general resources, positive role drain, renderer,
+installed packaging and independent slice/full Wave qualification remain open
+at their existing owners. APIs remain UI-independent; no AI mode is added.

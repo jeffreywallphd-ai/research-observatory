@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5e6e4d1f809c8fb37daecb852093aa1f3a0f53ebf23913fbc03dcf9421c3b061
+source_sha256: e83c13dfbd5028c80c230edd789ddd106eed0e04e2c7a2d84ad13949fd0d9762
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6156,7 +6156,7 @@ Original tasks and approvals remain unchanged.
 
 ### W3.C03.T01 — Implement fielded search, filters, snippets, and ranking explanation
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** Fresh unchanged populated Native qualification05 at f00097f4 failed the first /projects/search/page after2002.9426ms at the unchanged hard2s Native transport boundary. Actual clientFAIL/nativeexit101 remains; owner naturally reached0 with no force. All nine fixity flags held. No restart/final joined lifetime proof ran. Actual separate per-request/thread Core API phase diagnostic02 reproduced successful page wall2.034143s/threadCPU1.34375,51 foreground protected canonical opens, three current-item captures0.654036s and three import-source resolutions0.425312s. It uses real DPAPI/SQLCipher and an explicitly synthetic principal/ASGI fixture, not Native latency qualification. The first cProfile diagnostic has mixed background call attribution and is not foreground-count evidence. All original failures/raw receipts and independent open S01-NATIVE-LIFETIME-RUNTIME-01 remain preserved.
 
@@ -6176,13 +6176,43 @@ Original tasks and approvals remain unchanged.
 - tests/reconciliation/test_owner_inventory.py
 #### Review history — W3.C03.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `1eccebb080ba26d9afa0724fd42475f0f695b27ab96fb58c8dd125af932427f6`
+
+- Candidate / base / branch: `9b7825b974a041ba18e75645b5d0a7bb06152047` / `01f8b4ca9fba4e7e165a0c4fbe0daa7cfbf2ff91` / `codex/w3-implementation`
+- Submitted by / at: codex-w3-implementation / `2026-10-17T19:08:07+00:00`
+- Evidence: `artifacts/evidence/W3.C03.T01.R01.json` / `ff33ec299533ff61c0eea06923a4e50f43f2c654bef7a7b8124049738f5058e8` / `9b7825b974a041ba18e75645b5d0a7bb06152047`
+- Acceptance-criteria SHA-256: `01fc79a7ec1bafe7ce6058453825020cbb0421253dceb1a29d6d3629a83dafdd`
+- Verification-selection SHA-256: `3f01124090f51909cdde1f528f4374725392acace6acf7a9c92a68e9efb2e477`
+- Changed paths: `artifacts/evidence/W3.C03.T01.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/import_commit_repository.py`, `services/core-api/src/research_observatory_core/import_preview_service.py`, `services/core-api/src/research_observatory_core/ports/import_commits.py`, `tests/data/test_import_commit_hot_path.py`, `tests/reconciliation/test_owner_inventory.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest -v tests.service.test_native_owned_role_probe`, `.venv/Scripts/python.exe -B -c execute_quality(exact five C03 paths plus two unchanged Native observer fixtures; actual inline source in ignored report)`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`, `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_hot_path.ImportCommitHotPathTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_manifest_access.ImportManifestAccessTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_storage.ImportCommitConstraintTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_publication.ImportCommitPublicationTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_source_chunks.ImportSourceChunkTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.reconciliation.test_sources.SourceProjectionTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.service.test_import_commit_service.ImportCommitServiceTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_sources.IndexSourceTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service.LexicalQueryServiceTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery.LexicalDeliveryTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository.SearchRunRepositoryTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository.CommitTimeBoundaryReproduction`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority.SearchSourceAuthorityTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup.KnownItemLookupTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows.SearchRuntimeWindowsTests`, `pinned-cargo test --locked --offline --features integration-harness --lib --manifest-path apps/desktop/src-tauri/Cargo.toml native_stop_proof::tests -- --test-threads=1 --nocapture (existing owned_run,360s)`, `pinned-node24 apps/desktop/scripts/search-populated-native-integration.mjs --report artifacts/tmp/CAP-06.S01.populated-native-lifetime-06.json`
+- Deferred checks: `Technical frozen synthetic known-item lookup only; missing scientific human gold remains missing at its slice owner.`, `One populated Native metadata item does not prove100k metadata/permitted passages, general resources, renderer/accessibility, installed package or full-profile/slice/Wave qualification.`, `Actual zero-role receipts prove zero attempted roles only; no positive parser/guardian drain. Empty outer helper cleanup requests TerminateJobObject even after natural empty; no zero-all-termination-call claim.`, `Selected executable bytes and all input fixity observed fresh; installed dependency/OS attestation and evidence reuse remain disabled. No approval or release authority from receipts.`
+- Selection rationale: Five-path linked restoration: one fresh protected import-source transaction with all original full-manifest and accepted-attempt checks. Fresh data publication/manifest/source chunks, real service owner resolution/reopen/revocation/WAL coherence, query/delivery/known-item/current-source/final-time/actor/lifecycle/cancel fences and actual Windows headless API selected. Fresh six Python and six Windows observer calibrations and original complete Native hard2s/restart/cancellation/joined final lifetime proof are mandatory here because they exposed the defect. No public generated API/UX/schema/migration/runtime toolchain changes. Full profiles,100k/resources/scientific gold/renderer/package and independent slice/Wave proof remain at existing owners.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w3_c01_review / `2026-10-17T19:27:22+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W3.C03.T01.review-R01.json` / `b8fe376c020107a98bd785ebc74e1732986ebdec225ca3a819f35ca1c33678e2`
+
+**Review notes:** Approved W3.C03.T01 R01 at exact9b7825b974a041ba18e75645b5d0a7bb06152047 with no findings. Bounded one-transaction import-source resolution preserves authority and existing final fences and passes fresh affected/Core/Windows/original Native proof. Separate Native component approval authenticates joined lifetime closure for this candidate. All adverse history, scientific/scale/resource/positive-role/full-profile/S01/W3/release limits remain.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w3_c01_review at `2026-10-17T19:27:22+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approved W3.C03.T01 R01 at exact9b7825b974a041ba18e75645b5d0a7bb06152047 with no findings. Bounded one-transaction import-source resolution preserves authority and existing final fences and passes fresh affected/Core/Windows/original Native proof. Separate Native component approval authenticates joined lifetime closure for this candidate. All adverse history, scientific/scale/resource/positive-role/full-profile/S01/W3/release limits remain.
 
 **Currently open findings:** -
 

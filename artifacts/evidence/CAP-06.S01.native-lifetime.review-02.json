@@ -1,0 +1,453 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-independent-native-lifetime-control-and-actual-evidence-closure-review",
+  "reviewer": "agent:/root/w3_authority_review",
+  "reviewedAtUtc": "2026-10-17T19:10:53.392377+00:00",
+  "reviewedCommit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+  "nativeSourceOriginCommit": "f00097f4b3920490113bd03e5f8e914e6a92fb49",
+  "integratedPredecessorCommit": "9f73f0f3841ff850b73203bedb22d1e6304ca39b",
+  "status": "APPROVED_NATIVE_CONTROL_COMPONENT_AT_EXACT_CANDIDATE",
+  "scope": "Unchanged eight-file Native observer/carrier control component and actual fresh Native06 evidence at the C03 product candidate. Formal W3.C03.T01 product/task disposition is separate. No S01, Wave or release approval.",
+  "priorReview": {
+    "path": "artifacts/tmp/CAP-06.S01.native-lifetime-independent-review-01.json",
+    "sha256": "e02fe8ec41dab77bd262518e44cd0a624bc7a0918bb604a9a63f5bf843a738bb",
+    "oldStatusPreserved": "NOT_APPROVED_FOR_INTEGRATION_RUNTIME_PROOF_INCOMPLETE"
+  },
+  "authorityBindings": {
+    "planning/W3-planning-packet-01/contracts-01.md": "b656fe8604edc5ca663ca867ed189b9e1b824baa34191613b54c373c2a3d0da4",
+    "docs/adr/ADR-0008-supervise-the-local-core-process-through-a-portable-native-boundary.md": "ef704f7d8de769324ec5a1a25019b05cabccd0eaaa9e24f023265b327186ada4",
+    "docs/adr/ADR-0057-protected-rebuildable-lexical-and-vector-projections.md": "a6016f3a03a92880df026a422ae6e4bfe5091db8728479fe9ea75b2fb7ee0c3d",
+    "artifacts/evidence/CAP-06.S01.native-lifetime-proof-01.md": "484000699e97b7eaa159affd6a27726b6c35dac05b683e11547cd91aba640d54"
+  },
+  "unchangedNativeSourceBindings": {
+    "apps/desktop/scripts/search-populated-native-integration.mjs": {
+      "rawSha256": "c777347cb3d94aaca477c78f205e4c2254ebe4e15d27019c83faa8301dd51729",
+      "canonicalSha256": "c777347cb3d94aaca477c78f205e4c2254ebe4e15d27019c83faa8301dd51729",
+      "equalsOriginalGitBlob": true
+    },
+    "apps/desktop/scripts/search-populated-native-client.mjs": {
+      "rawSha256": "1a7cae1691b68a7588fe8173faf8d18ac9551f2a61c6c436d0b500539414c925",
+      "canonicalSha256": "1a7cae1691b68a7588fe8173faf8d18ac9551f2a61c6c436d0b500539414c925",
+      "equalsOriginalGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/supervisor.rs": {
+      "rawSha256": "e0cc95bd4367ae083675f5579f404f52003c775d34cae2d376285f7f10cdfcda",
+      "canonicalSha256": "e0cc95bd4367ae083675f5579f404f52003c775d34cae2d376285f7f10cdfcda",
+      "equalsOriginalGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/supervisor/native_stop_proof.rs": {
+      "rawSha256": "821bfdc73857f4636f4163e3133706e6de7fd06cf12b2e9ce46f332bffbb33be",
+      "canonicalSha256": "821bfdc73857f4636f4163e3133706e6de7fd06cf12b2e9ce46f332bffbb33be",
+      "equalsOriginalGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/supervisor/populated_search_integration.rs": {
+      "rawSha256": "169010de2052152d88027cac30a230bc8e7e45466fb966b773592230d107555a",
+      "canonicalSha256": "169010de2052152d88027cac30a230bc8e7e45466fb966b773592230d107555a",
+      "equalsOriginalGitBlob": true
+    },
+    "tests/service/fixtures/native_integration_sidecar.py": {
+      "rawSha256": "01b9ff9ebe47f964eed113a84d24dac477e6f124b77621c3ae3fd80b5f384066",
+      "canonicalSha256": "01b9ff9ebe47f964eed113a84d24dac477e6f124b77621c3ae3fd80b5f384066",
+      "equalsOriginalGitBlob": true
+    },
+    "tests/service/test_native_owned_role_probe.py": {
+      "rawSha256": "8679e3476461f087dc5b7aa50cc176bbb3ebe16f120c2d95d68ab0e5d194866f",
+      "canonicalSha256": "8679e3476461f087dc5b7aa50cc176bbb3ebe16f120c2d95d68ab0e5d194866f",
+      "equalsOriginalGitBlob": true
+    },
+    "tests/search/populated_native_owner.py": {
+      "rawSha256": "3eff85d88f96ecf43397efdbaf7f7401a2bd4bcdb67b084077fac5f93761e68a",
+      "canonicalSha256": "3eff85d88f96ecf43397efdbaf7f7401a2bd4bcdb67b084077fac5f93761e68a",
+      "equalsOriginalGitBlob": true
+    }
+  },
+  "completedQualification": {
+    "path": "artifacts/tmp/W3.C03.qualification-03/report.json",
+    "sha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+    "producer": {
+      "path": "artifacts/tmp/W3.C03.qualify-03.py",
+      "sha256": "711ef7d15dd029585aca5c288ca2116940deea59150e8080c2324f127646706a"
+    },
+    "candidate": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+    "status": "PASS",
+    "startedAtUtc": "2026-10-17T18:57:48.862542+00:00",
+    "completedAtUtc": "2026-10-17T19:07:26.001978+00:00",
+    "qualifierInputCount": 6977,
+    "flags": {
+      "headUnchanged": true,
+      "mainUnchanged": true,
+      "inventoryUnchanged": true,
+      "inputBytesUnchanged": true,
+      "indexUnchanged": true,
+      "refsUnchanged": true,
+      "producerUnchanged": true,
+      "cleanAfter": true,
+      "selectedRuntimeUnchanged": true
+    },
+    "all21GroupsPass": true,
+    "affectedPythonCases": 81,
+    "separatePythonCalibrations": 6,
+    "separateRustRootCalibrations": 6,
+    "nativeRootTestCount": 1,
+    "limits": "All referenced command raw digests were rehashed; selected per-class summaries/identity lists and calibration raw trailers authenticated. Complete entry/exit6977-input and selected-runtime fixity remains the producer observation, not independent OS/installed-dependency attestation or a repeated full-tree validator."
+  },
+  "nativeProof": {
+    "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06.json",
+    "sha256": "f6b465bf00cc11c23a57fe2e55da16f0e08e398906ec60f4f3c22fbb424683b4",
+    "status": "PASS",
+    "candidate": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+    "command": {
+      "path": "artifacts/tmp/W3.C03.qualification-03/full-populated-native-lifetime.log",
+      "sha256": "e4343bcf0af6d5b3ae101e011df4b14445068daee5f4584245816326e83de2d3",
+      "exitCode": 0,
+      "observedCommandSeconds": 106.37931210000534
+    },
+    "driverElapsedSeconds": 104.96999670000001,
+    "inputEqualityAfter": true,
+    "driverInputHashesEqualCurrentAndQualifier": true,
+    "copiedReceiptsAuthenticated": [
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/client-report.json",
+        "sha256": "68ebc212ca1ecb2d2b5749f6489fc3fb51be486d6e1a59559c92babe540dcda6",
+        "bytes": 23944
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-proof.json",
+        "sha256": "a18227b7d4e32586f1d08bc3f2c58e8faa4fb4f5fb78f544ed748c9243756334",
+        "bytes": 488
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/owner-report.json",
+        "sha256": "897ea2eb420132a2a3c1f7b09de7b9156e0f50fb364abf17fec77026727d9e0d",
+        "bytes": 2476
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/node-stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-stop-restart.json",
+        "sha256": "a193771305710ac98ca2f6fa234caa1d35e54cd36c082d7367c8ea800478d6a6",
+        "bytes": 4183
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-stop-final.json",
+        "sha256": "de86bcce1980845452384f77c91db3b01be2ef002cf1fae6165589090ca7e251",
+        "bytes": 4181
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/compiler.stdout.log",
+        "sha256": "8c913e9b7064875b102374c3b05c0d7e6f53c2602cfb26b3aa2b6fb07cb2633a",
+        "bytes": 292371
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/compiler.stderr.log",
+        "sha256": "6d3b81885fd87ad7bb4173e7c96eb9ff51ee53975949eaab018b79b9dc1359e2",
+        "bytes": 73
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-test.stdout.log",
+        "sha256": "46dfe02067631099b8ee52f8c6c435ffdf1f571bdfdfde34e6d2c4355cbadb8a",
+        "bytes": 382
+      },
+      {
+        "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-test.stderr.log",
+        "sha256": "917e64132500d78a83c3e7cd189314b747c80ce8d14a861d95be636719d7bad7",
+        "bytes": 294
+      },
+      {
+        "sha256": "563be17fb267f0d82cc5deffb4ba4ef8af3e24c162915dcbad6801030df0f70e",
+        "bytes": 2242,
+        "kind": "separate-Core-selected-role-zero-observation",
+        "stage": "restart",
+        "exactPathBinding": "Authenticated ignored Native report receipt inventory and preserved original review02."
+      },
+      {
+        "sha256": "12d2094b2184fb3132e0ece501cd5d6ebdf0e6214ef675c8e37ba7b1b5b4c33b",
+        "bytes": 2242,
+        "kind": "separate-Core-selected-role-zero-observation",
+        "stage": "final",
+        "exactPathBinding": "Authenticated ignored Native report receipt inventory and preserved original review02."
+      }
+    ],
+    "ownedFixtureCleanup": "complete",
+    "checkedOriginalDeadlineAndAuthorityPredicates": {
+      "unchangedOriginalHardNativeTransportBound": true,
+      "unchangedOriginalChildOwnerOperationBounds": true,
+      "noTimeoutOrAdmissionRelaxation": true,
+      "exactSettingsSource": "Authenticated ignored Native report and owner receipt."
+    }
+  },
+  "actualJourney": {
+    "recordedGeneratedClientCalls": 128,
+    "response200": 124,
+    "typed409Responses": 4,
+    "maximumRecordedCallMs": 1854.2407999999996,
+    "maximumRecordedPageMs": 1854.2407999999996,
+    "maximumRecordedStatusMs": 1438.2559000000037,
+    "sevenBoundaries": [
+      "actual Native principal and accepted protected Intent",
+      "actual Native import and generated public review/commit/manifest/reconciliation",
+      "fixed private corpus and six-permission rights setup through actual Core operations",
+      "populated protected field/filter/ranking/snippet/explanation with canonical IDs and stable replay",
+      "ordinary Native admission still denies claimed identity and private or unknown routes",
+      "actual rights successors invalidate old public page and status",
+      "actual close/restart denies old run and current restored source remains searchable; cancellation outcome retained"
+    ],
+    "typedDenialLabels": [
+      "rights-page",
+      "rights-status",
+      "closed-project-page",
+      "fresh-session-old-page"
+    ],
+    "cancellation": {
+      "terminalState": "cancelled",
+      "cancellationWon": true,
+      "limit": "A won completion race is retained; deterministic running-cancel/late acceptance is separate Core phase-barrier proof."
+    },
+    "originalAssertions": "Original pinned client additionally asserts request replay, populated page/snippet/explanation/filter-zero, Native claimed-identity/private-route refusal and restored fresh-source result. The unchanged carrier executes that exact entrypoint through real RuntimeSupervisor.api_request; no bounded substitute, admission relaxation, timeout increase or skipped postrestart/cancel journey."
+  },
+  "joinedLifetime": {
+    "actualDistinctCoreIncarnations": true,
+    "stops": [
+      {
+        "stage": "restart",
+        "attempt": 1,
+        "stopReceipt": {
+          "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-stop-restart.json",
+          "sha256": "a193771305710ac98ca2f6fa234caa1d35e54cd36c082d7367c8ea800478d6a6"
+        },
+        "separateRoleReceiptSha256": "563be17fb267f0d82cc5deffb4ba4ef8af3e24c162915dcbad6801030df0f70e",
+        "coreIdentitySha256": "7e916d274a73d62128a00eb0db59f3de2dc61f675d7de16eb436ef4c295ee7bd",
+        "sameRetainedProcessSignaledKnownZeroExit": true,
+        "postexitPidAndBirthEqual": true,
+        "imageIdentityObservedAtBindOnly": true,
+        "originalPrecloseJob": {
+          "accountingQueryOk": true,
+          "activeProcesses": 0,
+          "assignedProcesses": 0,
+          "completeProcessList": true,
+          "processIds": [],
+          "processListQueryOk": true,
+          "returnedProcesses": 0,
+          "totalProcesses": 2,
+          "totalTerminatedProcesses": 0
+        },
+        "normalEntries": 1,
+        "immediateTerminateDirectKillEntries": 0,
+        "singleOriginalSuccessfulClose": true,
+        "roleReceiptEqualsEmbeddedAndIdentity": true,
+        "roleAliasesAndCurrentQualifiedSourcePinsEqual": true,
+        "observedZeroSelectedRoleAttempts": true,
+        "positiveWorkerGuardianDrain": "NOT_OBSERVED"
+      },
+      {
+        "stage": "final",
+        "attempt": 2,
+        "stopReceipt": {
+          "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/native-stop-final.json",
+          "sha256": "de86bcce1980845452384f77c91db3b01be2ef002cf1fae6165589090ca7e251"
+        },
+        "separateRoleReceiptSha256": "12d2094b2184fb3132e0ece501cd5d6ebdf0e6214ef675c8e37ba7b1b5b4c33b",
+        "coreIdentitySha256": "cc9b07caf5b59eddb36f82fef589883ef07fdfe9e84d6d8d5be3a27f49d34c4e",
+        "sameRetainedProcessSignaledKnownZeroExit": true,
+        "postexitPidAndBirthEqual": true,
+        "imageIdentityObservedAtBindOnly": true,
+        "originalPrecloseJob": {
+          "accountingQueryOk": true,
+          "activeProcesses": 0,
+          "assignedProcesses": 0,
+          "completeProcessList": true,
+          "processIds": [],
+          "processListQueryOk": true,
+          "returnedProcesses": 0,
+          "totalProcesses": 2,
+          "totalTerminatedProcesses": 0
+        },
+        "normalEntries": 1,
+        "immediateTerminateDirectKillEntries": 0,
+        "singleOriginalSuccessfulClose": true,
+        "roleReceiptEqualsEmbeddedAndIdentity": true,
+        "roleAliasesAndCurrentQualifiedSourcePinsEqual": true,
+        "observedZeroSelectedRoleAttempts": true,
+        "positiveWorkerGuardianDrain": "NOT_OBSERVED"
+      }
+    ],
+    "bindingConclusion": "Each standalone selected-role receipt equals the embedded role receipt and binds exact observed Core PID/birth/image and attempt. Same retained process handle independently yielded postexit PID/birth, zero-ms signaled state and known exit0. Original Job accounting/process-list queries were complete and empty before the single successful original close; normal entry1, no immediate/terminate/direct-kill invocation. Full image identity is an observation at bind, not claimed freshly queried after exit."
+  },
+  "actualOwnerEnvelope": {
+    "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06-receipts/owner-report.json",
+    "sha256": "897ea2eb420132a2a3c1f7b09de7b9156e0f50fb364abf17fec77026727d9e0d",
+    "runs": [
+      {
+        "label": "compiler",
+        "status": "PASS",
+        "exitCode": 0,
+        "forcedTermination": false,
+        "postProcessObservation": {
+          "total": 3,
+          "active": 0
+        },
+        "naturalDrainObservation": {
+          "total": 3,
+          "active": 0
+        },
+        "binaryReaderCompleted": true,
+        "elapsedSeconds": 0.4807304000132717
+      },
+      {
+        "label": "native-test",
+        "status": "PASS",
+        "exitCode": 0,
+        "forcedTermination": false,
+        "postProcessObservation": {
+          "total": 7,
+          "active": 0
+        },
+        "naturalDrainObservation": {
+          "total": 7,
+          "active": 0
+        },
+        "binaryReaderCompleted": true,
+        "elapsedSeconds": 102.22024719999172
+      }
+    ],
+    "actualExactCompilerArtifactAndRetainedExecutableHashAuthenticated": true,
+    "testExecutableSha256": "177eeec742357c0533225b6583f20fe3f55248abf7a6c2a70c10dad0fac55f32",
+    "limits": "Compiler and Native parent Jobs naturally reached active0 before existing helper close. Existing helper close may issue TerminateJobObject on an already empty Job; no claim of zero termination API calls in all code. Intended adverse Rust force calibrations are separate from positive Native runtime no-live-force proof.",
+    "exactExecutablePathBinding": "Authenticated ignored owner report; matching compiler-artifact and executable hash were checked."
+  },
+  "calibrations": {
+    "python": {
+      "expectedCaseIds": [
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_synthetic_complete_no_invocation_calibration",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_any_attempt_forwards_same_result_and_denies_zero",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_original_exception_identity_is_preserved_and_never_zero",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_final_counter_snapshot_includes_late_entry_from_finished_thread",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_allowed_names_do_not_authorize_unknown_live_thread_targets",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_alias_change_after_install_invalidates_zero"
+      ],
+      "observedCaseIds": [
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_alias_change_after_install_invalidates_zero",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_allowed_names_do_not_authorize_unknown_live_thread_targets",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_any_attempt_forwards_same_result_and_denies_zero",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_final_counter_snapshot_includes_late_entry_from_finished_thread",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_original_exception_identity_is_preserved_and_never_zero",
+        "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_synthetic_complete_no_invocation_calibration"
+      ],
+      "rawPath": "artifacts/tmp/W3.C03.qualification-03/probe-forwarding-and-refusal-units.log",
+      "rawSha256": "ba81b5c87d3838d266814d1738039fddb1b0c1b62a6342612f221ec5b2473e09",
+      "passed": 6,
+      "skipped": 0
+    },
+    "rust": {
+      "expectedCaseIds": [
+        "supervisor::native_stop_proof::tests::calibration_child",
+        "supervisor::native_stop_proof::tests::actual_normal_exit_and_original_preclose_job_are_required",
+        "supervisor::native_stop_proof::tests::actual_five_second_fallback_and_security_force_deny_normal_proof",
+        "supervisor::native_stop_proof::tests::actual_wrong_object_query_dead_binding_and_missing_close_fail_closed",
+        "supervisor::native_stop_proof::tests::synthetic_duplicate_hook_replay_denies_without_actual_double_close",
+        "supervisor::native_stop_proof::tests::synthetic_identity_substitution_denies_actual_process_proof"
+      ],
+      "observedCaseIds": [
+        "supervisor::native_stop_proof::tests::actual_five_second_fallback_and_security_force_deny_normal_proof",
+        "supervisor::native_stop_proof::tests::actual_normal_exit_and_original_preclose_job_are_required",
+        "supervisor::native_stop_proof::tests::actual_wrong_object_query_dead_binding_and_missing_close_fail_closed",
+        "supervisor::native_stop_proof::tests::calibration_child",
+        "supervisor::native_stop_proof::tests::synthetic_duplicate_hook_replay_denies_without_actual_double_close",
+        "supervisor::native_stop_proof::tests::synthetic_identity_substitution_denies_actual_process_proof"
+      ],
+      "rawPath": "artifacts/tmp/W3.C03.qualification-03/calibration/native-calibrations.stdout.log",
+      "rawSha256": "4b839cd63cac93f63d3d80584b2cb6d53dd7d40c9d873937654138df0ad27724",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0,
+      "filteredOut": 277,
+      "ownedNaturalDrain": {
+        "total": 24,
+        "active": 0
+      },
+      "forcedTermination": false
+    },
+    "limits": "Six Rust root cases include the calibration-child root; descendants are not invented as additional passing root cases. Synthetic forwarding/refusal tests are not real positive guardian/parser/worker proof."
+  },
+  "findingLedger": [
+    {
+      "id": "S01-NATIVE-LIFETIME-RUNTIME-01",
+      "severity": "high",
+      "priorStatus": "OPEN_ACTUAL_HARD_NATIVE_BOUNDARY_FAILURE",
+      "status": "CLOSED_FOR_THIS_FRESH_QUALIFIED_CANDIDATE",
+      "criterion": "Unchanged2s original full Native populated search journey and actual restart/final normal Core lifetime with explicit external-role coverage.",
+      "closure": "Fresh candidate9b7825b executes the full unchanged Native source after actual failure-first C03 restoration. Native06/client/owner pass, all128 recorded calls are below2s, actual cancellation terminal is cancelled, and both normal Core/originalJob/zero-role joins are present and authenticated. Final qualifier21groups/all9flags PASS.",
+      "historicalCauseLimit": "Original Native05 page failure remains real; this result does not invent a universal cause for every earlier timing or compiler/observer failure. Separate C03 product correctness/scope disposition remains with its independent task reviewer."
+    }
+  ],
+  "openComponentFindings": [],
+  "priorHistory": {
+    "failedQualifiersPreserved": [
+      {
+        "path": "artifacts/tmp/W3.S01.native-lifetime-qualification-03/report.json",
+        "sha256": "6f38d69527114269ee8debd81e61c7611551b3d96d3e2871946a1b821506eeb0",
+        "status": "FAIL",
+        "candidate": "68d982773e37d3a7e2aeefb001f69343d991f53b"
+      },
+      {
+        "path": "artifacts/tmp/W3.S01.native-lifetime-qualification-04/report.json",
+        "sha256": "4445f1aee98218a8d32b2c5897a014f36912b3350cb6ce8a1f3ff9c0293b8890",
+        "status": "FAIL",
+        "candidate": "f00097f4b3920490113bd03e5f8e914e6a92fb49"
+      },
+      {
+        "path": "artifacts/tmp/W3.S01.native-lifetime-qualification-05/report.json",
+        "sha256": "dae34a387de3d3f76fb5e13838325a6c5d1bc3d687fbfca5e1f7cdc393543ac5",
+        "status": "FAIL",
+        "candidate": "f00097f4b3920490113bd03e5f8e914e6a92fb49"
+      }
+    ],
+    "compilerOnlyDiagnostic": {
+      "path": "artifacts/tmp/W3.S01.native-owner-diagnostic-01/report.json",
+      "sha256": "b409f1212648d48995c7542116b7782fe2afa65c657d5f2cd48c77be4b27e024",
+      "limits": "Original compiler-only forced/adverse outcome and diagnostic identity are retained; not relabelled as positive runtime cleanup. Earlier unobserved members keep their unknown cause."
+    },
+    "priorProofAndNative05Facts": "Candidate68 postexit identity uncertainty, qualifier03 outer forced cleanup, qualifier04 sixRustPASS with outeractive1forced, and Native05 hard2s failure/missing joins retain their original FAIL evidence. New Native06 is a fresh restored-candidate observation, not an average, historical overwrite or reused PASS.",
+    "sourceCollectorFindings": [
+      {
+        "path": "artifacts/tmp/W3.C03.qualifier-source-preflight-01.json",
+        "sha256": "ee417733150977bf82e33d3de13d3ab960c0881e0906b96e7c1c7c7dc82ce026"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.qualifier-source-preflight-02.json",
+        "sha256": "b703cd426220cd3c125f1bc96cf0ec14f77787803701199216ddfc5259ac609f"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.qualifier-source-preflight-03.json",
+        "sha256": "556ff096bdd5c9e8dd5dfcaa8a206d3ad77ebffc5e7fffc4618f11dd5b782c25"
+      }
+    ]
+  },
+  "accounting": "No additional allocation is introduced by this independent Native review. Exact C03 spec separately forecasts cumulative R20=P924-budget priorR16 plus4; 0.15P=138.6, remaining118.6. Forecast is engineering effort, not observed wall time/cost; planned28 is included in P once.",
+  "integrationDisposition": "The Native lifetime evidence/control component no longer blocks local integration of exact candidate9b7825b and its reviewed descendants. This is contingent on the separate required C03 product/task approval and normal evidence/publication/clean ancestry/local-main procedure. It is not a standalone approval to integrate original failing f000 as qualified, to mutate campaign/gates, or to approve slice/Wave/release.",
+  "limits": [
+    "Metadata-only single synthetic imported source, actual Native fixture session and accepted Intent; private corpus/rights setup is explicit. Zero attempts/inflight for the selected guardian/connector/LPAC/ACL aliases is not positive worker/guardian/parser/model drain, universal all-owned proof or proof for other workloads.",
+    "One successful restored-candidate Native journey is functional hard-bound evidence here, not100k/fulltext/scientific/resource/renderer/installed packaging or comparable multi-trial latency qualification. All earlier comparable or failed outcomes remain retained for their proper future assessment.",
+    "Node client bundle equality and original producer entry/exit observations were recorded before fixture cleanup; the derived bundle itself was not among retained receipts. Raw source input and current source pin equality were independently authenticated; no current installed/Core frozen-package equivalence is claimed.",
+    "Reviewer used only source/data/contract reads, hashes and read-only Git. No tests, probes, source imports/AST, Node/Cargo/build, scanner, controller/validator/generator, runtime/process query or source/HEAD/index/ref/backlog mutation. Only this new ignored review was written.",
+    "This append-only publication projection omits raw argv, machine-local executable paths, trace IDs, raw runtime settings and actual PID/birth role filenames. Exact settings and process identity facts remain authenticated in ignored reports/receipts and preserved review02; the two-incarnation joins are summarized with exact raw receipt hashes."
+  ],
+  "publicationProjection": {
+    "kind": "append-only-privacy-safe-projection-of-existing-independent-disposition",
+    "originalReview": {
+      "path": "artifacts/tmp/CAP-06.S01.native-lifetime-independent-review-02.json",
+      "sha256": "bea78bcc35799bb472685250726a91fe90c19f011f35699584d43a942b39ff0d",
+      "preservedByteForByte": true
+    },
+    "omissions": [
+      "Exact child runtime settings retained in authenticated Native report.",
+      "Per-run runtime deadline configuration retained in owner receipt.",
+      "Role receipt filenames containing actual runtime PID/birth retained in Native report receipt inventory.",
+      "Local target executable relative path retained in owner report."
+    ],
+    "unchanged": "Exact reviewed candidate, authenticated input/proof/source digests, actual outcomes, prior adverse history, finding closure, disposition and practical limits are unchanged. No new review round, execution, task or release authority."
+  }
+}

@@ -1,0 +1,971 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W3.C03.T01",
+  "baseCommit": "01f8b4ca9fba4e7e165a0c4fbe0daa7cfbf2ff91",
+  "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+  "branch": "codex/w3-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W3.C03.T01.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/import_commit_repository.py",
+    "services/core-api/src/research_observatory_core/import_preview_service.py",
+    "services/core-api/src/research_observatory_core/ports/import_commits.py",
+    "tests/data/test_import_commit_hot_path.py",
+    "tests/reconciliation/test_owner_inventory.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "known-items",
+        "query",
+        "delivery",
+        "run",
+        "full-populated-native-lifetime"
+      ],
+      "evidence": [
+        "Fresh frozen synthetic known-item frame retains64 held-out title/DOI queries and declared top20 threshold; actual SQLCipher FTS5 ranking/reversed-order replay runs. Query/delivery and original Native checks preserve stable order, exact/field/filter contribution explanations and ranks without probability claims.",
+        "Source assertion content is unchanged. The new protected bundle equals the original manifest/member/historical/current/selected projections; one source resolution uses one original fresh protected reader and two resolutions use distinct readers."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "hot-path",
+        "owner-import",
+        "manifest-access",
+        "publication",
+        "source-chunks",
+        "import-service",
+        "source-authority",
+        "commit-time",
+        "windows-headless-api",
+        "full-populated-native-lifetime"
+      ],
+      "evidence": [
+        "Actual failure-first two behavioral reds observed5versus1 and10versus2 readers with original product bytes unchanged; two separate missing-method errors are retained. Fresh committed tests cover real separate-writer WAL coherence, next-call revocation, accepted-attempt/address substitutions, every requested permission and unrequested manifest-member denial after a warm read.",
+        "Inspect restore is explicitly denied without revision advance; original production guard remains. Existing immutable manifest seal/accepted output/public wrappers/rights and final source/actor/time/lifecycle/selection/cancellation fences pass. Real Core headless API and complete Native initial/restart/typed denial/cancellation behavior run freshly."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "global-inventory-and-affected-python-quality",
+        "architecture",
+        "hot-path",
+        "manifest-access",
+        "owner-import",
+        "probe-forwarding-and-refusal-units",
+        "actual-windows-native-observer-calibrations",
+        "full-populated-native-lifetime"
+      ],
+      "evidence": [
+        "Exactly five declared product/test paths change plus task-owned evidence and normal claim/generated Markdown metadata. Existing wrapper/helper validation and audit/source projection remain; no public generated API, schema/migration, governed UX, key/permissions, deadline/baseline/release or AI-mode change. APIs stay independent of UI.",
+        "No cache, pool, alternate store or framework/controller work. Existing private Native observers and unchanged complete journey are pinned to f00097f4 bytes; six Python and six actual Windows Rust calibrations plus genuine joined restart/final receipts qualify only the bounded metadata journey. Prior adverse outcomes are preserved."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "known-items",
+        "query",
+        "delivery",
+        "run",
+        "source-authority",
+        "owner-import",
+        "windows-headless-api",
+        "full-populated-native-lifetime"
+      ],
+      "evidence": [
+        "Actual frozen synthetic held-out title/DOI top20 mean recall meets the declared0.90 threshold; stable ties/pagination/snippets and current rights checks pass in their selected technical fixtures. No scientific relevance, external-corpus recall, human gold annotations or general coverage claim is made.",
+        "The unchanged hard2s complete Native journey, both actual Core incarnation lifetime joins, original preclose Job and retained-handle checks and independently matched zero-role receipts pass freshly. Zero worker/guardian attempts is not positive worker/guardian drain; scale/resources/scientific/renderer/packaging/profile/slice/Wave obligations retain existing owners."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "probe-forwarding-and-refusal-units",
+      "commandId": "service:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.service.test_native_owned_role_probe",
+      "exitCode": 0,
+      "durationSeconds": 2.770513200026471,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/probe-forwarding-and-refusal-units.log",
+      "rawOutputSha256": "ba81b5c87d3838d266814d1738039fddb1b0c1b62a6342612f221ec5b2473e09",
+      "caseClosure": {
+        "expectedCaseIds": [
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_synthetic_complete_no_invocation_calibration",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_any_attempt_forwards_same_result_and_denies_zero",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_original_exception_identity_is_preserved_and_never_zero",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_final_counter_snapshot_includes_late_entry_from_finished_thread",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_allowed_names_do_not_authorize_unknown_live_thread_targets",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_alias_change_after_install_invalidates_zero"
+        ],
+        "observedPassedCaseIds": [
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_alias_change_after_install_invalidates_zero",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_allowed_names_do_not_authorize_unknown_live_thread_targets",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_any_attempt_forwards_same_result_and_denies_zero",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_final_counter_snapshot_includes_late_entry_from_finished_thread",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_original_exception_identity_is_preserved_and_never_zero",
+          "tests.service.test_native_owned_role_probe.OwnedRoleZeroObservationCalibration.test_synthetic_complete_no_invocation_calibration"
+        ],
+        "reportedRunCount": 6,
+        "reportedZeroSkipTerminalOk": true,
+        "exactExpectedCasesExecuted": true,
+        "limits": "Task-specific raw identity/count closure; synthetic Python units and Rust intentional adverse calibrations are not positive model/parser/guardian proof."
+      }
+    },
+    {
+      "id": "global-inventory-and-affected-python-quality",
+      "commandId": "foundation:quality",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -c execute_quality(exact five C03 paths plus two unchanged Native observer fixtures; actual inline source in ignored report)",
+      "exitCode": 0,
+      "durationSeconds": 2.8380593999754637,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/global-inventory-and-affected-python-quality.log",
+      "rawOutputSha256": "76a4ee24c3e47176a2e35ad98e0aeaf66150ae08c454c673112fd0a631cf4cb6"
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "durationSeconds": 6.197696299990639,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+    },
+    {
+      "id": "hot-path",
+      "commandId": "data:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_hot_path.ImportCommitHotPathTests",
+      "exitCode": 0,
+      "durationSeconds": 20.61105360003421,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/hot-path.log",
+      "rawOutputSha256": "f60c21b3798e1d2d87efe5ab95781953d426048b44532435b95862803ae06338",
+      "caseClosure": {
+        "reportedRunCount": 6,
+        "observedStartedCaseIds": [
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_canonical_publication_uses_fixed_compiled_statements",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_coherent_source_inputs_preserve_all_original_facts_in_one_read",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_draft_record_read_does_not_compile_the_same_query_per_ordinal",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_identity_verification_uses_one_fresh_transaction_per_page",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_revision_changed_between_verification_pages_is_rejected",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_source_inputs_use_coherent_snapshot_and_next_read_observes_concurrent_revocation"
+        ],
+        "observedPassedCaseIds": [
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_canonical_publication_uses_fixed_compiled_statements",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_coherent_source_inputs_preserve_all_original_facts_in_one_read",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_draft_record_read_does_not_compile_the_same_query_per_ordinal",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_identity_verification_uses_one_fresh_transaction_per_page",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_revision_changed_between_verification_pages_is_rejected",
+          "tests.data.test_import_commit_hot_path.ImportCommitHotPathTests.test_source_inputs_use_coherent_snapshot_and_next_read_observes_concurrent_revocation"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "manifest-access",
+      "commandId": "data:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_manifest_access.ImportManifestAccessTests",
+      "exitCode": 0,
+      "durationSeconds": 18.21999459998915,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/manifest-access.log",
+      "rawOutputSha256": "12599ee86b63effda1eb8e685511d7fb9341c9b562a4861e62323a6ecb8dd36c",
+      "caseClosure": {
+        "reportedRunCount": 7,
+        "observedStartedCaseIds": [
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_default_revocation_denies_warmed_read",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_new_draft_requires_complete_recheck_even_when_rights_stay_permitted",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_off_page_revocation_invalidates_warm_authority_and_failed_checks_are_never_memoized",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_publication_replay_rechecks_rights_even_after_warmed_read",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_unchanged_pages_reuse_only_complete_current_authorization_and_cold_adapter_rescans",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_undo_of_permitted_edit_rechecks_new_revision",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_warmed_scan_does_not_bypass_cancelled_preview"
+        ],
+        "observedPassedCaseIds": [
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_default_revocation_denies_warmed_read",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_new_draft_requires_complete_recheck_even_when_rights_stay_permitted",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_off_page_revocation_invalidates_warm_authority_and_failed_checks_are_never_memoized",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_publication_replay_rechecks_rights_even_after_warmed_read",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_unchanged_pages_reuse_only_complete_current_authorization_and_cold_adapter_rescans",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_undo_of_permitted_edit_rechecks_new_revision",
+          "tests.data.test_import_manifest_access.ImportManifestAccessTests.test_warmed_scan_does_not_bypass_cancelled_preview"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "import-storage",
+      "commandId": "data:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_storage.ImportCommitConstraintTests",
+      "exitCode": 0,
+      "durationSeconds": 0.600481600034982,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/import-storage.log",
+      "rawOutputSha256": "7a3227119eebd28942483cc6094689c30ea5c5328c7bfc7262b508ed0dd9c386",
+      "caseClosure": {
+        "reportedRunCount": 6,
+        "observedStartedCaseIds": [
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_comparison_requires_included_predecessor_member",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_excluded_prepared_row_cannot_become_selected",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_predecessor_lookup_is_indexed_by_exact_record",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_predecessor_must_be_sealed",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_published_decisions_must_equal_prepared_bytes",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_sealed_included_predecessor_allows_comparison"
+        ],
+        "observedPassedCaseIds": [
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_comparison_requires_included_predecessor_member",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_excluded_prepared_row_cannot_become_selected",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_predecessor_lookup_is_indexed_by_exact_record",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_predecessor_must_be_sealed",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_published_decisions_must_equal_prepared_bytes",
+          "tests.data.test_import_commit_storage.ImportCommitConstraintTests.test_sealed_included_predecessor_allows_comparison"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "publication",
+      "commandId": "data:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_publication.ImportCommitPublicationTests",
+      "exitCode": 0,
+      "durationSeconds": 43.31570969999302,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/publication.log",
+      "rawOutputSha256": "638ec6f564793a7c6b70f83d22b1df5100e3362cc3e1978ff0f8f93ea582366f",
+      "caseClosure": {
+        "reportedRunCount": 15,
+        "observedStartedCaseIds": [
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_cancel_before_publication_leaves_canonical_state_unchanged",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_changed_file_retains_old_assertion_and_explains_update",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_comparison_denies_current_predecessor_record_rights_revocation",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_equal_raw_bytes_do_not_hide_changed_accepted_mapping",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_expiration_during_publication_uses_fresh_time_and_rolls_back",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_forged_prepared_selection_cannot_override_actual_draft",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_generic_completed_receipt_is_not_an_import_manifest_replay",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_lost_reply_replays_without_new_facts",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_manifest_reads_preserve_complete_ordered_decisions_and_identity",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_material_failures_roll_back_entire_publication",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_more_than_64_records_have_complete_manifest_membership",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_multiple_current_candidates_are_not_reported_as_certain_updates",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_publication_commits_manifest_records_provenance_and_worker_output",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_file_new_preview_reuses_source_assertion_ids",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_scientific_import_reuses_manifest_and_records"
+        ],
+        "observedPassedCaseIds": [
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_cancel_before_publication_leaves_canonical_state_unchanged",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_changed_file_retains_old_assertion_and_explains_update",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_comparison_denies_current_predecessor_record_rights_revocation",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_equal_raw_bytes_do_not_hide_changed_accepted_mapping",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_expiration_during_publication_uses_fresh_time_and_rolls_back",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_forged_prepared_selection_cannot_override_actual_draft",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_generic_completed_receipt_is_not_an_import_manifest_replay",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_lost_reply_replays_without_new_facts",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_manifest_reads_preserve_complete_ordered_decisions_and_identity",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_material_failures_roll_back_entire_publication",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_more_than_64_records_have_complete_manifest_membership",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_multiple_current_candidates_are_not_reported_as_certain_updates",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_publication_commits_manifest_records_provenance_and_worker_output",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_file_new_preview_reuses_source_assertion_ids",
+          "tests.data.test_import_commit_publication.ImportCommitPublicationTests.test_same_scientific_import_reuses_manifest_and_records"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "source-chunks",
+      "commandId": "data:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_source_chunks.ImportSourceChunkTests",
+      "exitCode": 0,
+      "durationSeconds": 3.0851536000263877,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/source-chunks.log",
+      "rawOutputSha256": "2b1483a6eaefb47a619740521ffa53eb260cc9849ab21d9d8472819e9b8aa7aa",
+      "caseClosure": {
+        "reportedRunCount": 3,
+        "observedStartedCaseIds": [
+          "tests.data.test_import_source_chunks.ImportSourceChunkTests.test_chunk_length_substitution_and_unbounded_reads_fail_closed",
+          "tests.data.test_import_source_chunks.ImportSourceChunkTests.test_restarted_encrypted_source_preserves_bytes_and_releases_writer_before_yield",
+          "tests.data.test_import_source_chunks.ImportSourceChunkTests.test_unknown_revoked_rights_and_cancelled_authority_deny_buffered_reads"
+        ],
+        "observedPassedCaseIds": [
+          "tests.data.test_import_source_chunks.ImportSourceChunkTests.test_chunk_length_substitution_and_unbounded_reads_fail_closed",
+          "tests.data.test_import_source_chunks.ImportSourceChunkTests.test_restarted_encrypted_source_preserves_bytes_and_releases_writer_before_yield",
+          "tests.data.test_import_source_chunks.ImportSourceChunkTests.test_unknown_revoked_rights_and_cancelled_authority_deny_buffered_reads"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "owner-import",
+      "commandId": "service:reconciliation",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests",
+      "exitCode": 0,
+      "durationSeconds": 44.938343000016175,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/owner-import.log",
+      "rawOutputSha256": "82254ed766b189c61b7c3ee617edcccf8ec18232fd22dd1f5204d43584bd892c",
+      "caseClosure": {
+        "reportedRunCount": 7,
+        "observedStartedCaseIds": [
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_changed_request_cannot_borrow_old_manifest_but_same_identity_reuses",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_next_read_rechecks_all_requested_permissions",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_preserves_accepted_attempt_and_address_denials",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_resolution_uses_one_fresh_protected_read",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_warm_read_still_denies_unrequested_manifest_member",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_excluded_page_advances_and_included_address_survives_restart",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_separate_source_resolutions_never_share_a_reader"
+        ],
+        "observedPassedCaseIds": [
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_changed_request_cannot_borrow_old_manifest_but_same_identity_reuses",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_next_read_rechecks_all_requested_permissions",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_preserves_accepted_attempt_and_address_denials",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_resolution_uses_one_fresh_protected_read",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_current_source_warm_read_still_denies_unrequested_manifest_member",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_excluded_page_advances_and_included_address_survives_restart",
+          "tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests.test_separate_source_resolutions_never_share_a_reader"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "source-projection",
+      "commandId": "service:reconciliation",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.reconciliation.test_sources.SourceProjectionTests",
+      "exitCode": 0,
+      "durationSeconds": 0.44021940004313365,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/source-projection.log",
+      "rawOutputSha256": "0bc2331b6a2292726e29ef512316634a4e6c69069436724f4005f02c02dd0f3a",
+      "caseClosure": {
+        "reportedRunCount": 1,
+        "observedStartedCaseIds": [
+          "tests.reconciliation.test_sources.SourceProjectionTests.test_import_formats_preserve_original_doi_case_and_source_bytes"
+        ],
+        "observedPassedCaseIds": [
+          "tests.reconciliation.test_sources.SourceProjectionTests.test_import_formats_preserve_original_doi_case_and_source_bytes"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "import-service",
+      "commandId": "service:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.service.test_import_commit_service.ImportCommitServiceTests",
+      "exitCode": 0,
+      "durationSeconds": 39.847592399979476,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/import-service.log",
+      "rawOutputSha256": "d9cf1d57726b35f7e1c64f5121401aae286c7e073ce13b7bb6fdffef324c04ec",
+      "caseClosure": {
+        "reportedRunCount": 10,
+        "observedStartedCaseIds": [
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_draft_before_execution_is_not_silently_adopted",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_request_payload_conflicts_and_preserves_original",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_concurrent_same_request_has_one_durable_job",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_explicit_cancelled_job_continuation_preserves_saved_command",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_manifest_uses_accepted_order_not_uuid_sort_order_after_restart",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_request_uses_retained_order_not_uuid_sort_order_after_restart",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_preview_cancellation_cancels_queued_commit",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_request_written_before_enqueue_is_recovered_not_lost",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_security_epoch_cancels_old_commit_without_automatic_replacement",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_service_replays_request_and_worker_commits_after_restart"
+        ],
+        "observedPassedCaseIds": [
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_draft_before_execution_is_not_silently_adopted",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_changed_request_payload_conflicts_and_preserves_original",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_concurrent_same_request_has_one_durable_job",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_explicit_cancelled_job_continuation_preserves_saved_command",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_manifest_uses_accepted_order_not_uuid_sort_order_after_restart",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_latest_request_uses_retained_order_not_uuid_sort_order_after_restart",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_preview_cancellation_cancels_queued_commit",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_request_written_before_enqueue_is_recovered_not_lost",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_security_epoch_cancels_old_commit_without_automatic_replacement",
+          "tests.service.test_import_commit_service.ImportCommitServiceTests.test_service_replays_request_and_worker_commits_after_restart"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "index-sources",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_sources.IndexSourceTests",
+      "exitCode": 0,
+      "durationSeconds": 12.0930133999791,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/index-sources.log",
+      "rawOutputSha256": "21259b16b1e0a88d7818f09250e3849c2338509ff693ba0f195a8da62d18241d",
+      "caseClosure": {
+        "reportedRunCount": 2,
+        "observedStartedCaseIds": [
+          "tests.search.test_index_sources.IndexSourceTests.test_accepted_text_retains_canonical_node_projection_and_codepoint_span",
+          "tests.search.test_index_sources.IndexSourceTests.test_exact_search_permission_required_and_revocation_excludes_retained_metadata"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_index_sources.IndexSourceTests.test_accepted_text_retains_canonical_node_projection_and_codepoint_span",
+          "tests.search.test_index_sources.IndexSourceTests.test_exact_search_permission_required_and_revocation_excludes_retained_metadata"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "query",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service.LexicalQueryServiceTests",
+      "exitCode": 0,
+      "durationSeconds": 73.63363290001871,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/query.log",
+      "rawOutputSha256": "2d07f493b74c909caed1bc34e195e3b7c9d49297f5342becdd816784f910017a",
+      "caseClosure": {
+        "reportedRunCount": 11,
+        "observedStartedCaseIds": [
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_clock_rollback_during_delivery_denies_with_unchanged_time_partition",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_expiry_at_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_fence_uses_one_current_canonical_transaction_for_selection_and_source",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_future_nonmatching_permission_activation_denies_without_source_writes",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_generation_cancelled_during_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_initial_selection_and_source_capture_share_one_guarded_writer",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_nonoutbox_object_state_change_at_delivery_is_denied",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_republished_selection_during_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_revoked_nonmatching_text_blocks_statistics_before_any_rank_call",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_source_change_or_cancellation_during_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_stable_rank_has_exact_current_selection_and_complete_input_identity"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_clock_rollback_during_delivery_denies_with_unchanged_time_partition",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_expiry_at_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_fence_uses_one_current_canonical_transaction_for_selection_and_source",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_future_nonmatching_permission_activation_denies_without_source_writes",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_generation_cancelled_during_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_initial_selection_and_source_capture_share_one_guarded_writer",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_nonoutbox_object_state_change_at_delivery_is_denied",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_republished_selection_during_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_revoked_nonmatching_text_blocks_statistics_before_any_rank_call",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_source_change_or_cancellation_during_delivery_discards_buffered_result",
+          "tests.search.test_lexical_query_service.LexicalQueryServiceTests.test_stable_rank_has_exact_current_selection_and_complete_input_identity"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "delivery",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery.LexicalDeliveryTests",
+      "exitCode": 0,
+      "durationSeconds": 29.364957099955063,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/delivery.log",
+      "rawOutputSha256": "93295f09604d4dc419d944619c4b11422a8ea780aabf802290045ccf29465ec4",
+      "caseClosure": {
+        "reportedRunCount": 2,
+        "observedStartedCaseIds": [
+          "tests.search.test_lexical_delivery.LexicalDeliveryTests.test_complete_stable_pages_explanation_and_cross_run_cursor_denial",
+          "tests.search.test_lexical_delivery.LexicalDeliveryTests.test_text_preview_has_exact_source_and_only_real_contained_node_selection"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_lexical_delivery.LexicalDeliveryTests.test_complete_stable_pages_explanation_and_cross_run_cursor_denial",
+          "tests.search.test_lexical_delivery.LexicalDeliveryTests.test_text_preview_has_exact_source_and_only_real_contained_node_selection"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "run",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository.SearchRunRepositoryTests",
+      "exitCode": 0,
+      "durationSeconds": 35.28660099999979,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/run.log",
+      "rawOutputSha256": "41f99f3d1ec587f08afdfbc00057199372c1554766531821ea79612c35d2cd4a",
+      "caseClosure": {
+        "reportedRunCount": 5,
+        "observedStartedCaseIds": [
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_cancellation_before_commit_creates_no_accepted_node_or_partial_history",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_each_search_intent_read_is_fresh_and_coherent_in_one_connection",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_known_object_quarantine_without_outbox_denies_old_result",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_result_disclosure_requires_current_inputs_after_canonical_success",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_submission_replay_conflict_and_canonical_run_do_not_invalidate_inputs"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_cancellation_before_commit_creates_no_accepted_node_or_partial_history",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_each_search_intent_read_is_fresh_and_coherent_in_one_connection",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_known_object_quarantine_without_outbox_denies_old_result",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_result_disclosure_requires_current_inputs_after_canonical_success",
+          "tests.search.test_search_run_repository.SearchRunRepositoryTests.test_submission_replay_conflict_and_canonical_run_do_not_invalidate_inputs"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "commit-time",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository.CommitTimeBoundaryReproduction",
+      "exitCode": 0,
+      "durationSeconds": 22.52081240003463,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/commit-time.log",
+      "rawOutputSha256": "9328b78c6be1d2f36387fa9d100f6bb04a6041576dbcea80373b6d12dfd2c690",
+      "caseClosure": {
+        "reportedRunCount": 3,
+        "observedStartedCaseIds": [
+          "tests.search.test_search_run_repository.CommitTimeBoundaryReproduction.test_clock_rollback_after_terminal_write_rolls_back_canonical_acceptance",
+          "tests.search.test_search_run_repository.CommitTimeBoundaryReproduction.test_expiry_after_terminal_write_rolls_back_canonical_acceptance",
+          "tests.search.test_search_run_repository.CommitTimeBoundaryReproduction.test_nonmatching_activation_after_terminal_write_rolls_back_canonical_acceptance"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_search_run_repository.CommitTimeBoundaryReproduction.test_clock_rollback_after_terminal_write_rolls_back_canonical_acceptance",
+          "tests.search.test_search_run_repository.CommitTimeBoundaryReproduction.test_expiry_after_terminal_write_rolls_back_canonical_acceptance",
+          "tests.search.test_search_run_repository.CommitTimeBoundaryReproduction.test_nonmatching_activation_after_terminal_write_rolls_back_canonical_acceptance"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "source-authority",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority.SearchSourceAuthorityTests",
+      "exitCode": 0,
+      "durationSeconds": 2.1829413999803364,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/source-authority.log",
+      "rawOutputSha256": "1510996706b8a4196b486b2857b136259a04255491041777bb1a4e43437bc68a",
+      "caseClosure": {
+        "reportedRunCount": 1,
+        "observedStartedCaseIds": [
+          "tests.search.test_search_source_authority.SearchSourceAuthorityTests.test_each_preview_draft_and_record_decision_advances_transactional_epoch"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_search_source_authority.SearchSourceAuthorityTests.test_each_preview_draft_and_record_decision_advances_transactional_epoch"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "known-items",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup.KnownItemLookupTests",
+      "exitCode": 0,
+      "durationSeconds": 4.848694699991029,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/known-items.log",
+      "rawOutputSha256": "7aff8fa50a232884bd4c3c0fd62d3e41b7b006bdef4f42928bcb0fd31b7b3a7d",
+      "caseClosure": {
+        "reportedRunCount": 1,
+        "observedStartedCaseIds": [
+          "tests.search.test_known_item_lookup.KnownItemLookupTests.test_frozen_complete_held_out_title_and_doi_recall_at_twenty"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_known_item_lookup.KnownItemLookupTests.test_frozen_complete_held_out_title_and_doi_recall_at_twenty"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "windows-headless-api",
+      "commandId": "search:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows.SearchRuntimeWindowsTests",
+      "exitCode": 0,
+      "durationSeconds": 54.50423029996455,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/windows-headless-api.log",
+      "rawOutputSha256": "8b70c6e7a2dff6cddd9f33d00bfd70d8b909284719b4328cc0f678690e773e88",
+      "caseClosure": {
+        "reportedRunCount": 1,
+        "observedStartedCaseIds": [
+          "tests.search.test_search_runtime_windows.SearchRuntimeWindowsTests.test_headless_api_composition_positive_result_current_rights_and_no_claimed_principal"
+        ],
+        "observedPassedCaseIds": [
+          "tests.search.test_search_runtime_windows.SearchRuntimeWindowsTests.test_headless_api_composition_positive_result_current_rights_and_no_claimed_principal"
+        ],
+        "observedAdverseCaseIds": [],
+        "incompleteOrMalformedCaseProtocol": false,
+        "positiveCountAndZeroAdverse": true,
+        "limits": "Actual verbose identities/count only; binds interleaved fixture logs to each open case. No invented expected count or scientific coverage."
+      }
+    },
+    {
+      "id": "actual-windows-native-observer-calibrations",
+      "commandId": "desktop:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": "pinned-cargo test --locked --offline --features integration-harness --lib --manifest-path apps/desktop/src-tauri/Cargo.toml native_stop_proof::tests -- --test-threads=1 --nocapture (existing owned_run,360s)",
+      "exitCode": 0,
+      "durationSeconds": 16.071855299989693,
+      "startedAtUtc": "2026-10-17T19:04:49.425691+00:00",
+      "completedAtUtc": "2026-10-17T19:05:05.497552+00:00",
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/calibration/native-calibrations.stdout.log",
+      "rawOutputSha256": "4b839cd63cac93f63d3d80584b2cb6d53dd7d40c9d873937654138df0ad27724",
+      "rawErrorOutput": "artifacts/tmp/W3.C03.qualification-03/calibration/native-calibrations.stderr.log",
+      "rawErrorOutputSha256": "cf40556c4d568fd7c86e44d289c66b1010dc90a1dc70f40a0883d12efd18b86f",
+      "ownedNaturalDrain": true,
+      "caseClosure": {
+        "expectedCaseIds": [
+          "supervisor::native_stop_proof::tests::calibration_child",
+          "supervisor::native_stop_proof::tests::actual_normal_exit_and_original_preclose_job_are_required",
+          "supervisor::native_stop_proof::tests::actual_five_second_fallback_and_security_force_deny_normal_proof",
+          "supervisor::native_stop_proof::tests::actual_wrong_object_query_dead_binding_and_missing_close_fail_closed",
+          "supervisor::native_stop_proof::tests::synthetic_duplicate_hook_replay_denies_without_actual_double_close",
+          "supervisor::native_stop_proof::tests::synthetic_identity_substitution_denies_actual_process_proof"
+        ],
+        "observedPassedCaseIds": [
+          "supervisor::native_stop_proof::tests::actual_five_second_fallback_and_security_force_deny_normal_proof",
+          "supervisor::native_stop_proof::tests::actual_normal_exit_and_original_preclose_job_are_required",
+          "supervisor::native_stop_proof::tests::actual_wrong_object_query_dead_binding_and_missing_close_fail_closed",
+          "supervisor::native_stop_proof::tests::calibration_child",
+          "supervisor::native_stop_proof::tests::synthetic_duplicate_hook_replay_denies_without_actual_double_close",
+          "supervisor::native_stop_proof::tests::synthetic_identity_substitution_denies_actual_process_proof"
+        ],
+        "reportedPassed": 6,
+        "reportedFailed": 0,
+        "reportedIgnored": 0,
+        "reportedMeasured": 0,
+        "reportedFilteredOut": 277,
+        "exactExpectedCasesExecuted": true,
+        "limits": "Task-specific raw identity/count closure; synthetic Python units and Rust intentional adverse calibrations are not positive model/parser/guardian proof."
+      }
+    },
+    {
+      "id": "full-populated-native-lifetime",
+      "commandId": "desktop:unit",
+      "commit": "9b7825b974a041ba18e75645b5d0a7bb06152047",
+      "result": "PASS",
+      "timedOut": false,
+      "inputReport": "artifacts/tmp/W3.C03.qualification-03/report.json",
+      "inputReportSha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+      "executionContext": "Fresh fixed Windows x64 candidate; selected tracked/nonignored inputs, index/refs and producer/runtime fixity held. Actual absolute argv remain in ignored report; no receipt reuse or installed/OS closure claim.",
+      "command": "pinned-node24 apps/desktop/scripts/search-populated-native-integration.mjs --report artifacts/tmp/CAP-06.S01.populated-native-lifetime-06.json",
+      "exitCode": 0,
+      "durationSeconds": 106.37931210000534,
+      "rawOutput": "artifacts/tmp/W3.C03.qualification-03/full-populated-native-lifetime.log",
+      "rawOutputSha256": "e4343bcf0af6d5b3ae101e011df4b14445068daee5f4584245816326e83de2d3"
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "300e2322c7eb9059c2ea5341512757ba20830e67e359f7ead31df18339b4c55b",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -m unittest -v tests.service.test_native_owned_role_probe",
+      ".venv/Scripts/python.exe -B -c execute_quality(exact five C03 paths plus two unchanged Native observer fixtures; actual inline source in ignored report)",
+      ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_hot_path.ImportCommitHotPathTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_manifest_access.ImportManifestAccessTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_storage.ImportCommitConstraintTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_commit_publication.ImportCommitPublicationTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_import_source_chunks.ImportSourceChunkTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.reconciliation.test_owner_inventory.ImportOwnerInventoryTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.reconciliation.test_sources.SourceProjectionTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.service.test_import_commit_service.ImportCommitServiceTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_index_sources.IndexSourceTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_query_service.LexicalQueryServiceTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_lexical_delivery.LexicalDeliveryTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository.SearchRunRepositoryTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_run_repository.CommitTimeBoundaryReproduction",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_source_authority.SearchSourceAuthorityTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_known_item_lookup.KnownItemLookupTests",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.search.test_search_runtime_windows.SearchRuntimeWindowsTests",
+      "pinned-cargo test --locked --offline --features integration-harness --lib --manifest-path apps/desktop/src-tauri/Cargo.toml native_stop_proof::tests -- --test-threads=1 --nocapture (existing owned_run,360s)",
+      "pinned-node24 apps/desktop/scripts/search-populated-native-integration.mjs --report artifacts/tmp/CAP-06.S01.populated-native-lifetime-06.json"
+    ],
+    "reusedEvidence": [],
+    "rationale": "One fresh coherent protected import-source read restores the original hard2s delivery boundary while keeping full manifest/attempt/identity/rights guards and independent search captures/final fences. All selected evidence is fresh at the exact committed candidate; no old PASS or adverse result is reclassified."
+  },
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "data:unit",
+      "desktop:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "search:unit",
+      "service:reconciliation",
+      "service:unit"
+    ],
+    "riskAnalysis": "Five-path linked restoration: one fresh protected import-source transaction with all original full-manifest and accepted-attempt checks. Fresh data publication/manifest/source chunks, real service owner resolution/reopen/revocation/WAL coherence, query/delivery/known-item/current-source/final-time/actor/lifecycle/cancel fences and actual Windows headless API selected. Fresh six Python and six Windows observer calibrations and original complete Native hard2s/restart/cancellation/joined final lifetime proof are mandatory here because they exposed the defect. No public generated API/UX/schema/migration/runtime toolchain changes. Full profiles,100k/resources/scientific gold/renderer/package and independent slice/Wave proof remain at existing owners.",
+    "deferred": [
+      "Technical frozen synthetic known-item lookup only; missing scientific human gold remains missing at its slice owner.",
+      "One populated Native metadata item does not prove100k metadata/permitted passages, general resources, renderer/accessibility, installed package or full-profile/slice/Wave qualification.",
+      "Actual zero-role receipts prove zero attempted roles only; no positive parser/guardian drain. Empty outer helper cleanup requests TerminateJobObject even after natural empty; no zero-all-termination-call claim.",
+      "Selected executable bytes and all input fixity observed fresh; installed dependency/OS attestation and evidence reuse remain disabled. No approval or release authority from receipts."
+    ]
+  },
+  "qualification": {
+    "path": "artifacts/tmp/W3.C03.qualification-03/report.json",
+    "sha256": "fc54bdc3b13f728192ca81d8e4776a59ed7e3456c6345961ec1dd8f7b7bf9677",
+    "fresh": true,
+    "reused": false,
+    "runtimeClosureAuthenticated": false,
+    "producerPath": "artifacts/tmp/W3.C03.qualify-03.py",
+    "producerSha256": "711ef7d15dd029585aca5c288ca2116940deea59150e8080c2324f127646706a"
+  },
+  "nativeEvidence": {
+    "path": "artifacts/tmp/CAP-06.S01.populated-native-lifetime-06.json",
+    "sha256": "f6b465bf00cc11c23a57fe2e55da16f0e08e398906ec60f4f3c22fbb424683b4",
+    "scope": "Original complete populated Native journey with actual restart/final joined lifetime and zero-role proof; no positive worker drain or scale claim."
+  },
+  "knownItemEvidence": {
+    "path": "artifacts/tmp/W3.C03.qualification-03/known-items-result.json",
+    "sha256": "0ececf63502eb1d7686071d5dcf9fb82b574c24f8df6bf120fc03a949df2081d",
+    "fixtureSha256": "62f37a7259351dfa82c9ea1f2de8148d9e299c6c6db27cad16a903ee45a9ae32",
+    "heldOutTechnicalFrame": {
+      "split": "held-out",
+      "kind": "all",
+      "denominator": 64,
+      "meanRecallAt20": 1.0
+    },
+    "scope": "Frozen synthetic title/DOI lookup only; no scientific relevance or external recall."
+  },
+  "executionAccounting": {
+    "approvedWaveImplementationEstimateHours": 924,
+    "approvedPlannedRefactoringHoursIncludedOnce": 28,
+    "priorSupplementalForecastHours": 16,
+    "C03FullSupplementalAllocationHours": 4,
+    "cumulativeSupplementalForecastHours": 20,
+    "ceilingHours": 138.6,
+    "remainingHours": 118.6,
+    "assessment": "Conservative full4 helper-extraction allocation stays charged after completion; no additional remaining helper refactor forecast. PriorR16 retained in W3.history-decoding.maintenance-01.md. These are effort allocations, not measured4elapsedhours/cost or a new child budget."
+  },
+  "scopeLimits": [
+    "Technical frozen synthetic known-item lookup only; missing scientific human gold remains missing at its slice owner.",
+    "One populated Native metadata item does not prove100k metadata/permitted passages, general resources, renderer/accessibility, installed package or full-profile/slice/Wave qualification.",
+    "Actual zero-role receipts prove zero attempted roles only; no positive parser/guardian drain. Empty outer helper cleanup requests TerminateJobObject even after natural empty; no zero-all-termination-call claim.",
+    "Selected executable bytes and all input fixity observed fresh; installed dependency/OS attestation and evidence reuse remain disabled. No approval or release authority from receipts."
+  ],
+  "compositionProducerSha256": "97ee7700ca86c2112cd02ed7fc2f84318337882d64273a19b48d8f5aa0614732",
+  "preservedHistory": {
+    "artifacts": [
+      {
+        "path": "artifacts/tmp/W3.C03.development-red-01/report.json",
+        "sha256": "b2f964c8ba0e53a352aa8dd974777e91d30fe24f630e09f4823b922675dfcc4b",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.development-red-01/raw.log",
+        "sha256": "ff59c2be0fdbb4eaf37ed8d065f66e37d9025cae327615936dfa1c42f20f43a8",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.development-green-01/report.json",
+        "sha256": "f8f5e2646e396129323c413725385504fba4a3b9b20961f4b98a17808375ece4",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.development-green-01/raw.log",
+        "sha256": "4363e08ded7ba3aac8cea1c89f1b69e05ca0dfd8f941d7e8116954d504120168",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.development-quality-01/report.json",
+        "sha256": "ff456321b599942d9fecd5281e51418ae28fb841663af950969ae732871c90cd",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.development-quality-01/raw.log",
+        "sha256": "b32cd8e7a8bf11163ae22475e4176e4a9d5abd2e7694fa84423697c4c76715a9",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.prospective-source-test-review-01.json",
+        "sha256": "c660fc24c3260748dc87126b74d99287bffae19f425b9aa284b255f3fe69e2ac",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.prospective-source-test-closure-02.json",
+        "sha256": "b392dc7da38c046800085a365d411deb49b66706ec1477ab319e1a38a348f99f",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.qualifier-source-preflight-01.json",
+        "sha256": "ee417733150977bf82e33d3de13d3ab960c0881e0906b96e7c1c7c7dc82ce026",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.qualifier-source-preflight-02.json",
+        "sha256": "b703cd426220cd3c125f1bc96cf0ec14f77787803701199216ddfc5259ac609f",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.C03.qualifier-source-preflight-03.json",
+        "sha256": "556ff096bdd5c9e8dd5dfcaa8a206d3ad77ebffc5e7fffc4618f11dd5b782c25",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.S01.native-lifetime-qualification-05/report.json",
+        "sha256": "dae34a387de3d3f76fb5e13838325a6c5d1bc3d687fbfca5e1f7cdc393543ac5",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/evidence/CAP-06.S01.native-lifetime.review-01.json",
+        "sha256": "e02fe8ec41dab77bd262518e44cd0a624bc7a0918bb604a9a63f5bf843a738bb",
+        "hashMethod": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W3.S01.page-phase-diagnostic-02/report.json",
+        "sha256": "33e57431b01880b7841f8571f5d5d3f8f548a9d063bde6453019c9bc5985906e",
+        "hashMethod": "raw-bytes"
+      }
+    ],
+    "assessment": "Original native failures and preparation findings remain adverse and unchanged; source closures and development green are separately identified. Fresh qualifying checks alone support current closure."
+  },
+  "sourceSpec": {
+    "path": "artifacts/evidence/W3.C03.T01.spec.json",
+    "sha256": "e0e47ba8c6d8a68b0ed3748eb761c14e8c98d655d29df234edff04b9248be4d0",
+    "hashMethod": "raw-bytes"
+  },
+  "taskStartMap": {
+    "path": "artifacts/evidence/W3.C03.T01.task-start.md",
+    "sha256": "74d157a23db404bf5c23c799340225f18c1ad3d9661ab7680f5f662de364da9d",
+    "hashMethod": "raw-bytes"
+  }
+}
