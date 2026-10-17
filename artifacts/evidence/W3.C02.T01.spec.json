@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-06.S01.T02",
+    "commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+    "sha256": "e4987a00a2653fc820aae1acfea3fbf339edb4945f2b05db3e95ad8a4e786c68"
+  },
+  "reproduction": "The preserved full populated Native development journey failed foreground search status after restart under the unchanged two-second Native response bound. Separate nonqualifying actual Core phase diagnostic02 (artifacts/tmp/W3.C01.status-phase-diagnostic-02/report.json) reproduced request19 running200 after2.9594033s, including2.5321196s FIFO wait behind worker collect_obsolete2.5973173s/retire2.0870084s. No run-result/query-fence call occurred in that request. Original historical generic-error causes remain unknown; all full/bounded failures and raw traces remain preserved. The query-only correction W3.C01.T01 is independently approved, DONE and locally integrated at5410a1c94af476c09049fcbb4d19f6f6b2e2ab9d; the separate preparation/retirement defect remains a hard CAP-06.S01 blocker.",
+  "changedPaths": [
+    "services/core-api/src/research_observatory_core/lexical_index_repository.py",
+    "services/core-api/src/research_observatory_core/lexical_catalog_repository.py",
+    "tests/search/test_index_service.py",
+    "tests/search/test_index_catalog.py",
+    "tests/search/test_native_index_service.py"
+  ],
+  "impactAnalysis": "Restore the existing admitted-worker bounded-phase architecture for obsolete-index collection and retirement. Orchestrate the collection loop outside its whole-command project guard, explicitly guard each bounded ID-page transaction, and separate canonical Retired marking from a fresh current-authority held-file cleanup phase. Preserve default direct-caller guarding and project-to-generation/DELETE lock order. Consolidate repeated target/full selected-generation/initialized/file-witness checks in one coherent current catalog transaction per actual authorization point; retain every immediate destructive/key-use callback check. Preserve current Native/session/actor/accepted Intent/privacy authority, exact immutable configuration/scope/old derivative version, canonical selection coherence, reader drain, held file/ancestor identities, exclusive DELETE eligibility, exact-version key revocation, partial-bootstrap refusal, historical rekey/sidecar recovery and post-revocation retry. Do not require ordinary current-key leases for lawful historical retirement. No change to IO/key/store implementations, public API, AI mode, schema/migration, permission, governed UX, original full Native assertions, deadlines, baseline or release criteria. Add failure-first real-opener/FIFO/interphase-denial tests, then fresh exact-candidate affected catalog/service/rights/recovery/Windows proof and the unchanged complete populated Native journey. This is bounded defect restoration without optional structural cleanup or supplemental refactoring allocation; P924hours/28planned and cumulative supplemental R remain unchanged. No prior evidence is reused as a new PASS; full100k/resource/lifetime/scientific-gold/slice/Wave qualification remains separately required. This spec introduces no new criteria or product authority; claim it only through the existing taskctl linked-correction route after this immutable spec is committed."
+}
