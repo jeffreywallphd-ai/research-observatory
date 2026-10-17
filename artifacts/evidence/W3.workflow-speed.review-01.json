@@ -1,0 +1,390 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-workflow-readiness-live-review-final-independent-integration-disposition",
+  "reviewer": "agent:/root/w3_authority_review",
+  "reviewedAt": "2026-10-17T16:15:16.913272+00:00",
+  "reviewedCommit": "d20ef3721c07ad0a6988b11358e4802d17b6dd51",
+  "sourceCandidateCommit": "6730dc8dd2358cc2ec63571a7809fdcecd2012a0",
+  "readinessRepairCommit": "2d2e4500e2cbb25b0a3a223ecb867ef9dbd13bee",
+  "integratedPredecessorCommit": "e09c97cb55c6aedde92981de3b867639706c98fb",
+  "status": "APPROVED_FOR_LOCAL_MAIN_INTEGRATION",
+  "disposition": "The bounded owner-authorized readiness repair, workflow guidance/timing and read-only live planning review unit is independently approved for local integration. No blocking or open finding remains within this unit. A subsequent evidence-only exact copy of this review still needs narrow metadata-copy authentication; no product/slice/Wave/release approval is granted.",
+  "independence": "Reviewer is distinct from implementer; source, retained artifacts, producer code and actual logs were inspected read-only. No verification/candidate code was executed by reviewer.",
+  "scope": "Reuse exact prior expanded control/source review; replay six WF-LIVE closures, READY-DOC-01, separate pre-existing product-test helper inventory/type restoration, fresh committed selected and complete readiness proof, and the one-file append-only delivery boundary. No repeated broad product audit.",
+  "sourceAndDelivery": {
+    "sourceParent": "2d2e4500e2cbb25b0a3a223ecb867ef9dbd13bee",
+    "sourceChangedPaths": [
+      "artifacts/evidence/W3.workflow-speed.maintenance-01.md",
+      "artifacts/evidence/W3.workflow-speed.owner-direction-20261017-01.json",
+      "docs/automation/codex-tracking-guide.md",
+      "docs/automation/planning-review-site.md",
+      "docs/automation/project-automation-guide.md",
+      "docs/automation/workflow-efficiency.md",
+      "planning/README.md",
+      "quality-scope.json",
+      "tests/foundation/planning_review_browser.py",
+      "tests/foundation/test_plan_review_server.py",
+      "tests/foundation/test_workflow_guidance.py",
+      "tools/plan_review_server.py",
+      "tools/planctl.py",
+      "tools/planning_review/index.html",
+      "tools/planning_review/review.css",
+      "tools/planning_review/review.js",
+      "tools/taskctl.py"
+    ],
+    "deliverySoleParent": "6730dc8dd2358cc2ec63571a7809fdcecd2012a0",
+    "deliveryChangedPaths": [
+      "artifacts/evidence/W3.workflow-speed.qualification-01.json"
+    ],
+    "deliveryPath": "artifacts/evidence/W3.workflow-speed.qualification-01.json",
+    "deliverySha256": "d137d57b101a89007bd5d9de0b9cbc4f332ec446cf53f5f5041452233ef32ecc",
+    "committedBlobEqualsCurrentRaw": true,
+    "allDeclaredSourceHashesEqual": true,
+    "sourceSha256": {
+      "artifacts/evidence/W3-readiness-repair.maintenance-01.md": "136751b25275e591255381ba023659f99fc58f19b6184d4a502bac824dd884cc",
+      "artifacts/evidence/W3.readiness-repair.owner-approval-20261017-01.json": "4a5dadb69f53bc8f3d99ec03d3198473dcb7884e4279653700c762a53beca9a4",
+      "artifacts/evidence/W3.workflow-speed.maintenance-01.md": "420f20c862ff4490ef198c6ce089dbb43fc5bc725a039c64841ea89b1e0b11a6",
+      "artifacts/evidence/W3.workflow-speed.owner-direction-20261017-01.json": "f3d00840c4dbcc266a98443a319ae0a39fae96c8e3dfcb04e77a55e7cbaee84b",
+      "docs/automation/codex-tracking-guide.md": "d9daf7c97b4d4363f1bd6319f89b99c8214753d51159ead28a20e74e9c8c7b51",
+      "docs/automation/planning-review-site.md": "8ff796456c69d5b47faf3f84bd5ee4cb6ddc5b8eee35728c6b0ee4674bbe29f3",
+      "docs/automation/project-automation-guide.md": "741a0b5e522db3064a405ee9b4a45ebe0f7e4aeba9e8ed44e7c5bf49be58adcb",
+      "docs/automation/workflow-efficiency.md": "33714bde7878f475412f990c3fed9c7b7be68c8e19b4e9f74660b39355c440f8",
+      "planning/README.md": "15a321e584d03d1925195cfd18c4c21c16739cae1bf998e16aa10012b37bb33f",
+      "quality-scope.json": "eb3556cc782fe1ad10ccfdd8a30634dbf05ea7629ce3e3a3d280c71fb5cc1ddb",
+      "tests/foundation/planning_review_browser.py": "a3d3669730ff2404e648a4dcdc72a0fea673def89fa0cf92f217be3b3c0fc1e1",
+      "tests/foundation/test_plan_review_server.py": "365860e63cfc472e7975a225b92e3e85429875983c01860230b0eac0b4ca8548",
+      "tests/foundation/test_planctl_readiness.py": "72f674ac4f995548e15391c1e34c405dafeecfea71345071aae504cde2b280c5",
+      "tests/foundation/test_workflow_guidance.py": "9d0373d7e078bc6f4a47433f9719a14faf77e110cb2e7a4326faa2974604ec43",
+      "tests/search/populated_native_owner.py": "3eff85d88f96ecf43397efdbaf7f7401a2bd4bcdb67b084077fac5f93761e68a",
+      "tools/plan_review_server.py": "4c3a4485454b8e7956263fbd2f8ffe69b848a8e06e73517ce3c41f03337432d1",
+      "tools/planctl.py": "7f4a5519157d07a707a0999a78a3089de59f0884884a184525b4d4adb2856138",
+      "tools/planning_review/index.html": "159a969335d6224f9c58a08f6b8b0ba32e54c704ae1a37cdc2ad89806d301a95",
+      "tools/planning_review/review.css": "54c108bf8bb24c03004ba1d413114d97cc2f791cfdfb09a4c8c348bf97c24acf",
+      "tools/planning_review/review.js": "6caf8f2dce18a858f1f156aed4b03ee63e5f837cbbc546118455a8a4146634d3",
+      "tools/taskctl.py": "28ebd8d96fb8abadb523f672f16cebe942ab197bcee48daf67ccb6e3c1491430"
+    },
+    "allOld6963InputBytesUnchangedAfterDelivery": true,
+    "current6964PathInventoryDiffersOnlyByDeliveryRecord": true
+  },
+  "evidenceBindings": [
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-selected-independent-review-01.json",
+      "sha256": "ecf0b9a3874169d2a7d98e10af0a03db27e91878f30b90ad181c1c1820f3fa71"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01/report.json",
+      "sha256": "f0966ee74a4d435d5bb8d0ab30c513bb3dfdfbc8bbd5e28b4fe54f950dc994c2"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-qualification-01/report.json",
+      "sha256": "6588c8e4d753847c1cce38df10f8fe1303f82e77ee5d986a7c69b55dfb1dcb19"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-delivery-commit-01/report.json",
+      "sha256": "6f145e9e6541ab52412f9f7d05e85e6653ef25fef849b5d365918395855bf25c"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01.py",
+      "sha256": "a668a069a918534ab17c4eb131a7d7d41a55ce3e18f86de3bc43f892c17d7497"
+    },
+    {
+      "path": "artifacts/tmp/W3.workflow-speed-delivery-commit-01.py",
+      "sha256": "65c4f113e7073c3d5cedc489fa46722480c49a69d9eb75167161cbefb660c346"
+    }
+  ],
+  "selectedEvidence": {
+    "status": "PASS",
+    "candidate": "6730dc8dd2358cc2ec63571a7809fdcecd2012a0",
+    "reportSha256": "6588c8e4d753847c1cce38df10f8fe1303f82e77ee5d986a7c69b55dfb1dcb19",
+    "groups": [
+      {
+        "id": "live-review-and-guidance",
+        "exitCode": 0,
+        "seconds": 22.774838000012096,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/live-review-and-guidance.log",
+        "outputSha256": "4724438cac08f3e70f5bd691fe2bbfa5ab4aa6a53effc01545a206b6d5de9888"
+      },
+      {
+        "id": "focused-actual-Chromium",
+        "exitCode": 0,
+        "seconds": 18.80656810000073,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/focused-actual-Chromium.log",
+        "outputSha256": "161815ba5d79f677c931c42c5377e4c891a8b6bab63013fb157915467baed73c"
+      },
+      {
+        "id": "readiness-and-approval",
+        "exitCode": 0,
+        "seconds": 3.0185486000264063,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/readiness-and-approval.log",
+        "outputSha256": "eeae651b2ea62d234b0939c4f11f8a4691b521f0dfbc3541b5b8040296e9f256"
+      },
+      {
+        "id": "real-git-history-cas-and-review-gates",
+        "exitCode": 0,
+        "seconds": 15.395615599991288,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/real-git-history-cas-and-review-gates.log",
+        "outputSha256": "0859292fa32690d5177fabdd41ea7a4884eadd55000fd4569a998e0f6c6412ba"
+      },
+      {
+        "id": "unchanged-affected-policy-and-selection",
+        "exitCode": 0,
+        "seconds": 2.100156100001186,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/unchanged-affected-policy-and-selection.log",
+        "outputSha256": "9a572580b89a35bc259babd9f63614e2b7e29407ba4d010ccc3e272d916a751e"
+      },
+      {
+        "id": "global-inventory-and-affected-quality",
+        "exitCode": 0,
+        "seconds": 1.3078948999755085,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.workflow-speed-qualification-01/global-inventory-and-affected-quality.log",
+        "outputSha256": "d2ae448f8959bc096aa6f8ee6f4b967f1c0310696e63e03c7cf9f471ac451900"
+      }
+    ],
+    "recordedFixityFlags": {
+      "headEqualityAfter": true,
+      "inventoryEqualityAfter": true,
+      "inputEqualityAfter": true,
+      "indexEqualityAfter": true,
+      "refsEqualityAfter": true,
+      "producerEqualityAfter": true
+    },
+    "cases": 69,
+    "passed": 68,
+    "skipped": 1,
+    "skip": "Actual file symbolic-link creation authority unavailable; no skipped link test is promoted to PASS. Actual Windows junction denial passed separately.",
+    "browser": "Two actual Chromium tests PASS: inert imported text/navigation/gate conditions/keyboard/AX landmarks; visible real15s update/disclosure/focus/error-clear/recovery. Not product-UI/full accessibility certification.",
+    "quality": "Global inventory load and affected eight-file format/lint/types PASS, including original readiness test and pre-existing populated Native owner helper.",
+    "rawWarning": "Deliberate cleanup-exception injection emits retained implicit-cleanup ResourceWarning. No warning-free claim.",
+    "priorAuthentication": {
+      "path": "artifacts/tmp/W3.workflow-speed-selected-independent-review-01.json",
+      "sha256": "ecf0b9a3874169d2a7d98e10af0a03db27e91878f30b90ad181c1c1820f3fa71"
+    }
+  },
+  "fullReadiness": {
+    "status": "PASS",
+    "candidate": "6730dc8dd2358cc2ec63571a7809fdcecd2012a0",
+    "actualCommandExitCode": 0,
+    "command": "python -B tools/planctl.py --repo . wave ready W3 --require-approved",
+    "commandSeconds": 1999.3355979000335,
+    "startedAtUtc": "2026-10-17T15:39:27.503272+00:00",
+    "completedAtUtc": "2026-10-17T16:13:05.854434+00:00",
+    "report": {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01/report.json",
+      "sha256": "f0966ee74a4d435d5bb8d0ab30c513bb3dfdfbc8bbd5e28b4fe54f950dc994c2"
+    },
+    "raw": {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01/raw.log",
+      "sha256": "5764567f38dc05b48c6ff3eb456373547bfa63e2bbc49b105ce160085cf00268"
+    },
+    "producer": {
+      "path": "artifacts/tmp/W3.workflow-speed-full-readiness-01.py",
+      "sha256": "a668a069a918534ab17c4eb131a7d7d41a55ce3e18f86de3bc43f892c17d7497"
+    },
+    "pythonExecutableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "recordedFixityAndCleanupFlags": {
+      "headEqualityAfter": true,
+      "mainEqualityAfter": true,
+      "inputInventoryEqualityAfter": true,
+      "inputEqualityAfter": true,
+      "indexEqualityAfter": true,
+      "refsEqualityAfter": true,
+      "producerEqualityAfter": true,
+      "ownedReadinessOutputCleaned": true,
+      "cleanStatusAfter": true
+    },
+    "selectedAndFull6963InputMapsExactlyEqual": true,
+    "currentRecorded6963InputsIndependentlyRehashedEqual": true,
+    "actualRawFacts": [
+      "All3 Wave-binding capability decision plans and16 Wave-binding slice plans pass with approval_required=True.",
+      "Complete planning checker PASS19capabilities/111slices/337tasks/499HTMLpages.",
+      "Final CLI states isolated output used and published review pages unchanged."
+    ],
+    "stageTimingLines": [
+      "READINESS_TIMING {\"elapsedSeconds\": 983.476873, \"exitCode\": 0, \"stage\": \"site-generation\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.419567, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-06\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.097032, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-06\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.338408, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-07\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.313226, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-07\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.501805, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-08\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.171776, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-08\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 990.371716, \"exitCode\": 0, \"stage\": \"complete-site-validation\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 1012.566767, \"exitCode\": 0, \"stage\": \"wave-validation-inclusive\"}"
+    ],
+    "timingAssessment": "Site generation983.476873s; complete-site validation990.371716s; wave-validation-inclusive1012.566767s overlaps component stages. Actual whole command1999.3355979000335s. Do not sum nested timings or claim matched speed/cost savings.",
+    "producerAssessment": "Reads exact committed clean entry, fresh ordinary complete CLI, owned child TEMP, exclusive raw log, real subprocess exit and entry/exit HEAD/main/input inventory/bytes/index/refs/producer/owned-output cleanup/clean checks. All9 recorded flags true. Fresh generated-site validity is proved; retained canonical HTML is not falsely claimed freshly byte-identical.",
+    "limits": "Recorded process/input observations, not whole installed dependency/environment/OS attestation. Temporary generated site normally cleans; caller raw/report/TEMP root retained. No persisted PASS or cache authority."
+  },
+  "deliveryCommitEvidence": {
+    "path": "artifacts/tmp/W3.workflow-speed-delivery-commit-01/report.json",
+    "sha256": "6f145e9e6541ab52412f9f7d05e85e6653ef25fef849b5d365918395855bf25c",
+    "actualExitCode": 0,
+    "seconds": 4.860318600025494,
+    "recordedFlags": {
+      "expectedParent": true,
+      "mainUnchanged": true,
+      "branchUnchanged": true,
+      "deliveryBytesUnchanged": true,
+      "cleanStatusAfter": true
+    },
+    "raw": {
+      "path": "artifacts/tmp/W3.workflow-speed-delivery-commit-01/raw.log",
+      "sha256": "4e100f086c962c7eae97241360c13aed50dfcdfd2d95946435e3450cda74117c"
+    },
+    "producerSha256": "65c4f113e7073c3d5cedc489fa46722480c49a69d9eb75167161cbefb660c346",
+    "normalHookObservation": "Actual raw: PASS1entry/0findings and prospective commit-message PASS, then exact d20ef372 commit. No bypass/reset/force."
+  },
+  "findingLedger": [
+    {
+      "id": "WF-LIVE-01",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "checks CLI now passes repo=args.repo_root; guidance reads and validates that repository policy/contract; malformed policy uses manual guidance."
+    },
+    {
+      "id": "WF-LIVE-02",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "_asset_bytes rejects linked/junction ancestors and nonregular files, limits each implementation/asset read to1MiB, and is used both for initial pinning and per-request drift checking."
+    },
+    {
+      "id": "WF-LIVE-03",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "_plan_paths separates selected match/absence discovery; Projection.read records and rechecks each inspected selected inventory after file byte rereads."
+    },
+    {
+      "id": "WF-LIVE-04",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "Public gate name/criteria/after_wave/unlocks_waves and slice outcome/depends_on are projected; selected entity rendering and title fallback display them inertly."
+    },
+    {
+      "id": "WF-LIVE-05",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "Shared bounded JSON traversal counts public nodes/text with depth16, rejects nonfinite/unsupported values and nonstring object keys; _optional_object rejects invalid nested records. Selected plan count/file/aggregate-source bounds apply before further projection. JSONEncoder allow_nan=False iterencode checks byte budget before body extension."
+    },
+    {
+      "id": "WF-LIVE-06",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "readiness_stage protects diagnostic emission with suppress(OSError,ValueError), retaining operation return/exception while diagnostics remain inclusive/nonauthorizing."
+    },
+    {
+      "id": "READY-DOC-01",
+      "status": "CLOSED_AT_REVIEWED_COMMITTED_SOURCE_AND_FRESH_SELECTED_PROOF",
+      "assessment": "Preserves prior note/review. Explicitly distinguishes retained caller logs/receipts/TEMP roots from normally cleaned readiness-owned site; cleanup failure denies success. Does not claim temporary-site retention."
+    }
+  ],
+  "openFindings": [],
+  "authorityAndAccounting": {
+    "ownerAuthority": "Narrow readiness repair approval plus later direct workflow/live-server direction are recorded in unchanged committed owner artifacts. They authorize this bounded control work; frozen W3 approvals/product/security/migration/experience/release authority remains unchanged. No new human gate is identified for this local integration.",
+    "existingSelection": "Normal taskctl start/resume remains single fresh readiness owner; standalone ready optional diagnostic. Preview emitted only for validated existing affected policy; W3 manual focused guidance preserves deferred ownership.",
+    "helperRestoration": "Pre-existing populated_native_owner.py registration/type-only restoration was separately independently reviewed, not a same-commit-new-file exemption. Exact helper bytes unchanged since2d2. AST-erasure receipt is limited; actual Windows binary stdout/nonzero-exit proof retains exact2d2 label. Current eight-file quality is fresh.",
+    "arithmetic": {
+      "P": 924,
+      "plannedRefactoringIncludedOnce": 28,
+      "priorSupplementalR": 0,
+      "sameCumulativeSpentPlusCommittedRemainingForecastR": 12,
+      "limit": "138.60",
+      "remaining": "126.60",
+      "assessment": "R12 counted once and below138.6; no increase/double count. Split into spent/remaining and elapsed effort not independently measured; forecast is not12 measured elapsed hours or savings."
+    }
+  },
+  "historyAndDeferral": {
+    "authenticatedPriorReferences": [
+      {
+        "path": "artifacts/tmp/W3.workflow-and-live-review-scope-advisory-01.json",
+        "sha256": "784540b66a04b541b4a441d13779df95b72e11e3c219eebdffa3c9ab3c8ee426"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-live-review-source-preflight-01.json",
+        "sha256": "ef06ca61cdbca0ae9c24b5b4d287289f31164e6e12f11cda815cb2407a2ee13b"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-live-review-incremental-source-02.json",
+        "sha256": "a8be01c235aa31bc0707a19ff5d48bcea8badfa284664d909fec991022736ace"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-selected-independent-review-01.json",
+        "sha256": "ecf0b9a3874169d2a7d98e10af0a03db27e91878f30b90ad181c1c1820f3fa71"
+      },
+      {
+        "path": "artifacts/tmp/W3.readiness-repair-source-review-01.json",
+        "sha256": "8c184d4026af1332820e59a4fd9273b97c8a91367f5d0be96ba443342e385ed3"
+      },
+      {
+        "path": "artifacts/tmp/W3.preexisting-product-test-inventory-advisory-01.json",
+        "sha256": "4b80c70a3c870915b5baac49210eec47dd35daa7fbe5d0146f887d54157c5ebe"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-red-01/report.json",
+        "sha256": "6cd1ccc689de369dfeb86c78a1ac76693531d4d2e89a792c7600c2f37f91f39c"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-development-02/report.json",
+        "sha256": "1a28a80d7f18762cbb5c1ce7a36750f9667ec5972c4571b290d025369eee6fa9"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-development-03/report.json",
+        "sha256": "2bf89fdd83adc1cb12a36e98c24af5c8876503c1f52ee4a31cfedfdd8c455de0"
+      },
+      {
+        "path": "artifacts/tmp/W3.workflow-speed-development-04/report.json",
+        "sha256": "5a59a3062624c97870900bb6d44b17918bfe0a13ae1221014a3d2e473c043568"
+      },
+      {
+        "path": "artifacts/tmp/W3.readiness-repair-full-readiness-01/report.json",
+        "sha256": "2ac1b260a1b9fdc32d0a2080b344625569624e5e6bce33e88c9a9771a6352c3d"
+      },
+      {
+        "path": "artifacts/tmp/W3.readiness-repair-superseded-01.json",
+        "sha256": "3e228efac798f572d5e115c734cb4e2136622fd27917cc94bdf94a9b3ba14355"
+      },
+      {
+        "path": "artifacts/tmp/W3.readiness-repair-qualification-01/report.json",
+        "sha256": "be20b1234b540d911c8e76b72cc2ef05f770f8c864fab03a9afa9c7610091073"
+      },
+      {
+        "path": "artifacts/tmp/W3.readiness-repair-owner-runtime-01/report.json",
+        "sha256": "f1ba5ddbb4ab5f8d1c6b69ef98ea1afcd2f67f1d8696c3aa6472ea4830616b0e"
+      },
+      {
+        "path": "artifacts/tmp/W3.readiness-repair-owner-typing-equivalence-01.json",
+        "sha256": "5a6659693ffd0d6739aed18437c4743dbb087c74c91790e49f18a50922357737"
+      }
+    ],
+    "assessment": "All referenced prior/adverse report hashes remain exact. Original reds, development setup/inventory/types/browser failures, symbolic-link skip and old interrupted2d2 full readiness FAIL remain adverse/context; no prior result relabelled or reused as fresh6730 proof. READY-DOC-01 is closed by committed append-only clarification preserving old note/review.",
+    "deferred": "Product/Core API/Native principal/all-owned lifetime, S01 scale/resource/rights/recovery/UX, checkpoints, full repository/profile/packaging/scientific and Wave/release qualification remain with existing owners. This unit completes no ordinary W3 task/slice or G3.",
+    "normalResume": "After normal review-copy commit and its authentication/local fast-forward, ordinary taskctl resume still performs its own fresh complete readiness. This evidence cannot substitute for it."
+  },
+  "integrationReadinessObservations": {
+    "head": "d20ef3721c07ad0a6988b11358e4802d17b6dd51",
+    "branch": "codex/w3-implementation",
+    "cleanWorktree": true,
+    "main": "e09c97cb55c6aedde92981de3b867639706c98fb",
+    "mainIsAncestor": true,
+    "mainNotCheckedOutInListedWorktrees": true,
+    "worktreeInventorySha256": "9897430382b947fe4d5723da0907a011f42f36a479fa069b44c50bd031f6e1d7",
+    "rule": "Use documented local fast-forward without switch/force/push; repeat identity/worktree observations when integrating. Keep campaign checkout while unfinished W3/gates remain."
+  },
+  "limits": [
+    "Only read-only Git, exact bytes/hashes, JSON semantic comparisons and producer/log/authority inspection; this new ignored final review is the sole write.",
+    "No tests/probes/Node/browser/server/build/scanner/validator/generator/taskctl, tracked input/HEAD/index/ref/backlog/runtime/dependency or hook mutation by reviewer.",
+    "Disposition applies to exact source6730 plus exact deliveryd20 and authenticated retained evidence. Later substantive changes require impact-selected proof and review.",
+    "No final retained canonical-site bytePASS, speed guarantee, whole-runtime attestation, product/Native/lifetime/scale/scientific/slice/Wave/release or push authority."
+  ],
+  "publicationProjection": {
+    "kind": "privacy-safe-publication-projection-of-existing-independent-disposition",
+    "originalReview": {
+      "path": "artifacts/tmp/W3.workflow-speed-final-independent-review-01.json",
+      "sha256": "f0393d6e706ff3f1c9629152500128a6d71613a16e53d4a7376826a8ea0af5aa"
+    },
+    "omittedFields": [
+      "selectedEvidence.groups[].argv"
+    ],
+    "reason": "Machine-local absolute executable/runtime paths remain in the authenticated ignored selected report and original ignored review. Public projection omits only raw argv arrays; no command/evidence/source/result/closure/limit/authority fact or independent disposition changes.",
+    "preservedDecision": "Same exact source6730dc8dd2358cc2ec63571a7809fdcecd2012a0 and deliveryd20ef3721c07ad0a6988b11358e4802d17b6dd51 integration disposition; privacy projection is not a substantive new review round, execution or authority.",
+    "serialization": "UTF-8, LF, append-only new file; original bytes preserved."
+  }
+}
