@@ -22,10 +22,12 @@ import tempfile
 from collections import Counter
 from collections.abc import Iterator
 from contextlib import contextmanager, suppress
+from contextvars import ContextVar
 from functools import lru_cache
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
-from typing import Any
+from threading import get_ident
+from typing import Any, cast
 
 import yaml
 from governance_kernel import KernelValidationError, project_paused_corrections
@@ -2634,12 +2636,123 @@ def canonical_control_artifact_path(
     return value, path
 
 
+_HISTORY_FACT_ENTRIES = 8
+_HISTORY_FACT_BYTES = 64 * 1024 * 1024
+_HISTORY_FACT_RAW_BYTES = 8 * 1024 * 1024
+
+
+class _HistoricalFacts:
+    def __init__(self) -> None:
+        self.thread = get_ident()
+        self.active = True
+        self.entries: dict[tuple[str, str, str, str], tuple[dict[str, Any], int]] = {}
+        self.retained = 0
+
+
+_HISTORICAL_FACTS: ContextVar[_HistoricalFacts | None] = ContextVar("taskctl_historical_facts", default=None)
+
+
+@contextmanager
+def _historical_fact_scope() -> Iterator[None]:
+    current = _HISTORICAL_FACTS.get()
+    if current is not None and current.active and current.thread == get_ident():
+        yield
+        return
+    state = _HistoricalFacts()
+    token = _HISTORICAL_FACTS.set(state)
+    try:
+        yield
+    finally:
+        state.active = False
+        state.entries.clear()
+        state.retained = 0
+        _HISTORICAL_FACTS.reset(token)
+
+
+def _historical_graph_bytes(value: object, limit: int) -> int | None:
+    """Conservative retained object-graph size; unsupported/oversize bypasses."""
+    pending = [value]
+    seen: set[int] = set()
+    total = 0
+    while pending:
+        item = pending.pop()
+        identity = id(item)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        total += sys.getsizeof(item)
+        if total > limit:
+            return None
+        if type(item) is dict:
+            pending.extend(item.keys())
+            pending.extend(item.values())
+        elif type(item) in {list, tuple, set, frozenset}:
+            pending.extend(cast("list[object] | tuple[object, ...] | set[object] | frozenset[object]", item))
+        elif type(item) not in {str, bytes, int, float, bool, type(None), dt.date, dt.datetime}:
+            return None
+    return total
+
+
+def _decode_historical_backlog(repo: Path, commit: str, payload: bytes) -> Any:
+    """Decode immutable Git bytes; every caller still validates current authority."""
+    state = _HISTORICAL_FACTS.get()
+    key = None
+    if (
+        state is not None
+        and state.active
+        and state.thread == get_ident()
+        and re.fullmatch(r"[0-9a-f]{40}", commit)
+        and len(payload) <= _HISTORY_FACT_RAW_BYTES
+    ):
+        try:
+            canonical = os.path.normcase(str(repo.resolve(strict=True)))
+        except OSError, RuntimeError:
+            pass
+        else:
+            key = (canonical, commit, "planning/backlog.yaml", hashlib.sha256(payload).hexdigest())
+            previous = state.entries.get(key)
+            if previous is not None:
+                try:
+                    result = copy.deepcopy(previous[0])
+                except RecursionError:
+                    # The cache must not reduce the parser's accepted input domain.
+                    pass
+                else:
+                    state.entries.pop(key)
+                    state.entries[key] = previous
+                    return result
+    document = yaml.safe_load(payload.decode("utf-8"))
+    if key is None or state is None or type(document) is not dict:
+        return document
+    graph_bytes = _historical_graph_bytes((key, document), _HISTORY_FACT_BYTES)
+    if graph_bytes is None:
+        return document
+    # Include the entry tuple and retained size integer, in addition to its graph.
+    retained = graph_bytes + sys.getsizeof((document, graph_bytes)) + sys.getsizeof(graph_bytes)
+    try:
+        result = copy.deepcopy(document)
+    except RecursionError:
+        return document
+    previous = state.entries.pop(key, None)
+    if previous is not None:
+        state.retained -= previous[1]
+    state.entries[key] = (document, retained)
+    state.retained += retained
+    while state.entries and (
+        len(state.entries) > _HISTORY_FACT_ENTRIES
+        or state.retained + sys.getsizeof(state.entries) > _HISTORY_FACT_BYTES
+    ):
+        _, old_bytes = state.entries.pop(next(iter(state.entries)))
+        state.retained -= old_bytes
+    return result
+
+
 def historical_wave_approval(repo: Path, record_commit: str, wave_id: str) -> dict[str, Any] | None:
     payload = git_blob(repo, record_commit, "planning/backlog.yaml")
     if payload is None:
         return None
     try:
-        document = yaml.safe_load(payload.decode("utf-8"))
+        document = _decode_historical_backlog(repo, record_commit, payload)
     except UnicodeError, yaml.YAMLError:
         return None
     wave = next((item for item in document.get("waves", []) if item.get("id") == wave_id), None)
@@ -5711,6 +5824,7 @@ def wave_resume_record_errors(
     return errors
 
 
+@_historical_fact_scope()
 def validate(
     data: dict[str, Any],
     capabilities: dict[str, dict[str, Any]],
@@ -7162,7 +7276,7 @@ def historical_backlog_document(repo: Path, commit: str) -> dict[str, Any] | Non
     if payload is None:
         return None
     try:
-        document = yaml.safe_load(payload.decode("utf-8"))
+        document = _decode_historical_backlog(repo, commit, payload)
     except UnicodeError, yaml.YAMLError:
         return None
     return document if isinstance(document, dict) else None
@@ -11460,6 +11574,7 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+@_historical_fact_scope()
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()

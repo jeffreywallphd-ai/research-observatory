@@ -815,6 +815,7 @@
     "tools/plan_review_server.py",
     "tests/foundation/test_plan_review_server.py",
     "tests/foundation/test_workflow_guidance.py",
-    "tests/foundation/planning_review_browser.py"
+    "tests/foundation/planning_review_browser.py",
+    "tests/foundation/test_taskctl_history_decoding.py"
   ]
 }
