@@ -53,6 +53,33 @@ class CoreLexicalQueryService:
     def __init__(self, index: CoreLexicalIndexService) -> None:
         self.index = index
 
+    def _initial_authority(self) -> tuple[IndexGeneration, str, int, int]:
+        index = self.index
+
+        def capture():
+            with index.catalog._transaction(write=True) as (db, _actor, validated_at):
+                pointer = index.catalog._selection(db)
+                if pointer is None or pointer["generation_id"] is None:
+                    raise IndexServiceProblem("index preparation required")
+                generation = index.catalog._load(db, pointer["generation_id"])
+                if (
+                    generation.stage != "Ready"
+                    or generation.event_id != pointer["generation_event_id"]
+                    or generation.checkpoint != pointer["checkpoint"]
+                    or generation.authority_sha256 != pointer["authority_sha256"]
+                ):
+                    raise IndexServiceProblem("selected index is unavailable")
+                if generation.checkpoint != index.catalog._watermark(db):
+                    raise IndexServiceProblem("index synchronization required")
+                return (
+                    replace(generation, selection_id=pointer["event_id"]),
+                    validated_at,
+                    source_authority_epoch(db, index.project),
+                    rights_time_partition(db, index.project, validated_at),
+                )
+
+        return index._bounded(capture)
+
     def _fence(
         self,
         selected: IndexGeneration,
@@ -146,23 +173,8 @@ class CoreLexicalQueryService:
                 raise IndexServiceProblem("search filters are invalid")
             filters.__post_init__()
             index = self.index
-            selected = index.catalog.selected()
-            if selected is None:
-                raise IndexServiceProblem("index preparation required")
+            selected, validated_at, source_epoch, time_partition = self._initial_authority()
             index._current(selected)
-            if selected.checkpoint != index.catalog.watermark():
-                raise IndexServiceProblem("index synchronization required")
-
-            def capture_authority():
-                with index.sources.corpus._transaction(write=True) as (db, _aggregates):
-                    validated_at = index.catalog.now()
-                    return (
-                        validated_at,
-                        source_authority_epoch(db, index.project),
-                        rights_time_partition(db, index.project, validated_at),
-                    )
-
-            validated_at, source_epoch, time_partition = index._bounded(capture_authority)
 
             def fence(validation):
                 self._fence(

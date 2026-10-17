@@ -198,6 +198,25 @@ class LexicalQueryServiceTests(CanonicalIndexFixture):
             after = self.f.sources.capture(self.f.item.item_id)
             self.assertTrue(any("activation boundary" in row.full_text for row in after.rows))
 
+    def test_initial_selection_and_source_capture_share_one_guarded_writer(self):
+        from research_observatory_core import storage
+
+        self.service.rebuild()
+        entries: list[int] = []
+        original_enter = ProtectedLexicalStore.__enter__
+        with patch.object(storage, "_open_canonical_database", wraps=storage._open_canonical_database) as opened:
+
+            def enter(store):
+                entries.append(opened.call_count)
+                return original_enter(store)
+
+            with patch.object(ProtectedLexicalStore, "__enter__", new=enter):
+                self.reader().read(parse_query("identifiers:synthetic"))
+        self.assertEqual(1, len(entries))
+        # One outer guard validation plus the current phase's guard validation
+        # and canonical writer. All real storage operations remain enabled.
+        self.assertLessEqual(entries[0], 3)
+
     def test_fence_uses_one_current_canonical_transaction_for_selection_and_source(self):
         from research_observatory_core import storage
 
