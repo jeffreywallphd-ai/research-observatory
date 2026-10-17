@@ -6783,6 +6783,58 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W3.C02.T01",
+          "title": "Implement incremental FTS5 indexing and rebuild",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Committed corpus changes appear incrementally; interrupted indexing resumes or rebuilds safely; restricted text is excluded according to policy.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.",
+            "Prove FTS5 in the actual protected build; no plaintext sidecar. Compare fresh/rebuilt results, removal, cancellation and crash replay; never index unpermitted text."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-06.S01.T02",
+            "origin_commit": "ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c",
+            "paused_state_sha256": "24cad9a6ed10d99f789bf4d57f27cd55a6fe8b2f5d204cdee4f2ff154d991c4e",
+            "origin_sha256": "e4987a00a2653fc820aae1acfea3fbf339edb4945f2b05db3e95ad8a4e786c68",
+            "origin_contract_sha256": "e789120f5da89249238e8ff7027c6a113d82ac7b4dbcea3f40771bbf00d29512",
+            "origin_history_sha256": "b111b07672c068f9875405bb0c3fbfe930a07cbfc555fabf2c1232749884765b",
+            "origin_amendment_id": null,
+            "authority_sha256": "01058d554893ceb8e32d078121e8ac8b9f48855191485c76e7cf620654e384c2",
+            "spec": {
+              "path": "artifacts/evidence/W3.C02.T01.spec.json",
+              "sha256": "66b44f3518cc896b34f685866e576561c8edad4a2120e8a984b8348b61a32416",
+              "commit": "0b65ead522a5d2d22394f4425da8024b50ff269d"
+            },
+            "reproduction": "The preserved full populated Native development journey failed foreground search status after restart under the unchanged two-second Native response bound. Separate nonqualifying actual Core phase diagnostic02 (artifacts/tmp/W3.C01.status-phase-diagnostic-02/report.json) reproduced request19 running200 after2.9594033s, including2.5321196s FIFO wait behind worker collect_obsolete2.5973173s/retire2.0870084s. No run-result/query-fence call occurred in that request. Original historical generic-error causes remain unknown; all full/bounded failures and raw traces remain preserved. The query-only correction W3.C01.T01 is independently approved, DONE and locally integrated at5410a1c94af476c09049fcbb4d19f6f6b2e2ab9d; the separate preparation/retirement defect remains a hard CAP-06.S01 blocker.",
+            "changed_paths": [
+              "services/core-api/src/research_observatory_core/lexical_catalog_repository.py",
+              "services/core-api/src/research_observatory_core/lexical_index_repository.py",
+              "tests/search/test_index_catalog.py",
+              "tests/search/test_index_service.py",
+              "tests/search/test_native_index_service.py"
+            ],
+            "impact_analysis": "Restore the existing admitted-worker bounded-phase architecture for obsolete-index collection and retirement. Orchestrate the collection loop outside its whole-command project guard, explicitly guard each bounded ID-page transaction, and separate canonical Retired marking from a fresh current-authority held-file cleanup phase. Preserve default direct-caller guarding and project-to-generation/DELETE lock order. Consolidate repeated target/full selected-generation/initialized/file-witness checks in one coherent current catalog transaction per actual authorization point; retain every immediate destructive/key-use callback check. Preserve current Native/session/actor/accepted Intent/privacy authority, exact immutable configuration/scope/old derivative version, canonical selection coherence, reader drain, held file/ancestor identities, exclusive DELETE eligibility, exact-version key revocation, partial-bootstrap refusal, historical rekey/sidecar recovery and post-revocation retry. Do not require ordinary current-key leases for lawful historical retirement. No change to IO/key/store implementations, public API, AI mode, schema/migration, permission, governed UX, original full Native assertions, deadlines, baseline or release criteria. Add failure-first real-opener/FIFO/interphase-denial tests, then fresh exact-candidate affected catalog/service/rights/recovery/Windows proof and the unchanged complete populated Native journey. This is bounded defect restoration without optional structural cleanup or supplemental refactoring allocation; P924hours/28planned and cumulative supplemental R remain unchanged. No prior evidence is reused as a new PASS; full100k/resource/lifetime/scientific-gold/slice/Wave qualification remains separately required. This spec introduces no new criteria or product authority; claim it only through the existing taskctl linked-correction route after this immutable spec is committed."
+          },
+          "task_review": {
+            "task_id": "W3.C02.T01",
+            "title": "Implement incremental FTS5 indexing and rebuild",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

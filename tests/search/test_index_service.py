@@ -17,6 +17,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "services/core-api/src"), str(ROOT)]
 
+from research_observatory_core import lexical_index_repository as index_module  # noqa: E402
 from research_observatory_core import storage  # noqa: E402
 from research_observatory_core.corpus.membership import CorpusDecision  # noqa: E402
 from research_observatory_core.derivative_keys import VaultDerivativeKeyProvider  # noqa: E402
@@ -79,6 +80,279 @@ class IndexServiceTests(unittest.TestCase):
             actor=actor,
             build=build,
         )
+
+    def _drained_obsolete_generation(self):
+        first = self.service.rebuild()
+        ready, release = threading.Event(), threading.Event()
+        failures = []
+
+        def reader():
+            try:
+                with ProtectedLexicalStore(self.service.root, first.scope, self.keys):
+                    ready.set()
+                    if not release.wait(45):
+                        raise AssertionError("synthetic reader was not released")
+            except BaseException as error:
+                failures.append(error)
+                ready.set()
+
+        thread = threading.Thread(target=reader)
+        thread.start()
+        try:
+            self.assertTrue(ready.wait(10))
+            self.assertEqual([], failures)
+            with self.assertRaises(IndexCleanupPending):
+                self.service.rebuild()
+            selected = self.service.catalog.selected()
+            assert selected is not None
+            self.assertNotEqual(first.generation_id, selected.generation_id)
+        finally:
+            release.set()
+            thread.join(15)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual([], failures)
+        self.assertEqual("Retired", self.service.catalog.get(first.generation_id).stage)
+        return first, selected
+
+    def test_worker_obsolete_collection_releases_project_guard_between_retirements(self):
+        first, selected = self._drained_obsolete_generation()
+        guard = self.f.sources.documents.guard
+
+        def orchestrate(action):
+            guard(lambda: None)
+            result = action()
+            guard(lambda: None)
+            return result
+
+        assert self.canonical is not None
+        worker = CoreLexicalIndexService(self.f.sources, self.keys, self.canonical, orchestration=orchestrate)
+        self.addCleanup(worker.close)
+        entered, release, foreground_done = threading.Event(), threading.Event(), threading.Event()
+        failures, observations = [], []
+        original_retire = worker.retire
+
+        def retire(identity):
+            entered.set()
+            if not release.wait(15):
+                raise AssertionError("synthetic retirement barrier was not released")
+            return original_retire(identity)
+
+        def collect():
+            try:
+                worker.collect_obsolete()
+            except BaseException as error:
+                failures.append(error)
+
+        def foreground():
+            try:
+                observations.append(guard(lambda: self.service.catalog.selected()))
+            except BaseException as error:
+                failures.append(error)
+            finally:
+                foreground_done.set()
+
+        collector = threading.Thread(target=collect)
+        request = threading.Thread(target=foreground)
+        with patch.object(worker, "retire", side_effect=retire):
+            collector.start()
+            try:
+                self.assertTrue(entered.wait(10))
+                request.start()
+                completed_while_parked = foreground_done.wait(2)
+            finally:
+                release.set()
+                collector.join(15)
+                if request.ident is not None:
+                    request.join(15)
+        self.assertFalse(collector.is_alive())
+        self.assertFalse(request.is_alive())
+        self.assertEqual([], failures)
+        self.assertEqual([selected], observations)
+        self.assertTrue(completed_while_parked, "collection retained the project guard between retirements")
+        path = self.service.root / "indexes" / ("lexical-" + first.generation_id + ".sqlite3")
+        self.assertFalse(path.exists())
+        self.assertEqual((self.f.item.item_id,), self.service.match(parse_query("identifiers:synthetic")))
+
+    def test_retirement_callbacks_use_one_coherent_catalog_open_plus_fresh_native_validation(self):
+        first, selected = self._drained_obsolete_generation()
+        path = self.service.root / "indexes" / ("lexical-" + first.generation_id + ".sqlite3")
+        for suffix in ("-wal", "-shm"):
+            path.with_name(path.name + suffix).touch(exist_ok=False)
+        opens: list[None] = []
+        authorization_opens: list[int] = []
+        original_open = storage._open_canonical_database
+        original_recover = index_module.recover_retired_generation
+
+        def opened(*args, **kwargs):
+            opens.append(None)
+            return original_open(*args, **kwargs)
+
+        def recover(*args, authorize, **kwargs):
+            def observed(identity):
+                before = len(opens)
+                result = authorize(identity)
+                authorization_opens.append(len(opens) - before)
+                return result
+
+            return original_recover(*args, authorize=observed, **kwargs)
+
+        with (
+            patch.object(storage, "_open_canonical_database", side_effect=opened),
+            patch.object(index_module, "recover_retired_generation", side_effect=recover),
+        ):
+            self.service.retire(first.generation_id)
+        self.assertTrue(authorization_opens)
+        self.assertGreaterEqual(min(authorization_opens), 2, authorization_opens)
+        self.assertLessEqual(max(authorization_opens), 2, authorization_opens)
+        self.assertEqual(selected, self.service.catalog.selected())
+        self.assertFalse(path.exists())
+        self.assertFalse(any(path.parent.glob(path.name + "-*")))
+
+    def test_bootstrap_revoke_rechecks_actual_session_stop_after_delete_eligibility(self):
+        lease = self.service.begin_rebuild()
+        with (
+            patch.object(ProtectedLexicalStore, "_initialize", side_effect=RuntimeError("synthetic bootstrap fault")),
+            self.assertRaises(IndexServiceProblem),
+        ):
+            self.service.run_build(lease)
+        snapshot = self.service.catalog.get(lease.generation_id)
+        path = self.service.root / "indexes" / ("lexical-" + lease.generation_id + ".sqlite3")
+        before = {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")}
+        self.assertTrue(before)
+        preview = self.f.f.f.preview
+        is_stopped = preview.service.native_stop_latch(preview.root, self.service.project, self.f.f.f.session)
+        original_purge = index_module.purge_bootstrap
+
+        def purge(*args, authorize, revoke):
+            def stop_before_revoke():
+                preview.service.signal_stop(preview.root)
+                return revoke()
+
+            return original_purge(*args, authorize=authorize, revoke=stop_before_revoke)
+
+        denied = False
+        with patch.object(index_module, "purge_bootstrap", side_effect=purge):
+            try:
+                self.service.retire(lease.generation_id)
+            except IndexServiceProblem:
+                denied = True
+        self.assertTrue(is_stopped(), "the actual Native session-stop point was not reached")
+        self.assertEqual(before, {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")})
+        with self.keys.lease(snapshot.scope, create=False) as old:
+            self.assertEqual(snapshot.derivative_key_version, old.version)
+        self.assertTrue(denied, "bootstrap revocation ignored the actual Native session stop")
+
+    def test_closed_project_denies_retired_cleanup_and_fresh_session_can_retry(self):
+        # Added after the behavioral reds, once the functional phase helper
+        # exists; a missing-method AttributeError would not prove this risk.
+        first, selected = self._drained_obsolete_generation()
+        retired = self.service.catalog.get(first.generation_id)
+        path = self.service.root / "indexes" / ("lexical-" + first.generation_id + ".sqlite3")
+        before = {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")}
+        parse = self.f.f.f
+        preview, old_session = parse.preview, parse.session
+        preview.service.detach(preview.root)
+        preview.projects.close(root=preview.root, trace_id="f" * 32)
+        with self.assertRaises(IndexServiceProblem):
+            self.service._retire_cleanup(retired)
+        self.assertEqual(before, {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")})
+        with self.keys.lease(first.scope, create=False) as old:
+            self.assertEqual(first.derivative_key_version, old.version)
+        preview.projects.open(root=preview.root, trace_id="f" * 32)
+        preview.service.attach(preview.root)
+        fresh_session = preview.service.native_context(preview.root, first.scope.project_id)
+        self.assertNotEqual(old_session, fresh_session)
+        # The original bound document guard still reads parse.session, which
+        # remains old here. Reopening alone cannot authorize its cleanup.
+        with self.assertRaises(IndexServiceProblem):
+            self.service._retire_cleanup(retired)
+        self.assertEqual(before, {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")})
+        parse.session = fresh_session
+        self.service._retire_cleanup(retired)
+        self.assertEqual(retired, self.service.catalog.get(first.generation_id))
+        self.assertEqual(selected, self.service.catalog.selected())
+        self.assertFalse(path.exists())
+
+    def test_retired_cleanup_denies_incoherent_current_selected_generation_before_effects(self):
+        first, selected = self._drained_obsolete_generation()
+        retired = self.service.catalog.get(first.generation_id)
+        path = self.service.root / "indexes" / ("lexical-" + first.generation_id + ".sqlite3")
+        before = {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")}
+        # A legitimate canonical cancellation invalidates the selected Ready
+        # event relationship while leaving its append-only pointer intact.
+        self.service.catalog.cancel(self.service._leases[selected.generation_id])
+        with self.assertRaises(IndexServiceProblem):
+            self.service._retire_cleanup(retired)
+        self.assertEqual(before, {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")})
+        with self.keys.lease(first.scope, create=False) as old:
+            self.assertEqual(first.derivative_key_version, old.version)
+        self.assertEqual(retired, self.service.catalog.get(first.generation_id))
+        self.assertEqual("Incomplete", self.service.catalog.get(selected.generation_id).stage)
+
+    def test_worker_collection_rechecks_session_before_reading_generation_page(self):
+        selected = self.service.rebuild()
+        guard = self.f.sources.documents.guard
+
+        def orchestrate(action):
+            guard(lambda: None)
+            result = action()
+            guard(lambda: None)
+            return result
+
+        assert self.canonical is not None
+        worker = CoreLexicalIndexService(self.f.sources, self.keys, self.canonical, orchestration=orchestrate)
+        self.addCleanup(worker.close)
+        original_selected = worker.catalog.selected
+        original_transaction = self.f.sources.corpus._transaction
+        observed, reads = [], []
+        preview = self.f.f.f.preview
+
+        def stop_after_selection():
+            result = original_selected()
+            observed.append(result)
+            preview.service.signal_stop(preview.root)
+            return result
+
+        def transaction(*, write):
+            reads.append(write)
+            return original_transaction(write=write)
+
+        with (
+            patch.object(worker.catalog, "selected", side_effect=stop_after_selection),
+            patch.object(self.f.sources.corpus, "_transaction", side_effect=transaction),
+            self.assertRaises(IndexServiceProblem),
+        ):
+            worker.collect_obsolete()
+        self.assertEqual([selected], observed)
+        self.assertEqual([], reads, "generation page entered storage after the actual session stop")
+
+    def test_initialized_revoke_rechecks_actual_session_stop_after_delete_eligibility(self):
+        first, _selected = self._drained_obsolete_generation()
+        path = self.service.root / "indexes" / ("lexical-" + first.generation_id + ".sqlite3")
+        before = {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")}
+        self.assertTrue(before)
+        preview = self.f.f.f.preview
+        is_stopped = preview.service.native_stop_latch(preview.root, self.service.project, self.f.f.f.session)
+        original_purge = index_module.IndexFileGuard.purge_retired
+
+        def purge(guard, revoke):
+            def stop_before_revoke():
+                preview.service.signal_stop(preview.root)
+                return revoke()
+
+            return original_purge(guard, stop_before_revoke)
+
+        denied = False
+        with patch.object(index_module.IndexFileGuard, "purge_retired", purge):
+            try:
+                self.service.retire(first.generation_id)
+            except IndexServiceProblem:
+                denied = True
+        self.assertTrue(is_stopped(), "the actual Native session-stop point was not reached")
+        self.assertTrue(denied, "initialized revocation ignored the actual Native session stop")
+        self.assertEqual(before, {entry.name: entry.read_bytes() for entry in path.parent.glob(path.name + "*")})
+        with self.keys.lease(first.scope, create=False) as old:
+            self.assertEqual(first.derivative_key_version, old.version)
 
     def test_committed_membership_changes_update_same_generation_and_withdrawal_removes_text(self):
         first = self.service.rebuild()

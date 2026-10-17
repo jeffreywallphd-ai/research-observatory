@@ -328,7 +328,7 @@ class CoreLexicalIndexService:
         return self.run_build(lease, cancelled=cancelled)
 
     def retire(self, generation_id: str) -> None:
-        def remove():
+        def mark():
             snapshot = self.catalog.get(generation_id)
             selected = self.catalog.selected()
             if selected is not None and selected.generation_id == generation_id:
@@ -344,43 +344,49 @@ class CoreLexicalIndexService:
                     lease = self.catalog.acquire(generation_id)
                     self._leases[generation_id] = lease
                     self.catalog.retire(lease)
-            path = self.root / "indexes" / ("lexical-" + generation_id + ".sqlite3")
+            return snapshot
 
-            if not self.catalog.initialized(generation_id):
+        def remove():
+            snapshot = self._bounded(mark)
+            # Reacquire current project authority before the generation/file
+            # guards. An admitted worker releases the mutex between phases.
+            self._retire_cleanup(snapshot)
+
+        self._orchestrate(remove)
+
+    def _retire_cleanup(self, snapshot: IndexGeneration) -> None:
+        def cleanup():
+            generation_id = snapshot.generation_id
+            path = self.root / "indexes" / ("lexical-" + generation_id + ".sqlite3")
+            initialized = self.catalog.authorize_retirement(snapshot)
+            if not initialized:
+                held_identities: dict[str, tuple[int, int]] | None = None
 
                 def authorize_bootstrap(identities):
-                    current = self.catalog.get(generation_id)
-                    if (
-                        current.scope != snapshot.scope
-                        or current.derivative_key_version != snapshot.derivative_key_version
-                    ):
-                        raise IndexServiceProblem("bootstrap recovery authority changed")
-                    self.catalog.authorize_bootstrap_cleanup(generation_id, identities)
+                    nonlocal held_identities
+                    if self.catalog.authorize_retirement(snapshot, bootstrap_identities=identities) is not False:
+                        raise IndexServiceProblem("bootstrap recovery mode changed")
+                    held_identities = dict(identities)
 
                 def revoke_bootstrap():
                     # All present fixed roles are now exclusively held for
                     # DELETE, and no source admission was ever acknowledged.
+                    if (
+                        held_identities is None
+                        or self.catalog.authorize_retirement(snapshot, bootstrap_identities=held_identities)
+                        is not False
+                    ):
+                        raise IndexServiceProblem("bootstrap recovery authority changed")
                     self.keys.revoke(snapshot.scope, expected_version=snapshot.derivative_key_version)
 
                 purge_bootstrap(self.root, generation_id, authorize=authorize_bootstrap, revoke=revoke_bootstrap)
-                lease = self._leases.pop(generation_id, None)
-                if lease is not None:
-                    lease.close()
-                return
 
-            def eligible(identity):
-                current = self.catalog.get(generation_id)
-                current_selection = self.catalog.selected()
-                if (
-                    current.stage != "Retired"
-                    or current.scope != snapshot.scope
-                    or current.derivative_key_version != snapshot.derivative_key_version
-                    or (current_selection is not None and current_selection.generation_id == generation_id)
-                    or not self.catalog.file_bound(generation_id, identity)
-                ):
-                    raise IndexServiceProblem("retired recovery authority changed")
+            elif _present(path):
 
-            if _present(path):
+                def eligible(identity):
+                    if self.catalog.authorize_retirement(snapshot, identity=identity) is not True:
+                        raise IndexServiceProblem("retired recovery mode changed")
+
                 if any(_present(path.with_name(path.name + suffix)) for suffix in ("-wal", "-shm", "-journal")):
                     recover_retired_generation(
                         self.root,
@@ -404,13 +410,15 @@ class CoreLexicalIndexService:
                     guard.close(clean_sidecars=False)
             else:
                 assert_retired_absent(self.root, generation_id)
+                if self.catalog.authorize_retirement(snapshot) is not True:
+                    raise IndexServiceProblem("retired recovery mode changed")
                 self.keys.revoke(snapshot.scope, expected_version=snapshot.derivative_key_version)
                 assert_retired_absent(self.root, generation_id)
             lease = self._leases.pop(generation_id, None)
             if lease is not None:
                 lease.close()
 
-        self._bounded(remove)
+        self._bounded(cleanup)
 
     def collect_obsolete(self) -> None:
         def collect():
@@ -419,15 +427,19 @@ class CoreLexicalIndexService:
                 raise IndexServiceProblem("index has no safe replacement")
             cursor = None
             while True:
-                with self.sources.corpus._transaction(write=False) as (db, _aggregates):
-                    identities = tuple(
-                        row[0]
-                        for row in db.execute(
-                            "SELECT generation_id FROM search_generations WHERE project_id=? AND (? IS NULL OR "
-                            "generation_id>?) ORDER BY generation_id LIMIT 256",
-                            (self.project, cursor, cursor),
+
+                def page(after=cursor):
+                    with self.sources.corpus._transaction(write=False) as (db, _aggregates):
+                        return tuple(
+                            row[0]
+                            for row in db.execute(
+                                "SELECT generation_id FROM search_generations WHERE project_id=? AND (? IS NULL OR "
+                                "generation_id>?) ORDER BY generation_id LIMIT 256",
+                                (self.project, after, after),
+                            )
                         )
-                    )
+
+                identities = self._bounded(page)
                 if not identities:
                     break
                 for identity in identities:
@@ -435,7 +447,7 @@ class CoreLexicalIndexService:
                         self.retire(identity)
                 cursor = identities[-1]
 
-        self._bounded(collect)
+        self._orchestrate(collect)
 
     def _changed_items(self, after: int, through: int) -> tuple[str, ...]:
         """Map source revisions, including rights, to current corpus identities."""

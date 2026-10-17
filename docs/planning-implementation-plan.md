@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 503180db49e55ecac9b7ebbb9f33f8be9b869329b731cbd3212da02d76178315
+source_sha256: a72120077bf7f25b835db71973b906ee76f38d03e7597cf5862af0ed0b48f0a4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6089,6 +6089,38 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w3_c01_review at `2026-10-17T09:05:34+00:00`
 
 **Latest notes:** Approved W3.C01.T01 R01 at exact ce1a7c6fa8d1c23fefc1b3d317dc5ca8951d6d9c with no findings. Same-writer startup/fence consolidation preserves complete current lawful-source/selection/generation authority and final delivery controls. All selected fresh05 proof is authenticated with truthful bounded Native scope and preserved adverse history. CAP-06.S01 preparation/retirement, full Native journey, actual inner lifetime, scale and later qualification remain hard pending obligations; this is task disposition only.
+
+**Currently open findings:** -
+
+### W3.C02.T01 — Implement incremental FTS5 indexing and rebuild
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T02`. **Latest review:** `-`.
+
+**Reproduction:** The preserved full populated Native development journey failed foreground search status after restart under the unchanged two-second Native response bound. Separate nonqualifying actual Core phase diagnostic02 (artifacts/tmp/W3.C01.status-phase-diagnostic-02/report.json) reproduced request19 running200 after2.9594033s, including2.5321196s FIFO wait behind worker collect_obsolete2.5973173s/retire2.0870084s. No run-result/query-fence call occurred in that request. Original historical generic-error causes remain unknown; all full/bounded failures and raw traces remain preserved. The query-only correction W3.C01.T01 is independently approved, DONE and locally integrated at5410a1c94af476c09049fcbb4d19f6f6b2e2ab9d; the separate preparation/retirement defect remains a hard CAP-06.S01 blocker.
+
+**Inherited criteria:**
+
+- Committed corpus changes appear incrementally; interrupted indexing resumes or rebuilds safely; restricted text is excluded according to policy.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Prove FTS5 in the actual protected build; no plaintext sidecar. Compare fresh/rebuilt results, removal, cancellation and crash replay; never index unpermitted text.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/lexical_catalog_repository.py
+- services/core-api/src/research_observatory_core/lexical_index_repository.py
+- tests/search/test_index_catalog.py
+- tests/search/test_index_service.py
+- tests/search/test_native_index_service.py
+#### Review history — W3.C02.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

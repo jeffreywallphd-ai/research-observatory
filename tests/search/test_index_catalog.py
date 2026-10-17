@@ -71,6 +71,57 @@ class IndexCatalogTests(unittest.TestCase):
         self.assertIsNone(self.catalog.get(lease.generation_id).cursor_item_id)
         self.assertFalse(self.catalog.initialized(lease.generation_id))
 
+    def test_retirement_binds_immutable_configuration_and_initialized_held_file(self):
+        lease = self.catalog.create(self.scope)
+        self.addCleanup(lease.close)
+        with self.initialized_store(lease) as store:
+            identity = store.file_identity
+        expected = self.catalog.get(lease.generation_id)
+        self.catalog.retire(lease)
+        retired = self.catalog.get(lease.generation_id)
+        self.assertNotEqual(expected.event_id, retired.event_id)
+        self.assertTrue(self.catalog.authorize_retirement(expected, identity=identity))
+        self.assertTrue(self.catalog.authorize_retirement(retired))
+        for substituted in (
+            replace(expected, configuration_sha256="f" * 64),
+            replace(expected, initial_watermark=expected.initial_watermark + 1),
+            replace(expected, derivative_key_version="substituted-version"),
+            replace(expected, scope=replace(expected.scope, lifecycle_sha256="b" * 64)),
+            replace(retired, event_id=new_uuid_v7()),
+        ):
+            with self.subTest(field=substituted), self.assertRaises(IndexCatalogProblem):
+                self.catalog.authorize_retirement(substituted, identity=identity)
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.authorize_retirement(retired, identity=(identity[0], identity[1] + 1))
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.authorize_retirement(retired, bootstrap_identities={})
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.authorize_retirement(retired, identity=identity, bootstrap_identities={})
+        self.assertEqual(retired, self.catalog.get(lease.generation_id))
+
+    def test_bootstrap_retirement_requires_exact_witness_and_keeps_empty_subset_mode(self):
+        lease = self.catalog.create(self.scope)
+        self.addCleanup(lease.close)
+        with ProtectedLexicalStore(
+            self.root,
+            self.scope,
+            self.keys,
+            create=True,
+            _bootstrap=lambda identities: self.catalog.bind_bootstrap(lease, identities),
+        ) as store:
+            identity = store.file_identity
+        expected = self.catalog.get(lease.generation_id)
+        self.catalog.retire(lease)
+        self.assertFalse(self.catalog.authorize_retirement(expected))
+        self.assertFalse(self.catalog.authorize_retirement(expected, bootstrap_identities={}))
+        self.assertFalse(self.catalog.authorize_retirement(expected, bootstrap_identities={"": identity}))
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.authorize_retirement(expected, identity=identity)
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.authorize_retirement(expected, bootstrap_identities={"": (identity[0], identity[1] + 1)})
+        with self.assertRaises(IndexCatalogProblem):
+            self.catalog.authorize_retirement(expected, bootstrap_identities={"-unowned": identity})
+
     def test_shadow_creation_and_cancel_reacquire_fences_old_owner(self):
         first = self.catalog.create(self.scope)
         self.addCleanup(first.close)

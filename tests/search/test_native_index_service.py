@@ -26,6 +26,7 @@ from research_observatory_core.lexical_index_repository import (  # noqa: E402
     IndexCleanupPending,
     IndexServiceProblem,
 )
+from research_observatory_core.lexical_index_store import ProtectedLexicalStore  # noqa: E402
 from research_observatory_core.lexical_source_repository import CanonicalIndexSources  # noqa: E402
 from research_observatory_core.main import create_runtime_app  # noqa: E402
 from research_observatory_core.ports.rights import RightsPermissionDraft  # noqa: E402
@@ -176,6 +177,42 @@ class NativeIndexServiceTests(unittest.TestCase):
                     chosen = indexed.catalog.selected()
                     assert chosen is not None
                     return chosen
+
+            # Actual Native/session close is independent of the protected
+            # unit fixture. A terminal retirement may retry only with a fresh
+            # session; close/reopen does not reactivate the old service.
+            self.assertEqual(200, client.post("/projects/open", json={"root": str(project)}).status_code)
+            retiring = current_service(project)
+            pending = retiring.begin_rebuild()
+            with (
+                patch.object(
+                    ProtectedLexicalStore, "_initialize", side_effect=RuntimeError("synthetic bootstrap fault")
+                ),
+                self.assertRaises(IndexServiceProblem),
+            ):
+                retiring.run_build(pending)
+            retiring.catalog.retire(pending)
+            retired = retiring.catalog.get(pending.generation_id)
+            pending_path = project / "indexes" / ("lexical-" + pending.generation_id + ".sqlite3")
+            retained = {entry.name: entry.read_bytes() for entry in pending_path.parent.glob(pending_path.name + "*")}
+            self.assertTrue(retained)
+            self.assertEqual(200, client.post("/projects/close", json={"root": str(project)}).status_code)
+            with self.assertRaises(IndexServiceProblem):
+                retiring._retire_cleanup(retired)
+            self.assertEqual(
+                retained,
+                {entry.name: entry.read_bytes() for entry in pending_path.parent.glob(pending_path.name + "*")},
+            )
+            with keys.lease(retired.scope, create=False) as old:
+                self.assertEqual(retired.derivative_key_version, old.version)
+            self.assertEqual(200, client.post("/projects/open", json={"root": str(project)}).status_code)
+            with self.assertRaises(IndexServiceProblem):
+                retiring._retire_cleanup(retired)
+            rebound = current_service(project)
+            rebound.retire(retired.generation_id)
+            self.assertEqual(retired, rebound.catalog.get(retired.generation_id))
+            self.assertFalse(any(pending_path.parent.glob(pending_path.name + "*")))
+            self.assertEqual(200, client.post("/projects/close", json={"root": str(project)}).status_code)
 
             original = project
             relocated = scratch / "projects/relocated-project"

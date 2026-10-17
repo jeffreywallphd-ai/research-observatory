@@ -271,23 +271,24 @@ class SqliteIndexCatalog:
             raise IndexCatalogProblem("index selection is unavailable")
         return result
 
+    def _selected(self, db: CanonicalConnection) -> IndexGeneration | None:
+        selection = self._selection(db)
+        if selection is None or selection["generation_id"] is None:
+            return None
+        snapshot = self._load(db, selection["generation_id"])
+        if (
+            snapshot.stage != "Ready"
+            or snapshot.event_id != selection["generation_event_id"]
+            or snapshot.checkpoint != selection["checkpoint"]
+            or snapshot.authority_sha256 != selection["authority_sha256"]
+        ):
+            raise IndexCatalogProblem("selected index is unavailable")
+        return IndexGeneration(**(asdict(snapshot) | {"scope": snapshot.scope, "selection_id": selection["event_id"]}))
+
     def selected(self) -> IndexGeneration | None:
         def read() -> IndexGeneration | None:
             with self._transaction(write=False) as (db, _actor, _now):
-                selection = self._selection(db)
-                if selection is None or selection["generation_id"] is None:
-                    return None
-                snapshot = self._load(db, selection["generation_id"])
-                if (
-                    snapshot.stage != "Ready"
-                    or snapshot.event_id != selection["generation_event_id"]
-                    or snapshot.checkpoint != selection["checkpoint"]
-                    or snapshot.authority_sha256 != selection["authority_sha256"]
-                ):
-                    raise IndexCatalogProblem("selected index is unavailable")
-                return IndexGeneration(
-                    **(asdict(snapshot) | {"scope": snapshot.scope, "selection_id": selection["event_id"]})
-                )
+                return self._selected(db)
 
         return self._bounded(read)
 
@@ -566,22 +567,77 @@ class SqliteIndexCatalog:
 
         self._bounded(read)
 
+    def _file_bound(self, db: CanonicalConnection, generation_id: str, identity: tuple[int, int]) -> bool:
+        digest = self._file_binding(generation_id, identity)
+        return (
+            db.execute(
+                "SELECT 1 FROM outbox_events o WHERE o.project_id=? AND o.idempotency_key=? AND "
+                "o.event_type='search.index-generation-created' AND o.revision_id IS NULL AND "
+                "o.record_sha256=? AND EXISTS(SELECT 1 FROM provenance_events p WHERE "
+                "p.project_id=o.project_id AND p.event_type=o.event_type AND p.revision_id IS NULL AND "
+                "p.record_sha256=o.record_sha256)",
+                (self.project, "search-file-" + generation_id, digest),
+            ).fetchone()
+            is not None
+        )
+
     def file_bound(self, generation_id: str, identity: tuple[int, int]) -> bool:
         def read() -> bool:
             with self._transaction(write=False) as (db, _actor, _now):
                 self._load(db, generation_id)
-                digest = self._file_binding(generation_id, identity)
-                return (
-                    db.execute(
-                        "SELECT 1 FROM outbox_events o WHERE o.project_id=? AND o.idempotency_key=? AND "
-                        "o.event_type='search.index-generation-created' AND o.revision_id IS NULL AND "
-                        "o.record_sha256=? AND EXISTS(SELECT 1 FROM provenance_events p WHERE "
-                        "p.project_id=o.project_id AND p.event_type=o.event_type AND p.revision_id IS NULL AND "
-                        "p.record_sha256=o.record_sha256)",
-                        (self.project, "search-file-" + generation_id, digest),
-                    ).fetchone()
-                    is not None
-                )
+                return self._file_bound(db, generation_id, identity)
+
+        return self._bounded(read)
+
+    def authorize_retirement(
+        self,
+        expected: IndexGeneration,
+        *,
+        identity: tuple[int, int] | None = None,
+        bootstrap_identities: dict[str, tuple[int, int]] | None = None,
+    ) -> bool:
+        """Fresh coherent cleanup authority; return the initialized mode.
+
+        No identity means discovery/absent-file authorization only. Present
+        files require their actual held identity or complete held bootstrap
+        subset. Callers must reauthorize at each recovery/revocation callback.
+        Historical retirement deliberately requires no ordinary current key.
+        """
+
+        def read() -> bool:
+            if not isinstance(expected, IndexGeneration) or (identity is not None and bootstrap_identities is not None):
+                raise IndexCatalogProblem("retirement authority is invalid")
+            with self._transaction(write=True) as (db, _actor, _now):
+                current = self._load(db, expected.generation_id)
+                selected = self._selected(db)
+                if (
+                    current.stage != "Retired"
+                    or current.scope != expected.scope
+                    or current.configuration_sha256 != expected.configuration_sha256
+                    or current.initial_watermark != expected.initial_watermark
+                    or current.derivative_key_version != expected.derivative_key_version
+                    or (expected.stage == "Retired" and current != expected)
+                    or (selected is not None and selected.generation_id == current.generation_id)
+                ):
+                    raise IndexCatalogProblem("retired recovery authority changed")
+                records = self._bootstrap_records(db, current)
+                initialized = "initialized" in records
+                if identity is not None and (
+                    not initialized or not self._file_bound(db, current.generation_id, identity)
+                ):
+                    raise IndexCatalogProblem("retired file authority changed")
+                if bootstrap_identities is not None:
+                    if (
+                        initialized
+                        or current.cursor_item_id is not None
+                        or current.entry_count is not None
+                        or current.projection_sha256 is not None
+                    ):
+                        raise IndexCatalogProblem("bootstrap cleanup is unavailable")
+                    for role, held in bootstrap_identities.items():
+                        if not records or records.get(role or "main") != self._bootstrap_identity(current, role, held):
+                            raise IndexCatalogProblem("unknown bootstrap files are preserved")
+                return initialized
 
         return self._bounded(read)
 
