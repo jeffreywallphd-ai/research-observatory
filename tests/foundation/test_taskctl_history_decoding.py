@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import datetime as dt
 import io
 import subprocess
 import sys
@@ -397,6 +398,22 @@ class HistoricalDecodeTests(unittest.TestCase):
         ):
             self.invoke(recency_work)
         self.assertEqual(parse.call_count, 4)
+
+    def test_non_utc_yaml_timestamp_bypasses_cache_and_preserves_values(self):
+        self.commit = self.commit_bytes(self.payload + b"observed_at: 2026-10-17T12:30:45+05:45\n")
+        real = taskctl.yaml.safe_load
+
+        def work():
+            first = self.read_document(self.repo, self.commit)
+            second = self.read_document(self.repo, self.commit)
+            self.assertEqual(first["observed_at"].utcoffset(), dt.timedelta(hours=5, minutes=45))
+            self.assertEqual(first, second)
+            first["waves"][0]["approval"]["choices"].append("caller-only")
+            self.assertEqual(second["waves"][0]["approval"]["choices"], ["original"])
+
+        with patch.object(taskctl.yaml, "safe_load", wraps=real) as parse:
+            self.invoke(work)
+        self.assertEqual(parse.call_count, 2, "Referenced timezone objects require uncached fallback")
 
 
 if __name__ == "__main__":

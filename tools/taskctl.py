@@ -2688,6 +2688,8 @@ def _historical_graph_bytes(value: object, limit: int) -> int | None:
             pending.extend(item.values())
         elif type(item) in {list, tuple, set, frozenset}:
             pending.extend(cast("list[object] | tuple[object, ...] | set[object] | frozenset[object]", item))
+        elif type(item) is dt.datetime and item.tzinfo is not None:
+            return None  # Referenced timezone/offset storage is outside this graph model.
         elif type(item) not in {str, bytes, int, float, bool, type(None), dt.date, dt.datetime}:
             return None
     return total
