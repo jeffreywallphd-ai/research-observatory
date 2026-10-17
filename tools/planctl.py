@@ -13,7 +13,11 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
+from collections.abc import Callable
+from contextlib import suppress
 from datetime import UTC, datetime
+from functools import partial
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -545,6 +549,34 @@ def approve(
     return 0
 
 
+def readiness_stage(stage: str, operation: Callable[[], int]) -> int:
+    """Report inclusive monotonic timing; preserve every exit and exception.
+
+    Nested durations overlap and must not be summed as command wall time.
+    These diagnostics do not authorize readiness, reuse or a transition.
+    """
+    started = time.monotonic()
+    result: int | None = None
+    try:
+        result = operation()
+        return result
+    finally:
+        # Optional diagnostics must not replace the real exit or exception.
+        with suppress(OSError, ValueError):
+            print(
+                "READINESS_TIMING "
+                + json.dumps(
+                    {
+                        "stage": stage,
+                        "elapsedSeconds": round(time.monotonic() - started, 6),
+                        "exitCode": result,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+
+
 def validate_wave(root: Path, wave_id: str, approved: bool, site: Path | None = None) -> int:
     data, _ = load_backlog(root)
     wave = next((item for item in data.get("waves", []) if item.get("id") == wave_id), None)
@@ -578,8 +610,22 @@ def validate_wave(root: Path, wave_id: str, approved: bool, site: Path | None = 
             for decision in capability_meta.get("decisions", [])
             if wave_id in (decision.get("binding_waves") or [])
         )
-        failures += int(bool(run_validator(root, "capability_plan_check.py", capability_id, approved, wave_id)))
-        failures += int(bool(run_validator(root, "slice_plan_check.py", capability_id, approved, wave_id)))
+        failures += int(
+            bool(
+                readiness_stage(
+                    f"capability-plan:{capability_id}",
+                    partial(run_validator, root, "capability_plan_check.py", capability_id, approved, wave_id),
+                )
+            )
+        )
+        failures += int(
+            bool(
+                readiness_stage(
+                    f"slice-plans:{capability_id}",
+                    partial(run_validator, root, "slice_plan_check.py", capability_id, approved, wave_id),
+                )
+            )
+        )
     for error in wave_initiation_rollup_errors(
         assessment_entries, wave_id, require_current_policy=(wave.get("approval") or {}).get("status") != "APPROVED"
     ):
@@ -622,7 +668,9 @@ def validate_wave(root: Path, wave_id: str, approved: bool, site: Path | None = 
     command = [sys.executable, str(root / "tools/plan_review_check.py"), "--repo", str(root)]
     if site is not None:
         command.extend(["--site", str(site)])
-    failures += int(bool(subprocess.run(command, check=False).returncode))
+    failures += int(
+        bool(readiness_stage("complete-site-validation", lambda: subprocess.run(command, check=False).returncode))
+    )
     return 1 if failures else 0
 
 
@@ -635,10 +683,10 @@ def ready_wave(root: Path, wave_id: str) -> int:
         raise ValueError("Readiness output parent must be confined to the actual repository/.local")
     with tempfile.TemporaryDirectory(prefix="wave-ready-", dir=local) as temporary:
         site = Path(temporary)
-        if generate_review(root, output=site):
+        if readiness_stage("site-generation", lambda: generate_review(root, output=site)):
             print("ERROR: readiness review-site generation failed", file=sys.stderr)
             return 1
-        result = validate_wave(root, wave_id, True, site=site)
+        result = readiness_stage("wave-validation-inclusive", lambda: validate_wave(root, wave_id, True, site=site))
     # Cleanup is part of success. Its failure propagates to the fail-closed CLI.
     return result
 

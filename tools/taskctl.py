@@ -10431,7 +10431,7 @@ def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
     print(f"Renewed task lease for {task['id']}")
 
 
-def task_check_guidance(task: dict[str, Any]) -> list[str]:
+def task_check_guidance(task: dict[str, Any], repo: Path | None = None) -> list[str]:
     """Render task-scoped selection guidance while preserving the declared inventory."""
     profiles = [str(profile) for profile in task.get("verification_profiles", [])]
     commands = [str(command) for command in task.get("verification_commands", [])]
@@ -10441,7 +10441,32 @@ def task_check_guidance(task: dict[str, Any]) -> list[str]:
         "Task-scope guidance (advisory; no new gate)",
         "Select the narrowest deterministic checks that prove the task's credible changed-path and contract risks.",
     ]
-    if profiles and re.fullmatch(r"[0-9a-f]{40}", base_sha) and re.fullmatch(r"W[0-9]+", wave):
+    admitted = False
+    try:
+        from verify import load_contract, load_selection_policy, validate_selection_policy
+
+        selection_repo = repo or Path(__file__).resolve().parents[1]
+        policy = load_selection_policy(selection_repo)
+        contract = load_contract(selection_repo)
+        admitted = (
+            isinstance(policy, dict)
+            and isinstance(contract, dict)
+            and not validate_selection_policy(policy, contract)
+            and (f"{wave}-exit" in policy["affectedDeferredOwners"])
+        )
+    except OSError, ValueError, KeyError, TypeError, AttributeError:
+        # Advisory guidance never invents an exit owner or blocks a lawful task.
+        pass
+    if not admitted:
+        lines.extend(
+            [
+                f"No governed affected-selection owner for {wave or '(unbound Wave)'}-exit; no preview is emitted.",
+                "Select named focused checks manually from the inventory below; map them to material criteria/risks.",
+                "Record selected command IDs and deferred coverage with the actual slice/checkpoint/Wave owner.",
+                "Keep hard limits and fresh full Wave qualification. Use the existing repair route for failed checks.",
+            ]
+        )
+    if admitted and profiles and re.fullmatch(r"[0-9a-f]{40}", base_sha) and re.fullmatch(r"W[0-9]+", wave):
         profile_arguments = " ".join(f"--profile {profile}" for profile in profiles)
         lines.extend(
             [
@@ -11552,7 +11577,7 @@ def main() -> None:
         command_renew(args, data, capabilities, slices, tasks, gates)
     elif args.command == "checks":
         task = get(tasks, args.task, "task")
-        output = task.get("verification_commands", []) if args.raw else task_check_guidance(task)
+        output = task.get("verification_commands", []) if args.raw else task_check_guidance(task, repo=args.repo_root)
         for command in output:
             print(command)
     elif args.command == "evidence":

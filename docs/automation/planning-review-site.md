@@ -1,9 +1,43 @@
-# Static Wave, capability, and slice planning review
+# Live and published planning review
 
 Read only the section for the current review-site operation: navigation, feedback,
 approval, generation or change control. Ordinary implementation does not require
 this guide merely because a generated page exists. The site is a review surface;
 backlog and Markdown plans remain canonical.
+
+## Live review
+
+Run `python tools/plan_review_server.py --repo .` and open
+[the live review center](http://127.0.0.1:57003/) or
+[W3](http://127.0.0.1:57003/waves/W3.html). The running server reads canonical
+backlog YAML and selected capability/slice Markdown frontmatter. Stable Wave,
+capability, slice, task, gate, correction and historical amendment/recovery
+routes need no generated detail pages. Refresh or the visible-page periodic
+refresh reads current bytes; malformed or changing sources show an error rather
+than stale successful data. The API at `/api/review` and `/api/review/<ID>` is a
+read-only display projection, separate from the product Core API.
+
+The server binds only to `127.0.0.1`, accepts GET/HEAD, checks Host/Origin,
+serves fixed assets, and exposes no arbitrary repository files or mutation.
+Imported plan text is rendered inertly. Local owner/session/runtime fields are
+not included in the structured ledger projection. Byte-identical display input
+parsing may be reused in memory; no readiness, test, approval or review result
+is cached. No Node build or static generator is needed to start the server.
+Restart it after server-code or asset changes; those inputs are pinned for the
+running instance and drift produces a bounded unavailable response.
+
+Focused checks are `python -m unittest -v tests.foundation.test_plan_review_server
+tests.foundation.test_workflow_guidance` and, with installed Chromium,
+`python tests/foundation/planning_review_browser.py -v`. The explicit browser
+check covers navigation, inert text, gate conditions, keyboard landmarks,
+real periodic updates, focus/disclosure continuity and invalid-data recovery;
+it is not part of unrelated foundation discovery.
+
+Routine status/worksheet changes need no tracked HTML regeneration. Continue
+normal backlog mutations and Markdown view checks. The static exporter below
+remains the complete qualified publication route for explicit approval/evidence
+snapshots, frozen-packet handoffs and static-renderer changes. Never substitute
+a live HTTP response for approval, readiness or commit-bound evidence.
 
 ## Entry points and navigation
 
@@ -30,7 +64,9 @@ The tabs support pointer activation plus Left/Right, Home, and End keyboard
 navigation. Switching tabs changes only the navigation view; it never changes
 approval or backlog state.
 
-Use `python tools/planctl.py --repo . wave review WN` to regenerate and print the directly openable Wave link.
+Use the live server for current inspection. For a qualified static publication,
+use `python tools/planctl.py --repo . wave review WN` to regenerate and print
+the directly openable exported Wave link.
 
 In handoffs, present the exact generated destination as a directly openable link
 supported by the active client, plus its repository-relative path. In Codex,

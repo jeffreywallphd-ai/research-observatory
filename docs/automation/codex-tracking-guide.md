@@ -10,8 +10,10 @@ require a claim or campaign mutation.
 
 1. Follow the current AGENTS.md route and planning lifecycle. Reuse unchanged
    guidance already available; do not open every linked guide or reference page.
-2. At Wave start/resume, confirm complete immutable approval and readiness.
-   An approved Wave is not reapproved after an ordinary interruption.
+2. At Wave start/resume, use the normal taskctl command, which owns the fresh
+   complete immutable-approval/readiness check. Do not run a second required
+   standalone readiness precheck. An approved Wave is not reapproved after an
+   ordinary interruption.
 3. Read the current backlog task/dependencies and approved capability/slice scope.
    Inspect affected ADR/architecture sections; read experience contracts only
    when user-facing behavior is affected. Generated pages help navigation but
@@ -37,9 +39,8 @@ From repository root with the configured Python environment. Run only the
 command matching current state; inspect `--help` if its arguments are unclear.
 
 ```bash
-# Readiness at approved Wave start/resume:
-python tools/planctl.py --repo . wave ready WN --require-approved
-# Start a new approved campaign OR resume its recorded PAUSED campaign:
+# Start a new approved campaign OR resume its recorded PAUSED campaign.
+# Each command runs fresh complete readiness internally; do not pre-run it:
 python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <full-sha> --worktree . --profile LOC --platform windows-x64
 python tools/taskctl.py --file planning/backlog.yaml wave resume WN --agent <agent> --branch <branch> --base-sha <full-sha> --worktree . --profile LOC --platform windows-x64
 # Choose, inspect, and claim only the eligible task:
@@ -53,15 +54,19 @@ python tools/taskctl.py --file planning/backlog.yaml review CAP-XX.SXX.TXX --rev
 # After any successful ledger mutation:
 python tools/backlog_views.py --repo .
 python tools/backlog_views.py --repo . --check
-# After status, review, or task-start worksheet changes, also refresh the HTML site:
-python tools/planctl.py --repo . wave review WN
-# Before committing regenerated HTML:
-python tools/plan_review_check.py --repo .
 ```
 
-The backlog-view commands update Markdown only. Refresh the HTML site after each
-visible task/Wave/gate transition; do not wait until the next approval request.
-Check affected pages against the backlog before calling the review site current.
+The backlog-view commands update Markdown only. For current task/Wave/gate
+review, run `python tools/plan_review_server.py --repo .` and use the live site;
+it reads canonical YAML and plan frontmatter without generating tracked HTML.
+Ordinary transitions need no static-site publication. Use explicit
+`planctl wave review WN` and the complete `plan_review_check.py` when delivering
+an immutable approval/evidence snapshot or changing the static renderer. Follow
+the [review-site guide](planning-review-site.md#generation-and-validation).
+
+`planctl wave ready WN --require-approved` remains an optional standalone
+diagnostic. Its result is never reused to bypass the fresh check inside start
+or resume. A live review response likewise grants no execution authority.
 
 Use the actual branch, full current HEAD, canonical worktree, concrete
 profile/platform and matching owner/lease. New supported bindings store

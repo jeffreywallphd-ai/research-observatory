@@ -1,0 +1,36 @@
+:root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; --line: #8b99ad; }
+* { box-sizing: border-box; }
+body { margin: 0; background: light-dark(#f5f7fb, #131b28); color: light-dark(#10233d, #e9eef7); }
+a { color: light-dark(#1748b5, #a9c5ff); overflow-wrap: anywhere; }
+header { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; padding: 1rem 2rem; background: light-dark(#fff, #1a2537); border-bottom: 1px solid var(--line); }
+header a { font-size: 1.2rem; font-weight: 700; }
+button, input { font: inherit; padding: .5rem .7rem; border: 1px solid var(--line); border-radius: .3rem; }
+button { cursor: pointer; }
+header button { margin-left: auto; }
+#notice, footer { padding: .7rem 2rem; margin: 0; }
+#notice { background: light-dark(#e9f0ff, #253858); }
+.layout { display: grid; grid-template-columns: minmax(14rem, 20rem) minmax(0, 1fr); max-width: 110rem; margin: auto; }
+aside { padding: 1.4rem; border-right: 1px solid var(--line); }
+aside input { width: 100%; margin: .5rem 0; }
+nav h2 { font-size: 1rem; margin-bottom: .4rem; }
+nav ul { padding-left: 1.2rem; }
+nav li { margin: .4rem 0; }
+main { min-width: 0; padding: 1.4rem 2rem; }
+h1 { line-height: 1.2; }
+.muted { color: light-dark(#536985, #becbe0); }
+.badge { display: inline-block; padding: .1rem .4rem; margin: .2rem; border: 1px solid var(--line); border-radius: .3rem; font-size: .9rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: .8rem; }
+.card, details { padding: 1rem; border: 1px solid var(--line); border-radius: .5rem; background: light-dark(#fff, #1a2537); margin: .7rem 0; }
+.card h3 { margin-top: 0; }
+dl { display: grid; grid-template-columns: minmax(7rem, 1fr) 3fr; gap: .3rem 1rem; }
+dt { font-weight: 600; }
+dd { margin: 0; overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font: .9rem/1.6 ui-monospace, monospace; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+td, th { border: 1px solid var(--line); padding: .5rem; vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+.scroll { overflow-x: auto; }
+summary { cursor: pointer; font-weight: 600; }
+:focus-visible { outline: 3px solid light-dark(#1748b5, #a9c5ff); outline-offset: 3px; }
+.skip { position: absolute; top: -10rem; padding: .5rem; background: Canvas; }
+.skip:focus { top: 0; }
+@media (max-width: 700px) { .layout { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1px solid var(--line); } main { padding: 1rem; } header, #notice, footer { padding: .8rem 1rem; } }

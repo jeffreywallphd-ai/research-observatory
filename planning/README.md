@@ -41,10 +41,12 @@ confines paths to the repository, and atomically replaces changed outputs.
 Unchanged outputs keep their bytes and modification times. Check mode detects
 byte corruption without decoding; failures must be reported, not hand-repaired.
 
-These commands update Markdown, not `review-site/` HTML. After status, review,
-or task-start worksheet changes, also regenerate the HTML using the
-[task command sequence](../docs/automation/codex-tracking-guide.md#command-sequence).
-Validate the regenerated site before committing it.
+These commands update Markdown. Use the
+[live review server](../docs/automation/planning-review-site.md#live-review)
+for current status and plan inspection; it projects canonical YAML/frontmatter
+without per-transition HTML generation. Static exports remain explicit immutable
+approval/evidence publications and retain their complete validation.
+The live view is not an approval or qualifying receipt.
 
 ## Default planning and execution lifecycle
 
@@ -73,6 +75,14 @@ and rationale; the reviewer records any override with its rationale.
 
 The campaign survives process/session interruptions. An expired lease may be
 renewed only by its recorded owner. Later-Wave work stays gated.
+
+Within an approved task, refine implementation tactics and resolve ordinary
+failed tests through task-start tailoring and the existing repair routes.
+Do not create new approval packets for conforming implementation detail or
+optional adjacent suggestions. Material criteria, interfaces, safeguards and
+the complete frozen Wave packet remain binding. Assess any proposed change to
+future approval granularity before that future Wave is approved; the live
+review server and workflow improvements do not change W3's binding model.
 
 Historical exception: [W1 core owner acceptance](../artifacts/evidence/W1.owner-core-acceptance-01.md)
 records prototype delivery complete with retained qualification gaps. It does

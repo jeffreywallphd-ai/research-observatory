@@ -172,6 +172,15 @@ shared-infrastructure impact or unlocalized failure requires them earlier.
 `verify.py` affected selection is an impact aid, not a complete dependency
 closure and not an automatic cache key. Full Wave qualification stays fresh.
 
+Use normal taskctl start/resume as the single owner of its fresh complete
+readiness prerequisite; a standalone diagnostic is not an additional mandatory
+precheck or a reusable admission receipt. Use the
+[live review server](planning-review-site.md#live-review) for current planning
+status instead of publishing tracked HTML after ordinary transitions. Explicit
+approval/evidence exports keep their complete static validation. Unsupported
+affected-selection owners use named manual focused checks and documented
+broader coverage; do not invent an owner or run an invalid suggested command.
+
 ## Automatic receipts and safe reuse
 
 Before a costly run, check only its actual prerequisites: intended execution

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "direct-owner-workflow-improvement-direction",
+  "authority": "human:repository-owner",
+  "recordedDate": "2026-10-17",
+  "predecessor": "2d2e4500e2cbb25b0a3a223ecb867ef9dbd13bee",
+  "direction": "Please implement the suggested edits to the workflow to try to improve speed and flexibility. Also, the review site for this repo is static and requires update constantly. The other repo has a dynamic review site that is generated programmatically through a running server. Please implement something like that as well so that you don't have to revised review site pages constantly, instead editing YAML and/or JSON data structures.",
+  "scope": "Implement bounded comparison recommendations and a read-only live planning review server; qualify and independently review controls before local integration, then continue approved W3.",
+  "preservedBoundaries": "No frozen W3 product/architecture/experience/security/migration/release change, future approval-model change, persisted PASS trust, new controller, external exposure, push or publication. The earlier framework prohibition remains historical authority outside this directly authorized scope."
+}
