@@ -181,6 +181,7 @@ impl Fixture {
         let attempt_matches =
             receipt["record"]["attempt"].as_u64() == Some(u64::from(stopped.attempt));
         let complete = stopped.state == RuntimeState::Stopped
+            && receipt["schemaVersion"] == "2.0"
             && receipt["coreNormalContainedDrain"] == true
             && attempt_matches
             && roles_valid;

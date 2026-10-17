@@ -6,15 +6,15 @@ use std::collections::HashMap;
 use std::os::windows::io::AsRawHandle;
 use std::sync::OnceLock;
 use windows_sys::Win32::Foundation::{
-    CloseHandle, DuplicateHandle, HANDLE, WAIT_OBJECT_0, WAIT_TIMEOUT,
+    CloseHandle, DuplicateHandle, FILETIME, HANDLE, WAIT_OBJECT_0, WAIT_TIMEOUT,
 };
 use windows_sys::Win32::System::JobObjects::{
     JOBOBJECT_BASIC_ACCOUNTING_INFORMATION, JOBOBJECT_BASIC_PROCESS_ID_LIST,
     JobObjectBasicAccountingInformation, JobObjectBasicProcessIdList, QueryInformationJobObject,
 };
 use windows_sys::Win32::System::Threading::{
-    GetCurrentProcess, GetExitCodeProcess, GetProcessId, PROCESS_QUERY_LIMITED_INFORMATION,
-    PROCESS_SYNCHRONIZE, WaitForSingleObject,
+    GetCurrentProcess, GetExitCodeProcess, GetProcessId, GetProcessTimes,
+    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE, WaitForSingleObject,
 };
 
 type Ticket = Arc<Mutex<Record>>;
@@ -177,6 +177,35 @@ pub(super) fn after_close(ticket: Option<Ticket>, succeeded: bool) {
     }
 }
 
+#[derive(Serialize)]
+struct ProcessInstance {
+    process_id: u32,
+    creation_filetime: String,
+}
+
+fn process_instance(handle: HANDLE) -> Result<ProcessInstance, &'static str> {
+    let process_id = unsafe { GetProcessId(handle) };
+    if process_id == 0 {
+        return Err("observer-process-id-query-failed");
+    }
+    let (mut created, mut exited, mut kernel, mut user) = (
+        FILETIME::default(),
+        FILETIME::default(),
+        FILETIME::default(),
+        FILETIME::default(),
+    );
+    if unsafe { GetProcessTimes(handle, &mut created, &mut exited, &mut kernel, &mut user) } == 0 {
+        return Err("observer-process-birth-query-failed");
+    }
+    Ok(ProcessInstance {
+        process_id,
+        creation_filetime: format!(
+            "{:016x}",
+            (u64::from(created.dwHighDateTime) << 32) | u64::from(created.dwLowDateTime)
+        ),
+    })
+}
+
 struct ProcessHandle(Option<HANDLE>);
 
 impl ProcessHandle {
@@ -278,9 +307,17 @@ impl Observation {
         let wait_result = unsafe { WaitForSingleObject(handle, 0) };
         let mut exit_code = u32::MAX;
         let exit_known = unsafe { GetExitCodeProcess(handle, &raw mut exit_code) } != 0;
-        let actual_pid_after = unsafe { GetProcessId(handle) };
-        let identity_after = recovery_process_identity(handle, actual_pid_after);
-        let identity_equal = identity_after.as_ref() == Some(&record.identity);
+        // This is the SAME retained process object, never reopened by PID.
+        // Query actual kernel PID/birth after exit. The full image-file identity
+        // was observed while alive at bind, not freshly observed after exit.
+        let (process_identity_after, process_identity_error) = match process_instance(handle) {
+            Ok(identity) => (Some(identity), None),
+            Err(code) => (None, Some(code)),
+        };
+        let process_identity_equal = process_identity_after.as_ref().is_some_and(|identity| {
+            identity.process_id == record.identity.process_id
+                && identity.creation_filetime == record.identity.creation_filetime
+        });
         let observer_handle_closed = self.process.close();
         let normal = record.initially_alive
             && record.normal_entries == 1
@@ -298,13 +335,17 @@ impl Observation {
             && wait_result == WAIT_OBJECT_0
             && exit_known
             && exit_code == 0
-            && identity_equal
+            && process_identity_equal
             && observer_handle_closed;
         json!({
-            "kind":"actual-native-inner-core-stop-observation",
+            "kind":"actual-native-inner-core-stop-observation","schemaVersion":"2.0",
             "record":*record,
             "waitResult":wait_result,"exitCodeKnown":exit_known,"exitCode":exit_code,
-            "identityAfter":identity_after,"identityEqual":identity_equal,
+            "processIdentityAfter":process_identity_after,
+            "processIdentityQueryError":process_identity_error,
+            "processIdentityEqual":process_identity_equal,
+            "sameRetainedProcessHandle":true,
+            "imageIdentityObservedAtBind":record.identity.executable_identity,
             "observerHandleClosed":observer_handle_closed,"coreNormalContainedDrain":normal,
             "allOwnedRoleDrain":"requires-separate-actual-start-finish-observation",
             "limits":"Test-only queries add instrumentation overhead. No observer wait/kill/Job retention. This verdict alone cannot establish breakaway roles or all-owned drain."
@@ -407,6 +448,17 @@ mod tests {
         assert_eq!(normal["record"]["beforeClose"]["activeProcesses"], 0);
         assert_eq!(normal["record"]["beforeClose"]["completeProcessList"], true);
         assert_eq!(normal["exitCode"], 0);
+        assert_eq!(normal["schemaVersion"], "2.0");
+        assert_eq!(normal["processIdentityEqual"], true);
+        assert_eq!(normal["processIdentityQueryError"], Value::Null);
+        assert_eq!(
+            normal["processIdentityAfter"]["process_id"],
+            normal["record"]["identity"]["process_id"]
+        );
+        assert_eq!(
+            normal["processIdentityAfter"]["creation_filetime"],
+            normal["record"]["identity"]["creation_filetime"]
+        );
         assert_eq!(normal["observerHandleClosed"], true);
 
         let nonzero = stopped("nonzero", false, false);
@@ -428,6 +480,41 @@ mod tests {
         assert_eq!(late_force["exitCode"], 0);
         assert_eq!(late_force["record"]["terminateInvocations"], 1);
         assert_eq!(late_force["coreNormalContainedDrain"], false);
+    }
+
+    #[test]
+    fn synthetic_identity_substitution_denies_actual_process_proof() {
+        for substitute_pid in [false, true] {
+            let mut process = process("normal");
+            let observation = Observation::bind_running(&process, 1).unwrap();
+            let actual = observation.ticket.lock().unwrap().identity.clone();
+            assert_ne!(actual.creation_filetime, "0000000000000000");
+            // Synthetic observer-record substitutions only. The retained
+            // kernel object, real process and original cleanup are unchanged.
+            if substitute_pid {
+                observation.ticket.lock().unwrap().identity.process_id ^= 1;
+            } else {
+                observation
+                    .ticket
+                    .lock()
+                    .unwrap()
+                    .identity
+                    .creation_filetime = "0000000000000000".into();
+            }
+            assert!(stop_running_process(&mut process, &AtomicBool::new(false)));
+            drop(process);
+            let receipt = observation.finish();
+            assert_eq!(
+                receipt["processIdentityAfter"]["process_id"],
+                actual.process_id
+            );
+            assert_eq!(
+                receipt["processIdentityAfter"]["creation_filetime"],
+                actual.creation_filetime
+            );
+            assert_eq!(receipt["processIdentityEqual"], false);
+            assert_eq!(receipt["coreNormalContainedDrain"], false);
+        }
     }
 
     #[test]

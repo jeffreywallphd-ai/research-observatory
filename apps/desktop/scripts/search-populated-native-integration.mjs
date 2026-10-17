@@ -75,6 +75,7 @@ try {
   for(const stage of ["restart","final"]){
     const stop=JSON.parse(await readFile(path.join(fixture,`native-stop-${stage}.json`),"utf8"));
     assert.equal(stop.kind,"actual-native-inner-core-stop-observation");
+    assert.equal(stop.schemaVersion,"2.0");
     assert.equal(stop.stage,stage);
     assert.equal(stop.coreNormalContainedDrain,true);
     assert.equal(stop.boundedJourneyNormalLifetime,true);
@@ -92,8 +93,11 @@ try {
       assert.equal(before[key],0);
     assert.deepEqual(before.processIds,[]);
     assert.equal(stop.waitResult,0);assert.equal(stop.exitCodeKnown,true);assert.equal(stop.exitCode,0);
-    assert.equal(stop.identityEqual,true);assert.equal(stop.observerHandleClosed,true);
-    assert.deepEqual(stop.identityAfter,stop.record.identity);
+    assert.equal(stop.processIdentityEqual,true);assert.equal(stop.observerHandleClosed,true);
+    assert.equal(stop.processIdentityQueryError,null);assert.equal(stop.sameRetainedProcessHandle,true);
+    assert.equal(stop.imageIdentityObservedAtBind,stop.record.identity.executable_identity);
+    assert.deepEqual(stop.processIdentityAfter,{process_id:stop.record.identity.process_id,
+      creation_filetime:stop.record.identity.creation_filetime});
     const identity=stop.record.identity;
     assert.ok(Number.isSafeInteger(identity.process_id)&&identity.process_id>0&&identity.process_id<=0xffffffff);
     assert.match(identity.creation_filetime,/^[0-9a-f]{16}$/u);

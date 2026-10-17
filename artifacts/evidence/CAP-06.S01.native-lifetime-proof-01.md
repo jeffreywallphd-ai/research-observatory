@@ -55,3 +55,36 @@ refactoring or structural cleanup. The previously disclosed W3 cumulative R16
 forecast/P924 accounting is unchanged. Commit the bounded candidate before
 fresh runtime checks; independently review actual evidence before local
 integration. No product task/slice/Wave or release completion is asserted here.
+
+## Append-only first committed calibration failure
+
+Candidate `68d982773e37d3a7e2aeefb001f69343d991f53b` passed the exact six Python
+cases and affected quality. Qualifier03 compiled and ran all five Rust root
+cases: four passed, one failed, Cargo exit101. The normal process was signaled,
+exit0, with one normal stop, no stop force, one successful original close and
+an actual complete empty original Job before close. The old full identity
+helper returned None after exit; its exact failing substep was not recorded.
+The separate outer owner still had one active member after its unchanged10s
+drain window and used forced cleanup to actualzero. Preserve both failures,
+all raw output and all nine true fixity flags in qualifier03. No populated
+Native journey ran, and neither later cleanup nor an identity repair can waive
+the owner's natural-drain requirement.
+
+The missed acceptance row separated same-process continuity from fresh image
+file lookup after exit. The private observer now retains the same noninheritable
+process handle throughout and independently queries actual PID and creation
+FILETIME after exit; both must exactly match its live binding. The image-file
+identity remains explicitly observed-at-bind. Private receiptv2 names those
+facts separately; it never stamps old identity as a new observation. All
+signaled/known-zero-exit/no-force/preclose-empty/single-close predicates and
+all earlier calibration assertions remain. A sixth Rust calibration explicitly
+substitutes the recorded birth or PID while preserving the real process and handle,
+and must deny normal proof. The fixed producer must now require all six Rust
+cases, plus the existing six Python cases, before the original Native journey.
+
+Microsoft documents process creation/exit queries through the retained process
+handle and object validity until remaining handles close:
+[GetProcessTimes](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocesstimes),
+[process termination](https://learn.microsoft.com/en-us/windows/win32/procthread/terminating-a-process).
+These sources justify the observation design, not an unobserved failing API
+or a new runtime result. No shipping recovery helper, policy or deadline changes.
