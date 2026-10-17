@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: ed9f498f89ef65f403374c5482fa9b46c1086d3a0476e28197e5b0975cec291e
+source_sha256: 7dd92e2688cfc32c4200c92d71084edfd416e7d06f5adcd4544ad310e825765d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1002,6 +1002,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C34.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C35.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C36.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
+| `W3.C01.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1009,7 +1010,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
 | `W2` - Windows local evidence foundation | `APPROVED` | `COMPLETE` | `APPROVED` — artifacts/evidence/W2.initial-exit-independent-wave-disposition-20261016-01.json | 11/11 | 69/69 | `G2` / `APPROVED` |
-| `W3` - Windows local research workbench | `APPROVED` | `PAUSED` | `PAUSED` | 0/16 | 3/48 | `G3` / `PENDING` |
+| `W3` - Windows local research workbench | `APPROVED` | `PAUSED` | `PAUSED` | 0/16 | 3/49 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
 | `W6` - Cross-platform desktop qualification | `PENDING` | `NONE` | `PENDING` | 0/6 | 0/18 | `G6` / `PENDING` |
@@ -1065,7 +1066,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W3.C01.T01` Implement fielded search, filters, snippets, and ranking explanation | `IN_PROGRESS` | codex-w3-implementation | `codex/w3-implementation` |
 
 ## Linked corrective tasks
 
@@ -1234,4 +1237,8 @@ Original tasks and approvals remain unchanged.
 ### W2.C36.T01 — Build secure local PDF/page and structured-text viewer
 
 **Status:** `DONE`. **Original task:** `CAP-05.S04.T01`. **Latest review:** `approved`.
+
+### W3.C01.T01 — Implement fielded search, filters, snippets, and ranking explanation
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `-`.
 

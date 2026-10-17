@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ed9f498f89ef65f403374c5482fa9b46c1086d3a0476e28197e5b0975cec291e
+source_sha256: 7dd92e2688cfc32c4200c92d71084edfd416e7d06f5adcd4544ad310e825765d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6030,6 +6030,35 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-16T09:34:56+00:00`
 
 **Latest notes:** Approve the genuine frozen W2.C36.T01/R01 at measured fc694, with the later owner initial-W2 acceptance introduced at f86 explicitly distinguished. Reuse completed independent reviews of the two restorative CSS rules and specificity repair, fresh current205 and embedded Native206, reference/original snapshot19, and the full original Current14 90-case/180-capture machine component. All original machine predicates passed under actual closed inputs. Eight original Reader rights, streaming, cancellation, hostile-input and performance observations retain their historical provenance; they are not fresh C36 executions. The owner expressly ends further styling/checks and supersedes the unperformed capture-publication, final structural, visual and canonical-classification requirements for initial W2 closure. No canonical full-UI, credential scan, current Native GUI or fresh inherited latency PASS is claimed. Existing adverse evidence and limitations remain preserved for provisional W9 follow-up. This ledger records independent task disposition only; root records task/Wave/gate state through normal operations.
+
+**Currently open findings:** -
+
+### W3.C01.T01 — Implement fielded search, filters, snippets, and ranking explanation
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-06.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** Fresh committed populated Native slice trial at127372650c07489e7df413156193c084cb47d10b completed search execution but failed its one-item /projects/search/page at2037.9434ms with RO-CORE-API-RESPONSE-INVALID under the unchanged two-second Native response bound. Retained artifacts/tmp/CAP-06.S01.populated-native-runtime-01.json and its seven original receipts; full fresh recorder artifacts/tmp/CAP-06.S01.populated-native-qualification-01/report.json reports FAIL with all six source/runtime fixity flags true. Independent source inspection identifies a duplicate canonical open in each repeated query fence; actual failed invocation has no phase telemetry, so historical cause and concurrent-load contribution remain unknown.
+
+**Inherited criteria:**
+
+- Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish exact, field, and filter contributions.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights changes; expose ranks rather than probability.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/lexical_query_repository.py
+- tests/search/test_lexical_query_service.py
+#### Review history — W3.C01.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

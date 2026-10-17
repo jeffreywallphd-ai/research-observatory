@@ -197,6 +197,63 @@ class LexicalQueryServiceTests(CanonicalIndexFixture):
             after = self.f.sources.capture(self.f.item.item_id)
             self.assertTrue(any("activation boundary" in row.full_text for row in after.rows))
 
+    def test_fence_uses_one_current_canonical_transaction_for_selection_and_source(self):
+        from research_observatory_core import storage
+
+        self.service.rebuild()
+        reader = self.reader()
+        snapshot = reader.read(parse_query("identifiers:synthetic"))
+
+        def observe_phase():
+            # Observe the real protected opener through all imported aliases.
+            # Keep its actual connections and every existing storage control.
+            with patch.object(storage, "_open_canonical_database", wraps=storage._open_canonical_database) as opened:
+                reader._guarded_fence(
+                    snapshot.generation,
+                    snapshot.validation,
+                    lambda: False,
+                    source_epoch=snapshot.source_authority_epoch,
+                    time_partition=snapshot.rights_time_partition,
+                    validated_at=snapshot.validated_at,
+                )
+            return opened.call_count
+
+        # The outer authority guard remains real. Denial cases separately
+        # prevent satisfying this I/O budget by omitting freshness checks.
+        self.assertLessEqual(self.service._bounded(observe_phase), 1)
+
+    def test_republished_selection_during_delivery_discards_buffered_result(self):
+        self.service.rebuild()
+
+        def republish(snapshot, store):
+            lease = self.service.catalog.acquire(snapshot.generation.generation_id)
+            self.addCleanup(lease.close)
+            self.service.catalog.publish_ready(
+                lease,
+                store.projection(),
+                snapshot.validation,
+                expected_selection_id=snapshot.generation.selection_id,
+                revalidate=lambda db: self.service._fence(db, snapshot.validation),
+            )
+            self.assertNotEqual(snapshot.generation.selection_id, self.service.catalog.selected().selection_id)
+            return snapshot
+
+        with self.assertRaises(IndexServiceProblem):
+            self.reader().read(parse_query("identifiers:synthetic"), consume=republish)
+
+    def test_generation_cancelled_during_delivery_discards_buffered_result(self):
+        self.service.rebuild()
+
+        def invalidate(snapshot, _store):
+            lease = self.service.catalog.acquire(snapshot.generation.generation_id)
+            self.addCleanup(lease.close)
+            self.service.catalog.cancel(lease)
+            self.assertEqual("Incomplete", self.service.catalog.get(lease.generation_id).stage)
+            return snapshot
+
+        with self.assertRaises(IndexServiceProblem):
+            self.reader().read(parse_query("identifiers:synthetic"), consume=invalidate)
+
 
 if __name__ == "__main__":
     unittest.main()

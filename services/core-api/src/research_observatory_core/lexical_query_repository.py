@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 
 from .lexical_catalog_repository import IndexGeneration, IndexValidation
 from .lexical_index_repository import CoreLexicalIndexService, IndexServiceProblem
@@ -95,10 +95,32 @@ class CoreLexicalQueryService:
                 or rights_time_partition(db, index.project, now) != time_partition
             ):
                 raise IndexServiceProblem("search source authority changed")
+            # This fresh writer already owns current project/source authority.
+            # Authenticate the selected record and full generation here rather
+            # than opening another guarded connection for the same phase.
+            pointer = index.catalog._selection(db)
+            if (
+                selected.stage != "Ready"
+                or pointer is None
+                or (
+                    pointer["event_id"],
+                    pointer["generation_id"],
+                    pointer["generation_event_id"],
+                    pointer["checkpoint"],
+                    pointer["authority_sha256"],
+                )
+                != (
+                    selected.selection_id,
+                    selected.generation_id,
+                    selected.event_id,
+                    selected.checkpoint,
+                    selected.authority_sha256,
+                )
+                or index.catalog._load(db, selected.generation_id) != replace(selected, selection_id=None)
+            ):
+                raise IndexServiceProblem("search selection changed")
         if validation.expires_at is not None and index.catalog.now() >= validation.expires_at:
             raise IndexServiceProblem("search permission expired")
-        if index.catalog.selected() != selected:
-            raise IndexServiceProblem("search selection changed")
         index._current(selected)
         index._check_cancel(cancelled)
 

@@ -6634,7 +6634,58 @@
         "W4"
       ],
       "interrupting_change_request_ids": [],
-      "interrupting_recovery_request_ids": []
+      "interrupting_recovery_request_ids": [],
+      "corrective_tasks": [
+        {
+          "task_id": "W3.C01.T01",
+          "title": "Implement fielded search, filters, snippets, and ranking explanation",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish exact, field, and filter contributions.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.",
+            "Known-item top20 recall target >=0.90 on declared held-out queries; stable ties/pagination and snippets under rights changes; expose ranks rather than probability."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-06.S01.T03",
+            "origin_commit": "127372650c07489e7df413156193c084cb47d10b",
+            "paused_state_sha256": "24cad9a6ed10d99f789bf4d57f27cd55a6fe8b2f5d204cdee4f2ff154d991c4e",
+            "origin_sha256": "300e2322c7eb9059c2ea5341512757ba20830e67e359f7ead31df18339b4c55b",
+            "origin_contract_sha256": "112cf41af404ae65852ea40795d9810973c2541ff0d0cb7a2b0836aad8493c73",
+            "origin_history_sha256": "32327dfb9f0ed015ea1d0f8fdb5a57f0949afb40db3380bc4d92ca8619c26080",
+            "origin_amendment_id": null,
+            "authority_sha256": "01058d554893ceb8e32d078121e8ac8b9f48855191485c76e7cf620654e384c2",
+            "spec": {
+              "path": "artifacts/evidence/W3.C01.T01.spec.json",
+              "sha256": "0a3ebe04dbff06b8427f7dc98f7d81233302ea8140757cf0d3d30356508fbe35",
+              "commit": "c3c12aeaaaa031c15c0b2d56d188ec3386d54c3b"
+            },
+            "reproduction": "Fresh committed populated Native slice trial at127372650c07489e7df413156193c084cb47d10b completed search execution but failed its one-item /projects/search/page at2037.9434ms with RO-CORE-API-RESPONSE-INVALID under the unchanged two-second Native response bound. Retained artifacts/tmp/CAP-06.S01.populated-native-runtime-01.json and its seven original receipts; full fresh recorder artifacts/tmp/CAP-06.S01.populated-native-qualification-01/report.json reports FAIL with all six source/runtime fixity flags true. Independent source inspection identifies a duplicate canonical open in each repeated query fence; actual failed invocation has no phase telemetry, so historical cause and concurrent-load contribution remain unknown.",
+            "changed_paths": [
+              "services/core-api/src/research_observatory_core/lexical_query_repository.py",
+              "tests/search/test_lexical_query_service.py"
+            ],
+            "impact_analysis": "Restore the approved populated API response path by checking the exact selected generation and selection record within the same fresh canonical writer already checking source epochs, rights time and current actor authority. Retain complete lawful-universe validation before BM25, current key/path/lifecycle checks, cancellation, final post-consumer fences, all immutable SearchRun/lineage/rights bindings and the two-second Native transport bound. Add a failing regression for duplicate protected opens plus changed selection/generation denials; then execute current selected query/delivery/authority cases and fresh populated Native integration. No cross-request authorization cache, new API/AI mode, permission widening, migration, governed UX, baseline or release change. This is bounded defect restoration, with no structural cleanup or supplemental refactoring allocation; original approved W3 implementation estimate924hours and cumulative supplemental refactoring unchanged. Original task and adverse results remain immutable; slice/Wave/100k qualification remains pending."
+          },
+          "task_review": {
+            "task_id": "W3.C01.T01",
+            "title": "Implement fielded search, filters, snippets, and ranking explanation",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
+        }
+      ]
     },
     {
       "wave_id": "W4",
