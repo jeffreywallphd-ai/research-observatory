@@ -6629,7 +6629,7 @@
       "exit_gate_id": "G3",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "IN_PROGRESS",
+      "completion_status": "PAUSED",
       "unlocks_waves": [
         "W4"
       ],

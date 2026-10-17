@@ -9055,7 +9055,7 @@ waves:
       acceptance-only snapshot records ADR0056-58 and exact reference1.10 publication, independent activation review, and
       material bindings. No scope or estimates changed; G3 remains separate.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w3-implementation
     branch: codex/w3-implementation
@@ -9064,16 +9064,14 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-16T14:32:43+00:00'
-    updated_at: '2026-10-16T14:32:43+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w3-implementation
-      claimed_at: '2026-10-16T14:32:43+00:00'
-      expires_at: '2026-10-17T14:32:43+00:00'
+    updated_at: '2026-10-17T06:21:11+00:00'
+    pause_reason: Quiescent linked corrective route for demonstrated populated Native page response failure; restore current
+      candidate within unchanged approved authority, no human gate.
+    pause_category: infeasible
+    lease: null
   checkpoints: []
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
