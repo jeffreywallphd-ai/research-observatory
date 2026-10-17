@@ -5253,6 +5253,9 @@ impl ProcessTreeContainment {
     fn terminate(&self) {}
 }
 
+#[cfg(all(test, windows, feature = "integration-harness"))]
+mod populated_search_integration;
+
 #[cfg(test)]
 mod tests {
     use super::{CoreApiResponse, ImportProjectSelection};
