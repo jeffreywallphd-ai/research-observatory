@@ -1,0 +1,267 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-immutable-history-decoding-control-qualification",
+  "recordedAtUtc": "2026-10-17T17:52:26.292512+00:00",
+  "candidateCommit": "1ef03a45bc1706e9035cdfb4609f282df82923db",
+  "initialSourceCommit": "7042998289945b250a48532c8e98399e58afe539",
+  "integratedPredecessorCommit": "dfcaffbadf963f4bb7fd21c42ca915a14518f61a",
+  "sourceSha256": {
+    "artifacts/evidence/W3.history-decoding.maintenance-01.md": "4f78e6ca2dcbe59a3b6e75913cf0077fc4278aac518dabb59525bb92fb1bd2b3",
+    "quality-scope.json": "f2848c1b197829726c153471ff1c05afdf419acafe8ba2eb55887f5842cd519c",
+    "tests/foundation/test_taskctl_history_decoding.py": "e4da59e141f265cdc3dbe2b67b935da0e8e3551f9619f5cb5ba9fbd89174dd2e",
+    "tools/taskctl.py": "e180d97e96c689c64816dab44245a2dac1c5191cda676067a8bcf67983b8d457"
+  },
+  "authority": {
+    "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+    "ownerDirection": {
+      "path": "artifacts/evidence/W3.workflow-speed.owner-direction-20261017-01.json",
+      "sha256": "f3d00840c4dbcc266a98443a319ae0a39fae96c8e3dfcb04e77a55e7cbaee84b"
+    },
+    "maintenanceNote": {
+      "path": "artifacts/evidence/W3.history-decoding.maintenance-01.md",
+      "sha256": "4f78e6ca2dcbe59a3b6e75913cf0077fc4278aac518dabb59525bb92fb1bd2b3"
+    },
+    "preserved": "Same frozen W3 packet and active campaign. Private invocation-scoped immutable decoded facts only; every current decision/validator/approval/review/CAS boundary still executes. No new CLI/schema/state/controller/persistent cache, product/Core/API/Native/renderer/experience/security/migration/release authority."
+  },
+  "selectedQualification": {
+    "path": "artifacts/tmp/W3.history-decode-qualification-02/report.json",
+    "sha256": "2656d9362279d7b5de59dbfc8b2b6bf5ffb4e2bd902f4b6508634714dc1d0a08",
+    "status": "PASS",
+    "startedAtUtc": "2026-10-17T17:18:14.666558+00:00",
+    "completedAtUtc": "2026-10-17T17:19:03.771925+00:00",
+    "flags": {
+      "headUnchanged": true,
+      "mainUnchanged": true,
+      "inventoryUnchanged": true,
+      "inputBytesUnchanged": true,
+      "indexUnchanged": true,
+      "refsUnchanged": true,
+      "producerUnchanged": true,
+      "cleanAfter": true
+    },
+    "pythonExecutableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "producer": {
+      "path": "artifacts/tmp/W3.history-decode-qualification-02.py",
+      "sha256": "5f5485ab2998cd3147b9b4c6e0425b125ea8aaa4acc1e0ffac9754bc5b38c539"
+    },
+    "mode": "fresh actual execution at exact committed candidate",
+    "groups": [
+      {
+        "id": "immutable-facts-fresh-decisions-and-lifetime",
+        "exitCode": 0,
+        "seconds": 15.307984200015198,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.history-decode-qualification-02/immutable-facts-fresh-decisions-and-lifetime.log",
+        "outputSha256": "767fd7339df30c5ad0076f3d0fc8948f7c98ff4d4831feb4359b3c17f572fef7"
+      },
+      {
+        "id": "readiness-approval-and-history-schema",
+        "exitCode": 0,
+        "seconds": 8.206903400016017,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.history-decode-qualification-02/readiness-approval-and-history-schema.log",
+        "outputSha256": "20f7630cf3257963eb1ea4f47a6fad7dbf75504d4e04ef8499336eaf6f24c035"
+      },
+      {
+        "id": "real-git-authority-history-cas-review-release",
+        "exitCode": 0,
+        "seconds": 19.081188099982683,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.history-decode-qualification-02/real-git-authority-history-cas-review-release.log",
+        "outputSha256": "0d092d43bec3b7939e57f305efb81a9a8b8bf8959fd967406b85a1361c6ddf2a"
+      },
+      {
+        "id": "global-inventory-and-affected-quality",
+        "exitCode": 0,
+        "seconds": 3.1152378999977373,
+        "status": "PASS",
+        "outputPath": "artifacts/tmp/W3.history-decode-qualification-02/global-inventory-and-affected-quality.log",
+        "outputSha256": "60889b8b45b4f224fbca01c950e43ae8e0100591d067ded1312b4581230ecab9"
+      }
+    ],
+    "unittestCases": 64,
+    "passedCases": 64,
+    "skippedCases": 0,
+    "warning": "Deliberate cleanup-failure injection retains its implicit-cleanup ResourceWarning; no warning-free claim."
+  },
+  "completeReadiness": {
+    "path": "artifacts/tmp/W3.history-decode-full-readiness-02/report.json",
+    "sha256": "edcca4e049d59fcf9f6cd163024a29adaa5f6fd254950401950dff4fd2710c9c",
+    "status": "PASS",
+    "startedAtUtc": "2026-10-17T17:18:14.631951+00:00",
+    "completedAtUtc": "2026-10-17T17:52:11.241434+00:00",
+    "flags": {
+      "headEqualityAfter": true,
+      "mainEqualityAfter": true,
+      "inputInventoryEqualityAfter": true,
+      "inputEqualityAfter": true,
+      "indexEqualityAfter": true,
+      "refsEqualityAfter": true,
+      "producerEqualityAfter": true,
+      "ownedReadinessOutputCleaned": true,
+      "cleanStatusAfter": true
+    },
+    "pythonExecutableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "producer": {
+      "path": "artifacts/tmp/W3.history-decode-full-readiness-02.py",
+      "sha256": "5b59642616131c20ffdc5849ba7d23ef05623c277c9561fa1a22e88687861ac9"
+    },
+    "mode": "fresh actual execution at exact committed candidate",
+    "actualCommandExitCode": 0,
+    "commandSeconds": 2033.0230210999725,
+    "rawOutput": {
+      "path": "artifacts/tmp/W3.history-decode-full-readiness-02/raw.log",
+      "sha256": "69acc88f5622bea70af68af70a3cdabe7e065bb9785813f2544c4089c53d0b48"
+    },
+    "stageTimingLines": [
+      "READINESS_TIMING {\"elapsedSeconds\": 1034.226873, \"exitCode\": 0, \"stage\": \"site-generation\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.556035, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-06\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.103147, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-06\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.134888, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-07\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.284951, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-07\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.143417, \"exitCode\": 0, \"stage\": \"capability-plan:CAP-08\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 3.106372, \"exitCode\": 0, \"stage\": \"slice-plans:CAP-08\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 973.673441, \"exitCode\": 0, \"stage\": \"complete-site-validation\"}",
+      "READINESS_TIMING {\"elapsedSeconds\": 995.326807, \"exitCode\": 0, \"stage\": \"wave-validation-inclusive\"}"
+    ],
+    "limits": "Fresh actual full readiness CLI, unchanged component validators and complete byte/inventory/hash/semantic/link checker, at committed fixed inputs. The checker qualifies the owned generated site, not the retained canonical publication as fresh generated bytes. All canonical tracked bytes stay fixed; owned readiness site normally cleans on both success and failure, while caller raw logs/receipts/TEMP root remain retained. Cleanup failure denies success. No campaign mutation or cached validation verdict, whole installed-runtime/OS attestation, full Native journey or product/slice/Wave/release qualification claim."
+  },
+  "realCurrentLedgerCli": {
+    "path": "artifacts/tmp/W3.history-decode-current-validation-01/report.json",
+    "sha256": "1d1a89c77bf0039f8dcf5888ece15a6b5cb918fd2a762c6cf37724ad95179684",
+    "status": "PASS",
+    "startedAtUtc": "2026-10-17T17:20:04.481297+00:00",
+    "completedAtUtc": "2026-10-17T17:35:39.746142+00:00",
+    "flags": {
+      "headUnchanged": true,
+      "mainUnchanged": true,
+      "inventoryUnchanged": true,
+      "inputBytesUnchanged": true,
+      "indexUnchanged": true,
+      "refsUnchanged": true,
+      "producerUnchanged": true,
+      "cleanAfter": true
+    },
+    "pythonExecutableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "producer": {
+      "path": "artifacts/tmp/W3.history-decode-current-validation-01.py",
+      "sha256": "e998a4e931bbd3b383068d95e9dcb3274e74655b3214e8abbf6144a6b9f23324"
+    },
+    "mode": "fresh actual execution at exact committed candidate",
+    "actualCommandExitCode": 0,
+    "commandSeconds": 932.1400944999768,
+    "rawOutput": {
+      "path": "artifacts/tmp/W3.history-decode-current-validation-01/raw.log",
+      "sha256": "c63e88a76d235857363b25fda683d92e541b8bd86029b764717cf9ee44883bcf"
+    },
+    "limits": "Executes the actual full current-ledger CLI main/validate and existing real Git/history/authority/evidence controls; no mocks or mutation. This directly covers new invocation scope beyond isolated unit callbacks. One fresh observed command, not a matched whole-command speed comparison or cached verdict. Separate full readiness, independent disposition and product/slice/Wave/release qualification remain distinct."
+  },
+  "inputBoundary": {
+    "fileCount": 6969,
+    "allThreeInputMapsExactlyEqual": true,
+    "currentInputBytesAndInventoryEqual": true,
+    "limits": "Fixed HEAD, refs, index, inventory, bytes, producer and executable observations. Installed dependency/environment/OS closure is not attested. No reused validation verdict or prior readiness admission."
+  },
+  "criterionProof": [
+    {
+      "boundary": "Isolated immutable facts, unchanged malformed/nonmapping/alias/timestamp semantics, key binding, bounded retention, copy/eviction/finally/captured-context/thread behavior",
+      "proof": "19 focused immutable-facts-fresh-decisions-and-lifetime cases"
+    },
+    {
+      "boundary": "Readiness/approval/history schema and actual Git identity/ancestry/review/release/CAS denial behavior",
+      "proof": "33 readiness/schema cases plus12 real-Git controls; fresh complete generator/checker"
+    },
+    {
+      "boundary": "Actual main/validate invocation on complete current ledger, not only mocked fixture callback",
+      "proof": "realCurrentLedgerCli actual full read-only command exit0 and fixed-input flags"
+    },
+    {
+      "boundary": "Registered Python inventory and changed source format/lint/types",
+      "proof": "global-inventory-and-affected-quality actual selected command exit0"
+    }
+  ],
+  "diagnosticComparison": {
+    "path": "artifacts/tmp/W3.history-decode-comparison-03/report.json",
+    "sha256": "336905ae753f9c8884bc7e32c128da9cec0b53503588c7c3dcdad5915a925887",
+    "observation": "Three alternating warm-Git six-read pairs on same4306080-byte immutable payload: actual decodes6to1. Baseline min/median/max12.997292/13.005889/13.076701s; prototype2.291524/2.325821/2.345864s. Facts/isolation and all8 recorded flags match.",
+    "limits": "Retained exact historical helper/prototype diagnostic only, not current-source qualification, matched whole-command speedup, peak/RSS fit or cost saving. Full readiness stage durations are inclusive where labelled; do not sum overlapping stages."
+  },
+  "adverseHistory": [
+    {
+      "path": "artifacts/tmp/W3.history-decode-red-01.log",
+      "sha256": "e6a6f6a6a34ac5325b490f9f5606867fb64a14b9af6464e9665e367e33e76154",
+      "disposition": "Original unchanged controller behavioral red observes4decodes instead1; caller isolation passed before count failure."
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decode-prototype-tests-01/report.json",
+      "sha256": "acd6ed5768b2b5b4b5553ff20c51bcdbf51d499f5fc644e80482e9481ea1d34e",
+      "disposition": "Captured-context draft01 failure preserved; owning-state invalidation/clear and unchanged regression close HISTORY-SCOPE-01."
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decode-timestamp-red-01.log",
+      "sha256": "1d97bfcbf85c7ec3ed9cba947d73deea48c5a95e0da4ed2f572dcc906f8bebaf",
+      "disposition": "Valid nonUTC aware timestamp actual regression failed1instead2 after value/offset/isolation passed; exact same AST tracked. Aware datetime graph bypass closes HISTORY-BOUND-01 without parser/input/assertion reduction."
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decode-qualification-01/report.json",
+      "sha256": "5b64edcc63d251ce027acf008e3a03390406536afef7885f0f8b87002f0175cf",
+      "disposition": "63cases plus quality passed only at7042998; superseded source, never relabelled current qualification."
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decode-full-readiness-01/report.json",
+      "sha256": "d43bf83059013f50e66d99eee7220c3c697dc71bf1e7de168d1b990ecb3a0081",
+      "status": "FAIL",
+      "actualCommandExitCode": 1,
+      "commandSeconds": 175.41328640002757,
+      "flags": {
+        "headEqualityAfter": true,
+        "mainEqualityAfter": true,
+        "inputInventoryEqualityAfter": true,
+        "inputEqualityAfter": true,
+        "indexEqualityAfter": true,
+        "refsEqualityAfter": true,
+        "producerEqualityAfter": true,
+        "ownedReadinessOutputCleaned": true,
+        "cleanStatusAfter": true
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/W3.history-decode-full-readiness-01/raw.log",
+        "sha256": "9baa45d23fcf4fe2944f18deed1a43e9fb82a52b153877db111024cc74a92362"
+      },
+      "disposition": "Intentional exact-owned-generator interruption to remediate bound finding; first lossy timestamp ownership guard stopped nothing, native DateTime ticks then authenticated. Parent recorded actual failure/normal cleanup; superseded run remains FAIL."
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decode-quality-development-01/observation.json",
+      "sha256": "69a40f4b648679dbcaecdd9192e5867a0b1ef15263fc36f32788819aa77ece88",
+      "disposition": "Actual precommit6B023/20type errors preserved as development setup/source correction history. Positive type narrowing/default callback binding/type annotations fixed; no behavioral assertion weakened. No separately saved raw log invented."
+    }
+  ],
+  "developmentLimits": "Original comparison warm-up/provenance findings, Windows POSIX-key producer01 setup KeyError and captured-context draft failure remain separately retained in their original records. Prototype development PASS18 and current selected PASS64 are distinct. No failed attempt relabelled or overwritten.",
+  "independentSourceReviewHistory": [
+    {
+      "path": "artifacts/tmp/W3.history-decoding-committed-source-review-01.json",
+      "sha256": "6bea62d9320cc41617be85791fc170073c3ddcc31842993a799bada6fc583828"
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decoding-committed-bound-closure-02.json",
+      "sha256": "acf4b197bf8ba4128858237ec3b8ba96ea241f28f7b53058f1671c0d5100c4fd"
+    },
+    {
+      "path": "artifacts/tmp/W3.history-decoding-selected-evidence-review-02.json",
+      "sha256": "21947c40257e7fe830d2e99a26fd812de9c1ebdcbdf7ef4d1f161bfdb9216d0f"
+    }
+  ],
+  "accounting": {
+    "basis": "engineering hours",
+    "originalApprovedP": 924,
+    "plannedRefactoringIncludedOnce": 28,
+    "priorSameWaveSupplementalForecastR": 12,
+    "thisSameIncrementSpentPlusRemainingReserve": 4,
+    "cumulativeForecastR": 16,
+    "limit": 138.6,
+    "remaining": 122.6,
+    "interpretation": "Same disclosed allocations reconciled without reset, increase or double counting. Spent/remaining split not independently measured;16 is conservative forecast, not16 measured elapsed hours. Token/credit/cost usage unavailable in these receipts."
+  },
+  "next": "Independent final control/evidence disposition and documented local-main fast-forward; then continue unfinished CAP-06.S01 qualification and ordinary W3 through taskctl. No extra pause/resume from this maintenance.",
+  "limits": "This source/evidence increment does not complete a product task/slice/Wave, prove100k performance/resource/Native lifetime/scientific/packaging behavior, or approve G3. Fresh required product/slice/checkpoint/Wave proof retains existing owners. Broader framework prohibition remains."
+}
