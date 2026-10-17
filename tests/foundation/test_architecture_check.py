@@ -153,6 +153,52 @@ class ArchitectureContractTests(unittest.TestCase):
                     )
                     self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
 
+    def test_search_execution_adapters_are_root_only_and_denied_to_business_and_ports(self) -> None:
+        adapters = (
+            "lexical_input_repository",
+            "lexical_query_repository",
+            "lexical_run_repository",
+            "lexical_run_lineage",
+            "lexical_delivery",
+            "lexical_search_repository",
+        )
+        for adapter in adapters:
+            with self.subTest(adapter=adapter), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                (root / f"{adapter}.py").write_text(
+                    "import sqlite3\nfrom .storage import CanonicalConnection\n"
+                    "from .repositories import _SqliteAggregateRepository\n"
+                    "def save(connection):\n    connection.execute('SELECT 1')\n",
+                    encoding="utf-8",
+                )
+                (root / "main.py").write_text(f"from . import {adapter}\n", encoding="utf-8")
+                self.assertEqual([], core_data_boundary_errors(root))
+            for location in ("business.py", "ports/lexical.py"):
+                for source in (
+                    f"from research_observatory_core.{adapter} import Adapter\n",
+                    f"import research_observatory_core.{adapter}\n",
+                    f"from research_observatory_core import {adapter}\n",
+                    f"from . import {adapter}\n",
+                ):
+                    with (
+                        self.subTest(adapter=adapter, location=location, source=source),
+                        tempfile.TemporaryDirectory() as directory,
+                    ):
+                        root = Path(directory)
+                        path = root / location
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_text(source, encoding="utf-8")
+                        self.assertTrue(any("concrete" in error for error in core_data_boundary_errors(root)))
+            for location in (f"business/{adapter}.py", f"ports/{adapter}.py"):
+                with self.subTest(adapter=adapter, location=location), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    path = root / location
+                    path.parent.mkdir()
+                    path.write_text(
+                        "import sqlite3\ndef save(connection):\n    connection.execute('SELECT 1')\n", encoding="utf-8"
+                    )
+                    self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
+
     def test_model_catalog_adapter_is_owned_and_cannot_leak_into_business_or_ports(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

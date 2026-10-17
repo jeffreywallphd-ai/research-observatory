@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
+import secrets
 import sqlite3
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
@@ -23,7 +25,16 @@ from .ports.derivative_keys import (
     DerivativePurpose,
 )
 from .search.compiler import compile_query
-from .search.contracts import ANALYZER_ID, QueryDocument
+from .search.contracts import ANALYZER_ID, TEXT_FIELDS, QueryDocument, QueryNode
+from .search.ranking import (
+    FIELD_WEIGHTS,
+    MAX_EXPLANATION_ITEMS,
+    RankComponent,
+    RankedItem,
+    VerifiedSnippet,
+    positive_leaves,
+    verified_snippet,
+)
 from .storage import (
     StorageProblem,
     _configure_connection,
@@ -606,6 +617,120 @@ class ProtectedLexicalStore:
                 raise LexicalIndexCancelled("index operation cancelled") from None
             raise LexicalStoreProblem("protected index read failed") from None
 
+    def _best_leaf_rows(self, leaf: QueryNode, selected: set[str]) -> dict[str, tuple[str, float]]:
+        phrase = '"' + str(leaf.value).replace('"', '""') + '"'
+        if leaf.field is not None:
+            phrase = _COLUMNS[TEXT_FIELDS.index(leaf.field)] + " : " + phrase
+        rows = self._db.execute(
+            "SELECT r.item_id,r.entry_id,-bm25(search_fts," + ",".join("?" for _ in FIELD_WEIGHTS) + ") "
+            "FROM search_fts JOIN search_rows r ON r.rowid=search_fts.rowid "
+            "JOIN allowed_entries a ON a.entry_id=r.entry_id "
+            "JOIN allowed_items u ON u.item_id=r.item_id WHERE search_fts MATCH ? "
+            "ORDER BY r.item_id,r.entry_id",
+            (*FIELD_WEIGHTS, phrase),
+        )
+        best: dict[str, tuple[str, float]] = {}
+        for item, entry, score in rows:
+            self._check_cancel()
+            if item not in selected:
+                continue
+            if type(score) is not float or not math.isfinite(score) or score < 0:
+                raise LexicalStoreProblem("lexical rank is invalid")
+            previous = best.get(item)
+            if previous is None or (-score, entry) < (-previous[1], previous[0]):
+                best[item] = (entry, score)
+        return best
+
+    def rank(
+        self, query: QueryDocument, entries: tuple[str, ...], items: tuple[str, ...], *, explain_limit: int = 50
+    ) -> tuple[RankedItem, ...]:
+        """Rank one disjoint complete-item batch after Core validates ALL rows.
+
+        The allowed tables determine membership, never the BM25 statistical
+        universe. Core must prove the whole mirror is currently lawful first.
+        Each positive leaf contributes its best lawful row once per item;
+        Boolean membership still uses the existing cross-row set compiler.
+        """
+        if type(explain_limit) is not int or not 0 <= explain_limit <= MAX_EXPLANATION_ITEMS:
+            raise LexicalStoreProblem("rank explanation budget is invalid")
+        candidates = self.match(query, entries, items)
+        selected = set(candidates)
+        scores = dict.fromkeys(candidates, 0.0)
+        try:
+            self._current()
+            self._db.execute("BEGIN")
+            leaves = positive_leaves(query)
+            # Keep one scalar per candidate and one leaf's best-row working
+            # set. Never retain a corpus-size times query-size explanation
+            # matrix. The exact sorted leaf order defines IEEE-754 summation.
+            for _leaf_hash, leaf in leaves:
+                for item, (_entry, score) in self._best_leaf_rows(leaf, selected).items():
+                    scores[item] += score
+                    if not math.isfinite(scores[item]):
+                        raise LexicalStoreProblem("lexical rank is invalid")
+            ordered = sorted(scores, key=lambda item: (-scores[item], item))
+            explained = set(ordered[:explain_limit])
+            components: dict[str, list[RankComponent]] = {item: [] for item in explained}
+            if explained:
+                for leaf_hash, leaf in leaves:
+                    for item, (entry, score) in self._best_leaf_rows(leaf, explained).items():
+                        components[item].append(RankComponent(leaf_hash, entry, score))
+            result = tuple(RankedItem(item, scores[item], tuple(components.get(item, ()))) for item in ordered)
+            self._current()
+            self._db.execute("COMMIT")
+            return result
+        except (*_ERRORS, ValueError, LexicalStoreProblem):
+            self._rollback()
+            if self._was_cancelled:
+                raise LexicalIndexCancelled("index operation cancelled") from None
+            raise LexicalStoreProblem("protected index rank failed") from None
+
+    def snippet(self, query: QueryDocument, component: RankComponent, *, field: str) -> VerifiedSnippet:
+        """Internal exact mirror preview; Core reauthorizes the source/delivery.
+
+        This returns a projection range, never a fabricated structural node or
+        a permission to open the source in a different purpose-specific reader.
+        """
+        self._require_search()
+        self._was_cancelled = False
+        try:
+            leaves = dict(positive_leaves(query))
+            leaf = leaves.get(component.leaf_sha256)
+            fields = TEXT_FIELDS
+            if leaf is None or field not in fields or not _hash(component.entry_id):
+                raise LexicalStoreProblem("snippet address is invalid")
+            column = fields.index(field)
+            self._current()
+            if not self.sealed:
+                raise LexicalStoreProblem("index shadow is incomplete")
+            found = self._db.execute(
+                "SELECT " + _COLUMNS[column] + " FROM search_rows WHERE entry_id=?", (component.entry_id,)
+            ).fetchone()
+            if found is None:
+                raise LexicalStoreProblem("snippet source is unavailable")
+            original = found[0]
+            marker = secrets.token_hex(24)
+            opening, closing = "\ue000ro-open-" + marker + "\ue001", "\ue000ro-close-" + marker + "\ue001"
+            if opening in original or closing in original:
+                raise LexicalStoreProblem("snippet marker collision")
+            phrase = '"' + str(leaf.value).replace('"', '""') + '"'
+            if leaf.field is not None:
+                phrase = _COLUMNS[fields.index(leaf.field)] + " : " + phrase
+            marked = self._db.execute(
+                "SELECT highlight(search_fts,?,?,?) FROM search_fts "
+                "JOIN search_rows r ON r.rowid=search_fts.rowid WHERE search_fts MATCH ? AND r.entry_id=?",
+                (column, opening, closing, phrase, component.entry_id),
+            ).fetchone()
+            if marked is None:
+                raise LexicalStoreProblem("snippet match is unavailable")
+            result = verified_snippet(original, marked[0], opening, closing, field)
+            self._current()
+            return result
+        except (*_ERRORS, ValueError, LexicalStoreProblem):
+            if self._was_cancelled:
+                raise LexicalIndexCancelled("index operation cancelled") from None
+            raise LexicalStoreProblem("protected index snippet failed") from None
+
     def integrity_check(self) -> None:
         self._was_cancelled = False
         try:
@@ -665,6 +790,42 @@ class ProtectedLexicalStore:
                 raise LexicalIndexCancelled("index operation cancelled") from None
             raise LexicalStoreProblem("protected index projection is unavailable") from None
 
+    def _close_database(self, *, checkpointed: bool) -> None:
+        """Close both actual consumers before releasing any file/key holds.
+
+        The installed binding holds the GIL during connection.close(). Windows
+        WAL cleanup then retries deletion against our intentional deny-delete
+        guards. A genuine read-only companion keeps the writer from becoming
+        the last reader; it cannot acquire the exclusive lock for WAL cleanup
+        itself. Our existing authenticated guard cleanup remains the sole owner
+        of sidecar deletion. No persistent journal mode or dependency changes.
+        """
+        reader = None
+        try:
+            if checkpointed:
+                if self._guard is None or self._key is None:
+                    raise LexicalStoreProblem("index close authority is unavailable")
+                self._guard.check()
+                reader = sqlcipher.connect(
+                    _database_uri(self._guard.path, mode="ro"), uri=True, isolation_level=None, timeout=0.05
+                )
+                self._key.use(self._scope, lambda material: _key_sqlcipher_connection(reader, material))
+                reader.enable_load_extension(False)
+                reader.execute("PRAGMA query_only=ON")
+                reader.execute("PRAGMA trusted_schema=OFF")
+                reader.execute("BEGIN")
+                if reader.execute("SELECT singleton FROM index_state WHERE singleton=1").fetchone() != (1,):
+                    raise LexicalStoreProblem("index close binding is unavailable")
+                self._guard.check()
+        finally:
+            # Companion setup may fail after opening a real connection. Neither
+            # that failure nor writer-close failure can skip the other drain.
+            try:
+                self._db.close()
+            finally:
+                if reader is not None:
+                    reader.close()
+
     def close(self) -> None:
         if self._closed:
             return
@@ -685,7 +846,7 @@ class ProtectedLexicalStore:
                 except (*_ERRORS, LexicalStoreProblem):
                     failed = True
                 finally:
-                    self._db.close()
+                    self._close_database(checkpointed=clean)
         except _ERRORS:
             failed = True
         finally:

@@ -101,6 +101,7 @@ class ImportPreviewMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             plan.migration_ids,
         )
@@ -115,7 +116,7 @@ class ImportPreviewMigrationTests(unittest.TestCase):
             backup.close()
         current = storage.open_canonical_database(self.database, expected_project_id=predecessor.PROJECT_ID)
         try:
-            self.assertEqual(29, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, current.execute("PRAGMA user_version").fetchone()[0])
             for table in PREVIEW_TABLES:
                 self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
             self.assertEqual("dark", current.execute("SELECT text_value FROM settings").fetchone()[0])

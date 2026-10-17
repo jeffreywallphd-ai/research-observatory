@@ -118,6 +118,7 @@ class CorpusMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             plan.migration_ids,
         )
@@ -138,6 +139,7 @@ class CorpusMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             result.migration_ids,
         )
@@ -169,6 +171,7 @@ class CorpusMigrationTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ],
             manifest["migrationIds"],
         )

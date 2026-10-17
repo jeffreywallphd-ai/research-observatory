@@ -50,6 +50,7 @@ from research_observatory_core.migrations.versions import (
     v0027_revision_invalidations,
     v0028_document_enrichments,
     v0029_lexical_index_generations,
+    v0030_lexical_search_runs,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -268,6 +269,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0027_revision_invalidations.revision,
             v0028_document_enrichments.revision,
             v0029_lexical_index_generations.revision,
+            v0030_lexical_search_runs.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -479,6 +481,10 @@ _SUPPORTED_PROFILES = {
     storage.LEXICAL_INDEX_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
         storage.LEXICAL_INDEX_PREDECESSOR_PROFILE_SHA256,
         storage.LEXICAL_INDEX_PREDECESSOR_SCHEMA_SHA256,
+    ),
+    storage.SEARCH_RUN_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
+        storage.SEARCH_RUN_PREDECESSOR_PROFILE_SHA256,
+        storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256,
     ),
 }
 
@@ -801,6 +807,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             28,
             29,
             storage.LEXICAL_INDEX_PREDECESSOR_SCHEMA_SHA256,
+            storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256,
+        ),
+        (
+            v0030_lexical_search_runs.revision,
+            29,
+            30,
+            storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -991,9 +1004,17 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         == storage.LEXICAL_INDEX_PREDECESSOR_DATABASE_SCHEMA_VERSION
         and v0029_lexical_index_generations.SOURCE_SCHEMA_SHA256 == storage.LEXICAL_INDEX_PREDECESSOR_SCHEMA_SHA256
         and v0029_lexical_index_generations.SOURCE_PROFILE_SHA256 == storage.LEXICAL_INDEX_PREDECESSOR_PROFILE_SHA256
-        and v0029_lexical_index_generations.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0029_lexical_index_generations.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0029_lexical_index_generations.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0029_lexical_index_generations.target_schema_version
+        == storage.SEARCH_RUN_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0029_lexical_index_generations.TARGET_SCHEMA_SHA256 == storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256
+        and v0029_lexical_index_generations.TARGET_PROFILE_SHA256 == storage.SEARCH_RUN_PREDECESSOR_PROFILE_SHA256
+        and v0030_lexical_search_runs.down_revision == v0029_lexical_index_generations.revision
+        and v0030_lexical_search_runs.source_schema_version == storage.SEARCH_RUN_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0030_lexical_search_runs.SOURCE_SCHEMA_SHA256 == storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256
+        and v0030_lexical_search_runs.SOURCE_PROFILE_SHA256 == storage.SEARCH_RUN_PREDECESSOR_PROFILE_SHA256
+        and v0030_lexical_search_runs.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0030_lexical_search_runs.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0030_lexical_search_runs.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -1026,6 +1047,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         v0027_revision_invalidations,
         v0028_document_enrichments,
         v0029_lexical_index_generations,
+        v0030_lexical_search_runs,
     )
     for index, migration in enumerate(chain):
         if source_version == migration.source_schema_version:
@@ -2144,10 +2166,26 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.LEXICAL_INDEX_PREDECESSOR_SCHEMA_SHA256,
+                "target_schema_sha256": storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256,
+                "targetProfileSha256": storage.SEARCH_RUN_PREDECESSOR_PROFILE_SHA256,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V29_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+
+    if source_schema_version <= storage.SEARCH_RUN_PREDECESSOR_DATABASE_SCHEMA_VERSION:
+        v0030_lexical_search_runs.apply(
+            operations,
+            {
+                "migration_id": v0030_lexical_search_runs.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.SEARCH_RUN_PREDECESSOR_SCHEMA_SHA256,
                 "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
-                "schemaMetadataDdl": storage.SCHEMA_METADATA_V29_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V30_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )

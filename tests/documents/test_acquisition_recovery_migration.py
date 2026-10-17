@@ -22,6 +22,7 @@ from research_observatory_core.migrations.versions import v0026_document_revisio
 from research_observatory_core.migrations.versions import v0027_revision_invalidations as invalidation  # noqa: E402
 from research_observatory_core.migrations.versions import v0028_document_enrichments as enrichment  # noqa: E402
 from research_observatory_core.migrations.versions import v0029_lexical_index_generations as lexical  # noqa: E402
+from research_observatory_core.migrations.versions import v0030_lexical_search_runs as search_runs  # noqa: E402
 
 
 class AcquisitionRecoveryMigrationTests(unittest.TestCase):
@@ -100,6 +101,7 @@ class AcquisitionRecoveryMigrationTests(unittest.TestCase):
                         invalidation.revision,
                         enrichment.revision,
                         lexical.revision,
+                        search_runs.revision,
                     ),
                     plan.migration_ids,
                 )

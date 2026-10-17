@@ -35,6 +35,7 @@ from .corpus_query import ConnectorWorkerQueryResolver
 from .corpus_report_repository import SqliteCorpusReportRepository
 from .corpus_repository import SqliteCorpusRepository
 from .corpus_service import CorpusService
+from .derivative_keys import VaultDerivativeKeyProvider
 from .document_attachment_api import (
     DocumentAccessNeedCommand,
     DocumentCandidateRecovery,
@@ -51,6 +52,7 @@ from .document_viewer_repository import LocalDocumentViewerRepository
 from .document_viewer_service import DocumentViewerService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
+from .lexical_search_repository import SqliteLexicalSearchRepository
 from .logging import emit_log_record
 from .migrations.runner import migration_framework_projection
 from .model_catalog import ModelCatalogService
@@ -808,6 +810,16 @@ def create_runtime_app(
             repository_factory=LocalDocumentRevisionRepository,
             reconciliation=reconciliation,
         )
+        if resolved_database_provider is not None:
+            document_revisions.search = SqliteLexicalSearchRepository(
+                document_revisions,
+                derivative_keys=VaultDerivativeKeyProvider(
+                    WindowsCredentialStore(profile_vault_root or default_windows_profile_vault_path()),
+                    profile_id="local-profile",
+                    database_keys=resolved_database_provider,
+                ),
+                database_keys=resolved_database_provider,
+            )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,

@@ -1,0 +1,1311 @@
+{
+  "schemaVersion": "1.0",
+  "fixtureId": "ro-synthetic-known-items-1",
+  "purpose": "Deterministic technical known-item retrieval, not scientific relevance or human-annotated model evaluation.",
+  "authorship": "Artificial fixture authored for this repository; every work, title, identifier and author is synthetic. No real paper, citation, person, participant or research result is represented.",
+  "rights": "Repository test material; no external dataset or source content is included.",
+  "freezePolicy": "Authored before T03 product edits and candidate comparison. Case/split/query/expected-target membership is fixed. Runtime Core-minted item IDs must be bound to these case IDs before lookup. Preserve every query outcome; do not tune or replace held-out members after results.",
+  "scopeLimits": [
+    "Exact title and DOI lookup only; no external corpus recall, systematic coverage, scientific gold, human annotation or model-quality claim.",
+    "64 synthetic records: 4 development, 32 held-out and 28 distractors; 8 development and 64 held-out queries, reported separately by title/DOI.",
+    "Ranking/Boolean/filter/rights/snippet/paging failures require separate behavioral tests; this lookup fixture does not establish those boundaries."
+  ],
+  "criterion": {
+    "statistic": "mean per-query recall@20 over the complete held-out query list",
+    "minimum": 0.9,
+    "expectedTargetsPerQuery": 1,
+    "failedOrTimedOutQueries": "Retained technical failures, never silently removed or converted into successful abstentions."
+  },
+  "items": [
+    {
+      "caseId": "case-001",
+      "split": "development",
+      "title": "Synthetic retrieval fixture 001: river archives",
+      "doi": "10.00000/ro-synthetic.001",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 001",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-002",
+      "split": "development",
+      "title": "Synthetic retrieval fixture 002: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.002",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 002",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-003",
+      "split": "development",
+      "title": "Synthetic retrieval fixture 003: orchard networks",
+      "doi": "10.00000/ro-synthetic.003",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 003",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-004",
+      "split": "development",
+      "title": "Synthetic retrieval fixture 004: granite signals",
+      "doi": "10.00000/ro-synthetic.004",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 004",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-005",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 005: café ledgers",
+      "doi": "10.00000/ro-synthetic.005",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 005",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-006",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 006: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.006",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 006",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-007",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 007: solar indexes",
+      "doi": "10.00000/ro-synthetic.007",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 007",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-008",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 008: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.008",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 008",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-009",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 009: river archives",
+      "doi": "10.00000/ro-synthetic.009",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 009",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-010",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 010: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.010",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 010",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-011",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 011: orchard networks",
+      "doi": "10.00000/ro-synthetic.011",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 011",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-012",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 012: granite signals",
+      "doi": "10.00000/ro-synthetic.012",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 012",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-013",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 013: café ledgers",
+      "doi": "10.00000/ro-synthetic.013",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 013",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-014",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 014: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.014",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 014",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-015",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 015: solar indexes",
+      "doi": "10.00000/ro-synthetic.015",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 015",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-016",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 016: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.016",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 016",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-017",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 017: river archives",
+      "doi": "10.00000/ro-synthetic.017",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 017",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-018",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 018: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.018",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 018",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-019",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 019: orchard networks",
+      "doi": "10.00000/ro-synthetic.019",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 019",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-020",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 020: granite signals",
+      "doi": "10.00000/ro-synthetic.020",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 020",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-021",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 021: café ledgers",
+      "doi": "10.00000/ro-synthetic.021",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 021",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-022",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 022: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.022",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 022",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-023",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 023: solar indexes",
+      "doi": "10.00000/ro-synthetic.023",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 023",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-024",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 024: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.024",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 024",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-025",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 025: river archives",
+      "doi": "10.00000/ro-synthetic.025",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 025",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-026",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 026: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.026",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 026",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-027",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 027: orchard networks",
+      "doi": "10.00000/ro-synthetic.027",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 027",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-028",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 028: granite signals",
+      "doi": "10.00000/ro-synthetic.028",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 028",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-029",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 029: café ledgers",
+      "doi": "10.00000/ro-synthetic.029",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 029",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-030",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 030: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.030",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 030",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-031",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 031: solar indexes",
+      "doi": "10.00000/ro-synthetic.031",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 031",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-032",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 032: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.032",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 032",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-033",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 033: river archives",
+      "doi": "10.00000/ro-synthetic.033",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 033",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-034",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 034: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.034",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 034",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-035",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 035: orchard networks",
+      "doi": "10.00000/ro-synthetic.035",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 035",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-036",
+      "split": "held-out",
+      "title": "Synthetic retrieval fixture 036: granite signals",
+      "doi": "10.00000/ro-synthetic.036",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 036",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-037",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 037: café ledgers",
+      "doi": "10.00000/ro-synthetic.037",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 037",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-038",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 038: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.038",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 038",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-039",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 039: solar indexes",
+      "doi": "10.00000/ro-synthetic.039",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 039",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-040",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 040: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.040",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 040",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-041",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 041: river archives",
+      "doi": "10.00000/ro-synthetic.041",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 041",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-042",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 042: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.042",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 042",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-043",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 043: orchard networks",
+      "doi": "10.00000/ro-synthetic.043",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 043",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-044",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 044: granite signals",
+      "doi": "10.00000/ro-synthetic.044",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 044",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-045",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 045: café ledgers",
+      "doi": "10.00000/ro-synthetic.045",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 045",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-046",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 046: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.046",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 046",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-047",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 047: solar indexes",
+      "doi": "10.00000/ro-synthetic.047",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 047",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-048",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 048: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.048",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 048",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-049",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 049: river archives",
+      "doi": "10.00000/ro-synthetic.049",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 049",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-050",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 050: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.050",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 050",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-051",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 051: orchard networks",
+      "doi": "10.00000/ro-synthetic.051",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 051",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-052",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 052: granite signals",
+      "doi": "10.00000/ro-synthetic.052",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 052",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-053",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 053: café ledgers",
+      "doi": "10.00000/ro-synthetic.053",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 053",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-054",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 054: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.054",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 054",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-055",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 055: solar indexes",
+      "doi": "10.00000/ro-synthetic.055",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 055",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-056",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 056: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.056",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 056",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-057",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 057: river archives",
+      "doi": "10.00000/ro-synthetic.057",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 057",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-058",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 058: lunar catalogues",
+      "doi": "10.00000/ro-synthetic.058",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 058",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-059",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 059: orchard networks",
+      "doi": "10.00000/ro-synthetic.059",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 059",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    },
+    {
+      "caseId": "case-060",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 060: granite signals",
+      "doi": "10.00000/ro-synthetic.060",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 060",
+      "venue": "Synthetic test collection",
+      "year": 2024
+    },
+    {
+      "caseId": "case-061",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 061: café ledgers",
+      "doi": "10.00000/ro-synthetic.061",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 061",
+      "venue": "Synthetic test collection",
+      "year": 2020
+    },
+    {
+      "caseId": "case-062",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 062: marsh chronicles",
+      "doi": "10.00000/ro-synthetic.062",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 062",
+      "venue": "Synthetic test collection",
+      "year": 2021
+    },
+    {
+      "caseId": "case-063",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 063: solar indexes",
+      "doi": "10.00000/ro-synthetic.063",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 063",
+      "venue": "Synthetic test collection",
+      "year": 2022
+    },
+    {
+      "caseId": "case-064",
+      "split": "distractor",
+      "title": "Synthetic retrieval fixture 064: 📚 répertoires",
+      "doi": "10.00000/ro-synthetic.064",
+      "abstract": "Artificial technical lookup material for local search tests. This is not a publication or a research result.",
+      "authors": "Synthetic test author 064",
+      "venue": "Synthetic test collection",
+      "year": 2023
+    }
+  ],
+  "queries": [
+    {
+      "queryId": "case-001-title",
+      "split": "development",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 001: river archives\"",
+      "expectedCaseIds": [
+        "case-001"
+      ]
+    },
+    {
+      "queryId": "case-001-doi",
+      "split": "development",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.001\"",
+      "expectedCaseIds": [
+        "case-001"
+      ]
+    },
+    {
+      "queryId": "case-002-title",
+      "split": "development",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 002: lunar catalogues\"",
+      "expectedCaseIds": [
+        "case-002"
+      ]
+    },
+    {
+      "queryId": "case-002-doi",
+      "split": "development",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.002\"",
+      "expectedCaseIds": [
+        "case-002"
+      ]
+    },
+    {
+      "queryId": "case-003-title",
+      "split": "development",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 003: orchard networks\"",
+      "expectedCaseIds": [
+        "case-003"
+      ]
+    },
+    {
+      "queryId": "case-003-doi",
+      "split": "development",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.003\"",
+      "expectedCaseIds": [
+        "case-003"
+      ]
+    },
+    {
+      "queryId": "case-004-title",
+      "split": "development",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 004: granite signals\"",
+      "expectedCaseIds": [
+        "case-004"
+      ]
+    },
+    {
+      "queryId": "case-004-doi",
+      "split": "development",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.004\"",
+      "expectedCaseIds": [
+        "case-004"
+      ]
+    },
+    {
+      "queryId": "case-005-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 005: café ledgers\"",
+      "expectedCaseIds": [
+        "case-005"
+      ]
+    },
+    {
+      "queryId": "case-005-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.005\"",
+      "expectedCaseIds": [
+        "case-005"
+      ]
+    },
+    {
+      "queryId": "case-006-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 006: marsh chronicles\"",
+      "expectedCaseIds": [
+        "case-006"
+      ]
+    },
+    {
+      "queryId": "case-006-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.006\"",
+      "expectedCaseIds": [
+        "case-006"
+      ]
+    },
+    {
+      "queryId": "case-007-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 007: solar indexes\"",
+      "expectedCaseIds": [
+        "case-007"
+      ]
+    },
+    {
+      "queryId": "case-007-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.007\"",
+      "expectedCaseIds": [
+        "case-007"
+      ]
+    },
+    {
+      "queryId": "case-008-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 008: 📚 répertoires\"",
+      "expectedCaseIds": [
+        "case-008"
+      ]
+    },
+    {
+      "queryId": "case-008-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.008\"",
+      "expectedCaseIds": [
+        "case-008"
+      ]
+    },
+    {
+      "queryId": "case-009-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 009: river archives\"",
+      "expectedCaseIds": [
+        "case-009"
+      ]
+    },
+    {
+      "queryId": "case-009-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.009\"",
+      "expectedCaseIds": [
+        "case-009"
+      ]
+    },
+    {
+      "queryId": "case-010-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 010: lunar catalogues\"",
+      "expectedCaseIds": [
+        "case-010"
+      ]
+    },
+    {
+      "queryId": "case-010-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.010\"",
+      "expectedCaseIds": [
+        "case-010"
+      ]
+    },
+    {
+      "queryId": "case-011-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 011: orchard networks\"",
+      "expectedCaseIds": [
+        "case-011"
+      ]
+    },
+    {
+      "queryId": "case-011-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.011\"",
+      "expectedCaseIds": [
+        "case-011"
+      ]
+    },
+    {
+      "queryId": "case-012-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 012: granite signals\"",
+      "expectedCaseIds": [
+        "case-012"
+      ]
+    },
+    {
+      "queryId": "case-012-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.012\"",
+      "expectedCaseIds": [
+        "case-012"
+      ]
+    },
+    {
+      "queryId": "case-013-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 013: café ledgers\"",
+      "expectedCaseIds": [
+        "case-013"
+      ]
+    },
+    {
+      "queryId": "case-013-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.013\"",
+      "expectedCaseIds": [
+        "case-013"
+      ]
+    },
+    {
+      "queryId": "case-014-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 014: marsh chronicles\"",
+      "expectedCaseIds": [
+        "case-014"
+      ]
+    },
+    {
+      "queryId": "case-014-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.014\"",
+      "expectedCaseIds": [
+        "case-014"
+      ]
+    },
+    {
+      "queryId": "case-015-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 015: solar indexes\"",
+      "expectedCaseIds": [
+        "case-015"
+      ]
+    },
+    {
+      "queryId": "case-015-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.015\"",
+      "expectedCaseIds": [
+        "case-015"
+      ]
+    },
+    {
+      "queryId": "case-016-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 016: 📚 répertoires\"",
+      "expectedCaseIds": [
+        "case-016"
+      ]
+    },
+    {
+      "queryId": "case-016-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.016\"",
+      "expectedCaseIds": [
+        "case-016"
+      ]
+    },
+    {
+      "queryId": "case-017-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 017: river archives\"",
+      "expectedCaseIds": [
+        "case-017"
+      ]
+    },
+    {
+      "queryId": "case-017-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.017\"",
+      "expectedCaseIds": [
+        "case-017"
+      ]
+    },
+    {
+      "queryId": "case-018-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 018: lunar catalogues\"",
+      "expectedCaseIds": [
+        "case-018"
+      ]
+    },
+    {
+      "queryId": "case-018-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.018\"",
+      "expectedCaseIds": [
+        "case-018"
+      ]
+    },
+    {
+      "queryId": "case-019-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 019: orchard networks\"",
+      "expectedCaseIds": [
+        "case-019"
+      ]
+    },
+    {
+      "queryId": "case-019-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.019\"",
+      "expectedCaseIds": [
+        "case-019"
+      ]
+    },
+    {
+      "queryId": "case-020-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 020: granite signals\"",
+      "expectedCaseIds": [
+        "case-020"
+      ]
+    },
+    {
+      "queryId": "case-020-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.020\"",
+      "expectedCaseIds": [
+        "case-020"
+      ]
+    },
+    {
+      "queryId": "case-021-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 021: café ledgers\"",
+      "expectedCaseIds": [
+        "case-021"
+      ]
+    },
+    {
+      "queryId": "case-021-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.021\"",
+      "expectedCaseIds": [
+        "case-021"
+      ]
+    },
+    {
+      "queryId": "case-022-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 022: marsh chronicles\"",
+      "expectedCaseIds": [
+        "case-022"
+      ]
+    },
+    {
+      "queryId": "case-022-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.022\"",
+      "expectedCaseIds": [
+        "case-022"
+      ]
+    },
+    {
+      "queryId": "case-023-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 023: solar indexes\"",
+      "expectedCaseIds": [
+        "case-023"
+      ]
+    },
+    {
+      "queryId": "case-023-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.023\"",
+      "expectedCaseIds": [
+        "case-023"
+      ]
+    },
+    {
+      "queryId": "case-024-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 024: 📚 répertoires\"",
+      "expectedCaseIds": [
+        "case-024"
+      ]
+    },
+    {
+      "queryId": "case-024-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.024\"",
+      "expectedCaseIds": [
+        "case-024"
+      ]
+    },
+    {
+      "queryId": "case-025-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 025: river archives\"",
+      "expectedCaseIds": [
+        "case-025"
+      ]
+    },
+    {
+      "queryId": "case-025-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.025\"",
+      "expectedCaseIds": [
+        "case-025"
+      ]
+    },
+    {
+      "queryId": "case-026-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 026: lunar catalogues\"",
+      "expectedCaseIds": [
+        "case-026"
+      ]
+    },
+    {
+      "queryId": "case-026-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.026\"",
+      "expectedCaseIds": [
+        "case-026"
+      ]
+    },
+    {
+      "queryId": "case-027-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 027: orchard networks\"",
+      "expectedCaseIds": [
+        "case-027"
+      ]
+    },
+    {
+      "queryId": "case-027-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.027\"",
+      "expectedCaseIds": [
+        "case-027"
+      ]
+    },
+    {
+      "queryId": "case-028-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 028: granite signals\"",
+      "expectedCaseIds": [
+        "case-028"
+      ]
+    },
+    {
+      "queryId": "case-028-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.028\"",
+      "expectedCaseIds": [
+        "case-028"
+      ]
+    },
+    {
+      "queryId": "case-029-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 029: café ledgers\"",
+      "expectedCaseIds": [
+        "case-029"
+      ]
+    },
+    {
+      "queryId": "case-029-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.029\"",
+      "expectedCaseIds": [
+        "case-029"
+      ]
+    },
+    {
+      "queryId": "case-030-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 030: marsh chronicles\"",
+      "expectedCaseIds": [
+        "case-030"
+      ]
+    },
+    {
+      "queryId": "case-030-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.030\"",
+      "expectedCaseIds": [
+        "case-030"
+      ]
+    },
+    {
+      "queryId": "case-031-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 031: solar indexes\"",
+      "expectedCaseIds": [
+        "case-031"
+      ]
+    },
+    {
+      "queryId": "case-031-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.031\"",
+      "expectedCaseIds": [
+        "case-031"
+      ]
+    },
+    {
+      "queryId": "case-032-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 032: 📚 répertoires\"",
+      "expectedCaseIds": [
+        "case-032"
+      ]
+    },
+    {
+      "queryId": "case-032-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.032\"",
+      "expectedCaseIds": [
+        "case-032"
+      ]
+    },
+    {
+      "queryId": "case-033-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 033: river archives\"",
+      "expectedCaseIds": [
+        "case-033"
+      ]
+    },
+    {
+      "queryId": "case-033-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.033\"",
+      "expectedCaseIds": [
+        "case-033"
+      ]
+    },
+    {
+      "queryId": "case-034-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 034: lunar catalogues\"",
+      "expectedCaseIds": [
+        "case-034"
+      ]
+    },
+    {
+      "queryId": "case-034-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.034\"",
+      "expectedCaseIds": [
+        "case-034"
+      ]
+    },
+    {
+      "queryId": "case-035-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 035: orchard networks\"",
+      "expectedCaseIds": [
+        "case-035"
+      ]
+    },
+    {
+      "queryId": "case-035-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.035\"",
+      "expectedCaseIds": [
+        "case-035"
+      ]
+    },
+    {
+      "queryId": "case-036-title",
+      "split": "held-out",
+      "kind": "title",
+      "originalQuery": "title:\"Synthetic retrieval fixture 036: granite signals\"",
+      "expectedCaseIds": [
+        "case-036"
+      ]
+    },
+    {
+      "queryId": "case-036-doi",
+      "split": "held-out",
+      "kind": "doi",
+      "originalQuery": "identifiers:\"10.00000/ro-synthetic.036\"",
+      "expectedCaseIds": [
+        "case-036"
+      ]
+    }
+  ]
+}

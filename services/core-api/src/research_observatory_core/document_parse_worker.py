@@ -20,12 +20,16 @@ def document_worker_policy(project_id: str) -> ProjectWorkerPolicy:
     """All Core document-lane adapters share one immutable project policy."""
     metadata = WorkerResources(1, 256 * 1024**2, 0, 1024**3)
     parser = WorkerResources(4, 4 * 1024**3, 0, 1024**3)
+    search = WorkerResources(1, 512 * 1024**2, 0, 1024**3)
     return ProjectWorkerPolicy(
         project_id,
         parser,
         {"document": metadata},
         {"document": 1},
-        activity_demands={"document-parse": ActivityWorkerDemand("document", parser, exclusive=True)},
+        activity_demands={
+            "document-parse": ActivityWorkerDemand("document", parser, exclusive=True),
+            "lexical-search": ActivityWorkerDemand("document", search, exclusive=True),
+        },
     )
 
 

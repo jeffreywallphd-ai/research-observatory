@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from core_api_reconciliation import render_reconciliation
+from core_api_search import render_search
 
 GENERATOR_VERSION = "1.0.0"
 HTTP_METHODS = ("get", "post", "put", "patch", "delete")
@@ -2788,10 +2789,13 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
         f"export type CoreApiOperationId = {operation_union};\n\n"
     )
     reconciliation, methods = render_reconciliation(openapi)
+    search, search_methods = render_search(openapi)
     runtime = CLIENT_RUNTIME.replace(
         "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({",
         "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({\n"
         + CORPUS_METHODS
+        + "\n"
+        + search_methods
         + "\n"
         + methods,
     )
@@ -2804,6 +2808,8 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
         + reconciliation
         + "\n"
         + CORPUS_RUNTIME.strip()
+        + "\n"
+        + search
         + "\n"
     ).encode()
 

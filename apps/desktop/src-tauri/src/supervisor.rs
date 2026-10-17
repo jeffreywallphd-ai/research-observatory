@@ -3344,6 +3344,11 @@ pub(crate) fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'sta
         && request.idempotency_key.is_none()
         && request.body.as_deref().is_some_and(|body| {
             validate_import_review_request(&request.path, body)
+                || crate::search_admission::validate_public_request(
+                    &request.path,
+                    body,
+                    canonical_project_root,
+                )
                 || crate::reconciliation_admission::validate_public_request(
                     &request.path,
                     body,
@@ -6527,6 +6532,80 @@ mod tests {
         let mut wrong_method = read;
         wrong_method.method = "GET".to_owned();
         assert!(validate_api_request(&wrong_method).is_err());
+    }
+
+    #[test]
+    fn lexical_search_public_admission_is_closed_bounded_and_preserves_current_authority() {
+        let root = "C:/Research/synthetic";
+        let project = "018f47a2-4d6b-4f78-9f2e-7fb76c86d041";
+        let job = "018f47a2-4d6b-7f78-9f2e-7fb76c86d042";
+        let request = |route: &str, body: String| CoreApiRequest {
+            method: "POST".into(),
+            path: format!("/projects/search/{route}"),
+            body: Some(body),
+            if_match: None,
+            idempotency_key: None,
+        };
+        let run = serde_json::json!({"root":root,"projectId":project,"commandId":job,
+            "query":"title:\"Synthetic café\" AND year>=2020","filters":{"yearFrom":2020,"yearTo":null}});
+        for (route, body) in [
+            ("validate", serde_json::json!({"query":"synthetic"})),
+            ("run", run.clone()),
+            (
+                "status",
+                serde_json::json!({"root":root,"projectId":project,"jobId":job}),
+            ),
+            (
+                "cancel",
+                serde_json::json!({"root":root,"projectId":project,"jobId":job}),
+            ),
+            (
+                "page",
+                serde_json::json!({"root":root,"projectId":project,"jobId":job,"after":null,"limit":50}),
+            ),
+            (
+                "explain",
+                serde_json::json!({"root":root,"projectId":project,"jobId":job,"itemId":job}),
+            ),
+        ] {
+            assert!(
+                validate_api_request(&request(route, body.to_string())).is_ok(),
+                "{route}"
+            );
+        }
+        for key in ["actorId", "sessionId", "policySha256", "intent", "sql"] {
+            let mut changed = run.clone();
+            changed[key] = serde_json::json!("forged");
+            assert!(validate_api_request(&request("run", changed.to_string())).is_err());
+        }
+        for query in [String::new(), "x".repeat(8193)] {
+            assert!(
+                validate_api_request(&request(
+                    "validate",
+                    serde_json::json!({"query":query}).to_string()
+                ))
+                .is_err()
+            );
+        }
+        assert!(
+            validate_api_request(&request(
+                "validate",
+                "{\"query\":\"one\",\"query\":\"two\"}".into()
+            ))
+            .is_err()
+        );
+        assert!(validate_api_request(&request("validate", " ".repeat(262145))).is_err());
+        for (after, limit) in [
+            ("../path".to_string(), 50),
+            ("A".repeat(4097), 50),
+            ("A".into(), 51),
+        ] {
+            let body = serde_json::json!({"root":root,"projectId":project,"jobId":job,"after":after,"limit":limit});
+            assert!(validate_api_request(&request("page", body.to_string())).is_err());
+        }
+        let mut header = request("run", run.to_string());
+        header.if_match = Some("forged".into());
+        assert!(validate_api_request(&header).is_err());
     }
 
     #[test]

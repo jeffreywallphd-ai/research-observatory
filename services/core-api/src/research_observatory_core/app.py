@@ -31,6 +31,7 @@ from .document_viewer_service import DocumentViewerService
 from .import_api import register_import_routes
 from .import_intake_api import register_intake_routes
 from .import_preview_service import ImportPreviewService
+from .lexical_search_api import register_search_routes
 from .logging import emit_log_record
 from .model_catalog import ModelCatalogProblem, ModelCatalogService
 from .model_gateway_service import ProjectModelGatewayService
@@ -377,6 +378,12 @@ def create_app(
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
     register_document_attachment_routes(app, lambda request: runtime(request).attachments)
     register_document_revision_routes(app, lambda request: runtime(request).document_revisions)
+
+    def search_runtime(request):
+        documents = runtime(request).document_revisions
+        return None if documents is None else documents.search
+
+    register_search_routes(app, search_runtime)
     register_document_correction_routes(app, lambda request: runtime(request).document_revisions)
     register_document_reprocessing_routes(app, lambda request: runtime(request).document_revisions)
     register_document_viewer_routes(app, lambda request: runtime(request).document_viewer)

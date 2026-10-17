@@ -26,6 +26,7 @@ mod import_runtime;
 mod import_source;
 mod plugin_intake;
 mod reconciliation_admission;
+mod search_admission;
 pub mod supervisor;
 pub mod support_bundle;
 #[cfg(windows)]

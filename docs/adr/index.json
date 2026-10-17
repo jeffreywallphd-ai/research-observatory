@@ -611,6 +611,15 @@
       "linkedTasks": [
         "CAP-06.S01.T02"
       ]
+    },
+    {
+      "id": "ADR-0061",
+      "path": "docs/adr/ADR-0061-bind-lexical-search-delivery-to-existing-core-authority.md",
+      "title": "Bind lexical search delivery to existing Core authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-06.S01.T03"
+      ]
     }
   ]
 }

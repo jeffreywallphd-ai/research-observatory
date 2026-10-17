@@ -28321,7 +28321,7 @@
             {
               "task_id": "CAP-06.S01.T03",
               "title": "Implement fielded search, filters, snippets, and ranking explanation",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -28369,18 +28369,21 @@
             {
               "task_id": "CAP-06.S01.T03",
               "title": "Implement fielded search, filters, snippets, and ranking explanation",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-06/CAP-06.S01.T03.html",
               "dependencies": [
                 "CAP-06.S01.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w3-implementation",
+                "branch": "codex/w3-implementation",
+                "base_sha": "a6e2b9146f788d489006998fccb0669bfba91bc7"
               },
               "plan_section_sha256": "181508fd3d3eed8f569d6edb40fbee1b963b39165badbbd37e60c521427af8ad",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-06.S01.T03.task-start.md",
+                "sha256": "94940497a7db10b79797024608887f470d9267e216a4972336ee50ad0525beb6"
+              }
             }
           ]
         },

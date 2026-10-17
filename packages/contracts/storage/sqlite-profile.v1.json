@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 29,
+  "databaseSchemaVersion": 30,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3",
+  "schemaFingerprintSha256": "482afee1e46c8c867d6a216c243dd77f688cb3aa7f7aaf05f96aa171687f27fc",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -143,7 +143,12 @@
     "search_changes",
     "search_generations",
     "search_generation_events",
-    "search_selections"
+    "search_selections",
+    "search_lexical_jobs",
+    "search_input_manifests",
+    "search_lexical_runs",
+    "search_observation_events",
+    "search_source_epochs"
   ],
   "mutableStateTables": [
     "object_records",
@@ -306,6 +311,11 @@
     "search_generations",
     "search_generation_leases",
     "search_generation_events",
-    "search_selections"
+    "search_selections",
+    "search_lexical_jobs",
+    "search_input_manifests",
+    "search_lexical_runs",
+    "search_observation_events",
+    "search_source_epochs"
   ]
 }

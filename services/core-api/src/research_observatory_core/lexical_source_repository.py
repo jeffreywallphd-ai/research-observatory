@@ -12,6 +12,7 @@ from .document_revision_repository import LocalDocumentRevisionRepository
 from .domain_contracts import is_uuid_v7
 from .lexical_catalog_repository import actor_context_sha256
 from .lexical_index_store import IndexRow
+from .lexical_input_repository import lexical_watermark
 from .parsing.normalization import MAX_IR_BYTES
 from .parsing.source import source_identity
 from .ports.reconciliation import ReconciliationSourceResolver
@@ -259,11 +260,7 @@ class CanonicalIndexSources:
             resolved = tuple(self.resolve(address) for address in addresses)
             with self.corpus._transaction(write=True) as (db, _aggregates):
                 item, rows, revisions, metadata_hash, expiry = self._metadata(db, item_id, resolved)
-                watermark = int(
-                    db.execute(
-                        "SELECT coalesce(max(sequence),0) FROM search_changes WHERE project_id=?", (self.project,)
-                    ).fetchone()[0]
-                )
+                watermark = lexical_watermark(db, self.project)
             all_rows = list(rows)
             text_bytes = sum(
                 sum(
@@ -396,11 +393,7 @@ class CanonicalIndexSources:
         if cancelled() is not False:
             raise IndexSourceProblem("index source validation cancelled")
         item, rows, revisions, metadata_hash, expiry = self._metadata(db, snapshot.item_id, snapshot._sources)
-        watermark = int(
-            db.execute(
-                "SELECT coalesce(max(sequence),0) FROM search_changes WHERE project_id=?", (self.project,)
-            ).fetchone()[0]
-        )
+        watermark = lexical_watermark(db, self.project)
         if (
             watermark != snapshot.watermark
             or item.revision_id != snapshot.item_revision_id

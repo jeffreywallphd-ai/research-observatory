@@ -19,6 +19,7 @@ from typing import Any, Protocol, TypeVar
 from .corpus_repository import SqliteCorpusRepository
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .lexical_index_store import IndexProjection, projection_manifest
+from .lexical_input_repository import lexical_watermark
 from .ports.corpus import CorpusActor
 from .ports.credential_store import SecretLease
 from .ports.derivative_keys import DerivativeKeyProvider, DerivativeKeyScope, DerivativePurpose
@@ -176,11 +177,7 @@ class SqliteIndexCatalog:
             connection.close()
 
     def _watermark(self, db: CanonicalConnection) -> int:
-        return int(
-            db.execute(
-                "SELECT coalesce(max(sequence),0) FROM search_changes WHERE project_id=?", (self.project,)
-            ).fetchone()[0]
-        )
+        return lexical_watermark(db, self.project)
 
     def watermark(self) -> int:
         def read() -> int:

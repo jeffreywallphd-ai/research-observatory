@@ -106,8 +106,8 @@ class IndexMigrationTests(unittest.TestCase):
         self.assert_preserved()
         plan = runner.plan_database_migration(self.database, expected_project_id=self.project)
         self.assertEqual(28, plan.source_schema_version)
-        self.assertEqual(29, plan.target_schema_version)
-        self.assertEqual(("0029_lexical_index_generations",), plan.migration_ids)
+        self.assertEqual(30, plan.target_schema_version)
+        self.assertEqual(("0029_lexical_index_generations", "0030_lexical_search_runs"), plan.migration_ids)
 
     def test_protected_backup_all_old_cells_objects_and_change_backfill(self):
         result = runner.migrate_database(self.database, expected_project_id=self.project)
@@ -127,7 +127,7 @@ class IndexMigrationTests(unittest.TestCase):
             self.assertEqual(self.manifest["schemaSha256"], storage._schema_fingerprint(db))
         with closing(storage.open_canonical_database(self.database, expected_project_id=self.project)) as db:
             self.assertTrue(storage.database_integrity_report(db, expected_project_id=self.project).ok)
-            self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, db.execute("PRAGMA user_version").fetchone()[0])
             before = db.execute(
                 "SELECT outbox_id,project_id,revision_id,event_type,occurred_at,record_sha256 FROM outbox_events "
                 "ORDER BY outbox_id"

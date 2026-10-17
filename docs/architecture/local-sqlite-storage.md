@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-29 authority
+## Current version-30 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=29`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=30`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -70,6 +70,10 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `aggregate_revisions` | immutable common scholarly aggregate revision envelope |
 | `scholarly_records`, `documents`, `workflows`, `evidence`, `ontologies`, `decisions` | immutable kind extension rows keyed to a common revision |
 | `workflow_*` | versioned workflow authority, durable queue/attempt state, append-only history/checkpoints, artifacts, and committed output manifests |
+| `search_lexical_jobs` | immutable exact-command search request bound to its admitted queue job and current principal |
+| `search_input_manifests`, `search_lexical_runs` | immutable bounded typed workflow subtypes in `manifest_json` and `run_json`, with exact source edges, input identities and result digests |
+| `search_observation_events` | authenticated classification of exact search output events; never blanket suppression of workflow history |
+| `search_source_epochs` | append-only transactional invalidation for material import/object authority writes that do not publish outbox events |
 | `material_dependency_outputs` | immutable dependency-coverage classification for each exact output revision |
 | `material_dependencies` | immutable typed direct edges to exact revision or configuration endpoints, with policy and fingerprint authority |
 | `material_dependency_diagnostics` | content-free append-only audit facts for dependency-sensitive completion denials |
@@ -129,14 +133,14 @@ immutable; retries cannot replace their history.
 
 T01 established schema version 1 and its sealed ordinary connection factory.
 The backup-first migration authority now advances exact supported v1 through v28
-profiles to current schema v29. It owns forward migrations, backup-before-migrate,
+profiles to current schema v30. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-29 database is detected idempotently and is never backed up or rewritten.
-A version-28 source receives a verified backup before migration to v29.
+verified backup remains available. A current version-30 database is detected idempotently and is never backed up or rewritten.
+A version-29 source receives a verified backup before migration to v30.
 Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -435,3 +439,15 @@ relocation and restore require fresh derivative authority. Derivative files
 are excluded from portable backups under the existing project file classes.
 See [protected indexing Core commands](search-queries.md#protected-indexing-core-commands)
 and Accepted ADR-0057 for key retirement and recovery boundaries.
+
+## Version 30 immutable lexical execution observations
+
+The additive v29-to-v30 migration preserves exact prior rows, objects and history
+after a verified protected backup. Search input manifests and executed runs are
+closed typed workflow subtypes with domain-specific columns, bounded JSON keys,
+foreign-key/source bindings and strict value validation. They are not arbitrary
+aggregate property bags. Run, provenance/outbox, staged output and successful
+queue completion share the existing canonical writer transaction. Historical
+failures and cancellation remain visible. Current source epochs and trusted
+permission-time transitions fence replay and delivery; they do not grant rights.
+See [ranked search API and immutable observations](search-queries.md#ranked-search-api-and-immutable-observations).

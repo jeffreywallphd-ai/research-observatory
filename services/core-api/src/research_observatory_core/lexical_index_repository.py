@@ -10,6 +10,7 @@ import hashlib
 import json
 from collections.abc import Callable, Iterator
 from dataclasses import asdict
+from typing import Protocol
 
 from .domain_contracts import new_uuid_v7
 from .lexical_catalog_repository import (
@@ -22,18 +23,20 @@ from .lexical_catalog_repository import (
 )
 from .lexical_index_io import IndexFileGuard, _identity, _present, assert_retired_absent, purge_bootstrap
 from .lexical_index_store import IndexRow, ProtectedLexicalStore, recover_retired_generation
+from .lexical_input_repository import is_lexical_observation, lexical_watermark
 from .lexical_source_repository import CanonicalIndexSources, ItemIndexProjection
 from .ports.database_keys import DatabaseKeyProvider
 from .ports.derivative_keys import DerivativeKeyProvider, DerivativeKeyScope, DerivativePurpose
 from .search.contracts import QueryDocument
+from .search.errors import IndexServiceProblem as IndexServiceProblem
 from .storage import CanonicalConnection
 
 _MAX_QUERY_BATCH_ITEMS = 256
 _MAX_QUERY_BATCH_ENTRIES = 100_000
 
 
-class IndexServiceProblem(RuntimeError):
-    """The index is unavailable, interrupted or requires a fresh lawful rebuild."""
+class IndexOrchestration(Protocol):
+    def __call__[T](self, action: Callable[[], T]) -> T: ...
 
 
 class IndexProjectionStale(IndexServiceProblem):
@@ -60,7 +63,12 @@ def _sha(value: object) -> str:
 
 class CoreLexicalIndexService:
     def __init__(
-        self, sources: CanonicalIndexSources, keys: DerivativeKeyProvider, canonical_keys: DatabaseKeyProvider
+        self,
+        sources: CanonicalIndexSources,
+        keys: DerivativeKeyProvider,
+        canonical_keys: DatabaseKeyProvider,
+        *,
+        orchestration: IndexOrchestration | None = None,
     ) -> None:
         self.sources, self.keys, self.canonical_keys = sources, keys, canonical_keys
         self.database, self.project = sources.database, sources.project
@@ -69,6 +77,7 @@ class CoreLexicalIndexService:
             self.database, self.project, keys, actor=sources.documents.actor, guard=sources.documents.guard
         )
         self._leases: dict[str, IndexGenerationLease] = {}
+        self._orchestration = orchestration
 
     def _bounded(self, action):
         try:
@@ -77,6 +86,20 @@ class CoreLexicalIndexService:
             raise
         except Exception:
             raise IndexServiceProblem("protected search index needs attention") from None
+
+    def _orchestrate[T](self, action: Callable[[], T]) -> T:
+        # Direct callers retain the original whole-command guard. An admitted
+        # worker can orchestrate bounded guarded phases without holding the
+        # project mutex over index construction, ranking or heartbeat joins.
+        # Catalog/source operations and canonical publication keep _bounded.
+        if self._orchestration is None:
+            return self._bounded(action)
+        try:
+            return self._orchestration(action)
+        except IndexServiceProblem:
+            raise
+        except Exception:
+            raise IndexServiceProblem("protected search orchestration needs attention") from None
 
     def _scope(self, generation_id: str) -> DerivativeKeyScope:
         with self.canonical_keys.active_key(self.project, create=False) as key:
@@ -141,8 +164,12 @@ class CoreLexicalIndexService:
         for chunk in self._chunks(captured.rows):
             self.catalog.renew(lease)
             store.stage(chunk, ())
-        with self.sources.corpus._transaction(write=True) as (db, _aggregates):
-            self.sources.revalidate(db, captured, cancelled=cancelled)
+
+        def revalidate():
+            with self.sources.corpus._transaction(write=True) as (db, _aggregates):
+                self.sources.revalidate(db, captured, cancelled=cancelled)
+
+        self._bounded(revalidate)
         self.catalog.assert_owner(lease)
 
     @staticmethod
@@ -152,11 +179,7 @@ class CoreLexicalIndexService:
 
     def _fence(self, db, validation: IndexValidation) -> None:
         self.sources.documents._authority(db, self.sources.documents.actor())
-        watermark = int(
-            db.execute(
-                "SELECT coalesce(max(sequence),0) FROM search_changes WHERE project_id=?", (self.project,)
-            ).fetchone()[0]
-        )
+        watermark = lexical_watermark(db, self.project)
         if (
             watermark != validation.watermark
             or actor_context_sha256(self.project, self.sources.documents.actor()) != validation.actor_sha256
@@ -205,8 +228,12 @@ class CoreLexicalIndexService:
         validation = IndexValidation(
             watermark, authority.hexdigest(), actor_context_sha256(self.project, self.sources.documents.actor()), expiry
         )
-        with self.sources.corpus._transaction(write=True) as (db, _aggregates):
-            self._fence(db, validation)
+
+        def validate_current():
+            with self.sources.corpus._transaction(write=True) as (db, _aggregates):
+                self._fence(db, validation)
+
+        self._bounded(validate_current)
         return validation
 
     def run_build(
@@ -287,7 +314,7 @@ class CoreLexicalIndexService:
                     pass
                 raise
 
-        return self._bounded(build)
+        return self._orchestrate(build)
 
     def rebuild(self, *, cancelled: Callable[[], bool] = lambda: False) -> IndexGeneration:
         return self.run_build(self.begin_rebuild(), cancelled=cancelled)
@@ -412,84 +439,96 @@ class CoreLexicalIndexService:
 
     def _changed_items(self, after: int, through: int) -> tuple[str, ...]:
         """Map source revisions, including rights, to current corpus identities."""
+        if type(after) is not int or type(through) is not int or not 0 <= after <= through:
+            raise IndexServiceProblem("index change cursor is invalid")
+        result: set[str] = set()
+        cursor = after
+        while cursor < through:
+            previous = cursor
+            cursor, items, fallback = self._bounded(lambda cursor=cursor: self._changed_items_batch(cursor, through))
+            if fallback:
+                # No canonical read transaction or phase guard is held while
+                # the existing ordered item port enumerates bounded pages.
+                return tuple(self._items())
+            result.update(items)
+            if cursor == previous:
+                raise IndexServiceProblem("index change sequence is incomplete")
+        return tuple(sorted(result))
+
+    def _changed_items_batch(self, after: int, through: int) -> tuple[int, tuple[str, ...], bool]:
         result: set[str] = set()
         with self.sources.corpus._transaction(write=False) as (db, _aggregates):
             cursor = after
-            while True:
-                rows = db.execute(
-                    "SELECT c.sequence,c.revision_id,c.event_type,o.revision_id,o.event_type,c.record_sha256,o.re"
-                    "cord_sha256 FROM search_changes c JOIN outbox_events o ON o.outbox_id=c.outbox_id AND "
-                    "o.project_id=c.project_id WHERE c.project_id=? AND c.sequence>? AND c.sequence<=? ORDER BY "
-                    "c.sequence LIMIT 256",
-                    (self.project, cursor, through),
-                ).fetchall()
-                if not rows:
-                    break
-                for sequence, revision, kind, original_revision, original_kind, digest, original_digest in rows:
-                    if (
-                        revision != original_revision
-                        or kind != original_kind
-                        or digest != original_digest
-                        or sequence != cursor + 1
-                    ):
-                        raise IndexServiceProblem("index change sequence is invalid")
-                    cursor = sequence
-                    if revision is None:
-                        return tuple(self._items())
-                    aggregate = db.execute(
-                        "SELECT aggregate_kind,aggregate_id FROM aggregate_revisions WHERE project_id=? AND "
-                        "revision_id=?",
+            rows = db.execute(
+                "SELECT c.sequence,c.revision_id,c.event_type,o.revision_id,o.event_type,c.record_sha256,o.re"
+                "cord_sha256 FROM search_changes c JOIN outbox_events o ON o.outbox_id=c.outbox_id AND "
+                "o.project_id=c.project_id WHERE c.project_id=? AND c.sequence>? AND c.sequence<=? ORDER BY "
+                "c.sequence LIMIT 256",
+                (self.project, cursor, through),
+            ).fetchall()
+            if not rows:
+                return cursor, (), False
+            for sequence, revision, kind, original_revision, original_kind, digest, original_digest in rows:
+                if (
+                    revision != original_revision
+                    or kind != original_kind
+                    or digest != original_digest
+                    or sequence != cursor + 1
+                ):
+                    raise IndexServiceProblem("index change sequence is invalid")
+                cursor = sequence
+                if is_lexical_observation(db, self.project, sequence):
+                    continue
+                if revision is None:
+                    return cursor, (), True
+                aggregate = db.execute(
+                    "SELECT aggregate_kind,aggregate_id FROM aggregate_revisions WHERE project_id=? AND revision_id=?",
+                    (self.project, revision),
+                ).fetchone()
+                if aggregate is None:
+                    return cursor, (), True
+                if aggregate[0] == "corpus-item":
+                    result.add(aggregate[1])
+                    continue
+                work_ids = set()
+                if aggregate[0] == "record":
+                    work_ids.add(aggregate[1])
+                elif aggregate[0] == "document":
+                    work_ids.update(
+                        row[0]
+                        for row in db.execute(
+                            "SELECT work_id FROM document_attachment_assertions WHERE project_id=? AND document_id=?",
+                            (self.project, aggregate[1]),
+                        )
+                    )
+                else:
+                    assertion = db.execute(
+                        "SELECT s.source_assertion_revision_id FROM rights_policy_revisions r JOIN "
+                        "rights_policy_subjects s ON s.project_id=r.project_id AND "
+                        "s.subject_sha256=r.subject_sha256 WHERE r.project_id=? AND r.revision_id=?",
                         (self.project, revision),
                     ).fetchone()
-                    if aggregate is None:
-                        return tuple(self._items())
-                    if aggregate[0] == "corpus-item":
-                        result.add(aggregate[1])
-                        continue
-                    work_ids = set()
-                    if aggregate[0] == "record":
-                        work_ids.add(aggregate[1])
-                    elif aggregate[0] == "document":
-                        work_ids.update(
-                            row[0]
-                            for row in db.execute(
-                                "SELECT work_id FROM document_attachment_assertions WHERE project_id=? AND "
-                                "document_id=?",
-                                (self.project, aggregate[1]),
-                            )
+                    if assertion is None:
+                        return cursor, (), True
+                    work_ids.update(
+                        row[0]
+                        for row in db.execute(
+                            "SELECT s.work_id FROM reconciliation_work_members m JOIN "
+                            "reconciliation_work_states s ON s.project_id=m.project_id AND "
+                            "s.revision_id=m.work_revision_id WHERE m.project_id=? AND "
+                            "m.assertion_revision_id=?",
+                            (self.project, assertion[0]),
                         )
-                    else:
-                        assertion = db.execute(
-                            "SELECT s.source_assertion_revision_id FROM rights_policy_revisions r JOIN "
-                            "rights_policy_subjects s ON s.project_id=r.project_id AND "
-                            "s.subject_sha256=r.subject_sha256 WHERE r.project_id=? AND r.revision_id=?",
-                            (self.project, revision),
-                        ).fetchone()
-                        if assertion is None:
-                            return tuple(self._items())
-                        work_ids.update(
-                            row[0]
-                            for row in db.execute(
-                                "SELECT s.work_id FROM reconciliation_work_members m JOIN "
-                                "reconciliation_work_states s ON s.project_id=m.project_id AND "
-                                "s.revision_id=m.work_revision_id WHERE m.project_id=? AND "
-                                "m.assertion_revision_id=?",
-                                (self.project, assertion[0]),
-                            )
+                    )
+                for work in work_ids:
+                    result.update(
+                        row[0]
+                        for row in db.execute(
+                            "SELECT DISTINCT item_id FROM corpus_item_states WHERE project_id=? AND work_id=?",
+                            (self.project, work),
                         )
-                    for work in work_ids:
-                        result.update(
-                            row[0]
-                            for row in db.execute(
-                                "SELECT DISTINCT item_id FROM corpus_item_states WHERE project_id=? AND work_id=?",
-                                (self.project, work),
-                            )
-                        )
-                if cursor == through:
-                    break
-            if cursor != through:
-                raise IndexServiceProblem("index change sequence is incomplete")
-        return tuple(sorted(result))
+                    )
+        return cursor, tuple(sorted(result)), False
 
     def synchronize(self, *, cancelled: Callable[[], bool] = lambda: False) -> IndexGeneration:
         def update():
@@ -509,16 +548,20 @@ class CoreLexicalIndexService:
                     else:
                         return selected
                 return self.rebuild(cancelled=cancelled)
-            with self.sources.corpus._transaction(write=False) as (db, _aggregates):
-                rights_changed = (
-                    db.execute(
-                        "SELECT 1 FROM search_changes c JOIN rights_policy_revisions r ON "
-                        "r.project_id=c.project_id AND r.revision_id=c.revision_id WHERE c.project_id=? AND "
-                        "c.sequence>? AND c.sequence<=? LIMIT 1",
-                        (self.project, selected.checkpoint, target),
-                    ).fetchone()
-                    is not None
-                )
+
+            def changed_rights():
+                with self.sources.corpus._transaction(write=False) as (db, _aggregates):
+                    return (
+                        db.execute(
+                            "SELECT 1 FROM search_changes c JOIN rights_policy_revisions r ON "
+                            "r.project_id=c.project_id AND r.revision_id=c.revision_id WHERE c.project_id=? AND "
+                            "c.sequence>? AND c.sequence<=? LIMIT 1",
+                            (self.project, selected.checkpoint, target),
+                        ).fetchone()
+                        is not None
+                    )
+
+            rights_changed = self._bounded(changed_rights)
             if rights_changed:
                 return self.rebuild(cancelled=cancelled)
             lease = self._leases.get(selected.generation_id)
@@ -600,7 +643,7 @@ class CoreLexicalIndexService:
             # partly replaced item's text across multiple active transactions.
             return self.rebuild(cancelled=cancelled)
 
-        updated = self._bounded(update)
+        updated = self._orchestrate(update)
         return self.rebuild(cancelled=cancelled) if updated is None else updated
 
     def match(self, query: QueryDocument, *, cancelled: Callable[[], bool] = lambda: False) -> tuple[str, ...]:

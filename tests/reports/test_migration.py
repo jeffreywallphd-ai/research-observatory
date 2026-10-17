@@ -202,6 +202,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
                         "0029_lexical_index_generations",
+                        "0030_lexical_search_runs",
                     ),
                     planned.migration_ids,
                 )
@@ -231,6 +232,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
                         "0029_lexical_index_generations",
+                        "0030_lexical_search_runs",
                     ),
                     completed.migration_ids,
                 )
@@ -279,6 +281,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
             27: "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913",
             28: "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6",
             29: "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3",
+            30: "482afee1e46c8c867d6a216c243dd77f688cb3aa7f7aaf05f96aa171687f27fc",
         }
         current_targets: dict[int, str] = {}
         for rule in current["allOf"]:
@@ -327,6 +330,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
                         "0029_lexical_index_generations",
+                        "0030_lexical_search_runs",
                     ),
                     planned.migration_ids,
                 )

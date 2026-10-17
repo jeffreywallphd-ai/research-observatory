@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5d78e8642f67920eaf22dac8d9a423bf760e04e659ca70f4971bb9373ece934f
+source_sha256: 193e08180444a555422259d9e311bd73ece8d799791746a3037b76275de98948
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -14096,13 +14096,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-06.S01.T03 - Implement fielded search, filters, snippets, and ranking explanation
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-06.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w3-implementation / - (`-`)
 
 **Objective:** Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.
 

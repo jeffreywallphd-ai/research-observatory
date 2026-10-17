@@ -15,6 +15,7 @@ from .document_parser_runtime import InstalledDocumentParserRuntime
 from .document_revisions import DocumentRevisionProblem
 from .parsing.selection import ParserRegistry, RegisteredParser, SelectionSource, select_parser
 from .ports.import_previews import PreviewProblem
+from .ports.lexical_search import LexicalSearchPort
 from .ports.workflow_executor import WorkflowActor
 from .workflow_executor import LocalWorkerSupervisor
 
@@ -55,6 +56,7 @@ class DocumentRevisionService:
         self.runtime, self.now = runtime or InstalledDocumentParserRuntime(), now
         self.repository_factory = repository_factory
         self.reconciliation = reconciliation
+        self.search: LexicalSearchPort | None = None
         self.registrations = {}
         self.mutex, self.runner = threading.RLock(), threading.Lock()
         self.stopped, self.wake = threading.Event(), threading.Event()
@@ -818,15 +820,37 @@ class DocumentRevisionService:
                             repository, session_stopped=registration.stopped, runtime=self.runtime
                         )(context, claim)
 
-                    LocalWorkerSupervisor(
-                        repository.queue,
-                        {"document-parse": execute},
-                        concurrency_limits={"document": 1},
-                        now=self.now,
-                        recovery_actor=WorkflowActor(actor.actor_id, "system", "workflow-coordinator"),
-                        admission=admission,
-                        activity_types=("document-parse",),
-                    ).run_available()
+                    handlers: dict[str, Callable] = {"document-parse": execute}
+                    if self.search is not None:
+
+                        def execute_search(
+                            context,
+                            claim,
+                            registration=registration,
+                            search=self.search,
+                            admission=admission,
+                            trace=trace,
+                        ):
+                            return search.run_activity(
+                                registration, context, claim, admission=admission, trace_id=trace
+                            )
+
+                        handlers["lexical-search"] = execute_search
+
+                    # Each known activity reserves its own declared resources.
+                    # A mixed handler set conservatively reserves the largest
+                    # eligible demand, which would charge search for a parser.
+                    # The existing runner still serializes these invocations.
+                    for activity_type, handler in handlers.items():
+                        LocalWorkerSupervisor(
+                            repository.queue,
+                            {activity_type: handler},
+                            concurrency_limits={"document": 1},
+                            now=self.now,
+                            recovery_actor=WorkflowActor(actor.actor_id, "system", "workflow-coordinator"),
+                            admission=admission,
+                            activity_types=(activity_type,),
+                        ).run_available()
                 finally:
                     registration.drained.set()
 

@@ -280,4 +280,6 @@ kbd { padding: var(--space-1) var(--space-2); color: var(--text-strong); backgro
 .quality-fields { display: grid; gap: var(--space-3); }
 .parsing-quality-workspace select, .parsing-quality-workspace input, .parsing-quality-workspace textarea { max-width: 100%; min-width: 0; }
 .quality-layout > *, .quality-comparison > * { min-width: 0; }
+[data-search-workspace] pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+[data-search-workspace] :is(p, code, td) { overflow-wrap: anywhere; }
 @media (max-width: 68rem) { .quality-layout, .quality-comparison { grid-template-columns: minmax(0, 1fr); } }

@@ -16,6 +16,7 @@ from research_observatory_core import storage  # noqa: E402
 from research_observatory_core.migrations import runner  # noqa: E402
 from research_observatory_core.migrations.versions import v0028_document_enrichments as migration  # noqa: E402
 from research_observatory_core.migrations.versions import v0029_lexical_index_generations as lexical  # noqa: E402
+from research_observatory_core.migrations.versions import v0030_lexical_search_runs as search_runs  # noqa: E402
 
 from tests.documents import test_acquisition_recovery_migration as predecessor  # noqa: E402
 
@@ -32,7 +33,7 @@ class ReferenceMigrationTests(unittest.TestCase):
             manifest, project, database = fixture.load("v27-populated-predecessor")
             fixture.assert_predecessor_rows(database, manifest)
             plan = runner.plan_database_migration(database, expected_project_id=manifest["projectId"])
-            self.assertEqual((migration.revision, lexical.revision), plan.migration_ids)
+            self.assertEqual((migration.revision, lexical.revision, search_runs.revision), plan.migration_ids)
             result = runner.migrate_database(database, expected_project_id=manifest["projectId"])
             self.assertEqual("migrated", result.status)
             recovery = json.loads((project / result.recovery_manifest_relative_path).read_text())
@@ -53,7 +54,7 @@ class ReferenceMigrationTests(unittest.TestCase):
                 self.assertEqual(27, db.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(manifest["schemaSha256"], storage._schema_fingerprint(db))
             with closing(storage.open_canonical_database(database, expected_project_id=manifest["projectId"])) as db:
-                self.assertEqual(29, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(30, db.execute("PRAGMA user_version").fetchone()[0])
                 self.assertTrue(storage.database_integrity_report(db, expected_project_id=manifest["projectId"]).ok)
                 for table in migration.TABLES:
                     self.assertEqual(0, db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0])

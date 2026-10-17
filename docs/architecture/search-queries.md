@@ -214,3 +214,102 @@ cannot search, stage, update or promote. Ordinary leases still reject old
 canonical-key versions. DELETE eligibility and reader drain precede key
 revocation. `IndexCleanupPending` identifies a valid new selection whose obsolete
 generation needs a cleanup retry; it does not mark the new generation incomplete.
+
+## Ranked search API and immutable observations
+
+CAP-06.S01.T03 adds six fixed, bounded POST operations to Core's existing
+authenticated API. The generated `createCoreApiClient` exposes the same contract
+to the desktop and to a headless caller using an authorized transport:
+
+| Path under `/projects/search` | Generated method | Effect |
+| --- | --- | --- |
+| `/validate` | `validateLexicalQuery` | Parse only; original/normalized query or content-free error location. |
+| `/run` | `executeLexicalSearch` | Enqueue one explicit command in the existing durable local worker. |
+| `/status` | `inspectLexicalSearch` | Inspect the exact job under current project authority. |
+| `/page` | `pageLexicalSearch` | Read up to 50 current-lawful hits using an exact-run cursor. |
+| `/explain` | `explainLexicalSearch` | Inspect actual positive-leaf BM25 contributions for one hit. |
+| `/cancel` | `cancelLexicalSearch` | Request existing queue cancellation; retain attempts and accepted history. |
+
+Project commands carry `root` and `projectId`; reads also carry `jobId`. Core
+resolves its own current Native actor/session, accepted Intent and privacy
+policy. Renderer-supplied authority fields, unknown routes, duplicate JSON keys,
+oversized bodies, invalid years and malformed cursors are rejected. Command
+bodies are capped at 256 KiB. This exposes no unauthenticated launcher or AI-mode
+authority. The query, ranking, run repository and result service import no React
+or renderer code.
+
+`commandId` identifies an immutable request including query, filters and method.
+Exact replay returns the same job; changed content with the same command is a
+conflict. A lost acknowledgement must reconcile that same command. Search uses
+the existing document worker lane/admission controller, with its own declared
+resource demand; it does not reserve parser resources for a search or add a
+second scheduler. Unknown capacity leaves work queued rather than bypassing
+admission.
+
+Pure command and activity ports keep the HTTP handlers and worker orchestration
+independent of concrete storage adapters. Core startup composes the Native-scoped
+search repository. Long activity orchestration releases the project mutex;
+individual current-authority reads and canonical writers reacquire its guarded
+scope before taking their transaction. The existing registration still owns drain.
+
+Protected close retains every file and key hold until both actual database
+consumers close. After a successful TRUNCATE checkpoint, a temporary genuine
+read-only SQLCipher companion prevents the writer's last-reader WAL cleanup.
+The companion cannot perform that cleanup itself; existing identity-authenticated
+guard cleanup removes the sidecars after both close. Persistent WAL mode and the
+pinned dependency remain unchanged. Failed companion setup still attempts writer
+and partial-companion close, retains authority denial and reports incomplete close.
+
+Canonical schema 30 adds typed SearchRun and bounded source-input manifest
+subtypes of existing workflow revisions, exact observation classification, and
+append-only source-authority epochs. A SearchRun binds the actual successful
+attempt, accepted Intent/policy, original and normalized query, analyzer/ranking
+configuration, generation/selection, canonical source head, current source-set
+digest, rights-time partition, expiry and ordered result digest. Source manifests
+have bounded fan-in and remain private, job-owned provenance. The canonical
+writer commits run/provenance/outbox, staged workflow artifact and successful
+queue completion together. This is not an exactly-once side-effect claim.
+Only authenticated search observation events are excluded from lexical source
+changes; unrelated workflow events and raw history remain intact. Material
+non-outbox import/object-state changes advance a separate canonical epoch.
+
+The fixed method `ro-lexical-best-row-per-leaf-bm25-1` uses FTS field weights
+`[8,4,1,2,2,10,1,1]` for title, abstract, full text, authors, venue, identifiers,
+tags and decisions. Each distinct positive literal/phrase contributes its best
+lawful row score once; pure-negative and year/filter clauses affect membership
+only. Sort descending score then ascending immutable item ID. These engineering
+parameters and scores are not relevance probabilities. Semantic is `unqualified`
+and rerank is `not-run`; lexical execution never asserts either succeeded.
+
+BM25 statistics require the complete current-lawful mirror before ranking,
+including nonmatching rows. Current implementation revalidates that mirror and
+canonical sources; pages are recomputed against the accepted run's exact input
+and result digests. A cursor binds the run revision/input configuration, position
+and preceding item/score; it grants no permission. Source, rights, project,
+session, Intent, privacy, generation, key, expiry, clock rollback or cancellation
+changes deny the old result. There is no qualified warm-read certificate or
+100k latency claim from this implementation description.
+
+The separate deterministic title/DOI lookup frame qualifies only its declared
+technical known-item contract. SciFact/QASPER evidence retrieval remains
+unqualified until the approved exact-release, rights, source-mapping and actual
+human-review prerequisites are met. Its lexical baseline must participate in
+the later same-ID scientific encoder/fusion comparisons; synthetic lookup results
+do not replace that obligation.
+
+Replies contain at most 50 hits and 512 KiB total serialized page data. Snippets
+contain at most 384 original codepoints and 32 verified highlight ranges, rendered
+as inert text. Truncation is explicit. Document previews identify the exact
+accepted normalized revision; only a genuine containing structural node can
+produce a selection for the existing anchor API. Unanchored previews open that
+exact revision without inventing a node or anchor. Reader independently checks
+its document-analysis rights; local-search grants do not widen them. Selected
+title/year fields may come from different lawful metadata rows for one Work.
+
+Search Studio keeps a bounded in-memory draft/run/page context across source
+inspection, rechecks the same page on return, and restores the initiating row
+focus or explains a safe fallback. Lock, project replacement and Intent changes
+clear protected context; browser storage retains no query, snippet or result.
+Validation, draft retention and previews do not execute retrieval or alter corpus
+membership. Branch editing, semantic retrieval, reranking and AI-mode planning
+remain with their approved owning tasks.

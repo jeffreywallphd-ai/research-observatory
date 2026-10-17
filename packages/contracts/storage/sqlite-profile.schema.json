@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 29
+      "const": 30
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "278e4c7f6e7b219cc022ca0d71dee2199ba0bbb6cb5587ce6ea9acd84895a0e3"
+      "const": "482afee1e46c8c867d6a216c243dd77f688cb3aa7f7aaf05f96aa171687f27fc"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"
@@ -194,7 +194,12 @@
         "search_changes",
         "search_generations",
         "search_generation_events",
-        "search_selections"
+        "search_selections",
+        "search_lexical_jobs",
+        "search_input_manifests",
+        "search_lexical_runs",
+        "search_observation_events",
+        "search_source_epochs"
       ]
     },
     "mutableStateTables": {
@@ -367,7 +372,12 @@
         "search_generations",
         "search_generation_leases",
         "search_generation_events",
-        "search_selections"
+        "search_selections",
+        "search_lexical_jobs",
+        "search_input_manifests",
+        "search_lexical_runs",
+        "search_observation_events",
+        "search_source_epochs"
       ]
     }
   }

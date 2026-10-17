@@ -216,7 +216,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 project = restore_v17(database, kind)["projectId"]
                 plan = runner.plan_database_migration(database, expected_project_id=project)
                 self.assertEqual(17, plan.source_schema_version)
-                self.assertEqual(29, plan.target_schema_version)
+                self.assertEqual(30, plan.target_schema_version)
                 self.assertEqual(
                     (
                         v0018_rights_policy.revision,
@@ -231,6 +231,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
                         "0029_lexical_index_generations",
+                        "0030_lexical_search_runs",
                     ),
                     plan.migration_ids,
                 )
@@ -251,6 +252,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
                         "0029_lexical_index_generations",
+                        "0030_lexical_search_runs",
                     ),
                     result.migration_ids,
                 )
@@ -268,7 +270,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 validator = Draft202012Validator(schema, format_checker=FormatChecker())
                 self.assertEqual([], list(validator.iter_errors(manifest)))
                 self.assertEqual(17, manifest["sourceSchemaVersion"])
-                self.assertEqual(29, manifest["targetSchemaVersion"])
+                self.assertEqual(30, manifest["targetSchemaVersion"])
                 self.assertEqual(
                     [
                         v0018_rights_policy.revision,
@@ -283,6 +285,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         "0027_revision_invalidations",
                         "0028_document_enrichments",
                         "0029_lexical_index_generations",
+                        "0030_lexical_search_runs",
                     ],
                     manifest["migrationIds"],
                 )
@@ -345,7 +348,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                     with closing(storage.open_canonical_database(database, expected_project_id=project)) as reopened:
                         report = storage.database_integrity_report(reopened, expected_project_id=project)
                         self.assertTrue(report.ok, report.errors)
-                        self.assertEqual(29, report.schema_version)
+                        self.assertEqual(30, report.schema_version)
                         for table in (
                             "document_intake_jobs",
                             "document_intake_results",
@@ -486,6 +489,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 "0027_revision_invalidations",
                 "0028_document_enrichments",
                 "0029_lexical_index_generations",
+                "0030_lexical_search_runs",
             ),
             result.migration_ids,
         )
@@ -500,7 +504,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as current:
                 report = storage.database_integrity_report(current, expected_project_id=project)
                 self.assertTrue(report.ok, report.errors)
-                self.assertEqual(29, report.schema_version)
+                self.assertEqual(30, report.schema_version)
                 for table in (
                     "document_intake_jobs",
                     "document_intake_results",

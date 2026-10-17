@@ -31,6 +31,7 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0027_revision_invalidations,
     v0028_document_enrichments,
     v0029_lexical_index_generations,
+    v0030_lexical_search_runs,
 )
 
 from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
@@ -47,6 +48,7 @@ MIGRATION_IDS = (
     v0027_revision_invalidations.revision,
     v0028_document_enrichments.revision,
     v0029_lexical_index_generations.revision,
+    v0030_lexical_search_runs.revision,
 )
 
 
@@ -132,7 +134,7 @@ class PluginGrantMigrationTests(unittest.TestCase):
     def _assert_current_v29_history(self) -> None:
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
-            self.assertEqual(29, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(30, current.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(v0029_lexical_index_generations.TARGET_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(0, current.execute("SELECT count(*) FROM plugin_grant_events").fetchone()[0])
@@ -231,7 +233,7 @@ class PluginGrantMigrationTests(unittest.TestCase):
         backup_path = self.state.parent / manifest["backup"]["relativePath"]
         self.assertEqual(hashlib.sha256(backup_path.read_bytes()).hexdigest(), manifest["backup"]["sha256"])
         self.assertEqual(20, manifest["sourceSchemaVersion"])
-        self.assertEqual(29, manifest["targetSchemaVersion"])
+        self.assertEqual(30, manifest["targetSchemaVersion"])
         self.assertEqual(list(MIGRATION_IDS), manifest["migrationIds"])
 
     def test_each_v21_step_failure_rolls_back_exact_v20_and_retries(self) -> None:
@@ -265,5 +267,5 @@ class PluginGrantMigrationTests(unittest.TestCase):
         backup_path = self.state.parent / manifest["backup"]["relativePath"]
         self.assertEqual(hashlib.sha256(backup_path.read_bytes()).hexdigest(), manifest["backup"]["sha256"])
         self.assertEqual(20, manifest["sourceSchemaVersion"])
-        self.assertEqual(29, manifest["targetSchemaVersion"])
+        self.assertEqual(30, manifest["targetSchemaVersion"])
         self.assertEqual(list(MIGRATION_IDS), manifest["migrationIds"])

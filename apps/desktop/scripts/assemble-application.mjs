@@ -13,7 +13,7 @@ const packageInputRoots = [
   path.join(repoRoot, "packages", "ui-tokens"),
 ];
 const expectedArtifacts = new Set(["assets/app.css", "assets/app.js", "assets/app.js.map", "index.html"]);
-for (const name of ["ParsingQualityWorkspace", "documentCorrections", "documentAttachment", "preload-helper"]) {
+for (const name of ["ParsingQualityWorkspace", "documentCorrections", "sourceAnchors", "preload-helper"]) {
   expectedArtifacts.add(`assets/${name}.js`);
   expectedArtifacts.add(`assets/${name}.js.map`);
 }
@@ -97,12 +97,12 @@ const manifest = {
   implementedCapabilities: [
     "CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03", "CAP-03.S02.T02",
     "CAP-03.S03.T03", "CAP-03.S05.T03", "CAP-03.S06.T02", "CAP-03.S06.T03", "CAP-03.S06.T04",
-    "CAP-03.S06.T05", "CAP-07.S01.T02",
+    "CAP-03.S06.T05", "CAP-07.S01.T02", "CAP-06.S01.T03",
   ],
   routes: ["index.html"],
   referenceUse: "design-contract-only",
-  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.9",
-  referencePackageSha256: "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.10",
+  referencePackageSha256: "c40722fc2580eedd7d56cc4390b1061a59cedf63c8dd7a411f730f84675cd99a",
   sourceFiles: Object.fromEntries(Object.entries(sourceFiles).sort()),
   artifacts: Object.fromEntries(Object.entries(artifacts).sort()),
 };

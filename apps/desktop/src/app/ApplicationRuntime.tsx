@@ -9,6 +9,7 @@ import {
   type CoreApiTransport,
   type IntentWorkspaceProjection,
   type ProjectProjection,
+  type SearchDocumentTarget,
   type WorkflowProfileCatalogProjection,
   type WorkflowProgressProjection,
 } from "@research-observatory/contracts/core-api";
@@ -36,9 +37,11 @@ import type { AttachmentHandoff } from "./DocumentAttachmentPane";
 import { sameAttachmentSelection, type AttachmentSelection } from "./documentAttachment";
 import { decodeViewerDeepLink, parseViewerDeepLink, readStoredViewerDeepLink, rememberViewerDeepLink, VIEWER_LINK_EVENT,
   type ViewerDeepLink } from "./viewerDeepLinks";
-import { CorpusCanvasWorkspace } from "./CorpusCanvasWorkspace";
+import { CorpusCanvasWorkspace, corpusReportCommandId } from "./CorpusCanvasWorkspace";
 import { SourceManagerWorkspace } from "./SourceManagerWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
+import { SearchWorkspace, type SearchWorkspaceState } from "./SearchWorkspace";
+import { nativeSourceAnchorPort } from "./sourceAnchorsNative";
 import type { SourceIdentity } from "./sourceAnchors";
 import type { QualitySelection } from "./ParsingQualityWorkspace";
 
@@ -366,6 +369,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const [readerLink, setReaderLink] = useState<ViewerDeepLink | null>(null);
   const [qualitySelection, setQualitySelection] = useState<QualitySelection | null>(null);
   const [qualityReaderRevision, setQualityReaderRevision] = useState<string | null>(null);
+  const [searchState, setSearchState] = useState<SearchWorkspaceState | null>(null);
+  const [searchReaderReturn, setSearchReaderReturn] = useState<string | null>(null);
   const qualityNavigationBlocked = useRef(false);
   const blockQualityNavigation = useCallback((blocked: boolean) => { qualityNavigationBlocked.current = blocked; }, []);
   const [attachmentReturn, setAttachmentReturn] = useState<AttachmentHandoff | null>(null);
@@ -415,6 +420,13 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   currentProjectRef.current = currentProject;
   workflowAuthorityRef.current = workflowAuthority;
   workflowProgressRef.current = workflowProgress;
+  const searchScopeKey = currentProject?.open && workflowLoadState === "ready" && workflowAuthority && workflowProgress
+    ? [currentProject.projectId,currentProject.root,workflowAuthority.intentRevisionId,workflowProgress.selectionRevisionId].join(":") : null;
+  const searchScopeRef = useRef(searchScopeKey);
+  searchScopeRef.current = searchScopeKey;
+  const retainSearchState = useCallback((next:SearchWorkspaceState) => {
+    if (applicationLockRef.current.state === "unlocked" && searchScopeRef.current === next.scopeKey) setSearchState(next);
+  }, []);
   if (lockedRecoveryControllerRef.current === null) {
     lockedRecoveryControllerRef.current = new ApplicationSettingsController({
       invoke: (command, arguments_) => invoke(command, arguments_),
@@ -440,6 +452,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       setReaderLink(null);
       setQualitySelection(null);
       setQualityReaderRevision(null);
+      setSearchState(null); setSearchReaderReturn(null);
       qualityNavigationBlocked.current = false;
       setAttachmentReturn(null);
       setWorkflowCatalog(null);
@@ -593,6 +606,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     setReaderLink(null);
     setQualitySelection(null);
     setQualityReaderRevision(null);
+    setSearchState(null); setSearchReaderReturn(null);
     qualityNavigationBlocked.current = false;
     setAttachmentReturn(null);
   }, [clearPendingSupportingRequest]);
@@ -667,6 +681,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     clearPendingSupportingRequest();
     workflowCommandBusyRef.current = false;
     setWorkflowIntent(next);
+    setSearchState(null); setSearchReaderReturn(null);
     setWorkflowProgress(null);
     setWorkflowCommandBusy(false);
     setWorkflowLoadState("loading");
@@ -896,6 +911,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== handoff.selection.projectId
       || !handoff.attachmentId || !handoff.documentRevisionId) return;
     setQualitySelection(null); setQualityReaderRevision(null);
+    setSearchReaderReturn(null);
     setReaderLink(null); setAttachmentHandoff(handoff); navigateWorkspaceState("reader");
     announce("Document Reader opened for the exact selected Work/version. Current source permission will be checked again.");
   }, [announce, navigateWorkspaceState]);
@@ -904,9 +920,37 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== source.projectId
       || selection.projectId !== source.projectId || qualityNavigationBlocked.current) return;
     setQualitySelection(selection); setQualityReaderRevision(revision); setReaderLink(null);
+    setSearchReaderReturn(null);
     setAttachmentHandoff({attachmentId:source.attachmentId,documentRevisionId:source.documentRevisionId,operationId:null,commitRequest:null,
       selection:{projectId:source.projectId,workId:source.workId,workRevisionId:source.workRevisionId,versionId:source.versionId,versionRevisionId:source.versionRevisionId,sourceAssertionRevisionId:source.sourceAssertionRevisionId}});
     navigateWorkspaceState("reader"); announce("Reader opened for the exact correction source. Return reloads the saved proposal under current authority.");
+  }, [announce,navigateWorkspaceState]);
+
+  const openSearchReader = useCallback(async (target:SearchDocumentTarget, callerCurrent:()=>boolean):Promise<boolean> => {
+    const scope = searchScopeRef.current;
+    const source = target.source;
+    const current = ():boolean => callerCurrent() && workspaceRef.current === "search"
+      && applicationLockRef.current.state === "unlocked" && scope !== null
+      && searchScopeRef.current === scope && currentProjectRef.current?.open === true
+      && currentProjectRef.current.projectId === source.projectId;
+    if (!current()) return false;
+    let link:ViewerDeepLink|null = null;
+    if (target.selection) {
+      const anchor = await nativeSourceAnchorPort.create(source.projectId,corpusReportCommandId(null),target.selection);
+      if (!current() || !anchor) return false;
+      link = {schemaVersion:"1.0",projectId:source.projectId,selector:{attachmentId:source.attachmentId,
+        documentRevisionId:source.documentRevisionId,normalizedRevisionId:target.revisionId},anchorIds:[anchor.anchorId]};
+    }
+    if (!current()) return false;
+    setQualitySelection(null); setQualityReaderRevision(target.revisionId); setReaderLink(link);
+    setSearchReaderReturn(scope);
+    setAttachmentHandoff({attachmentId:source.attachmentId,documentRevisionId:source.documentRevisionId,
+      operationId:null,commitRequest:null,selection:{projectId:source.projectId,workId:source.workId,
+        workRevisionId:source.workRevisionId,versionId:source.versionId,versionRevisionId:source.versionRevisionId,
+        sourceAssertionRevisionId:source.sourceAssertionRevisionId}});
+    if (!navigateWorkspaceState("reader")) return false;
+    announce("Reader opened for the exact search source. Return rechecks the same query, run, page and result under current rights.");
+    return true;
   }, [announce,navigateWorkspaceState]);
 
   useEffect(() => {
@@ -916,6 +960,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       if (!link || applicationLockRef.current.state !== "unlocked" || !currentProjectRef.current?.open
         || currentProjectRef.current.projectId !== link.projectId) return;
       setQualitySelection(null); setQualityReaderRevision(null);
+      setSearchReaderReturn(null);
       setAttachmentHandoff(null); setReaderLink(link); navigateWorkspaceState("reader");
       announce("Document Reader opened for the exact linked revision. Current source permission will be checked again.");
     }
@@ -926,8 +971,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const selectedReaderLink = useMemo(() => {
     if (workspace !== "reader" || !currentProject?.open || applicationLock.state !== "unlocked") return null;
     if (readerLink?.projectId === currentProject.projectId) return readerLink;
+    if (searchReaderReturn) return null;
     try { return readStoredViewerDeepLink(window.localStorage, currentProject.projectId); } catch { return null; }
-  }, [workspace, currentProject, applicationLock.state, readerLink]);
+  }, [workspace, currentProject, applicationLock.state, readerLink, searchReaderReturn]);
   const retainReaderLink = useCallback((link: ViewerDeepLink): boolean => {
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== link.projectId) return false;
     try { return rememberViewerDeepLink(window.localStorage, link); } catch { return false; }
@@ -1376,13 +1422,21 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "reader" ? (
             <Suspense fallback={<p role="status">Loading the local Document Reader…</p>}><DocumentViewerWorkspace project={currentProject} handoff={attachmentHandoff} active={workspace === "reader"}
               deepLink={selectedReaderLink} onRememberLink={retainReaderLink} initialRevision={qualityReaderRevision}
-              returnLabel={qualitySelection ? "Return to Parsing Quality" : "Return to selected Work/version"}
-              announce={announce} onReturn={(handoff) => qualitySelection?.projectId === currentProject?.projectId ? navigateWorkspaceState("parsing-quality") : handoff || attachmentHandoff ? returnToAttachment(handoff) : navigateWorkspaceState("imports")} /></Suspense>
+              returnLabel={searchReaderReturn ? "Return to Search Studio" : qualitySelection ? "Return to Parsing Quality" : "Return to selected Work/version"}
+              announce={announce} onReturn={(handoff) => {
+                if (searchReaderReturn) { setSearchReaderReturn(null); navigateWorkspaceState("search"); }
+                else if (qualitySelection?.projectId === currentProject?.projectId) navigateWorkspaceState("parsing-quality");
+                else if (handoff || attachmentHandoff) returnToAttachment(handoff);
+                else navigateWorkspaceState("imports");
+              }} /></Suspense>
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "parsing-quality" ? (
             <Suspense fallback={<p role="status">Loading local Parsing Quality…</p>}><ParsingQualityWorkspace project={currentProject} active={workspace === "parsing-quality"}
               selection={qualitySelection} announce={announce} onReader={openQualityReader} onNavigationBlocked={blockQualityNavigation} /></Suspense>
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "corpus" ? (
             <CorpusCanvasWorkspace project={currentProject} announce={announce} active={workspace === "corpus"} onNavigate={navigateWorkspaceState} />
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "search" ? (
+            <SearchWorkspace project={currentProject} scopeKey={searchScopeKey} state={searchState} onStateChange={retainSearchState}
+              active={workspace === "search"} announce={announce} onOpenSource={openSearchReader} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "sources" ? (
             <SourceManagerWorkspace project={currentProject} announce={announce} active={workspace === "sources"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (

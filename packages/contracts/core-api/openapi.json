@@ -1,6 +1,29 @@
 {
   "components": {
     "schemas": {
+      "AcquisitionOrigin": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "remote-acquisition",
+            "title": "Kind",
+            "type": "string"
+          },
+          "locationId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "receiptSha256": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        },
+        "required": [
+          "kind",
+          "locationId",
+          "receiptSha256"
+        ],
+        "title": "AcquisitionOrigin",
+        "type": "object"
+      },
       "AliasPlan": {
         "additionalProperties": false,
         "properties": {
@@ -20,6 +43,39 @@
           "targetGroup"
         ],
         "title": "AliasPlan",
+        "type": "object"
+      },
+      "AnchorSelection": {
+        "additionalProperties": false,
+        "properties": {
+          "nodeId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "normalizedRange": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CodepointRange"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revisionId",
+          "nodeId"
+        ],
+        "title": "AnchorSelection",
         "type": "object"
       },
       "ApiVersion": {
@@ -618,6 +674,23 @@
           "direction"
         ],
         "title": "CitationQuery",
+        "type": "object"
+      },
+      "CodepointRange": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "start": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "CodepointRange",
         "type": "object"
       },
       "ColumnSelection": {
@@ -2440,6 +2513,12 @@
         "minimum": 0.0,
         "type": "integer"
       },
+      "CursorText": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "type": "string"
+      },
       "DecisionCode": {
         "enum": [
           "allow",
@@ -2638,6 +2717,18 @@
         ],
         "title": "FieldObservation",
         "type": "object"
+      },
+      "Format": {
+        "enum": [
+          "jats",
+          "tei",
+          "xml",
+          "html",
+          "pdf",
+          "docx",
+          "plain-text"
+        ],
+        "type": "string"
       },
       "GroupName": {
         "pattern": "^[a-z][a-z0-9-]{0,31}$",
@@ -4044,6 +4135,10 @@
         "title": "ImportUndoRequest",
         "type": "object"
       },
+      "Instant": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+        "type": "string"
+      },
       "IntentAcceptRequest": {
         "additionalProperties": false,
         "properties": {
@@ -5370,6 +5465,25 @@
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
         "type": "string"
       },
+      "LexicalScore": {
+        "minimum": 0.0,
+        "type": "number"
+      },
+      "LocalOrigin": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "local-import",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "LocalOrigin",
+        "type": "object"
+      },
       "LookupQuery": {
         "additionalProperties": false,
         "properties": {
@@ -6361,6 +6475,10 @@
         "title": "PreferenceState",
         "type": "object"
       },
+      "PreviewText": {
+        "maxLength": 384,
+        "type": "string"
+      },
       "PrivacyNetworkPolicy": {
         "enum": [
           "offline",
@@ -7346,6 +7464,15 @@
         ],
         "title": "ProviderIdentifier",
         "type": "object"
+      },
+      "QueryText": {
+        "maxLength": 32768,
+        "type": "string"
+      },
+      "QueryWire": {
+        "maxLength": 262144,
+        "minLength": 2,
+        "type": "string"
       },
       "RateLimitState": {
         "additionalProperties": false,
@@ -10292,6 +10419,291 @@
         "minimum": 0.0,
         "type": "integer"
       },
+      "SearchAddress": {
+        "additionalProperties": false,
+        "properties": {
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "projectId",
+          "jobId"
+        ],
+        "title": "SearchAddress",
+        "type": "object"
+      },
+      "SearchContribution": {
+        "additionalProperties": false,
+        "properties": {
+          "entryId": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchField"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "leafSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "matchKind": {
+            "enum": [
+              "literal",
+              "phrase"
+            ],
+            "title": "Matchkind",
+            "type": "string"
+          },
+          "score": {
+            "$ref": "#/components/schemas/LexicalScore"
+          }
+        },
+        "required": [
+          "leafSha256",
+          "entryId",
+          "field",
+          "matchKind",
+          "score"
+        ],
+        "title": "SearchContribution",
+        "type": "object"
+      },
+      "SearchDocumentTarget": {
+        "additionalProperties": false,
+        "properties": {
+          "locationState": {
+            "enum": [
+              "contained-text-selection",
+              "unanchored-preview"
+            ],
+            "title": "Locationstate",
+            "type": "string"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "selection": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AnchorSelection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceIdentity"
+          }
+        },
+        "required": [
+          "revisionId",
+          "source",
+          "selection",
+          "locationState"
+        ],
+        "title": "SearchDocumentTarget",
+        "type": "object"
+      },
+      "SearchExecution": {
+        "additionalProperties": false,
+        "properties": {
+          "expiresAt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Instant"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fieldWeights": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 8,
+            "minItems": 8,
+            "title": "Fieldweights",
+            "type": "array"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/SearchFilters"
+          },
+          "generationId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "inputSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "normalizedQuery": {
+            "$ref": "#/components/schemas/QueryText"
+          },
+          "originalQuery": {
+            "$ref": "#/components/schemas/QueryText"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "rankingVersion": {
+            "const": "ro-lexical-best-row-per-leaf-bm25-1",
+            "default": "ro-lexical-best-row-per-leaf-bm25-1",
+            "title": "Rankingversion",
+            "type": "string"
+          },
+          "rerankState": {
+            "const": "not-run",
+            "default": "not-run",
+            "title": "Rerankstate",
+            "type": "string"
+          },
+          "resultCount": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "resultSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "scoreMeaning": {
+            "const": "weighted-bm25-relevance",
+            "default": "weighted-bm25-relevance",
+            "title": "Scoremeaning",
+            "type": "string"
+          },
+          "searchRunId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "semanticState": {
+            "const": "unqualified",
+            "default": "unqualified",
+            "title": "Semanticstate",
+            "type": "string"
+          },
+          "sourceWatermark": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "validatedAt": {
+            "$ref": "#/components/schemas/Instant"
+          }
+        },
+        "required": [
+          "projectId",
+          "searchRunId",
+          "revisionId",
+          "jobId",
+          "generationId",
+          "sourceWatermark",
+          "inputSha256",
+          "resultSha256",
+          "resultCount",
+          "validatedAt",
+          "expiresAt",
+          "originalQuery",
+          "normalizedQuery",
+          "filters",
+          "fieldWeights"
+        ],
+        "title": "SearchExecution",
+        "type": "object"
+      },
+      "SearchExplanation": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/SearchContribution"
+            },
+            "maxItems": 256,
+            "title": "Components",
+            "type": "array"
+          },
+          "execution": {
+            "$ref": "#/components/schemas/SearchExecution"
+          },
+          "filterEffect": {
+            "const": "membership-only; statistical universe unchanged",
+            "default": "membership-only; statistical universe unchanged",
+            "title": "Filtereffect",
+            "type": "string"
+          },
+          "itemId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "score": {
+            "$ref": "#/components/schemas/LexicalScore"
+          }
+        },
+        "required": [
+          "execution",
+          "itemId",
+          "score",
+          "components"
+        ],
+        "title": "SearchExplanation",
+        "type": "object"
+      },
+      "SearchExplanationCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "itemId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "projectId",
+          "jobId",
+          "itemId"
+        ],
+        "title": "SearchExplanationCommand",
+        "type": "object"
+      },
+      "SearchField": {
+        "enum": [
+          "title",
+          "abstract",
+          "full-text",
+          "authors",
+          "venue",
+          "identifiers",
+          "tags",
+          "decisions"
+        ],
+        "type": "string"
+      },
       "SearchFilter": {
         "additionalProperties": false,
         "properties": {
@@ -10326,6 +10738,268 @@
           "value"
         ],
         "title": "SearchFilter",
+        "type": "object"
+      },
+      "SearchFilters": {
+        "additionalProperties": false,
+        "properties": {
+          "yearFrom": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Yearfrom"
+          },
+          "yearTo": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Yearto"
+          }
+        },
+        "title": "SearchFilters",
+        "type": "object"
+      },
+      "SearchHit": {
+        "additionalProperties": false,
+        "properties": {
+          "itemId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "position": {
+            "minimum": 1.0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "score": {
+            "$ref": "#/components/schemas/LexicalScore"
+          },
+          "snippet": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchSnippet"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchDocumentTarget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "maxLength": 512,
+            "title": "Title",
+            "type": "string"
+          },
+          "titleTruncated": {
+            "title": "Titletruncated",
+            "type": "boolean"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "maximum": 9999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "itemId",
+          "workId",
+          "workRevisionId",
+          "position",
+          "score",
+          "title",
+          "titleTruncated",
+          "year",
+          "snippet",
+          "source"
+        ],
+        "title": "SearchHit",
+        "type": "object"
+      },
+      "SearchJob": {
+        "additionalProperties": false,
+        "properties": {
+          "attemptCount": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "cancellationRequested": {
+            "title": "Cancellationrequested",
+            "type": "boolean"
+          },
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "state": {
+            "enum": [
+              "runnable",
+              "claimed",
+              "running",
+              "retry-scheduled",
+              "cancelling",
+              "cancelled",
+              "failed",
+              "succeeded"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workflowRunId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "projectId",
+          "commandId",
+          "jobId",
+          "workflowRunId",
+          "state",
+          "attemptCount",
+          "cancellationRequested",
+          "diagnosticCode"
+        ],
+        "title": "SearchJob",
+        "type": "object"
+      },
+      "SearchPage": {
+        "additionalProperties": false,
+        "properties": {
+          "afterCursor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CursorText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "execution": {
+            "$ref": "#/components/schemas/SearchExecution"
+          },
+          "hits": {
+            "items": {
+              "$ref": "#/components/schemas/SearchHit"
+            },
+            "maxItems": 50,
+            "title": "Hits",
+            "type": "array"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CursorText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "startPosition": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          }
+        },
+        "required": [
+          "execution",
+          "afterCursor",
+          "startPosition",
+          "hits",
+          "nextCursor"
+        ],
+        "title": "SearchPage",
+        "type": "object"
+      },
+      "SearchPageCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CursorText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "projectId",
+          "jobId"
+        ],
+        "title": "SearchPageCommand",
         "type": "object"
       },
       "SearchQuery": {
@@ -10394,6 +11068,180 @@
         "title": "SearchQuery",
         "type": "object"
       },
+      "SearchQueryDiagnostic": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "column": {
+            "minimum": 1.0,
+            "title": "Column",
+            "type": "integer"
+          },
+          "end": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "line": {
+            "minimum": 1.0,
+            "title": "Line",
+            "type": "integer"
+          },
+          "start": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          }
+        },
+        "required": [
+          "code",
+          "start",
+          "end",
+          "line",
+          "column"
+        ],
+        "title": "SearchQueryDiagnostic",
+        "type": "object"
+      },
+      "SearchQueryInput": {
+        "maxLength": 8192,
+        "minLength": 1,
+        "type": "string"
+      },
+      "SearchQueryValidation": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnostic": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchQueryDiagnostic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "normalizedQuery": {
+            "anyOf": [
+              {
+                "maxLength": 32768,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Normalizedquery"
+          },
+          "originalQuery": {
+            "anyOf": [
+              {
+                "maxLength": 8192,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Originalquery"
+          },
+          "queryDocument": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QueryWire"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "valid",
+          "originalQuery",
+          "normalizedQuery",
+          "queryDocument",
+          "diagnostic"
+        ],
+        "title": "SearchQueryValidation",
+        "type": "object"
+      },
+      "SearchRunCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/SearchFilters"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "query": {
+            "$ref": "#/components/schemas/SearchQueryInput"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "projectId",
+          "commandId",
+          "query"
+        ],
+        "title": "SearchRunCommand",
+        "type": "object"
+      },
+      "SearchSnippet": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "field": {
+            "$ref": "#/components/schemas/SearchField"
+          },
+          "highlights": {
+            "items": {
+              "$ref": "#/components/schemas/CodepointRange"
+            },
+            "maxItems": 32,
+            "title": "Highlights",
+            "type": "array"
+          },
+          "start": {
+            "$ref": "#/components/schemas/research_observatory_core__parsing__contracts__Count"
+          },
+          "text": {
+            "$ref": "#/components/schemas/PreviewText"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "field",
+          "start",
+          "end",
+          "text",
+          "highlights",
+          "truncated"
+        ],
+        "title": "SearchSnippet",
+        "type": "object"
+      },
       "SearchSort": {
         "additionalProperties": false,
         "properties": {
@@ -10420,6 +11268,19 @@
           "direction"
         ],
         "title": "SearchSort",
+        "type": "object"
+      },
+      "SearchValidationCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/SearchQueryInput"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "SearchValidationCommand",
         "type": "object"
       },
       "Section": {
@@ -10606,6 +11467,89 @@
           "value"
         ],
         "title": "SourceField",
+        "type": "object"
+      },
+      "SourceIdentity": {
+        "additionalProperties": false,
+        "properties": {
+          "attachmentId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "byteLength": {
+            "maximum": 134217728.0,
+            "minimum": 0.0,
+            "title": "Bytelength",
+            "type": "integer"
+          },
+          "candidateId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "documentId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "documentRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "format": {
+            "$ref": "#/components/schemas/Format"
+          },
+          "objectSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "provenance": {
+            "discriminator": {
+              "mapping": {
+                "local-import": "#/components/schemas/LocalOrigin",
+                "remote-acquisition": "#/components/schemas/AcquisitionOrigin"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalOrigin"
+              },
+              {
+                "$ref": "#/components/schemas/AcquisitionOrigin"
+              }
+            ],
+            "title": "Provenance"
+          },
+          "sourceAssertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "versionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "versionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "projectId",
+          "attachmentId",
+          "documentId",
+          "documentRevisionId",
+          "candidateId",
+          "sourceAssertionRevisionId",
+          "workId",
+          "workRevisionId",
+          "versionId",
+          "versionRevisionId",
+          "objectSha256",
+          "byteLength",
+          "format",
+          "provenance"
+        ],
+        "title": "SourceIdentity",
         "type": "object"
       },
       "SourceKey": {
@@ -13449,6 +14393,11 @@
       },
       "research_observatory_core__ingestion__import_summaries__Count": {
         "maximum": 200000.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
+      "research_observatory_core__parsing__contracts__Count": {
+        "maximum": 9007199254740991.0,
         "minimum": 0.0,
         "type": "integer"
       }
@@ -20011,6 +20960,252 @@
         "summary": "Restore Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/projects/search/cancel": {
+      "post": {
+        "operationId": "cancelLexicalSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchAddress"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/projects/search/explain": {
+      "post": {
+        "operationId": "explainLexicalSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchExplanationCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchExplanation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Explain",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/projects/search/page": {
+      "post": {
+        "operationId": "pageLexicalSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchPageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Page",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/projects/search/run": {
+      "post": {
+        "operationId": "executeLexicalSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRunCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/projects/search/status": {
+      "post": {
+        "operationId": "inspectLexicalSearch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchAddress"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchJob"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Status",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/projects/search/validate": {
+      "post": {
+        "operationId": "validateLexicalQuery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchValidationCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchQueryValidation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Validate",
+        "tags": [
+          "search"
         ]
       }
     },
