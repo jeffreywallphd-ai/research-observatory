@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "services/core-api/src"), str(ROOT)]
 
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
+from research_observatory_core.lexical_catalog_repository import IndexGeneration  # noqa: E402
 from research_observatory_core.lexical_index_repository import IndexServiceProblem  # noqa: E402
 from research_observatory_core.lexical_index_store import ProtectedLexicalStore  # noqa: E402
 from research_observatory_core.lexical_input_repository import (  # noqa: E402
@@ -223,7 +224,8 @@ class LexicalQueryServiceTests(CanonicalIndexFixture):
         self.assertLessEqual(self.service._bounded(observe_phase), 1)
 
     def test_republished_selection_during_delivery_discards_buffered_result(self):
-        self.service.rebuild()
+        selected = self.service.rebuild()
+        published: list[IndexGeneration | None] = []
 
         def republish(snapshot, store):
             lease = self.service.catalog.acquire(snapshot.generation.generation_id)
@@ -235,24 +237,30 @@ class LexicalQueryServiceTests(CanonicalIndexFixture):
                 expected_selection_id=snapshot.generation.selection_id,
                 revalidate=lambda db: self.service._fence(db, snapshot.validation),
             )
-            self.assertNotEqual(snapshot.generation.selection_id, self.service.catalog.selected().selection_id)
+            published.append(self.service.catalog.selected())
             return snapshot
 
         with self.assertRaises(IndexServiceProblem):
             self.reader().read(parse_query("identifiers:synthetic"), consume=republish)
+        self.assertEqual(1, len(published))
+        current = published[0]
+        assert current is not None
+        self.assertNotEqual(selected.selection_id, current.selection_id)
 
     def test_generation_cancelled_during_delivery_discards_buffered_result(self):
         self.service.rebuild()
+        stages: list[str] = []
 
         def invalidate(snapshot, _store):
             lease = self.service.catalog.acquire(snapshot.generation.generation_id)
             self.addCleanup(lease.close)
             self.service.catalog.cancel(lease)
-            self.assertEqual("Incomplete", self.service.catalog.get(lease.generation_id).stage)
+            stages.append(self.service.catalog.get(lease.generation_id).stage)
             return snapshot
 
         with self.assertRaises(IndexServiceProblem):
             self.reader().read(parse_query("identifiers:synthetic"), consume=invalidate)
+        self.assertEqual(["Incomplete"], stages)
 
 
 if __name__ == "__main__":
